@@ -3422,25 +3422,37 @@ app.get('/api/user-status', async (req, res) => {
 });
 
 app.get('/api/dashboard-stats', async (req, res) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     try {
-        const startOfToday = new Date();
-        startOfToday.setHours(0, 0, 0, 0);
+        const tz = 'Asia/Jakarta';
+        const now = new Date();
 
-        const startOfYesterday = new Date(startOfToday);
-        startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+        // Hitung batas awal hari ini & kemarin dalam WIB (+07:00)
+        const wibNowStr = now.toLocaleDateString('en-CA', { timeZone: tz }); // YYYY-MM-DD
+        const startOfToday = new Date(`${wibNowStr}T00:00:00.000+07:00`);
+        const startOfYesterday = new Date(startOfToday.getTime() - 24 * 60 * 60 * 1000);
 
-        const fourteenDaysAgo = new Date(startOfToday);
-        fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 13);
+        const fourteenDaysAgo = new Date(startOfToday.getTime() - 13 * 24 * 60 * 60 * 1000);
+
+        const twelveMonthsAgo = new Date(startOfToday);
+        twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
+        twelveMonthsAgo.setDate(1);
+
+        const fiveYearsAgo = new Date(startOfToday);
+        fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 4);
+        fiveYearsAgo.setMonth(0, 1);
 
         const [
-            totalUsers, 
-            totalProducts, 
-            totalTrx, 
-            lunasTrx, 
-            trxToday, 
-            trxYesterday, 
+            totalUsers,
+            totalProducts,
+            totalTrx,
+            lunasTrx,
+            trxToday,
+            trxYesterday,
             recentTrxRaw,
             dailyChartRaw,
+            monthlyChartRaw,
+            yearlyChartRaw,
             latencyMetrics
         ] = await Promise.all([
             UserV2.countDocuments(),
@@ -3456,13 +3468,14 @@ app.get('/api/dashboard-stats', async (req, res) => {
             TransactionV2.find({})
                 .sort({ createdAt: -1 })
                 .limit(10)
-                .select('orderId userEmail amount status itemDetails createdAt type')
+                .select('orderId userEmail amount status itemDetails createdAt type paymentMethod')
                 .lean(),
+            // Agregasi per Tanggal (14 hari terakhir)
             TransactionV2.aggregate([
                 { $match: { createdAt: { $gte: fourteenDaysAgo } } },
                 {
                     $group: {
-                        _id: { $dateToString: { format: "%d %b", date: "$createdAt" } },
+                        _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", timezone: tz } },
                         total: { $sum: 1 },
                         lunas: {
                             $sum: {
@@ -3471,7 +3484,62 @@ app.get('/api/dashboard-stats', async (req, res) => {
                         },
                         batal: {
                             $sum: {
-                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expire", "batal"]] }, 1, 0]
+                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expired", "expire", "batal"]] }, 1, 0]
+                            }
+                        },
+                        pending: {
+                            $sum: {
+                                $cond: [{ $eq: ["$status", "pending"] }, 1, 0]
+                            }
+                        }
+                    }
+                }
+            ]),
+            // Agregasi per Bulan (12 bulan terakhir)
+            TransactionV2.aggregate([
+                { $match: { createdAt: { $gte: twelveMonthsAgo } } },
+                {
+                    $group: {
+                        _id: { $dateToString: { format: "%Y-%m", date: "$createdAt", timezone: tz } },
+                        total: { $sum: 1 },
+                        lunas: {
+                            $sum: {
+                                $cond: [{ $in: ["$status", ["settlement", "success", "paid", "settled"]] }, 1, 0]
+                            }
+                        },
+                        batal: {
+                            $sum: {
+                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expired", "expire", "batal"]] }, 1, 0]
+                            }
+                        },
+                        pending: {
+                            $sum: {
+                                $cond: [{ $eq: ["$status", "pending"] }, 1, 0]
+                            }
+                        }
+                    }
+                }
+            ]),
+            // Agregasi per Tahun (5 tahun terakhir)
+            TransactionV2.aggregate([
+                { $match: { createdAt: { $gte: fiveYearsAgo } } },
+                {
+                    $group: {
+                        _id: { $dateToString: { format: "%Y", date: "$createdAt", timezone: tz } },
+                        total: { $sum: 1 },
+                        lunas: {
+                            $sum: {
+                                $cond: [{ $in: ["$status", ["settlement", "success", "paid", "settled"]] }, 1, 0]
+                            }
+                        },
+                        batal: {
+                            $sum: {
+                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expired", "expire", "batal"]] }, 1, 0]
+                            }
+                        },
+                        pending: {
+                            $sum: {
+                                $cond: [{ $eq: ["$status", "pending"] }, 1, 0]
                             }
                         }
                     }
@@ -3505,27 +3573,69 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 orderId: trx.orderId,
                 pelanggan: cleanName,
                 produk: trx.itemDetails?.nama || (trx.type === 'DEPOSIT' ? 'Deposit Saldo' : 'Pembelian Marketplace'),
+                type: trx.type || 'PURCHASE',
+                paymentMethod: trx.paymentMethod || 'QRIS',
                 amount: trx.itemDetails?.harga_setelah_voucher || trx.amount || 0,
                 status: trx.status,
                 createdAt: trx.createdAt
             };
         });
 
-        const chartLabels = [];
-        const chartTotalTrx = [];
-        const chartLunasTrx = [];
-        const chartBatalTrx = [];
-
+        // 1. Susun seri Tanggal (14 hari terakhir)
+        const byDate = [];
         for (let i = 13; i >= 0; i--) {
-            const d = new Date(startOfToday);
-            d.setDate(d.getDate() - i);
-            const dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
-            
-            const found = dailyChartRaw.find(item => item._id === dateStr);
-            chartLabels.push(dateStr);
-            chartTotalTrx.push(found ? found.total : 0);
-            chartLunasTrx.push(found ? found.lunas : 0);
-            chartBatalTrx.push(found ? found.batal : 0);
+            const d = new Date(startOfToday.getTime() - i * 24 * 60 * 60 * 1000);
+            const key = d.toLocaleDateString('en-CA', { timeZone: tz }); // YYYY-MM-DD
+            const label = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', timeZone: tz });
+            const found = dailyChartRaw.find(item => item._id === key);
+            byDate.push({
+                key,
+                label,
+                timestamp: d.getTime(),
+                total: found ? found.total : 0,
+                lunas: found ? found.lunas : 0,
+                batal: found ? found.batal : 0,
+                pending: found ? found.pending : 0
+            });
+        }
+
+        // 2. Susun seri Bulan (12 bulan terakhir)
+        const byMonth = [];
+        const baseMonth = new Date(`${wibNowStr.slice(0, 7)}-01T00:00:00.000+07:00`);
+        for (let i = 11; i >= 0; i--) {
+            const d = new Date(baseMonth);
+            d.setMonth(d.getMonth() - i);
+            const key = d.toLocaleDateString('en-CA', { timeZone: tz }).slice(0, 7); // YYYY-MM
+            const label = d.toLocaleDateString('id-ID', { month: 'short', year: 'numeric', timeZone: tz });
+            const found = monthlyChartRaw.find(item => item._id === key);
+            byMonth.push({
+                key,
+                label,
+                timestamp: d.getTime(),
+                total: found ? found.total : 0,
+                lunas: found ? found.lunas : 0,
+                batal: found ? found.batal : 0,
+                pending: found ? found.pending : 0
+            });
+        }
+
+        // 3. Susun seri Tahun (5 tahun terakhir)
+        const byYear = [];
+        const currentYear = Number(wibNowStr.slice(0, 4));
+        for (let i = 4; i >= 0; i--) {
+            const yr = currentYear - i;
+            const key = String(yr);
+            const d = new Date(`${key}-01-01T00:00:00.000+07:00`);
+            const found = yearlyChartRaw.find(item => item._id === key);
+            byYear.push({
+                key,
+                label: key,
+                timestamp: d.getTime(),
+                total: found ? found.total : 0,
+                lunas: found ? found.lunas : 0,
+                batal: found ? found.batal : 0,
+                pending: found ? found.pending : 0
+            });
         }
 
         const systemLatency = latencyMetrics.length > 0 ? Math.round(latencyMetrics[0].avgLatency) : 12;
@@ -3533,6 +3643,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
 
         res.json({
             status: true,
+            serverTime: now.toISOString(),
             totalUsers,
             totalProducts,
             totalTrx,
@@ -3543,10 +3654,9 @@ app.get('/api/dashboard-stats', async (req, res) => {
             totalRequests,
             recentTrx,
             chartData: {
-                labels: chartLabels,
-                totalTrx: chartTotalTrx,
-                lunasTrx: chartLunasTrx,
-                batalTrx: chartBatalTrx
+                date: byDate,
+                month: byMonth,
+                year: byYear
             }
         });
     } catch (err) {
