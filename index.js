@@ -3480,6 +3480,11 @@ app.get('/api/dashboard-stats', async (req, res) => {
                                 $cond: [{ $in: ["$status", ["settlement", "success", "paid", "settled"]] }, 1, 0]
                             }
                         },
+                        batal: {
+                            $sum: {
+                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expire", "expired", "batal"]] }, 1, 0]
+                            }
+                        },
                         omzet: {
                             $sum: {
                                 $cond: [
@@ -3507,6 +3512,11 @@ app.get('/api/dashboard-stats', async (req, res) => {
                         lunas: {
                             $sum: {
                                 $cond: [{ $in: ["$status", ["settlement", "success", "paid", "settled"]] }, 1, 0]
+                            }
+                        },
+                        batal: {
+                            $sum: {
+                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expire", "expired", "batal"]] }, 1, 0]
                             }
                         },
                         omzet: {
@@ -3563,31 +3573,51 @@ app.get('/api/dashboard-stats', async (req, res) => {
             };
         });
 
-        // 1. Series 1 Hari (24 jam terakhir, per jam)
-        const hourlyMap = {};
-        hourlyRaw.forEach(item => { hourlyMap[item._id] = item; });
+        // Helper pembentuk candle OHLC berkesinambungan dari transaksi nyata
+        function buildOhlcCandles(buckets) {
+            let prevClose = 0;
+            return buckets.map((b) => {
+                const open = prevClose;
+                const close = b.lunas;
+                const pendingCount = Math.max(0, b.total - b.lunas - b.batal);
+                // High = puncak tertinggi (termasuk pesanan masuk/pending), Low = penurunan akibat transaksi batal
+                const high = Math.max(open, close) + pendingCount;
+                const low = Math.max(0, Math.min(open, close) - b.batal);
+                prevClose = close;
 
-        const series1d = [];
-        for (let i = 23; i >= 0; i--) {
-            const dt = new Date(now.getTime() - i * 60 * 60 * 1000);
-            const wibStr = dt.toLocaleString('sv-SE', { timeZone: 'Asia/Jakarta' }); // "YYYY-MM-DD HH:mm:ss"
-            const hourKey = wibStr.slice(0, 13) + ':00';
-            const label = wibStr.slice(11, 16);
-            const row = hourlyMap[hourKey] || { total: 0, lunas: 0, omzet: 0 };
-
-            series1d.push({
-                label,
-                total: row.total,
-                lunas: row.lunas,
-                omzet: row.omzet
+                return {
+                    label: b.label,
+                    o: open,
+                    h: high,
+                    l: low,
+                    c: close,
+                    total: b.total,
+                    lunas: b.lunas,
+                    batal: b.batal,
+                    omzet: b.omzet
+                };
             });
         }
 
-        // 2. Series 30 Hari & 7 Hari (harian)
+        // 1. Data 1 Hari (24 jam terakhir per jam)
+        const hourlyMap = {};
+        hourlyRaw.forEach(item => { hourlyMap[item._id] = item; });
+
+        const raw1d = [];
+        for (let i = 23; i >= 0; i--) {
+            const dt = new Date(now.getTime() - i * 60 * 60 * 1000);
+            const wibStr = dt.toLocaleString('sv-SE', { timeZone: 'Asia/Jakarta' });
+            const hourKey = wibStr.slice(0, 13) + ':00';
+            const label = wibStr.slice(11, 16);
+            const row = hourlyMap[hourKey] || { total: 0, lunas: 0, batal: 0, omzet: 0 };
+            raw1d.push({ label, ...row });
+        }
+
+        // 2. Data 30 Hari & 7 Hari
         const dailyMap = {};
         daily30Raw.forEach(item => { dailyMap[item._id] = item; });
 
-        const series30d = [];
+        const raw30d = [];
         for (let i = 29; i >= 0; i--) {
             const d = new Date(startOfToday);
             d.setDate(d.getDate() - i);
@@ -3596,17 +3626,13 @@ app.get('/api/dashboard-stats', async (req, res) => {
             const dd = String(d.getDate()).padStart(2, '0');
             const dateKey = `${yyyy}-${mm}-${dd}`;
             const label = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
-            const row = dailyMap[dateKey] || { total: 0, lunas: 0, omzet: 0 };
-
-            series30d.push({
-                label,
-                total: row.total,
-                lunas: row.lunas,
-                omzet: row.omzet
-            });
+            const row = dailyMap[dateKey] || { total: 0, lunas: 0, batal: 0, omzet: 0 };
+            raw30d.push({ label, ...row });
         }
 
-        const series7d = series30d.slice(-7);
+        const candles1d = buildOhlcCandles(raw1d);
+        const candles30d = buildOhlcCandles(raw30d);
+        const candles7d = candles30d.slice(-7);
 
         const systemLatency = latencyMetrics.length > 0 ? Math.round(latencyMetrics[0].avgLatency) : 12;
         const totalRequests = latencyMetrics.length > 0 ? latencyMetrics[0].totalRequests : totalTrx;
@@ -3622,10 +3648,10 @@ app.get('/api/dashboard-stats', async (req, res) => {
             systemLatency: `${systemLatency} ms`,
             totalRequests,
             recentTrx,
-            forexSeries: {
-                '1d': series1d,
-                '7d': series7d,
-                '1m': series30d
+            tradingSeries: {
+                '1d': candles1d,
+                '7d': candles7d,
+                '1m': candles30d
             }
         });
     } catch (err) {
@@ -3633,7 +3659,6 @@ app.get('/api/dashboard-stats', async (req, res) => {
         res.status(500).json({ status: false, message: "Gagal memuat data statistik" });
     }
 });
-
 
 // ============================================================
 // 11. START SERVER
