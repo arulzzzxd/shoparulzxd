@@ -3422,37 +3422,25 @@ app.get('/api/user-status', async (req, res) => {
 });
 
 app.get('/api/dashboard-stats', async (req, res) => {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     try {
-        const tz = 'Asia/Jakarta';
-        const now = new Date();
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
 
-        // Hitung batas awal hari ini & kemarin dalam WIB (+07:00)
-        const wibNowStr = now.toLocaleDateString('en-CA', { timeZone: tz }); // YYYY-MM-DD
-        const startOfToday = new Date(`${wibNowStr}T00:00:00.000+07:00`);
-        const startOfYesterday = new Date(startOfToday.getTime() - 24 * 60 * 60 * 1000);
+        const startOfYesterday = new Date(startOfToday);
+        startOfYesterday.setDate(startOfYesterday.getDate() - 1);
 
-        const fourteenDaysAgo = new Date(startOfToday.getTime() - 13 * 24 * 60 * 60 * 1000);
-
-        const twelveMonthsAgo = new Date(startOfToday);
-        twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
-        twelveMonthsAgo.setDate(1);
-
-        const fiveYearsAgo = new Date(startOfToday);
-        fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 4);
-        fiveYearsAgo.setMonth(0, 1);
+        const fourteenDaysAgo = new Date(startOfToday);
+        fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 13);
 
         const [
-            totalUsers,
-            totalProducts,
-            totalTrx,
-            lunasTrx,
-            trxToday,
-            trxYesterday,
+            totalUsers, 
+            totalProducts, 
+            totalTrx, 
+            lunasTrx, 
+            trxToday, 
+            trxYesterday, 
             recentTrxRaw,
             dailyChartRaw,
-            monthlyChartRaw,
-            yearlyChartRaw,
             latencyMetrics
         ] = await Promise.all([
             UserV2.countDocuments(),
@@ -3470,12 +3458,17 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 .limit(10)
                 .select('orderId userEmail amount status itemDetails createdAt type paymentMethod')
                 .lean(),
-            // Agregasi per Tanggal (14 hari terakhir)
             TransactionV2.aggregate([
                 { $match: { createdAt: { $gte: fourteenDaysAgo } } },
                 {
                     $group: {
-                        _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", timezone: tz } },
+                        _id: {
+                            $dateToString: {
+                                format: "%Y-%m-%d",
+                                date: "$createdAt",
+                                timezone: "Asia/Jakarta"
+                            }
+                        },
                         total: { $sum: 1 },
                         lunas: {
                             $sum: {
@@ -3484,62 +3477,16 @@ app.get('/api/dashboard-stats', async (req, res) => {
                         },
                         batal: {
                             $sum: {
-                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expired", "expire", "batal"]] }, 1, 0]
+                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expire", "expired", "batal"]] }, 1, 0]
                             }
                         },
-                        pending: {
+                        omzet: {
                             $sum: {
-                                $cond: [{ $eq: ["$status", "pending"] }, 1, 0]
-                            }
-                        }
-                    }
-                }
-            ]),
-            // Agregasi per Bulan (12 bulan terakhir)
-            TransactionV2.aggregate([
-                { $match: { createdAt: { $gte: twelveMonthsAgo } } },
-                {
-                    $group: {
-                        _id: { $dateToString: { format: "%Y-%m", date: "$createdAt", timezone: tz } },
-                        total: { $sum: 1 },
-                        lunas: {
-                            $sum: {
-                                $cond: [{ $in: ["$status", ["settlement", "success", "paid", "settled"]] }, 1, 0]
-                            }
-                        },
-                        batal: {
-                            $sum: {
-                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expired", "expire", "batal"]] }, 1, 0]
-                            }
-                        },
-                        pending: {
-                            $sum: {
-                                $cond: [{ $eq: ["$status", "pending"] }, 1, 0]
-                            }
-                        }
-                    }
-                }
-            ]),
-            // Agregasi per Tahun (5 tahun terakhir)
-            TransactionV2.aggregate([
-                { $match: { createdAt: { $gte: fiveYearsAgo } } },
-                {
-                    $group: {
-                        _id: { $dateToString: { format: "%Y", date: "$createdAt", timezone: tz } },
-                        total: { $sum: 1 },
-                        lunas: {
-                            $sum: {
-                                $cond: [{ $in: ["$status", ["settlement", "success", "paid", "settled"]] }, 1, 0]
-                            }
-                        },
-                        batal: {
-                            $sum: {
-                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expired", "expire", "batal"]] }, 1, 0]
-                            }
-                        },
-                        pending: {
-                            $sum: {
-                                $cond: [{ $eq: ["$status", "pending"] }, 1, 0]
+                                $cond: [
+                                    { $in: ["$status", ["settlement", "success", "paid", "settled"]] },
+                                    { $ifNull: ["$itemDetails.harga_setelah_voucher", "$amount"] },
+                                    0
+                                ]
                             }
                         }
                     }
@@ -3558,84 +3505,78 @@ app.get('/api/dashboard-stats', async (req, res) => {
         ]);
 
         const emails = recentTrxRaw.map(t => t.userEmail).filter(Boolean);
-        const users = await UserV2.find({ email: { $in: emails } }).select('email username').lean();
+        const users = await UserV2.find({ email: { $in: emails } }).select('email username avatar').lean();
         const userMap = {};
         users.forEach(u => {
-            if (u.email) userMap[u.email.toLowerCase().trim()] = u.username;
+            if (u.email) {
+                userMap[u.email.toLowerCase().trim()] = {
+                    username: u.username,
+                    avatar: u.avatar
+                };
+            }
         });
 
         const recentTrx = recentTrxRaw.map(trx => {
             const emailKey = (trx.userEmail || '').toLowerCase().trim();
-            let cleanName = userMap[emailKey] || trx.itemDetails?.buyer || 'Guest';
+            const matchedUser = userMap[emailKey];
+            let cleanName = matchedUser?.username || trx.itemDetails?.buyer || 'Pembeli Tamu';
             if (cleanName.includes('@')) cleanName = cleanName.split('@')[0];
 
             return {
                 orderId: trx.orderId,
                 pelanggan: cleanName,
-                produk: trx.itemDetails?.nama || (trx.type === 'DEPOSIT' ? 'Deposit Saldo' : 'Pembelian Marketplace'),
-                type: trx.type || 'PURCHASE',
-                paymentMethod: trx.paymentMethod || 'QRIS',
+                avatar: matchedUser?.avatar || null,
+                produk: trx.itemDetails?.nama || (trx.type === 'DEPOSIT' ? 'Isi Saldo Akun' : 'Produk Digital'),
+                metode: trx.paymentMethod || 'QRIS',
                 amount: trx.itemDetails?.harga_setelah_voucher || trx.amount || 0,
                 status: trx.status,
                 createdAt: trx.createdAt
             };
         });
 
-        // 1. Susun seri Tanggal (14 hari terakhir)
-        const byDate = [];
+        // Susun data OHLC Candlestick asli dari transaksi harian (14 hari terakhir)
+        const dailyMap = {};
+        dailyChartRaw.forEach(item => {
+            dailyMap[item._id] = item;
+        });
+
+        const ohlcSeries = [];
+        let prevClose = 0;
+
         for (let i = 13; i >= 0; i--) {
-            const d = new Date(startOfToday.getTime() - i * 24 * 60 * 60 * 1000);
-            const key = d.toLocaleDateString('en-CA', { timeZone: tz }); // YYYY-MM-DD
-            const label = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', timeZone: tz });
-            const found = dailyChartRaw.find(item => item._id === key);
-            byDate.push({
-                key,
-                label,
-                timestamp: d.getTime(),
-                total: found ? found.total : 0,
-                lunas: found ? found.lunas : 0,
-                batal: found ? found.batal : 0,
-                pending: found ? found.pending : 0
-            });
-        }
+            const d = new Date(startOfToday);
+            d.setDate(d.getDate() - i);
 
-        // 2. Susun seri Bulan (12 bulan terakhir)
-        const byMonth = [];
-        const baseMonth = new Date(`${wibNowStr.slice(0, 7)}-01T00:00:00.000+07:00`);
-        for (let i = 11; i >= 0; i--) {
-            const d = new Date(baseMonth);
-            d.setMonth(d.getMonth() - i);
-            const key = d.toLocaleDateString('en-CA', { timeZone: tz }).slice(0, 7); // YYYY-MM
-            const label = d.toLocaleDateString('id-ID', { month: 'short', year: 'numeric', timeZone: tz });
-            const found = monthlyChartRaw.find(item => item._id === key);
-            byMonth.push({
-                key,
-                label,
-                timestamp: d.getTime(),
-                total: found ? found.total : 0,
-                lunas: found ? found.lunas : 0,
-                batal: found ? found.batal : 0,
-                pending: found ? found.pending : 0
-            });
-        }
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            const dateKey = `${yyyy}-${mm}-${dd}`;
+            const label = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
 
-        // 3. Susun seri Tahun (5 tahun terakhir)
-        const byYear = [];
-        const currentYear = Number(wibNowStr.slice(0, 4));
-        for (let i = 4; i >= 0; i--) {
-            const yr = currentYear - i;
-            const key = String(yr);
-            const d = new Date(`${key}-01-01T00:00:00.000+07:00`);
-            const found = yearlyChartRaw.find(item => item._id === key);
-            byYear.push({
-                key,
-                label: key,
-                timestamp: d.getTime(),
-                total: found ? found.total : 0,
-                lunas: found ? found.lunas : 0,
-                batal: found ? found.batal : 0,
-                pending: found ? found.pending : 0
+            const row = dailyMap[dateKey] || { total: 0, lunas: 0, batal: 0, omzet: 0 };
+
+            // Open = Close hari sebelumnya, Close = jumlah transaksi lunas hari ini
+            // High = total semua pesanan masuk, Low = batas terendah setelah dikurangi batal
+            const open = prevClose;
+            const close = row.lunas;
+            const high = Math.max(open, close, row.total);
+            const low = Math.max(0, Math.min(open, close, Math.max(0, row.lunas - row.batal)));
+
+            ohlcSeries.push({
+                date: dateKey,
+                label,
+                x: d.getTime(),
+                o: open,
+                h: high,
+                l: low,
+                c: close,
+                total: row.total,
+                lunas: row.lunas,
+                batal: row.batal,
+                omzet: row.omzet
             });
+
+            prevClose = close;
         }
 
         const systemLatency = latencyMetrics.length > 0 ? Math.round(latencyMetrics[0].avgLatency) : 12;
@@ -3643,7 +3584,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
 
         res.json({
             status: true,
-            serverTime: now.toISOString(),
+            serverTime: new Date().toISOString(),
             totalUsers,
             totalProducts,
             totalTrx,
@@ -3653,11 +3594,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
             systemLatency: `${systemLatency} ms`,
             totalRequests,
             recentTrx,
-            chartData: {
-                date: byDate,
-                month: byMonth,
-                year: byYear
-            }
+            ohlcSeries
         });
     } catch (err) {
         console.error("Gagal mengambil statistik dashboard:", err);
