@@ -37,9 +37,6 @@
     <!-- Styles & Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1/dist/chartjs-chart-financial.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -80,35 +77,62 @@
         }
 
         .neo-btn {
-            border: 3px solid #000000;
-            box-shadow: 4px 4px 0px #000000;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            border: 2.5px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
         }
         .neo-btn:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px #000000;
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px #000000;
         }
         .neo-btn:active {
             transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px #000000;
+            box-shadow: 1px 1px 0px #000000;
         }
 
-        /* Light Neo-Brutalist Grid untuk Area Chart */
-        .neo-chart-grid {
+        /* Grid Forex Light Neo-Brutalism */
+        .forex-grid-bg {
             background-color: #FFFDF7;
             background-image:
                 linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
-            background-size: 28px 28px;
+            background-size: 26px 26px;
         }
 
-        /* Custom Scrollbar untuk tabel di layar kecil */
+        /* Garis Pembatas Solid untuk Tabel Status Transaksi */
+        .neo-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .neo-table thead tr {
+            border-bottom: 3px solid #000000;
+        }
+        .neo-table th {
+            border-right: 3px solid #000000;
+        }
+        .neo-table th:last-child {
+            border-right: none;
+        }
+        .neo-table tbody tr {
+            border-bottom: 2.5px solid #000000;
+        }
+        .neo-table tbody tr:last-child {
+            border-bottom: none;
+        }
+        .neo-table td {
+            border-right: 2.5px solid #000000;
+        }
+        .neo-table td:last-child {
+            border-right: none;
+        }
+
+        /* Custom Scrollbar */
         .neo-scroll::-webkit-scrollbar {
             height: 8px;
         }
         .neo-scroll::-webkit-scrollbar-track {
             background: #F4F0EA;
-            border-top: 2px solid #000000;
+            border-top: 2.5px solid #000000;
         }
         .neo-scroll::-webkit-scrollbar-thumb {
             background: #FFDE59;
@@ -214,7 +238,7 @@
 <body class="font-sans antialiased text-black min-h-screen pb-32">
 
     <!-- TOP NAVBAR -->
-    <header class="sticky top-0 z-40 bg-neoYellow border-b-3 border-black shadow-[0_4px_0_#000]">
+    <header class="sticky top-0 z-40 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <a href="/" class="text-2xl font-black font-cyber tracking-tight text-black">
                 Arulz<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">Store</span>
@@ -295,97 +319,115 @@
             </div>
         </section>
 
-        <!-- ANALITIK PASAR LIGHT NEO-BRUTALISME (ALA TRADER) -->
+        <!-- ANALITIK PASAR LIGHT NEO-BRUTALISM (TRENDING FOREX) -->
         <section class="neo-box rounded-2xl overflow-hidden bg-white text-black">
-            <!-- Header Bar Light Neo-Brutalist -->
-            <div class="bg-neoYellow border-b-3 border-black px-4 sm:px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <!-- Header Bar -->
+            <div class="bg-neoYellow border-b-[3px] border-black px-4 sm:px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-white text-black border-3 border-black flex items-center justify-center font-black font-cyber text-lg shadow-[3px_3px_0_#000]">
-                        <i class="fa-solid fa-chart-candlestick"></i>
+                    <div class="w-11 h-11 rounded-xl bg-white text-black border-[3px] border-black flex items-center justify-center font-black text-lg shadow-[3px_3px_0_#000] shrink-0">
+                        <i class="fa-solid fa-chart-line"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
                             <h3 class="text-base sm:text-lg font-black font-cyber tracking-tight text-black">
                                 ARULZ / IDR
                             </h3>
-                            <span class="text-[10px] font-mono font-extrabold bg-black text-white px-2 py-0.5 rounded-md">
-                                1D CANDLE
+                            <span id="forexTfBadge" class="text-[10px] font-mono font-extrabold bg-black text-white px-2 py-0.5 rounded-md">
+                                7 HARI
                             </span>
                             <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-extrabold bg-neoGreen text-black border-2 border-black px-2 py-0.5 rounded-md shadow-[2px_2px_0_#000]">
                                 <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
                                 LIVE
                             </span>
                         </div>
-                        <p class="text-[11px] font-bold text-black/80 mt-0.5">
-                            Grafik pergerakan transaksi 14 hari terakhir • Pembaruan otomatis
+                        <p id="forexSubtitle" class="text-[11px] font-bold text-black/80 mt-0.5">
+                            Tren transaksi 7 hari terakhir • Diperbarui otomatis
                         </p>
                     </div>
                 </div>
 
-                <!-- Ticker & OHLC Blocks Light Neo-Brutalist -->
-                <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 font-mono">
-                    <div class="bg-white neo-box-sm px-3.5 py-2 rounded-xl">
-                        <div class="text-[10px] font-extrabold text-gray-600 uppercase">Lunas Hari Ini</div>
-                        <div class="flex items-center gap-2 mt-0.5">
-                            <span id="traderLastClose" class="text-base sm:text-lg font-black text-black">0 Order</span>
-                            <span id="traderChangeBadge" class="text-[11px] font-extrabold px-2 py-0.5 rounded-md border-2 border-black bg-neoGreen text-black">
-                                0.0%
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-4 gap-1.5 sm:gap-2 bg-white neo-box-sm px-3 py-2 rounded-xl text-xs">
-                        <div class="px-1.5">
-                            <span class="text-[10px] font-extrabold text-gray-500 block">OPEN</span>
-                            <span id="ohlcOpen" class="font-black text-black">0</span>
-                        </div>
-                        <div class="px-1.5 border-l-2 border-black/15">
-                            <span class="text-[10px] font-extrabold text-gray-500 block">HIGH</span>
-                            <span id="ohlcHigh" class="font-black text-emerald-700">0</span>
-                        </div>
-                        <div class="px-1.5 border-l-2 border-black/15">
-                            <span class="text-[10px] font-extrabold text-gray-500 block">LOW</span>
-                            <span id="ohlcLow" class="font-black text-rose-600">0</span>
-                        </div>
-                        <div class="px-1.5 border-l-2 border-black/15">
-                            <span class="text-[10px] font-extrabold text-gray-500 block">CLOSE</span>
-                            <span id="ohlcClose" class="font-black text-sky-700">0</span>
-                        </div>
-                    </div>
+                <!-- Tombol Timeframe Forex: 1 HARI | 7 HARI | 1 BULAN -->
+                <div class="flex items-center gap-2 bg-white p-1.5 rounded-xl border-[2.5px] border-black shadow-[3px_3px_0_#000] self-start lg:self-auto">
+                    <button id="btnTf1d" type="button" onclick="setForexRange('1d')" class="neo-btn px-3 py-1.5 rounded-lg text-[11px] font-black font-cyber uppercase bg-white text-black">
+                        1 Hari
+                    </button>
+                    <button id="btnTf7d" type="button" onclick="setForexRange('7d')" class="neo-btn px-3 py-1.5 rounded-lg text-[11px] font-black font-cyber uppercase bg-neoCyan text-black">
+                        7 Hari
+                    </button>
+                    <button id="btnTf1m" type="button" onclick="setForexRange('1m')" class="neo-btn px-3 py-1.5 rounded-lg text-[11px] font-black font-cyber uppercase bg-white text-black">
+                        1 Bulan
+                    </button>
                 </div>
             </div>
 
-            <!-- Sub-bar Legenda & Omzet -->
-            <div class="bg-neoBg border-b-3 border-black px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono font-bold">
+            <!-- Ticker Harga & Indikator Forex -->
+            <div class="bg-neoBg border-b-[3px] border-black px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3 font-mono">
+                <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                    <!-- Nilai Terkini & Persentase Perubahan -->
+                    <div class="bg-white neo-box-sm px-3.5 py-2 rounded-xl flex items-center gap-2.5">
+                        <div>
+                            <div class="text-[10px] font-extrabold text-gray-500 uppercase">Transaksi Lunas</div>
+                            <div id="forexCurrentVal" class="text-base sm:text-lg font-black text-black leading-tight">0 Order</div>
+                        </div>
+                        <span id="forexTrendBadge" class="text-[11px] font-black px-2.5 py-1 rounded-lg border-2 border-black bg-neoGreen text-black">
+                            <i class="fa-solid fa-arrow-trend-up mr-1"></i>+0.0%
+                        </span>
+                    </div>
+
+                    <!-- Ringkasan Puncak / Terendah / Total Masuk -->
+                    <div class="grid grid-cols-3 gap-2 bg-white neo-box-sm px-3 py-2 rounded-xl text-xs">
+                        <div class="px-1.5">
+                            <span class="text-[10px] font-extrabold text-gray-500 block">TERTINGGI</span>
+                            <span id="forexHighVal" class="font-black text-emerald-700">0</span>
+                        </div>
+                        <div class="px-1.5 border-l-2 border-black/15">
+                            <span class="text-[10px] font-extrabold text-gray-500 block">TERENDAH</span>
+                            <span id="forexLowVal" class="font-black text-rose-600">0</span>
+                        </div>
+                        <div class="px-1.5 border-l-2 border-black/15">
+                            <span class="text-[10px] font-extrabold text-gray-500 block">ORDER MASUK</span>
+                            <span id="forexTotalPeriod" class="font-black text-sky-700">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white neo-box-sm px-3 py-2 rounded-xl text-xs">
+                    <span class="text-[10px] font-extrabold text-gray-500 block">OMZET PERIODE</span>
+                    <span id="forexOmzetVal" class="font-black text-black">Rp 0</span>
+                </div>
+            </div>
+
+            <!-- Legend Garis Trending Forex -->
+            <div class="bg-white border-b-[3px] border-black px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono font-bold">
                 <div class="flex items-center gap-4 flex-wrap">
                     <span class="flex items-center gap-1.5 text-black">
-                        <span class="w-3.5 h-3.5 rounded-sm bg-neoGreen border-2 border-black inline-block"></span>
-                        <span>Naik (Transaksi lunas bertambah)</span>
+                        <span id="legendTrendLine" class="w-5 h-1.5 rounded-full bg-neoGreen border border-black inline-block"></span>
+                        <span>Garis Tren Lunas</span>
                     </span>
                     <span class="flex items-center gap-1.5 text-black">
-                        <span class="w-3.5 h-3.5 rounded-sm bg-neoPink border-2 border-black inline-block"></span>
-                        <span>Turun (Lebih rendah dari kemarin)</span>
+                        <span class="w-5 h-1.5 rounded-full bg-black/50 inline-block"></span>
+                        <span>Pesanan Masuk (Dashed)</span>
                     </span>
                 </div>
-                <div class="bg-white border-2 border-black px-2.5 py-1 rounded-lg shadow-[2px_2px_0_#000] text-black">
-                    Omzet 14 Hari: <span id="traderTotalOmzet" class="font-black">Rp 0</span>
-                </div>
+                <span id="forexTrendStatusText" class="text-[11px] font-extrabold text-emerald-700">
+                    Tren Stabil
+                </span>
             </div>
 
-            <!-- Canvas Chart Candlestick Light -->
-            <div class="p-4 sm:p-6 neo-chart-grid">
-                <div class="h-80 sm:h-96 relative">
-                    <canvas id="lineChart"></canvas>
+            <!-- Canvas Area Chart Forex -->
+            <div class="p-4 sm:p-6 forex-grid-bg">
+                <div class="h-72 sm:h-88 relative">
+                    <canvas id="forexChart"></canvas>
                 </div>
             </div>
         </section>
 
-        <!-- STATUS TRANSAKSI NEO-BRUTALISME -->
+        <!-- STATUS TRANSAKSI NEO-BRUTALISME DENGAN GARIS PEMBATAS TEGAS -->
         <section class="neo-box rounded-2xl overflow-hidden bg-white">
             <!-- Header Section -->
-            <div class="bg-neoCyan border-b-3 border-black px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="bg-neoCyan border-b-[3px] border-black px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-white border-3 border-black flex items-center justify-center shadow-[3px_3px_0_#000] shrink-0">
+                    <div class="w-11 h-11 rounded-xl bg-white border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0_#000] shrink-0">
                         <i class="fa-solid fa-receipt text-lg"></i>
                     </div>
                     <div>
@@ -412,18 +454,18 @@
 
             <!-- Tabel Transaksi Neo-Brutalisme -->
             <div class="p-4 sm:p-5 bg-neoPaper">
-                <div class="overflow-x-auto neo-scroll rounded-xl border-3 border-black shadow-[4px_4px_0_#000] bg-white">
-                    <table class="w-full text-left text-xs font-bold border-collapse min-w-[700px]">
+                <div class="overflow-x-auto neo-scroll rounded-xl border-[3px] border-black shadow-[4px_4px_0_#000] bg-white">
+                    <table class="neo-table text-left text-xs font-bold min-w-[720px]">
                         <thead>
-                            <tr class="bg-neoYellow border-b-3 border-black font-cyber uppercase tracking-wider text-[11px] text-black">
-                                <th class="p-3.5 border-r-3 border-black">Order &amp; Waktu</th>
-                                <th class="p-3.5 border-r-3 border-black">Pelanggan</th>
-                                <th class="p-3.5 border-r-3 border-black">Item &amp; Metode</th>
-                                <th class="p-3.5 border-r-3 border-black">Nominal</th>
+                            <tr class="bg-neoYellow font-cyber uppercase tracking-wider text-[11px] text-black">
+                                <th class="p-3.5">Order &amp; Waktu</th>
+                                <th class="p-3.5">Pelanggan</th>
+                                <th class="p-3.5">Item &amp; Metode</th>
+                                <th class="p-3.5">Nominal</th>
                                 <th class="p-3.5 text-center">Status</th>
                             </tr>
                         </thead>
-                        <tbody id="transactionTableBody" class="divide-y-3 divide-black bg-white">
+                        <tbody id="transactionTableBody" class="bg-white">
                             <tr>
                                 <td colspan="5" class="py-10 text-center font-mono font-bold text-gray-700">
                                     Memuat daftar transaksi...
@@ -496,9 +538,10 @@
     </noscript>
 
     <script>
-        let traderChartInstance = null;
+        let forexChartInstance = null;
         let isInitialLoad = true;
-        let latestOhlcMap = {};
+        let activeForexRange = '7d';
+        let cachedForexSeries = { '1d': [], '7d': [], '1m': [] };
 
         function maskOrderId(orderId) {
             if (!orderId) return '-';
@@ -564,80 +607,175 @@
             }, stepTime);
         }
 
-        function updateTraderSummary(ohlcSeries) {
-            if (!Array.isArray(ohlcSeries) || ohlcSeries.length === 0) return;
+        // Plugin garis crosshair vertikal ala Forex saat hover
+        const forexCrosshairPlugin = {
+            id: 'forexCrosshair',
+            afterDatasetsDraw(chart) {
+                const { ctx, tooltip, chartArea } = chart;
+                if (!tooltip || !tooltip._active || !tooltip._active.length) return;
+                const activePoint = tooltip._active[0];
+                const x = activePoint.element.x;
 
-            latestOhlcMap = {};
-            let totalOmzet14d = 0;
-            ohlcSeries.forEach(item => {
-                latestOhlcMap[item.x] = item;
-                totalOmzet14d += Number(item.omzet || 0);
+                ctx.save();
+                ctx.beginPath();
+                ctx.setLineDash([5, 5]);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#000000';
+                ctx.moveTo(x, chartArea.top);
+                ctx.lineTo(x, chartArea.bottom);
+                ctx.stroke();
+                ctx.restore();
+            }
+        };
+
+        function setForexRange(range) {
+            activeForexRange = range;
+
+            const btnMap = {
+                '1d': document.getElementById('btnTf1d'),
+                '7d': document.getElementById('btnTf7d'),
+                '1m': document.getElementById('btnTf1m')
+            };
+
+            Object.keys(btnMap).forEach(key => {
+                const btn = btnMap[key];
+                if (!btn) return;
+                if (key === range) {
+                    btn.className = 'neo-btn px-3 py-1.5 rounded-lg text-[11px] font-black font-cyber uppercase bg-neoCyan text-black';
+                } else {
+                    btn.className = 'neo-btn px-3 py-1.5 rounded-lg text-[11px] font-black font-cyber uppercase bg-white text-black';
+                }
             });
 
-            const todayCandle = ohlcSeries[ohlcSeries.length - 1];
-            const prevCandle = ohlcSeries.length > 1 ? ohlcSeries[ohlcSeries.length - 2] : todayCandle;
+            const metaMap = {
+                '1d': { badge: '1 HARI', desc: 'Tren transaksi 24 jam terakhir (per jam) • Diperbarui otomatis' },
+                '7d': { badge: '7 HARI', desc: 'Tren transaksi 7 hari terakhir • Diperbarui otomatis' },
+                '1m': { badge: '1 BULAN', desc: 'Tren transaksi 30 hari terakhir • Diperbarui otomatis' }
+            };
 
-            document.getElementById('ohlcOpen').innerText = todayCandle.o;
-            document.getElementById('ohlcHigh').innerText = todayCandle.h;
-            document.getElementById('ohlcLow').innerText = todayCandle.l;
-            document.getElementById('ohlcClose').innerText = todayCandle.c;
-            document.getElementById('traderLastClose').innerText = `${todayCandle.c} Order`;
-            document.getElementById('traderTotalOmzet').innerText = `Rp ${totalOmzet14d.toLocaleString('id-ID')}`;
+            const tfBadge = document.getElementById('forexTfBadge');
+            const tfSub = document.getElementById('forexSubtitle');
+            if (tfBadge) tfBadge.innerText = metaMap[range].badge;
+            if (tfSub) tfSub.innerText = metaMap[range].desc;
 
-            const diff = todayCandle.c - prevCandle.c;
-            const pct = prevCandle.c > 0
-                ? ((diff / prevCandle.c) * 100).toFixed(1)
-                : (todayCandle.c > 0 ? '100.0' : '0.0');
-
-            const badge = document.getElementById('traderChangeBadge');
-            if (diff > 0) {
-                badge.className = 'text-[11px] font-extrabold px-2 py-0.5 rounded-md border-2 border-black bg-neoGreen text-black';
-                badge.innerHTML = `<i class="fa-solid fa-caret-up mr-0.5"></i>+${pct}%`;
-            } else if (diff < 0) {
-                badge.className = 'text-[11px] font-extrabold px-2 py-0.5 rounded-md border-2 border-black bg-neoPink text-black';
-                badge.innerHTML = `<i class="fa-solid fa-caret-down mr-0.5"></i>${pct}%`;
-            } else {
-                badge.className = 'text-[11px] font-extrabold px-2 py-0.5 rounded-md border-2 border-black bg-neoCyan text-black';
-                badge.innerHTML = `0.0%`;
-            }
+            renderForexChart(cachedForexSeries[range] || []);
         }
 
-        function renderOrUpdateTraderChart(ohlcSeries) {
-            const chartData = (ohlcSeries || []).map(item => ({
-                x: item.x,
-                o: item.o,
-                h: item.h,
-                l: item.l,
-                c: item.c
-            }));
+        function renderForexChart(series) {
+            const safeSeries = Array.isArray(series) ? series : [];
+            const labels = safeSeries.map(item => item.label);
+            const lunasData = safeSeries.map(item => Number(item.lunas || 0));
+            const totalData = safeSeries.map(item => Number(item.total || 0));
 
-            updateTraderSummary(ohlcSeries);
+            const totalLunas = lunasData.reduce((a, b) => a + b, 0);
+            const totalMasuk = totalData.reduce((a, b) => a + b, 0);
+            const totalOmzet = safeSeries.reduce((a, b) => a + Number(b.omzet || 0), 0);
+            const highVal = lunasData.length ? Math.max(...lunasData) : 0;
+            const lowVal = lunasData.length ? Math.min(...lunasData) : 0;
 
-            if (traderChartInstance) {
-                traderChartInstance.data.datasets[0].data = chartData;
-                traderChartInstance.update('none');
+            const lastVal = lunasData.length ? lunasData[lunasData.length - 1] : 0;
+            const prevVal = lunasData.length > 1 ? lunasData[lunasData.length - 2] : lastVal;
+            const diff = lastVal - prevVal;
+            const pct = prevVal > 0
+                ? ((diff / prevVal) * 100).toFixed(1)
+                : (lastVal > 0 ? '100.0' : '0.0');
+
+            // Tentukan arah tren (Bullish = Hijau, Bearish = Pink/Merah)
+            const isBearish = diff < 0;
+            const lineColor = isBearish ? '#FF4D6D' : '#00C853';
+            const fillTopColor = isBearish ? 'rgba(255, 121, 198, 0.42)' : 'rgba(0, 230, 118, 0.38)';
+            const fillBottomColor = isBearish ? 'rgba(255, 121, 198, 0.02)' : 'rgba(0, 230, 118, 0.02)';
+
+            document.getElementById('forexCurrentVal').innerText = `${totalLunas} Order`;
+            document.getElementById('forexHighVal').innerText = highVal;
+            document.getElementById('forexLowVal').innerText = lowVal;
+            document.getElementById('forexTotalPeriod').innerText = totalMasuk;
+            document.getElementById('forexOmzetVal').innerText = `Rp ${totalOmzet.toLocaleString('id-ID')}`;
+
+            const trendBadge = document.getElementById('forexTrendBadge');
+            const legendLine = document.getElementById('legendTrendLine');
+            const trendStatus = document.getElementById('forexTrendStatusText');
+
+            if (isBearish) {
+                trendBadge.className = 'text-[11px] font-black px-2.5 py-1 rounded-lg border-2 border-black bg-neoPink text-black';
+                trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-down mr-1"></i>${pct}%`;
+                if (legendLine) legendLine.className = 'w-5 h-1.5 rounded-full bg-neoPink border border-black inline-block';
+                if (trendStatus) {
+                    trendStatus.className = 'text-[11px] font-extrabold text-rose-600';
+                    trendStatus.innerText = 'Tren Menurun (Bearish)';
+                }
+            } else if (diff > 0) {
+                trendBadge.className = 'text-[11px] font-black px-2.5 py-1 rounded-lg border-2 border-black bg-neoGreen text-black';
+                trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-up mr-1"></i>+${pct}%`;
+                if (legendLine) legendLine.className = 'w-5 h-1.5 rounded-full bg-neoGreen border border-black inline-block';
+                if (trendStatus) {
+                    trendStatus.className = 'text-[11px] font-extrabold text-emerald-700';
+                    trendStatus.innerText = 'Tren Menguat (Bullish)';
+                }
+            } else {
+                trendBadge.className = 'text-[11px] font-black px-2.5 py-1 rounded-lg border-2 border-black bg-neoCyan text-black';
+                trendBadge.innerHTML = `<i class="fa-solid fa-minus mr-1"></i>0.0%`;
+                if (legendLine) legendLine.className = 'w-5 h-1.5 rounded-full bg-neoGreen border border-black inline-block';
+                if (trendStatus) {
+                    trendStatus.className = 'text-[11px] font-extrabold text-black';
+                    trendStatus.innerText = 'Tren Stabil (Sideways)';
+                }
+            }
+
+            const canvas = document.getElementById('forexChart');
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 320);
+            gradient.addColorStop(0, fillTopColor);
+            gradient.addColorStop(1, fillBottomColor);
+
+            if (forexChartInstance) {
+                forexChartInstance.data.labels = labels;
+                forexChartInstance.data.datasets[0].data = lunasData;
+                forexChartInstance.data.datasets[0].borderColor = lineColor;
+                forexChartInstance.data.datasets[0].backgroundColor = gradient;
+                forexChartInstance.data.datasets[0].pointBackgroundColor = lineColor;
+                forexChartInstance.data.datasets[1].data = totalData;
+                forexChartInstance._seriesDetail = safeSeries;
+                forexChartInstance.update('none');
                 return;
             }
 
-            const ctx = document.getElementById('lineChart').getContext('2d');
-            traderChartInstance = new Chart(ctx, {
-                type: 'candlestick',
+            forexChartInstance = new Chart(ctx, {
+                type: 'line',
+                plugins: [forexCrosshairPlugin],
                 data: {
-                    datasets: [{
-                        label: 'Transaksi Harian',
-                        data: chartData,
-                        color: {
-                            up: '#00E676',
-                            down: '#FF79C6',
-                            unchanged: '#00E5FF'
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Transaksi Lunas',
+                            data: lunasData,
+                            borderColor: lineColor,
+                            backgroundColor: gradient,
+                            borderWidth: 3.5,
+                            fill: true,
+                            tension: 0.35,
+                            pointRadius: 3.5,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: lineColor,
+                            pointBorderColor: '#000000',
+                            pointBorderWidth: 2
                         },
-                        borderColor: {
-                            up: '#000000',
-                            down: '#000000',
-                            unchanged: '#000000'
-                        },
-                        borderWidth: 2
-                    }]
+                        {
+                            label: 'Pesanan Masuk',
+                            data: totalData,
+                            borderColor: 'rgba(0, 0, 0, 0.55)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.35,
+                            pointRadius: 0,
+                            pointHoverRadius: 4,
+                            pointBackgroundColor: '#FFDE59',
+                            pointBorderColor: '#000000',
+                            pointBorderWidth: 2
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
@@ -657,50 +795,41 @@
                             cornerRadius: 10,
                             padding: 12,
                             titleFont: { family: 'Space Grotesk', size: 13, weight: '900' },
-                            bodyFont: { family: 'JetBrains Mono', size: 12, weight: '700' },
+                            bodyFont: { family: 'JetBrains Mono', size: 11, weight: '700' },
                             callbacks: {
                                 title: function(items) {
                                     if (!items.length) return '';
-                                    const ts = items[0].raw.x;
-                                    const detail = latestOhlcMap[ts];
-                                    return detail ? `Tanggal: ${detail.label}` : '';
+                                    return `Waktu: ${items[0].label}`;
                                 },
-                                label: function(context) {
-                                    const raw = context.raw;
-                                    const detail = latestOhlcMap[raw.x] || {};
-                                    return [
-                                        `Open  : ${raw.o} transaksi`,
-                                        `High  : ${raw.h} pesanan masuk`,
-                                        `Low   : ${raw.l} terendah`,
-                                        `Close : ${raw.c} lunas`,
-                                        `Omzet : Rp ${Number(detail.omzet || 0).toLocaleString('id-ID')}`
-                                    ];
+                                afterBody: function(items) {
+                                    if (!items.length) return [];
+                                    const idx = items[0].dataIndex;
+                                    const detail = (forexChartInstance._seriesDetail || [])[idx];
+                                    if (!detail) return [];
+                                    return [`Omzet: Rp ${Number(detail.omzet || 0).toLocaleString('id-ID')}`];
                                 }
                             }
                         }
                     },
                     scales: {
                         x: {
-                            type: 'time',
-                            time: {
-                                unit: 'day',
-                                displayFormats: { day: 'dd MMM' }
-                            },
                             grid: {
-                                color: 'rgba(0, 0, 0, 0.1)',
+                                color: 'rgba(0, 0, 0, 0.08)',
                                 borderColor: '#000000',
                                 borderWidth: 2
                             },
                             ticks: {
                                 color: '#000000',
-                                font: { family: 'JetBrains Mono', size: 11, weight: '800' }
+                                maxTicksLimit: 8,
+                                font: { family: 'JetBrains Mono', size: 10, weight: '800' }
                             }
                         },
                         y: {
                             position: 'right',
                             beginAtZero: true,
+                            suggestedMax: 3,
                             grid: {
-                                color: 'rgba(0, 0, 0, 0.1)',
+                                color: 'rgba(0, 0, 0, 0.08)',
                                 borderColor: '#000000',
                                 borderWidth: 2
                             },
@@ -713,6 +842,8 @@
                     }
                 }
             });
+
+            forexChartInstance._seriesDetail = safeSeries;
         }
 
         function getCustomerBadge(name, avatarUrl) {
@@ -797,7 +928,7 @@
                 return `
                     <tr class="hover:bg-neoBg/75 transition-colors">
                         <!-- Kolom 1: Order & Waktu -->
-                        <td class="p-3.5 border-r-3 border-black align-middle whitespace-nowrap">
+                        <td class="p-3.5 align-middle whitespace-nowrap">
                             <span class="inline-block font-mono text-[11px] font-black bg-neoBg border-2 border-black px-2 py-0.5 rounded-md shadow-[2px_2px_0_#000] text-black">
                                 ${maskOrderId(trx.orderId)}
                             </span>
@@ -809,12 +940,12 @@
                         </td>
 
                         <!-- Kolom 2: Pelanggan -->
-                        <td class="p-3.5 border-r-3 border-black align-middle">
+                        <td class="p-3.5 align-middle">
                             ${getCustomerBadge(trx.pelanggan, trx.avatar)}
                         </td>
 
                         <!-- Kolom 3: Item & Metode -->
-                        <td class="p-3.5 border-r-3 border-black align-middle">
+                        <td class="p-3.5 align-middle">
                             <div class="font-extrabold text-black text-xs truncate max-w-[200px]" title="${safeProduk}">
                                 ${safeProduk}
                             </div>
@@ -824,7 +955,7 @@
                         </td>
 
                         <!-- Kolom 4: Nominal -->
-                        <td class="p-3.5 border-r-3 border-black align-middle whitespace-nowrap">
+                        <td class="p-3.5 align-middle whitespace-nowrap">
                             <span class="inline-block font-mono font-black text-xs sm:text-sm bg-neoPaper border-2 border-black px-2.5 py-1 rounded-lg shadow-[2px_2px_0_#000] text-black">
                                 Rp ${Number(trx.amount || 0).toLocaleString('id-ID')}
                             </span>
@@ -869,7 +1000,11 @@
                 animateCounter('statTrxToday', data.trxToday || 0);
                 animateCounter('statTrxYesterday', data.trxYesterday || 0);
 
-                renderOrUpdateTraderChart(data.ohlcSeries || []);
+                if (data.forexSeries) {
+                    cachedForexSeries = data.forexSeries;
+                    renderForexChart(cachedForexSeries[activeForexRange] || []);
+                }
+
                 renderTransactionRows(data.recentTrx || []);
 
                 const nowStr = new Date().toLocaleTimeString('id-ID', {
