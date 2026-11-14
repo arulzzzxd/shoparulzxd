@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#FFDE59">
-    <title>ArulzXD Store - Marketplace Source Code & Layanan Digital</title>
-    <meta name="description" content="ArulzXD Store: Marketplace penyedia Source Code, Script, dan Layanan Digital Premium otomatis 24/7.">
+    <title>ArulzXD Store - Katalog Source Code &amp; Produk Digital</title>
+    <meta name="description" content="ArulzXD Store: Tempat belanja Source Code, Script, dan Layanan Digital otomatis 24 jam.">
 
     <!-- Favicon & Icons -->
     <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
@@ -16,23 +16,23 @@
     <meta property="og:type" content="website">
     <meta property="og:locale" content="id_ID">
     <meta property="og:site_name" content="ArulzXD Store">
-    <meta property="og:url" content="https://www.shoparulzxd.biz.id/">
-    <meta property="og:title" content="ArulzXD Store - Marketplace Source Code & Layanan Digital">
-    <meta property="og:description" content="Marketplace penyedia Source Code, Script, dan Layanan Digital Premium otomatis 24/7.">
+    <meta property="og:url" content="https://arulzxd.biz.id/">
+    <meta property="og:title" content="ArulzXD Store - Katalog Source Code & Produk Digital">
+    <meta property="og:description" content="Belanja Source Code, Script, dan Layanan Digital langsung diproses otomatis setelah pembayaran.">
     <meta property="og:image" content="https://cdn.larasxd.my.id/files/7TZ5vL.jpg">
     <meta property="og:image:secure_url" content="https://cdn.larasxd.my.id/files/7TZ5vL.jpg">
     <meta property="og:image:type" content="image/jpeg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="ArulzXD Store - Marketplace Source Code & Layanan Digital">
+    <meta property="og:image:alt" content="ArulzXD Store">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://www.shoparulzxd.biz.id/">
-    <meta name="twitter:title" content="ArulzXD Store - Marketplace Source Code & Layanan Digital">
-    <meta name="twitter:description" content="Marketplace penyedia Source Code, Script, dan Layanan Digital Premium otomatis 24/7.">
+    <meta name="twitter:url" content="https://arulzxd.biz.id/">
+    <meta name="twitter:title" content="ArulzXD Store - Katalog Source Code & Produk Digital">
+    <meta name="twitter:description" content="Belanja Source Code, Script, dan Layanan Digital langsung diproses otomatis setelah pembayaran.">
     <meta name="twitter:image" content="https://cdn.larasxd.my.id/files/7TZ5vL.jpg">
-    <meta name="twitter:image:alt" content="ArulzXD Store - Marketplace Source Code & Layanan Digital">
+    <meta name="twitter:image:alt" content="ArulzXD Store">
 
     <!-- Styles & Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -40,7 +40,7 @@
     <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1/dist/chartjs-chart-financial.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
@@ -50,6 +50,7 @@
                     fontFamily: {
                         sans: ['Plus Jakarta Sans', 'sans-serif'],
                         cyber: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
                         neoYellow: '#FFDE59',
@@ -57,6 +58,7 @@
                         neoPink: '#FF79C6',
                         neoGreen: '#00E676',
                         neoBg: '#F4F0EA',
+                        neoPaper: '#FFFDF7',
                         neoCard: '#FFFFFF'
                     }
                 }
@@ -72,24 +74,47 @@
             box-shadow: 5px 5px 0px #000000;
         }
 
+        .neo-box-sm {
+            border: 2.5px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
+        }
+
         .neo-btn {
             border: 3px solid #000000;
-            box-shadow: 3px 3px 0px #000000;
-            transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+            box-shadow: 4px 4px 0px #000000;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
         .neo-btn:hover {
-            transform: translate(-1.5px, -1.5px);
-            box-shadow: 5px 5px 0px #000000;
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000000;
         }
         .neo-btn:active {
             transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px #000000;
+            box-shadow: 2px 2px 0px #000000;
         }
 
-        /* Custom Scrollbar untuk Tabel */
-        .neo-scroll::-webkit-scrollbar { height: 8px; }
-        .neo-scroll::-webkit-scrollbar-track { background: #F4F0EA; border-top: 2px solid #000; }
-        .neo-scroll::-webkit-scrollbar-thumb { background: #000; border-radius: 4px; }
+        /* Light Neo-Brutalist Grid untuk Area Chart */
+        .neo-chart-grid {
+            background-color: #FFFDF7;
+            background-image:
+                linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+
+        /* Custom Scrollbar untuk tabel di layar kecil */
+        .neo-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+        .neo-scroll::-webkit-scrollbar-track {
+            background: #F4F0EA;
+            border-top: 2px solid #000000;
+        }
+        .neo-scroll::-webkit-scrollbar-thumb {
+            background: #FFDE59;
+            border: 2px solid #000000;
+            border-radius: 99px;
+        }
 
         /* BOTTOM NAVIGATION BAR */
         .bottom-nav-fixed {
@@ -196,7 +221,7 @@
             </a>
             <span class="text-xs font-cyber font-black bg-white text-black px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] flex items-center gap-1.5">
                 <span class="w-2.5 h-2.5 rounded-full bg-neoGreen border border-black animate-pulse"></span>
-                <span>SERVER ONLINE</span>
+                <span>Layanan Aktif</span>
             </span>
         </div>
     </header>
@@ -209,26 +234,26 @@
             <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
                     <span class="inline-flex items-center gap-1.5 bg-white border-2 border-black text-black text-xs font-black px-3 py-1 rounded-md uppercase font-cyber shadow-[2px_2px_0px_#000] mb-3">
-                        <i class="fa-solid fa-gauge-high"></i> Panel Utama
+                        <i class="fa-solid fa-store"></i> Beranda Toko
                     </span>
                     <h1 class="text-2xl sm:text-4xl font-black text-black font-cyber tracking-tight">
-                        Selamat Datang, <span id="dashUsername" class="underline decoration-wavy decoration-black">Pengguna</span>!
+                        Halo, <span id="dashUsername" class="underline decoration-wavy decoration-black">Pengunjung</span>!
                     </h1>
                     <p class="text-xs sm:text-sm font-bold text-black mt-2 max-w-xl">
-                        Pantau analitik toko, transaksi realtime, pengguna aktif, dan status marketplace ArulzXD Store secara instan.
+                        Lihat perkembangan penjualan, pergerakan transaksi harian, dan pesanan terbaru di ArulzXD Store.
                     </p>
                 </div>
                 <a href="/store" class="neo-btn bg-neoYellow text-black font-cyber font-black px-5 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-store"></i> Belanja Sekarang
+                    <i class="fa-solid fa-bag-shopping"></i> Lihat Katalog
                 </a>
             </div>
         </section>
 
         <!-- STATS CARDS -->
-        <section aria-label="Statistik Marketplace" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
+        <section aria-label="Ringkasan Toko" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
             <div class="neo-box p-4 rounded-xl">
                 <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
-                    <span>Pengguna</span>
+                    <span>Member</span>
                     <i class="fa-solid fa-users text-lg"></i>
                 </div>
                 <h2 id="statTotalUsers" class="text-2xl font-black font-cyber">0</h2>
@@ -242,14 +267,14 @@
             </div>
             <div class="neo-box p-4 rounded-xl bg-neoYellow">
                 <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
-                    <span>Pesanan</span>
+                    <span>Total Order</span>
                     <i class="fa-solid fa-cart-shopping text-lg"></i>
                 </div>
                 <h2 id="statTotalTrx" class="text-2xl font-black font-cyber">0</h2>
             </div>
             <div class="neo-box p-4 rounded-xl bg-neoGreen">
                 <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
-                    <span>Lunas</span>
+                    <span>Berhasil</span>
                     <i class="fa-solid fa-circle-check text-lg"></i>
                 </div>
                 <h2 id="statSuccessTrx" class="text-2xl font-black font-cyber">0</h2>
@@ -270,107 +295,158 @@
             </div>
         </section>
 
-        <!-- LEGENDA GRAFIK -->
-        <div class="neo-box p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-4 text-xs font-mono font-bold">
-            <span class="uppercase font-cyber flex items-center gap-1.5">
-                <i class="fa-solid fa-chart-candlestick"></i> Legenda Volume Pasar Realtime:
-            </span>
-            <div class="flex items-center gap-4 flex-wrap">
-                <span class="flex items-center gap-1.5">
-                    <span class="w-4 h-4 rounded border-2 border-black bg-neoGreen shadow-[2px_2px_0_#000]"></span>
-                    <span>Bullish (Naik)</span>
-                </span>
-                <span class="flex items-center gap-1.5">
-                    <span class="w-4 h-4 rounded border-2 border-black bg-neoPink shadow-[2px_2px_0_#000]"></span>
-                    <span>Bearish (Turun)</span>
-                </span>
-                <span class="flex items-center gap-1.5">
-                    <span class="w-4 h-4 rounded border-2 border-black bg-neoCyan shadow-[2px_2px_0_#000]"></span>
-                    <span>Stabil</span>
-                </span>
-            </div>
-        </div>
-
-        <!-- CHART CONTAINER -->
-        <section class="w-full neo-box p-5 rounded-2xl space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-3 border-black pb-3">
-                <div class="flex items-center gap-2.5">
-                    <h3 class="text-sm font-black font-cyber uppercase tracking-wider flex items-center gap-2">
-                        <i class="fa-solid fa-arrow-trend-up"></i> Analitik Pasar (OHLC)
-                    </h3>
-                    <span class="inline-flex items-center gap-1 bg-neoGreen border-2 border-black px-2 py-0.5 rounded-md text-[10px] font-black font-cyber">
-                        <span class="w-1.5 h-1.5 rounded-full bg-black animate-ping"></span> REALTIME
-                    </span>
-                </div>
-                <div class="flex items-center gap-1.5 bg-neoBg p-1.5 rounded-xl border-2 border-black self-start sm:self-auto">
-                    <button id="btnDate" onclick="updateChartFilter('date')" class="neo-btn px-3 py-1 rounded-lg text-[11px] font-black font-cyber bg-neoYellow">TANGGAL</button>
-                    <button id="btnMonth" onclick="updateChartFilter('month')" class="neo-btn px-3 py-1 rounded-lg text-[11px] font-black font-cyber bg-white">BULAN</button>
-                    <button id="btnYear" onclick="updateChartFilter('year')" class="neo-btn px-3 py-1 rounded-lg text-[11px] font-black font-cyber bg-white">TAHUN</button>
-                </div>
-            </div>
-            <div class="h-80 relative">
-                <canvas id="lineChart"></canvas>
-            </div>
-        </section>
-
-        <!-- TRANSAKSI TABEL (REDESIGNED) -->
-        <section class="neo-box rounded-2xl overflow-hidden bg-white">
-            <!-- Header Tabel -->
-            <div class="bg-neoYellow border-b-3 border-black px-5 py-4 flex flex-wrap items-center justify-between gap-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-black text-neoYellow flex items-center justify-center border-2 border-black">
-                        <i class="fa-solid fa-bolt text-sm"></i>
+        <!-- ANALITIK PASAR LIGHT NEO-BRUTALISME (ALA TRADER) -->
+        <section class="neo-box rounded-2xl overflow-hidden bg-white text-black">
+            <!-- Header Bar Light Neo-Brutalist -->
+            <div class="bg-neoYellow border-b-3 border-black px-4 sm:px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-white text-black border-3 border-black flex items-center justify-center font-black font-cyber text-lg shadow-[3px_3px_0_#000]">
+                        <i class="fa-solid fa-chart-candlestick"></i>
                     </div>
                     <div>
-                        <h3 class="text-sm sm:text-base font-black font-cyber uppercase tracking-wider leading-tight">
-                            Status Transaksi Langsung
-                        </h3>
-                        <p class="text-[11px] font-bold text-black/80">
-                            Pembaruan otomatis setiap 5 detik dari aktivitas order terbaru
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-base sm:text-lg font-black font-cyber tracking-tight text-black">
+                                ARULZ / IDR
+                            </h3>
+                            <span class="text-[10px] font-mono font-extrabold bg-black text-white px-2 py-0.5 rounded-md">
+                                1D CANDLE
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-extrabold bg-neoGreen text-black border-2 border-black px-2 py-0.5 rounded-md shadow-[2px_2px_0_#000]">
+                                <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
+                                LIVE
+                            </span>
+                        </div>
+                        <p class="text-[11px] font-bold text-black/80 mt-0.5">
+                            Grafik pergerakan transaksi 14 hari terakhir • Pembaruan otomatis
                         </p>
                     </div>
                 </div>
-                <span id="liveSyncBadge" class="inline-flex items-center gap-1.5 bg-white border-2 border-black px-3 py-1 rounded-lg text-[11px] font-black font-cyber shadow-[2px_2px_0px_#000]">
-                    <span class="w-2 h-2 rounded-full bg-neoGreen border border-black animate-pulse"></span>
-                    <span>LIVE FEED</span>
-                </span>
+
+                <!-- Ticker & OHLC Blocks Light Neo-Brutalist -->
+                <div class="flex flex-wrap items-center gap-2.5 sm:gap-3 font-mono">
+                    <div class="bg-white neo-box-sm px-3.5 py-2 rounded-xl">
+                        <div class="text-[10px] font-extrabold text-gray-600 uppercase">Lunas Hari Ini</div>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span id="traderLastClose" class="text-base sm:text-lg font-black text-black">0 Order</span>
+                            <span id="traderChangeBadge" class="text-[11px] font-extrabold px-2 py-0.5 rounded-md border-2 border-black bg-neoGreen text-black">
+                                0.0%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-1.5 sm:gap-2 bg-white neo-box-sm px-3 py-2 rounded-xl text-xs">
+                        <div class="px-1.5">
+                            <span class="text-[10px] font-extrabold text-gray-500 block">OPEN</span>
+                            <span id="ohlcOpen" class="font-black text-black">0</span>
+                        </div>
+                        <div class="px-1.5 border-l-2 border-black/15">
+                            <span class="text-[10px] font-extrabold text-gray-500 block">HIGH</span>
+                            <span id="ohlcHigh" class="font-black text-emerald-700">0</span>
+                        </div>
+                        <div class="px-1.5 border-l-2 border-black/15">
+                            <span class="text-[10px] font-extrabold text-gray-500 block">LOW</span>
+                            <span id="ohlcLow" class="font-black text-rose-600">0</span>
+                        </div>
+                        <div class="px-1.5 border-l-2 border-black/15">
+                            <span class="text-[10px] font-extrabold text-gray-500 block">CLOSE</span>
+                            <span id="ohlcClose" class="font-black text-sky-700">0</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Tabel Wrapper -->
-            <div class="overflow-x-auto neo-scroll">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-neoBg border-b-3 border-black font-cyber uppercase tracking-wider text-[11px] text-black">
-                            <th class="py-3.5 px-4 border-r-2 border-black">Order & Waktu</th>
-                            <th class="py-3.5 px-4 border-r-2 border-black">Pelanggan</th>
-                            <th class="py-3.5 px-4 border-r-2 border-black">Item & Metode</th>
-                            <th class="py-3.5 px-4 border-r-2 border-black text-right">Nominal</th>
-                            <th class="py-3.5 px-4 text-center">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactionTableBody" class="divide-y-2 divide-black text-xs font-bold">
-                        <tr>
-                            <td colspan="5" class="py-8 text-center font-mono font-bold text-black/70">
-                                <i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Memuat data transaksi realtime...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Sub-bar Legenda & Omzet -->
+            <div class="bg-neoBg border-b-3 border-black px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono font-bold">
+                <div class="flex items-center gap-4 flex-wrap">
+                    <span class="flex items-center gap-1.5 text-black">
+                        <span class="w-3.5 h-3.5 rounded-sm bg-neoGreen border-2 border-black inline-block"></span>
+                        <span>Naik (Transaksi lunas bertambah)</span>
+                    </span>
+                    <span class="flex items-center gap-1.5 text-black">
+                        <span class="w-3.5 h-3.5 rounded-sm bg-neoPink border-2 border-black inline-block"></span>
+                        <span>Turun (Lebih rendah dari kemarin)</span>
+                    </span>
+                </div>
+                <div class="bg-white border-2 border-black px-2.5 py-1 rounded-lg shadow-[2px_2px_0_#000] text-black">
+                    Omzet 14 Hari: <span id="traderTotalOmzet" class="font-black">Rp 0</span>
+                </div>
+            </div>
+
+            <!-- Canvas Chart Candlestick Light -->
+            <div class="p-4 sm:p-6 neo-chart-grid">
+                <div class="h-80 sm:h-96 relative">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- STATUS TRANSAKSI NEO-BRUTALISME -->
+        <section class="neo-box rounded-2xl overflow-hidden bg-white">
+            <!-- Header Section -->
+            <div class="bg-neoCyan border-b-3 border-black px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-white border-3 border-black flex items-center justify-center shadow-[3px_3px_0_#000] shrink-0">
+                        <i class="fa-solid fa-receipt text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-base sm:text-lg font-black font-cyber tracking-tight text-black">
+                                Status Transaksi Terbaru
+                            </h3>
+                            <span id="trxCountBadge" class="text-[10px] font-mono font-extrabold bg-black text-neoYellow px-2 py-0.5 rounded-md">
+                                0 ORDER
+                            </span>
+                        </div>
+                        <p class="text-xs font-bold text-black/80 mt-0.5">
+                            Daftar pesanan yang masuk dan diproses di toko
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 self-start sm:self-auto">
+                    <span id="trxLastSync" class="inline-flex items-center gap-1.5 text-[11px] font-mono font-extrabold bg-white border-2 border-black px-3 py-1.5 rounded-lg shadow-[2px_2px_0_#000]">
+                        <span class="w-2 h-2 rounded-full bg-neoGreen border border-black"></span>
+                        <span>Baru diperbarui</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Tabel Transaksi Neo-Brutalisme -->
+            <div class="p-4 sm:p-5 bg-neoPaper">
+                <div class="overflow-x-auto neo-scroll rounded-xl border-3 border-black shadow-[4px_4px_0_#000] bg-white">
+                    <table class="w-full text-left text-xs font-bold border-collapse min-w-[700px]">
+                        <thead>
+                            <tr class="bg-neoYellow border-b-3 border-black font-cyber uppercase tracking-wider text-[11px] text-black">
+                                <th class="p-3.5 border-r-3 border-black">Order &amp; Waktu</th>
+                                <th class="p-3.5 border-r-3 border-black">Pelanggan</th>
+                                <th class="p-3.5 border-r-3 border-black">Item &amp; Metode</th>
+                                <th class="p-3.5 border-r-3 border-black">Nominal</th>
+                                <th class="p-3.5 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionTableBody" class="divide-y-3 divide-black bg-white">
+                            <tr>
+                                <td colspan="5" class="py-10 text-center font-mono font-bold text-gray-700">
+                                    Memuat daftar transaksi...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
     </main>
 
-    <!-- FOOTER SITELINKS & SEO -->
+    <!-- FOOTER SITELINKS -->
     <footer class="max-w-6xl mx-auto px-4 mt-4 mb-4 text-center">
         <div class="neo-box p-4 rounded-2xl bg-white flex flex-wrap items-center justify-center gap-4 text-xs font-black font-cyber">
             <a href="/store" class="hover:underline">Katalog Toko</a>
             <span>•</span>
-            <a href="/login" class="hover:underline">Masuk & Daftar Akun</a>
+            <a href="/login" class="hover:underline">Masuk &amp; Daftar</a>
             <span>•</span>
-            <a href="/deposit" class="hover:underline">Deposit Saldo</a>
+            <a href="/deposit" class="hover:underline">Isi Saldo</a>
             <span>•</span>
-            <a href="/riwayat" class="hover:underline">Riwayat Transaksi</a>
+            <a href="/riwayat" class="hover:underline">Riwayat Pesanan</a>
             <span>•</span>
             <a href="/privacy" class="hover:underline">Kebijakan Privasi</a>
         </div>
@@ -392,19 +468,19 @@
                 </div>
                 <span>Toko</span>
             </a>
-            <a href="/deposit" title="Deposit Saldo" class="nav-item-btn">
+            <a href="/deposit" title="Isi Saldo" class="nav-item-btn">
                 <div class="nav-icon-box">
                     <i class="fa-solid fa-wallet"></i>
                 </div>
                 <span>Deposit</span>
             </a>
-            <a href="/riwayat" title="Riwayat Transaksi" class="nav-item-btn">
+            <a href="/riwayat" title="Riwayat Pesanan" class="nav-item-btn">
                 <div class="nav-icon-box">
                     <i class="fa-solid fa-clock-rotate-left"></i>
                 </div>
                 <span>Riwayat</span>
             </a>
-            <a href="/login" id="nav-auth-link" title="Masuk & Daftar Akun" class="nav-item-btn">
+            <a href="/login" id="nav-auth-link" title="Akun Saya" class="nav-item-btn">
                 <div class="nav-icon-box">
                     <i class="fa-regular fa-user"></i>
                 </div>
@@ -414,61 +490,61 @@
     </nav>
 
     <noscript id="arulz-noscript-fallback">
-        <h1>ArulzXD Store - Marketplace Source Code &amp; Layanan Digital</h1>
-        <p>Marketplace penyedia Source Code, Script, dan Layanan Digital Premium otomatis 24/7.</p>
-        <h2>Layanan Utama</h2>
-        <ul>
-            <li><strong>Katalog Source Code &amp; Script</strong>: Berbagai script bot WhatsApp, web aplikasi, dan template siap pakai.</li>
-            <li><strong>Pengiriman Otomatis 24/7</strong>: Akses file dan layanan langsung setelah pembayaran QRIS terkonfirmasi.</li>
-            <li><strong>Deposit Saldo Instan</strong>: Top up saldo akun untuk transaksi lebih cepat dan praktis.</li>
-        </ul>
-        <p>Navigasi: <a href="https://www.shoparulzxd.biz.id/store">Katalog Toko</a> · <a href="https://www.shoparulzxd.biz.id/login">Masuk &amp; Daftar Akun</a> · <a href="https://www.shoparulzxd.biz.id/deposit">Deposit Saldo</a> · <a href="https://www.shoparulzxd.biz.id/riwayat">Riwayat Transaksi</a> · <a href="https://www.shoparulzxd.biz.id/privacy">Kebijakan Privasi</a> · <a href="https://www.shoparulzxd.biz.id/rss.xml">RSS Feed</a></p>
+        <h1>ArulzXD Store - Katalog Source Code &amp; Produk Digital</h1>
+        <p>Tempat belanja Source Code, Script, dan Layanan Digital otomatis 24 jam.</p>
+        <p>Navigasi: <a href="https://arulzxd.biz.id/store">Katalog Toko</a> · <a href="https://arulzxd.biz.id/login">Masuk &amp; Daftar</a> · <a href="https://arulzxd.biz.id/deposit">Isi Saldo</a> · <a href="https://arulzxd.biz.id/riwayat">Riwayat Pesanan</a> · <a href="https://arulzxd.biz.id/privacy">Kebijakan Privasi</a></p>
     </noscript>
 
     <script>
-        let lineChartInstance = null;
-        let globalChartData = null;
-        let activeFilterMode = 'date'; // 'date' | 'month' | 'year'
+        let traderChartInstance = null;
         let isInitialLoad = true;
-        const prevStatValues = {};
+        let latestOhlcMap = {};
 
         function maskOrderId(orderId) {
             if (!orderId) return '-';
             if (orderId.length <= 10) return orderId;
-            return `${orderId.substring(0, 6)}...${orderId.substring(orderId.length - 4)}`;
+            return `${orderId.substring(0, 6)}•••${orderId.substring(orderId.length - 4)}`;
         }
 
-        function escapeHtml(str) {
-            return String(str || '')
+        function formatRelativeTime(dateInput) {
+            if (!dateInput) return '-';
+            const diffSec = Math.floor((Date.now() - new Date(dateInput).getTime()) / 1000);
+            if (diffSec < 60) return 'Baru saja';
+            const diffMin = Math.floor(diffSec / 60);
+            if (diffMin < 60) return `${diffMin} menit lalu`;
+            const diffHour = Math.floor(diffMin / 60);
+            if (diffHour < 24) return `${diffHour} jam lalu`;
+            const diffDay = Math.floor(diffHour / 24);
+            return `${diffDay} hari lalu`;
+        }
+
+        function formatClockTime(dateInput) {
+            if (!dateInput) return '';
+            return new Date(dateInput).toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function escapeHtml(text) {
+            return String(text || '')
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
         }
 
-        function formatWibTime(isoString) {
-            if (!isoString) return '-';
-            const dt = luxon.DateTime.fromISO(isoString).setZone('Asia/Jakarta');
-            if (!dt.isValid) return '-';
-            return dt.toFormat('dd MMM yyyy, HH:mm') + ' WIB';
-        }
-
-        function getAvatarBg(name) {
-            const palette = ['bg-neoYellow', 'bg-neoCyan', 'bg-neoPink', 'bg-neoGreen'];
-            const code = (name || 'G').charCodeAt(0) || 0;
-            return palette[code % palette.length];
-        }
-
-        function updateStatNumber(elementId, targetValue) {
+        function animateCounter(elementId, targetValue) {
             const el = document.getElementById(elementId);
             if (!el) return;
 
-            const oldVal = prevStatValues[elementId] ?? 0;
-            if (oldVal === targetValue && !isInitialLoad) return;
-            prevStatValues[elementId] = targetValue;
+            if (!isInitialLoad) {
+                el.innerText = Number(targetValue || 0).toLocaleString('id-ID');
+                return;
+            }
 
-            if (!isInitialLoad || targetValue === 0) {
-                el.innerText = targetValue.toLocaleString('id-ID');
+            if (targetValue === 0) {
+                el.innerText = '0';
                 return;
             }
 
@@ -488,130 +564,275 @@
             }, stepTime);
         }
 
-        // Konversi murni & deterministik dari data transaksi aktual (tanpa Math.random)
-        function buildRealtimeOhlcData(series) {
-            if (!Array.isArray(series) || series.length === 0) return [];
-            return series.map((item, idx) => {
-                const prevTotal = idx > 0 ? series[idx - 1].total : item.total;
-                const open = prevTotal;
-                const close = item.total;
-                // High mencakup total transaksi + pesanan lunas, Low merepresentasikan baseline selesai
-                const high = Math.max(open, close) + (item.pending || 0);
-                const low = Math.max(0, Math.min(open, close) - (item.batal || 0));
+        function updateTraderSummary(ohlcSeries) {
+            if (!Array.isArray(ohlcSeries) || ohlcSeries.length === 0) return;
 
-                return {
-                    x: item.timestamp,
-                    o: open,
-                    h: high,
-                    l: low,
-                    c: close,
-                    meta: item
-                };
+            latestOhlcMap = {};
+            let totalOmzet14d = 0;
+            ohlcSeries.forEach(item => {
+                latestOhlcMap[item.x] = item;
+                totalOmzet14d += Number(item.omzet || 0);
+            });
+
+            const todayCandle = ohlcSeries[ohlcSeries.length - 1];
+            const prevCandle = ohlcSeries.length > 1 ? ohlcSeries[ohlcSeries.length - 2] : todayCandle;
+
+            document.getElementById('ohlcOpen').innerText = todayCandle.o;
+            document.getElementById('ohlcHigh').innerText = todayCandle.h;
+            document.getElementById('ohlcLow').innerText = todayCandle.l;
+            document.getElementById('ohlcClose').innerText = todayCandle.c;
+            document.getElementById('traderLastClose').innerText = `${todayCandle.c} Order`;
+            document.getElementById('traderTotalOmzet').innerText = `Rp ${totalOmzet14d.toLocaleString('id-ID')}`;
+
+            const diff = todayCandle.c - prevCandle.c;
+            const pct = prevCandle.c > 0
+                ? ((diff / prevCandle.c) * 100).toFixed(1)
+                : (todayCandle.c > 0 ? '100.0' : '0.0');
+
+            const badge = document.getElementById('traderChangeBadge');
+            if (diff > 0) {
+                badge.className = 'text-[11px] font-extrabold px-2 py-0.5 rounded-md border-2 border-black bg-neoGreen text-black';
+                badge.innerHTML = `<i class="fa-solid fa-caret-up mr-0.5"></i>+${pct}%`;
+            } else if (diff < 0) {
+                badge.className = 'text-[11px] font-extrabold px-2 py-0.5 rounded-md border-2 border-black bg-neoPink text-black';
+                badge.innerHTML = `<i class="fa-solid fa-caret-down mr-0.5"></i>${pct}%`;
+            } else {
+                badge.className = 'text-[11px] font-extrabold px-2 py-0.5 rounded-md border-2 border-black bg-neoCyan text-black';
+                badge.innerHTML = `0.0%`;
+            }
+        }
+
+        function renderOrUpdateTraderChart(ohlcSeries) {
+            const chartData = (ohlcSeries || []).map(item => ({
+                x: item.x,
+                o: item.o,
+                h: item.h,
+                l: item.l,
+                c: item.c
+            }));
+
+            updateTraderSummary(ohlcSeries);
+
+            if (traderChartInstance) {
+                traderChartInstance.data.datasets[0].data = chartData;
+                traderChartInstance.update('none');
+                return;
+            }
+
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            traderChartInstance = new Chart(ctx, {
+                type: 'candlestick',
+                data: {
+                    datasets: [{
+                        label: 'Transaksi Harian',
+                        data: chartData,
+                        color: {
+                            up: '#00E676',
+                            down: '#FF79C6',
+                            unchanged: '#00E5FF'
+                        },
+                        borderColor: {
+                            up: '#000000',
+                            down: '#000000',
+                            unchanged: '#000000'
+                        },
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#FFFFFF',
+                            titleColor: '#000000',
+                            bodyColor: '#000000',
+                            borderColor: '#000000',
+                            borderWidth: 3,
+                            cornerRadius: 10,
+                            padding: 12,
+                            titleFont: { family: 'Space Grotesk', size: 13, weight: '900' },
+                            bodyFont: { family: 'JetBrains Mono', size: 12, weight: '700' },
+                            callbacks: {
+                                title: function(items) {
+                                    if (!items.length) return '';
+                                    const ts = items[0].raw.x;
+                                    const detail = latestOhlcMap[ts];
+                                    return detail ? `Tanggal: ${detail.label}` : '';
+                                },
+                                label: function(context) {
+                                    const raw = context.raw;
+                                    const detail = latestOhlcMap[raw.x] || {};
+                                    return [
+                                        `Open  : ${raw.o} transaksi`,
+                                        `High  : ${raw.h} pesanan masuk`,
+                                        `Low   : ${raw.l} terendah`,
+                                        `Close : ${raw.c} lunas`,
+                                        `Omzet : Rp ${Number(detail.omzet || 0).toLocaleString('id-ID')}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'day',
+                                displayFormats: { day: 'dd MMM' }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                borderColor: '#000000',
+                                borderWidth: 2
+                            },
+                            ticks: {
+                                color: '#000000',
+                                font: { family: 'JetBrains Mono', size: 11, weight: '800' }
+                            }
+                        },
+                        y: {
+                            position: 'right',
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                borderColor: '#000000',
+                                borderWidth: 2
+                            },
+                            ticks: {
+                                color: '#000000',
+                                precision: 0,
+                                font: { family: 'JetBrains Mono', size: 11, weight: '800' }
+                            }
+                        }
+                    }
+                }
             });
         }
 
-        function getTimeUnitForMode(mode) {
-            if (mode === 'month') return 'month';
-            if (mode === 'year') return 'year';
-            return 'day';
+        function getCustomerBadge(name, avatarUrl) {
+            const safeName = escapeHtml(name || 'Pembeli Tamu');
+            const initial = safeName.charAt(0).toUpperCase() || 'P';
+            const avatarColors = ['bg-neoYellow', 'bg-neoCyan', 'bg-neoPink', 'bg-neoGreen'];
+            const colorClass = avatarColors[safeName.charCodeAt(0) % avatarColors.length];
+
+            if (avatarUrl) {
+                return `
+                    <div class="flex items-center gap-2.5">
+                        <img src="${escapeHtml(avatarUrl)}" alt="${safeName}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" class="w-8 h-8 rounded-lg object-cover border-2 border-black shadow-[2px_2px_0_#000] shrink-0">
+                        <div style="display:none;" class="w-8 h-8 rounded-lg ${colorClass} border-2 border-black shadow-[2px_2px_0_#000] items-center justify-center font-cyber font-black text-xs shrink-0">${initial}</div>
+                        <span class="font-extrabold text-black truncate max-w-[125px]">${safeName}</span>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg ${colorClass} border-2 border-black shadow-[2px_2px_0_#000] flex items-center justify-center font-cyber font-black text-xs shrink-0">
+                        ${initial}
+                    </div>
+                    <span class="font-extrabold text-black truncate max-w-[125px]">${safeName}</span>
+                </div>
+            `;
         }
 
-        function updateChartFilter(mode) {
-            activeFilterMode = mode;
-            const btnDate = document.getElementById('btnDate');
-            const btnMonth = document.getElementById('btnMonth');
-            const btnYear = document.getElementById('btnYear');
-
-            const buttons = { date: btnDate, month: btnMonth, year: btnYear };
-            Object.entries(buttons).forEach(([key, btn]) => {
-                if (!btn) return;
-                btn.className = key === mode
-                    ? "neo-btn px-3 py-1 rounded-lg text-[11px] font-black font-cyber bg-neoYellow"
-                    : "neo-btn px-3 py-1 rounded-lg text-[11px] font-black font-cyber bg-white";
-            });
-
-            if (!globalChartData || !lineChartInstance) return;
-
-            const selectedSeries = globalChartData[mode] || [];
-            lineChartInstance.options.scales.x.time.unit = getTimeUnitForMode(mode);
-            lineChartInstance.data.datasets[0].data = buildRealtimeOhlcData(selectedSeries);
-            lineChartInstance.update('none');
+        function getMethodPill(metodeRaw) {
+            const metode = (metodeRaw || 'QRIS').toUpperCase();
+            if (metode === 'SALDO') {
+                return `
+                    <span class="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold bg-neoCyan text-black border-2 border-black px-2 py-0.5 rounded-md">
+                        <i class="fa-solid fa-wallet"></i> SALDO
+                    </span>
+                `;
+            }
+            return `
+                <span class="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold bg-neoYellow text-black border-2 border-black px-2 py-0.5 rounded-md">
+                    <i class="fa-solid fa-qrcode"></i> ${escapeHtml(metode)}
+                </span>
+            `;
         }
 
-        function renderTransactionTable(recentTrx) {
+        function renderTransactionRows(recentTrx) {
             const tbody = document.getElementById('transactionTableBody');
-            if (!tbody) return;
+            const countBadge = document.getElementById('trxCountBadge');
+            if (countBadge) {
+                countBadge.innerText = `${(recentTrx || []).length} ORDER`;
+            }
 
             if (!recentTrx || recentTrx.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="py-8 text-center font-mono text-black/70">
-                            Belum ada transaksi tercatat.
+                        <td colspan="5" class="py-10 text-center font-mono text-gray-700">
+                            Belum ada transaksi masuk.
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
                 return;
             }
 
             tbody.innerHTML = recentTrx.map(trx => {
                 const status = (trx.status || 'pending').toLowerCase();
                 let badgeClass = 'bg-neoYellow text-black';
-                let statusText = 'PENDING';
-                let icon = 'fa-clock';
+                let statusText = 'Menunggu Bayar';
+                let icon = 'fa-hourglass-half';
 
                 if (['settlement', 'success', 'paid', 'settled'].includes(status)) {
                     badgeClass = 'bg-neoGreen text-black';
-                    statusText = 'LUNAS';
+                    statusText = 'Berhasil';
                     icon = 'fa-circle-check';
-                } else if (['cancelled', 'failed', 'expired', 'expire', 'batal'].includes(status)) {
+                } else if (['cancelled', 'failed', 'expire', 'expired', 'batal'].includes(status)) {
                     badgeClass = 'bg-neoPink text-black';
-                    statusText = 'BATAL';
+                    statusText = 'Dibatalkan';
                     icon = 'fa-circle-xmark';
                 }
 
-                const cleanPelanggan = escapeHtml(trx.pelanggan || 'Guest');
-                const initial = cleanPelanggan.charAt(0).toUpperCase();
-                const avatarBg = getAvatarBg(cleanPelanggan);
-                const cleanProduk = escapeHtml(trx.produk || '-');
-                const methodLabel = escapeHtml(trx.paymentMethod || 'QRIS');
-                const typeBadge = trx.type === 'DEPOSIT'
-                    ? `<span class="bg-neoCyan border border-black px-1.5 py-0.5 rounded text-[9px] font-black font-cyber">DEPOSIT</span>`
-                    : `<span class="bg-neoBg border border-black px-1.5 py-0.5 rounded text-[9px] font-black font-cyber">ORDER</span>`;
+                const timeAgo = formatRelativeTime(trx.createdAt);
+                const clockStr = formatClockTime(trx.createdAt);
+                const safeProduk = escapeHtml(trx.produk || 'Produk Digital');
 
                 return `
-                    <tr class="hover:bg-neoYellow/20 transition-colors">
-                        <td class="py-3.5 px-4 border-r-2 border-black whitespace-nowrap">
-                            <div class="font-mono font-black text-xs text-black">${escapeHtml(maskOrderId(trx.orderId))}</div>
-                            <div class="text-[10px] font-semibold text-black/65 mt-0.5">
-                                <i class="fa-regular fa-clock mr-1"></i>${formatWibTime(trx.createdAt)}
+                    <tr class="hover:bg-neoBg/75 transition-colors">
+                        <!-- Kolom 1: Order & Waktu -->
+                        <td class="p-3.5 border-r-3 border-black align-middle whitespace-nowrap">
+                            <span class="inline-block font-mono text-[11px] font-black bg-neoBg border-2 border-black px-2 py-0.5 rounded-md shadow-[2px_2px_0_#000] text-black">
+                                ${maskOrderId(trx.orderId)}
+                            </span>
+                            <div class="flex items-center gap-1.5 text-[11px] font-bold text-gray-600 mt-1.5">
+                                <i class="fa-regular fa-clock text-[10px] text-black"></i>
+                                <span>${timeAgo}</span>
+                                ${clockStr ? `<span class="text-gray-400">•</span><span class="font-mono text-[10px]">${clockStr}</span>` : ''}
                             </div>
                         </td>
-                        <td class="py-3.5 px-4 border-r-2 border-black">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-lg ${avatarBg} border-2 border-black shadow-[2px_2px_0_#000] flex items-center justify-center font-cyber font-black text-xs shrink-0">
-                                    ${initial}
-                                </div>
-                                <span class="font-extrabold text-xs truncate max-w-[130px]" title="${cleanPelanggan}">
-                                    ${cleanPelanggan}
-                                </span>
+
+                        <!-- Kolom 2: Pelanggan -->
+                        <td class="p-3.5 border-r-3 border-black align-middle">
+                            ${getCustomerBadge(trx.pelanggan, trx.avatar)}
+                        </td>
+
+                        <!-- Kolom 3: Item & Metode -->
+                        <td class="p-3.5 border-r-3 border-black align-middle">
+                            <div class="font-extrabold text-black text-xs truncate max-w-[200px]" title="${safeProduk}">
+                                ${safeProduk}
+                            </div>
+                            <div class="mt-1.5">
+                                ${getMethodPill(trx.metode)}
                             </div>
                         </td>
-                        <td class="py-3.5 px-4 border-r-2 border-black">
-                            <div class="font-extrabold text-xs text-black truncate max-w-[190px]" title="${cleanProduk}">
-                                ${cleanProduk}
-                            </div>
-                            <div class="flex items-center gap-1.5 mt-1">
-                                ${typeBadge}
-                                <span class="text-[10px] font-mono font-bold text-black/70">${methodLabel}</span>
-                            </div>
-                        </td>
-                        <td class="py-3.5 px-4 border-r-2 border-black text-right whitespace-nowrap">
-                            <span class="inline-block bg-neoBg border-2 border-black px-2.5 py-1 rounded-lg font-mono font-black text-xs">
+
+                        <!-- Kolom 4: Nominal -->
+                        <td class="p-3.5 border-r-3 border-black align-middle whitespace-nowrap">
+                            <span class="inline-block font-mono font-black text-xs sm:text-sm bg-neoPaper border-2 border-black px-2.5 py-1 rounded-lg shadow-[2px_2px_0_#000] text-black">
                                 Rp ${Number(trx.amount || 0).toLocaleString('id-ID')}
                             </span>
                         </td>
-                        <td class="py-3.5 px-4 text-center whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 text-[10px] font-black font-cyber px-3 py-1.5 rounded-lg border-2 border-black shadow-[2px_2px_0_#000] ${badgeClass}">
+
+                        <!-- Kolom 5: Status -->
+                        <td class="p-3.5 text-center align-middle whitespace-nowrap">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] font-black font-cyber uppercase px-3 py-1.5 rounded-lg border-2 border-black shadow-[3px_3px_0_#000] ${badgeClass}">
                                 <i class="fa-solid ${icon}"></i> ${statusText}
                             </span>
                         </td>
@@ -622,7 +843,8 @@
 
         async function loadUserStatus() {
             try {
-                const data = await fetch('/api/user-status').then(r => r.json());
+                const res = await fetch('/api/user-status');
+                const data = await res.json();
                 const authLabel = document.getElementById('nav-auth-label');
                 const authLink = document.getElementById('nav-auth-link');
 
@@ -634,100 +856,47 @@
             } catch (e) {}
         }
 
-        async function fetchRealtimeStats() {
+        async function refreshRealtimeStats() {
             try {
-                const data = await fetch(`/api/dashboard-stats?t=${Date.now()}`).then(r => r.json());
+                const res = await fetch('/api/dashboard-stats', { cache: 'no-store' });
+                const data = await res.json();
                 if (!data.status) return;
 
-                updateStatNumber('statTotalUsers', data.totalUsers || 0);
-                updateStatNumber('statTotalProducts', data.totalProducts || 0);
-                updateStatNumber('statTotalTrx', data.totalTrx || 0);
-                updateStatNumber('statSuccessTrx', data.lunasTrx || 0);
-                updateStatNumber('statTrxToday', data.trxToday || 0);
-                updateStatNumber('statTrxYesterday', data.trxYesterday || 0);
+                animateCounter('statTotalUsers', data.totalUsers || 0);
+                animateCounter('statTotalProducts', data.totalProducts || 0);
+                animateCounter('statTotalTrx', data.totalTrx || 0);
+                animateCounter('statSuccessTrx', data.lunasTrx || 0);
+                animateCounter('statTrxToday', data.trxToday || 0);
+                animateCounter('statTrxYesterday', data.trxYesterday || 0);
 
-                globalChartData = data.chartData;
-                const activeSeries = globalChartData[activeFilterMode] || [];
-                const ohlcPoints = buildRealtimeOhlcData(activeSeries);
+                renderOrUpdateTraderChart(data.ohlcSeries || []);
+                renderTransactionRows(data.recentTrx || []);
 
-                if (!lineChartInstance) {
-                    const ctxLine = document.getElementById('lineChart').getContext('2d');
-                    lineChartInstance = new Chart(ctxLine, {
-                        type: 'candlestick',
-                        data: {
-                            datasets: [{
-                                label: 'Transaksi Pasar',
-                                data: ohlcPoints,
-                                color: { up: '#00E676', down: '#FF79C6', unchanged: '#00E5FF' },
-                                borderColor: { up: '#000000', down: '#000000', unchanged: '#000000' }
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            animation: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    backgroundColor: '#FFFFFF',
-                                    titleColor: '#000000',
-                                    bodyColor: '#000000',
-                                    borderColor: '#000000',
-                                    borderWidth: 2,
-                                    titleFont: { family: 'Space Grotesk', weight: 'bold' },
-                                    bodyFont: { family: 'Plus Jakarta Sans', weight: 'bold' },
-                                    callbacks: {
-                                        title: (items) => {
-                                            const raw = items[0]?.raw;
-                                            return raw?.meta?.label ? `Periode: ${raw.meta.label}` : '';
-                                        },
-                                        label: (ctx) => {
-                                            const meta = ctx.raw?.meta;
-                                            if (!meta) return '';
-                                            return [
-                                                `Total Transaksi: ${meta.total}`,
-                                                `Lunas: ${meta.lunas} | Pending: ${meta.pending} | Batal: ${meta.batal}`
-                                            ];
-                                        }
-                                    }
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    type: 'time',
-                                    time: { unit: getTimeUnitForMode(activeFilterMode) },
-                                    grid: { color: '#00000015' },
-                                    ticks: { color: '#000', font: { family: 'Space Grotesk', weight: 'bold' } }
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    grid: { color: '#00000015' },
-                                    ticks: {
-                                        precision: 0,
-                                        color: '#000',
-                                        font: { family: 'Space Grotesk', weight: 'bold' }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                } else {
-                    lineChartInstance.options.scales.x.time.unit = getTimeUnitForMode(activeFilterMode);
-                    lineChartInstance.data.datasets[0].data = ohlcPoints;
-                    lineChartInstance.update('none');
+                const nowStr = new Date().toLocaleTimeString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                const syncEl = document.getElementById('trxLastSync');
+                if (syncEl) {
+                    syncEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-neoGreen border border-black"></span><span>Update ${nowStr}</span>`;
                 }
 
-                renderTransactionTable(data.recentTrx);
                 isInitialLoad = false;
             } catch (err) {
-                console.error('Gagal menyinkronkan statistik realtime:', err);
+                console.error('Gagal memperbarui data:', err);
             }
         }
 
-        // Inisialisasi awal & polling realtime setiap 5 detik
         loadUserStatus();
-        fetchRealtimeStats();
-        setInterval(fetchRealtimeStats, 5000);
+        refreshRealtimeStats();
+
+        // Pembaruan real-time otomatis setiap 10 detik saat tab aktif
+        setInterval(() => {
+            if (!document.hidden) {
+                refreshRealtimeStats();
+            }
+        }, 10000);
     </script>
 </body>
 </html>
