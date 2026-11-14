@@ -894,6 +894,7 @@ const uploadBannerMulter = multer({
             cb(new Error('File banner harus berupa gambar (JPG/PNG/GIF) atau video MP4!'));
         }
     }
+});
 
 const uploadReviewMedia = multer({
     limits: { fileSize: 10 * 1024 * 1024 }, 
@@ -1254,8 +1255,6 @@ app.post('/api/user/update-avatar', checkAuthSession, (req, res) => {
             return res.status(500).json({ status: false, message: 'Terjadi kesalahan pada server saat memperbarui avatar.' });
         }
     });
-});
-
 });
 
 app.post('/api/user/update-banner', checkAuthSession, (req, res) => {
