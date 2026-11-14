@@ -3430,9 +3430,6 @@ app.get('/api/dashboard-stats', async (req, res) => {
         const startOfYesterday = new Date(startOfToday);
         startOfYesterday.setDate(startOfYesterday.getDate() - 1);
 
-        const twentyFourHoursAgo = new Date(now.getTime() - 23 * 60 * 60 * 1000);
-        twentyFourHoursAgo.setMinutes(0, 0, 0);
-
         const thirtyDaysAgo = new Date(startOfToday);
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
 
@@ -3444,8 +3441,8 @@ app.get('/api/dashboard-stats', async (req, res) => {
             trxToday,
             trxYesterday,
             recentTrxRaw,
-            hourlyRaw,
-            daily30Raw,
+            baselineAgg,
+            windowTrxList,
             latencyMetrics
         ] = await Promise.all([
             UserV2.countDocuments(),
@@ -3456,87 +3453,39 @@ app.get('/api/dashboard-stats', async (req, res) => {
             }),
             TransactionV2.countDocuments({ createdAt: { $gte: startOfToday } }),
             TransactionV2.countDocuments({
-                createdAt: { $gte: startOfYesterday, $lt: startOfToday }
+                createdAt: { $gte: startOfYesterday,$lt: startOfToday }
             }),
             TransactionV2.find({})
                 .sort({ createdAt: -1 })
                 .limit(10)
                 .select('orderId userEmail amount status itemDetails createdAt type paymentMethod')
                 .lean(),
+            // Saldo kumulatif omzet sebelum 30 hari terakhir sebagai titik awal chart
             TransactionV2.aggregate([
-                { $match: { createdAt: { $gte: twentyFourHoursAgo } } },
                 {
-                    $group: {
-                        _id: {
-                            $dateToString: {
-                                format: "%Y-%m-%d %H:00",
-                                date: "$createdAt",
-                                timezone: "Asia/Jakarta"
-                            }
-                        },
-                        total: { $sum: 1 },
-                        lunas: {
-                            $sum: {
-                                $cond: [{ $in: ["$status", ["settlement", "success", "paid", "settled"]] }, 1, 0]
-                            }
-                        },
-                        batal: {
-                            $sum: {
-                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expire", "expired", "batal"]] }, 1, 0]
-                            }
-                        },
-                        omzet: {
-                            $sum: {
-                                $cond: [
-                                    { $in: ["$status", ["settlement", "success", "paid", "settled"]] },
-                                    { $ifNull: ["$itemDetails.harga_setelah_voucher", "$amount"] },
-                                    0
-                                ]
-                            }
-                        }
+                    $match: {
+                        createdAt: { $lt: thirtyDaysAgo },
+                        status: { $in: ['settlement', 'success', 'paid', 'settled'] }
                     }
-                }
-            ]),
-            TransactionV2.aggregate([
-                { $match: { createdAt: { $gte: thirtyDaysAgo } } },
-                {
-                    $group: {
-                        _id: {
-                            $dateToString: {
-                                format: "%Y-%m-%d",
-                                date: "$createdAt",
-                                timezone: "Asia/Jakarta"
-                            }
-                        },
-                        total: { $sum: 1 },
-                        lunas: {
-                            $sum: {
-                                $cond: [{ $in: ["$status", ["settlement", "success", "paid", "settled"]] }, 1, 0]
-                            }
-                        },
-                        batal: {
-                            $sum: {
-                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expire", "expired", "batal"]] }, 1, 0]
-                            }
-                        },
-                        omzet: {
-                            $sum: {
-                                $cond: [
-                                    { $in: ["$status", ["settlement", "success", "paid", "settled"]] },
-                                    { $ifNull: ["$itemDetails.harga_setelah_voucher", "$amount"] },
-                                    0
-                                ]
-                            }
-                        }
-                    }
-                }
-            ]),
-            SystemMetricsV2.aggregate([
-                { $match: { timestamp: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } } },
+                },
                 {
                     $group: {
                         _id: null,
-                        avgLatency: { $avg: "$responseTimeMs" },
+                        totalOmzet: {
+                            $sum: {$ifNull: ['$itemDetails.harga_setelah_voucher', '$amount'] }
+                        }
+                    }
+                }
+            ]),
+            // Semua transaksi 30 hari terakhir secara kronologis untuk membentuk candle OHLC asli
+            TransactionV2.find({ createdAt: { $gte: thirtyDaysAgo } })
+                .sort({ createdAt: 1 })
+                .select('amount status itemDetails.harga_setelah_voucher createdAt')
+                .lean(),
+            SystemMetricsV2.aggregate([
+                { $match: { timestamp: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } } }, {$group: {
+                        _id: null,
+                        avgLatency: { $avg: '$responseTimeMs' },
                         totalRequests: { $sum: 1 }
                     }
                 }
@@ -3573,66 +3522,115 @@ app.get('/api/dashboard-stats', async (req, res) => {
             };
         });
 
-        // Helper pembentuk candle OHLC berkesinambungan dari transaksi nyata
-        function buildOhlcCandles(buckets) {
-            let prevClose = 0;
-            return buckets.map((b) => {
-                const open = prevClose;
-                const close = b.lunas;
-                const pendingCount = Math.max(0, b.total - b.lunas - b.batal);
-                // High = puncak tertinggi (termasuk pesanan masuk/pending), Low = penurunan akibat transaksi batal
-                const high = Math.max(open, close) + pendingCount;
-                const low = Math.max(0, Math.min(open, close) - b.batal);
-                prevClose = close;
+        // Pembentuk candle OHLC berkesinambungan (Open[i] = Close[i-1]) dari transaksi real-time
+        function generateStockCandles(startMs, stepMs, bucketCount, initialValue, trxItems, labelFormatter) {
+            let runningVal = initialValue;
+            let idx = 0;
 
-                return {
-                    label: b.label,
+            // Akumulasikan transaksi sebelum startMs jika ada
+            while (idx < trxItems.length && new Date(trxItems[idx].createdAt).getTime() < startMs) {
+                const st = (trxItems[idx].status || '').toLowerCase();
+                const val = Number(trxItems[idx].itemDetails?.harga_setelah_voucher || trxItems[idx].amount || 0);
+                if (['settlement', 'success', 'paid', 'settled'].includes(st)) {
+                    runningVal += val;
+                }
+                idx++;
+            }
+
+            const candles = [];
+            for (let b = 0; b < bucketCount; b++) {
+                const bucketStart = startMs + b * stepMs;
+                const bucketEnd = bucketStart + stepMs;
+
+                const open = runningVal;
+                let high = open;
+                let low = open;
+                let lunasCount = 0;
+                let totalCount = 0;
+                let periodOmzet = 0;
+
+                while (idx < trxItems.length) {
+                    const tMs = new Date(trxItems[idx].createdAt).getTime();
+                    if (tMs >= bucketEnd) break;
+
+                    const st = (trxItems[idx].status || '').toLowerCase();
+                    const val = Number(trxItems[idx].itemDetails?.harga_setelah_voucher || trxItems[idx].amount || 0);
+                    totalCount++;
+
+                    if (['settlement', 'success', 'paid', 'settled'].includes(st)) {
+                        runningVal += val;
+                        periodOmzet += val;
+                        lunasCount++;
+                        if (runningVal > high) high = runningVal;
+                    } else if (['cancelled', 'failed', 'expire', 'expired', 'batal'].includes(st)) {
+                        // Transaksi batal/kedaluwarsa menekan pergerakan ke bawah (bearish / lower wick)
+                        const dropStep = Math.max(1000, Math.round(val * 0.5));
+                        runningVal = Math.max(0, runningVal - dropStep);
+                        if (runningVal < low) low = runningVal;
+                    } else {
+                        // Transaksi pending membentuk sumbu atas (upper wick) sementara
+                        const spike = runningVal + Math.max(1000, Math.round(val * 0.35));
+                        if (spike > high) high = spike;
+                    }
+                    idx++;
+                }
+
+                const close = runningVal;
+                if (close > high) high = close;
+                if (close < low) low = close;
+
+                candles.push({
+                    label: labelFormatter(new Date(bucketStart)),
                     o: open,
                     h: high,
                     l: low,
                     c: close,
-                    total: b.total,
-                    lunas: b.lunas,
-                    batal: b.batal,
-                    omzet: b.omzet
-                };
-            });
+                    volume: totalCount,
+                    lunas: lunasCount,
+                    omzet: periodOmzet
+                });
+            }
+
+            return candles;
         }
 
-        // 1. Data 1 Hari (24 jam terakhir per jam)
-        const hourlyMap = {};
-        hourlyRaw.forEach(item => { hourlyMap[item._id] = item; });
+        const baseOmzetBefore30d = baselineAgg.length > 0 ? Number(baselineAgg[0].totalOmzet || 0) : 0;
 
-        const raw1d = [];
-        for (let i = 23; i >= 0; i--) {
-            const dt = new Date(now.getTime() - i * 60 * 60 * 1000);
-            const wibStr = dt.toLocaleString('sv-SE', { timeZone: 'Asia/Jakarta' });
-            const hourKey = wibStr.slice(0, 13) + ':00';
-            const label = wibStr.slice(11, 16);
-            const row = hourlyMap[hourKey] || { total: 0, lunas: 0, batal: 0, omzet: 0 };
-            raw1d.push({ label, ...row });
-        }
+        // 1 Hari: 24 candle (per 1 jam terakhir)
+        const hourMs = 60 * 60 * 1000;
+        const start1d = Math.floor((now.getTime() - 23 * hourMs) / hourMs) * hourMs;
+        const candles1d = generateStockCandles(
+            start1d,
+            hourMs,
+            24,
+            baseOmzetBefore30d,
+            windowTrxList,
+            (d) => d.toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' })
+        );
 
-        // 2. Data 30 Hari & 7 Hari
-        const dailyMap = {};
-        daily30Raw.forEach(item => { dailyMap[item._id] = item; });
+        // 7 Hari: 28 candle (per 6 jam selama 7 hari terakhir agar candle rapat & proporsional)
+        const sixHourMs = 6 * hourMs;
+        const start7d = startOfToday.getTime() - 6 * 24 * hourMs;
+        const candles7d = generateStockCandles(
+            start7d,
+            sixHourMs,
+            28,
+            baseOmzetBefore30d,
+            windowTrxList,
+            (d) => d.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short' })
+        );
 
-        const raw30d = [];
-        for (let i = 29; i >= 0; i--) {
-            const d = new Date(startOfToday);
-            d.setDate(d.getDate() - i);
-            const yyyy = d.getFullYear();
-            const mm = String(d.getMonth() + 1).padStart(2, '0');
-            const dd = String(d.getDate()).padStart(2, '0');
-            const dateKey = `${yyyy}-${mm}-${dd}`;
-            const label = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
-            const row = dailyMap[dateKey] || { total: 0, lunas: 0, batal: 0, omzet: 0 };
-            raw30d.push({ label, ...row });
-        }
-
-        const candles1d = buildOhlcCandles(raw1d);
-        const candles30d = buildOhlcCandles(raw30d);
-        const candles7d = candles30d.slice(-7);
+        // 1 Bulan: 30 candle (per 1 hari selama 30 hari terakhir)
+        const dayMs = 24 * hourMs;
+        const start1m = thirtyDaysAgo.getTime();
+        const candles1m = generateStockCandles(
+            start1m,
+            dayMs,
+            30,
+            baseOmzetBefore30d,
+            windowTrxList,
+            (d) => d.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short' })
+        );
 
         const systemLatency = latencyMetrics.length > 0 ? Math.round(latencyMetrics[0].avgLatency) : 12;
         const totalRequests = latencyMetrics.length > 0 ? latencyMetrics[0].totalRequests : totalTrx;
@@ -3651,7 +3649,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
             tradingSeries: {
                 '1d': candles1d,
                 '7d': candles7d,
-                '1m': candles30d
+                '1m': candles1m
             }
         });
     } catch (err) {
