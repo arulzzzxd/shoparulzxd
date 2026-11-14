@@ -84,7 +84,7 @@
             box-shadow: 2px 2px 0px #000000;
         }
 
-        /* Segmented Tab Timeframe yang Rapi */
+        /* Segmented Tab Timeframe */
         .tf-group {
             display: inline-flex;
             background: #FFFFFF;
@@ -94,7 +94,7 @@
             overflow: hidden;
         }
         .tf-tab {
-            padding: 7px 13px;
+            padding: 7px 14px;
             font-family: 'Space Grotesk', sans-serif;
             font-size: 11px;
             font-weight: 900;
@@ -333,9 +333,9 @@
             </div>
         </section>
 
-        <!-- ANALITIK PASAR LIGHT NEO-BRUTALISM (CANDLESTICK TRADING VIEW) -->
+        <!-- ANALITIK PASAR LIGHT NEO-BRUTALISM (TRADING SAHAM STYLE) -->
         <section class="neo-box rounded-2xl overflow-hidden bg-white text-black">
-            <!-- Top Header: Judul Pair & Tombol 1 Hari / 7 Hari / 1 Bulan -->
+            <!-- Top Header: Pair & Tombol 1 Hari / 7 Hari / 1 Bulan -->
             <div class="bg-neoYellow border-b-[3px] border-black px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
                 <div class="flex items-center gap-3">
                     <div class="w-11 h-11 rounded-xl bg-white text-black border-[3px] border-black flex items-center justify-center font-black text-lg shadow-[3px_3px_0_#000] shrink-0">
@@ -352,7 +352,7 @@
                             </span>
                         </div>
                         <p id="tradingSubtitle" class="text-xs font-bold text-black/80 mt-0.5">
-                            Pergerakan transaksi 7 hari terakhir
+                            Grafik transaksi 7 hari terakhir
                         </p>
                     </div>
                 </div>
@@ -365,12 +365,12 @@
                 </div>
             </div>
 
-            <!-- Strip Statistik Terpadu (4 Kolom Sejajar Rapi) -->
+            <!-- Strip Statistik Terpadu -->
             <div class="grid grid-cols-2 lg:grid-cols-4 border-b-[3px] border-black bg-white divide-y-[2.5px] lg:divide-y-0 divide-x-0 lg:divide-x-[2.5px] divide-black font-mono">
                 <div class="p-3.5 sm:px-5 border-r-[2.5px] lg:border-r-0 border-black">
-                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Transaksi Lunas</div>
+                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Indeks Nilai</div>
                     <div class="flex items-center gap-2 mt-1 flex-wrap">
-                        <span id="tdLunasVal" class="text-base sm:text-lg font-black text-black">0 Order</span>
+                        <span id="tdCloseMain" class="text-base sm:text-lg font-black text-black">Rp 0</span>
                         <span id="tdChangeBadge" class="text-[10px] font-black px-1.5 py-0.5 rounded border-2 border-black bg-neoGreen text-black">
                             +0.0%
                         </span>
@@ -385,8 +385,8 @@
                 </div>
 
                 <div class="p-3.5 sm:px-5 border-r-[2.5px] lg:border-r-0 border-black">
-                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Tertinggi / Terendah</div>
-                    <div class="flex items-center gap-2 mt-1 text-sm sm:text-base font-black">
+                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Puncak / Lembah</div>
+                    <div class="flex items-center gap-2 mt-1 text-xs sm:text-sm font-black">
                         <span class="text-emerald-700" id="tdHighVal">H: 0</span>
                         <span class="text-gray-400">/</span>
                         <span class="text-rose-600" id="tdLowVal">L: 0</span>
@@ -394,12 +394,9 @@
                 </div>
 
                 <div class="p-3.5 sm:px-5">
-                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">OHLC Candle Terakhir</div>
-                    <div class="flex items-center gap-2 mt-1 text-xs sm:text-sm font-black">
-                        <span>O:<b id="tdOpenVal">0</b></span>
-                        <span class="text-emerald-700">H:<b id="tdCandleH">0</b></span>
-                        <span class="text-rose-600">L:<b id="tdCandleL">0</b></span>
-                        <span class="text-sky-700">C:<b id="tdCloseVal">0</b></span>
+                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Order Lunas</div>
+                    <div id="tdLunasCount" class="text-base sm:text-lg font-black text-black mt-1">
+                        0 Order
                     </div>
                 </div>
             </div>
@@ -408,12 +405,12 @@
             <div class="bg-neoBg border-b-[3px] border-black px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono font-bold">
                 <div class="flex items-center gap-4">
                     <span class="flex items-center gap-1.5 text-black">
-                        <span class="w-3 h-3 rounded-sm bg-[#00B853] border border-black inline-block"></span>
-                        <span>Bullish (Naik)</span>
+                        <span class="w-3 h-3 rounded-sm bg-[#00C076] border border-black inline-block"></span>
+                        <span>Naik (Bullish)</span>
                     </span>
                     <span class="flex items-center gap-1.5 text-black">
-                        <span class="w-3 h-3 rounded-sm bg-[#FF3B30] border border-black inline-block"></span>
-                        <span>Bearish (Turun)</span>
+                        <span class="w-3 h-3 rounded-sm bg-[#F23645] border border-black inline-block"></span>
+                        <span>Turun (Bearish)</span>
                     </span>
                 </div>
                 <div id="candleHoverInfo" class="text-[11px] font-extrabold text-black">
@@ -421,15 +418,14 @@
                 </div>
             </div>
 
-            <!-- Canvas Grafik Candlestick TradingView Style -->
-            <div class="relative w-full bg-[#FFFDF7]">
-                <canvas id="tradingCanvas" class="w-full h-[310px] sm:h-[370px] block cursor-crosshair"></canvas>
+            <!-- Canvas Grafik Candlestick Saham -->
+            <div id="tradingChartWrapper" class="relative w-full bg-[#FFFDF7]">
+                <canvas id="tradingCanvas" class="w-full h-[320px] sm:h-[380px] block cursor-crosshair"></canvas>
             </div>
         </section>
 
         <!-- STATUS TRANSAKSI NEO-BRUTALISME DENGAN GARIS PEMBATAS TEGAS -->
         <section class="neo-box rounded-2xl overflow-hidden bg-white">
-            <!-- Header Section -->
             <div class="bg-neoCyan border-b-[3px] border-black px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <div class="w-11 h-11 rounded-xl bg-white border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0_#000] shrink-0">
@@ -457,7 +453,6 @@
                 </div>
             </div>
 
-            <!-- Tabel Transaksi Neo-Brutalisme -->
             <div class="p-4 sm:p-5 bg-neoPaper">
                 <div class="overflow-x-auto neo-scroll rounded-xl border-[3px] border-black shadow-[4px_4px_0_#000] bg-white">
                     <table class="neo-table text-left text-xs font-bold min-w-[720px]">
@@ -554,6 +549,13 @@
             return `${orderId.substring(0, 6)}•••${orderId.substring(orderId.length - 4)}`;
         }
 
+        function formatCompactAxisVal(val) {
+            const num = Number(val || 0);
+            if (num >= 1000000) return `${(num / 1000000).toFixed(2).replace('.', ',')}Jt`;
+            if (num >= 1000) return `${(num / 1000).toFixed(1).replace('.', ',')}K`;
+            return String(Math.round(num));
+        }
+
         function formatRelativeTime(dateInput) {
             if (!dateInput) return '-';
             const diffSec = Math.floor((Date.now() - new Date(dateInput).getTime()) / 1000);
@@ -623,39 +625,40 @@
             });
 
             const descMap = {
-                '1d': 'Pergerakan transaksi 24 jam terakhir (per jam)',
-                '7d': 'Pergerakan transaksi 7 hari terakhir',
-                '1m': 'Pergerakan transaksi 30 hari terakhir'
+                '1d': 'Grafik transaksi 24 jam terakhir (per jam)',
+                '7d': 'Grafik transaksi 7 hari terakhir',
+                '1m': 'Grafik transaksi 30 hari terakhir'
             };
             const subEl = document.getElementById('tradingSubtitle');
             if (subEl) subEl.innerText = descMap[range];
 
             updateTradingHeader(cachedTradingSeries[range] || []);
-            drawCandlestickChart();
+            drawStockChart();
         }
 
         function updateTradingHeader(series) {
             const safe = Array.isArray(series) ? series : [];
             const totalLunas = safe.reduce((s, d) => s + Number(d.lunas || 0), 0);
             const totalOmzet = safe.reduce((s, d) => s + Number(d.omzet || 0), 0);
+
+            const first = safe.length ? safe[0] : { o: 0, h: 0, l: 0, c: 0 };
+            const last = safe.length ? safe[safe.length - 1] : { o: 0, h: 0, l: 0, c: 0 };
+
             const maxH = safe.length ? Math.max(...safe.map(d => Number(d.h || 0))) : 0;
             const minL = safe.length ? Math.min(...safe.map(d => Number(d.l || 0))) : 0;
 
-            const last = safe.length ? safe[safe.length - 1] : { o: 0, h: 0, l: 0, c: 0 };
-            const prev = safe.length > 1 ? safe[safe.length - 2] : last;
-            const diff = Number(last.c) - Number(prev.c);
-            const pct = prev.c > 0
-                ? ((diff / prev.c) * 100).toFixed(1)
-                : (last.c > 0 ? '100.0' : '0.0');
+            const startVal = Number(first.o || 0);
+            const endVal = Number(last.c || 0);
+            const diff = endVal - startVal;
+            const pct = startVal > 0
+                ? ((diff / startVal) * 100).toFixed(1)
+                : (endVal > 0 ? '100.0' : '0.0');
 
-            document.getElementById('tdLunasVal').innerText = `${totalLunas} Order`;
+            document.getElementById('tdCloseMain').innerText = `Rp ${endVal.toLocaleString('id-ID')}`;
             document.getElementById('tdOmzetVal').innerText = `Rp ${totalOmzet.toLocaleString('id-ID')}`;
-            document.getElementById('tdHighVal').innerText = `H: ${maxH}`;
-            document.getElementById('tdLowVal').innerText = `L: ${minL}`;
-            document.getElementById('tdOpenVal').innerText = last.o;
-            document.getElementById('tdCandleH').innerText = last.h;
-            document.getElementById('tdCandleL').innerText = last.l;
-            document.getElementById('tdCloseVal').innerText = last.c;
+            document.getElementById('tdHighVal').innerText = `H: ${formatCompactAxisVal(maxH)}`;
+            document.getElementById('tdLowVal').innerText = `L: ${formatCompactAxisVal(minL)}`;
+            document.getElementById('tdLunasCount').innerText = `${totalLunas} Order`;
 
             const badge = document.getElementById('tdChangeBadge');
             if (diff < 0) {
@@ -667,8 +670,23 @@
             }
         }
 
-        // Custom Candlestick Renderer ala TradingView Light Neo-Brutalist
-        function drawCandlestickChart() {
+        function drawRoundRect(ctx, x, y, w, h, r) {
+            const radius = Math.min(r, w / 2, h / 2);
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + w - radius, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+            ctx.lineTo(x + w, y + h - radius);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+            ctx.lineTo(x + radius, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
+        // Renderer Grafik Trading Saham (Floating Candlestick + Wicks + Doji + Volume + Pill Axis)
+        function drawStockChart() {
             const canvas = document.getElementById('tradingCanvas');
             if (!canvas) return;
 
@@ -684,49 +702,58 @@
 
             const W = rect.width;
             const H = rect.height;
-            const padLeft = 14;
-            const padRight = 54;
-            const padTop = 22;
-            const padBottom = 34;
+            const padLeft = 12;
+            const padRight = 64;
+            const padTop = 20;
+            const padBottom = 32;
             const plotW = W - padLeft - padRight;
             const plotH = H - padTop - padBottom;
 
-            // 1. Background Kertas Terang
+            // 1. Background Kertas Terang Neo-Brutalist
             ctx.fillStyle = '#FFFDF7';
             ctx.fillRect(0, 0, W, H);
 
             const series = cachedTradingSeries[activeTradingRange] || [];
             if (series.length === 0) {
                 ctx.fillStyle = '#000000';
-                ctx.font = '800 13px "JetBrains Mono", monospace';
+                ctx.font = '800 12px "JetBrains Mono", monospace';
                 ctx.textAlign = 'center';
-                ctx.fillText('Memuat grafik transaksi...', W / 2, H / 2);
+                ctx.fillText('Memuat data grafik...', W / 2, H / 2);
                 return;
             }
 
-            // 2. Hitung Skala Y Dinamis
+            // 2. Hitung Rentang Skala Y Mengambang (Floating Price Range)
             const allHighs = series.map(d => Number(d.h || 0));
             const allLows = series.map(d => Number(d.l || 0));
-            const rawMax = Math.max(...allHighs, 2);
-            const rawMin = Math.min(...allLows, 0);
-            const yMax = Math.ceil(rawMax * 1.15);
-            const yMin = Math.max(0, Math.floor(rawMin));
+            let rawMax = Math.max(...allHighs);
+            let rawMin = Math.min(...allLows);
+
+            if (rawMax === rawMin) {
+                rawMin = Math.max(0, rawMin - 2000);
+                rawMax = rawMax + 8000;
+            }
+
+            const rangeSpan = rawMax - rawMin;
+            const yMin = Math.max(0, rawMin - rangeSpan * 0.14);
+            const yMax = rawMax + rangeSpan * 0.14;
             const ySpan = Math.max(1, yMax - yMin);
 
             const toY = (val) => padTop + plotH - ((val - yMin) / ySpan) * plotH;
 
-            // 3. Grid Vertikal & Horizontal ala Trading Terminal
+            // 3. Grid Putus-putus Halus ala TradingView
             const stepW = plotW / series.length;
+            ctx.save();
+            ctx.setLineDash([3, 3]);
             ctx.lineWidth = 1;
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.08)';
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.12)';
 
-            // Garis horizontal & Label Sumbu Y Kanan
-            const ySteps = Math.min(5, ySpan);
+            // Garis Horizontal & Label Sumbu Y Kanan
+            const ySteps = 5;
             ctx.font = '800 10px "JetBrains Mono", monospace';
             ctx.textAlign = 'left';
 
             for (let i = 0; i <= ySteps; i++) {
-                const val = Math.round(yMin + (ySpan * i) / ySteps);
+                const val = yMin + (ySpan * i) / ySteps;
                 const y = Math.round(toY(val)) + 0.5;
 
                 ctx.beginPath();
@@ -734,34 +761,46 @@
                 ctx.lineTo(W - padRight, y);
                 ctx.stroke();
 
-                ctx.fillStyle = '#111827';
-                ctx.fillText(String(val), W - padRight + 8, y + 3.5);
+                ctx.fillStyle = '#1F2937';
+                ctx.fillText(formatCompactAxisVal(val), W - padRight + 8, y + 3.5);
             }
 
-            // Garis vertikal & Label Tanggal Sumbu X
-            const labelEvery = series.length <= 8 ? 1 : (series.length <= 24 ? 4 : 5);
+            // Garis Vertikal & Label Sumbu X Bawah
+            const labelStep = Math.max(1, Math.ceil(series.length / 5));
             ctx.textAlign = 'center';
 
             series.forEach((d, idx) => {
-                const cx = Math.round(padLeft + idx * stepW + stepW / 2) + 0.5;
-                if (idx % labelEvery === 0) {
+                if (idx % labelStep === 0 || idx === series.length - 1) {
+                    const cx = Math.round(padLeft + idx * stepW + stepW / 2) + 0.5;
                     ctx.beginPath();
                     ctx.moveTo(cx, padTop);
                     ctx.lineTo(cx, H - padBottom);
                     ctx.stroke();
 
                     ctx.fillStyle = '#111827';
-                    ctx.fillText(d.label, cx, H - 12);
+                    ctx.fillText(d.label, cx, H - 11);
                 }
             });
+            ctx.restore();
 
-            // Border Area Chart Hitam Tegas
-            ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(padLeft, padTop, plotW, plotH);
+            // 4. Volume Histogram Halus di Dasar Grafik (Seperti Gambar Referensi)
+            const maxVol = Math.max(...series.map(d => Number(d.volume || 0)), 1);
+            const maxVolBarH = plotH * 0.16;
+            const barW = Math.max(4, Math.min(18, stepW * 0.65));
 
-            // 4. Gambar Setiap Candlestick (Wick + Body Hijau/Merah)
-            const candleW = Math.max(5, Math.min(24, stepW * 0.62));
+            series.forEach((d, idx) => {
+                const vol = Number(d.volume || 0);
+                if (vol <= 0) return;
+                const cx = padLeft + idx * stepW + stepW / 2;
+                const vh = Math.max(4, (vol / maxVol) * maxVolBarH);
+                const isBull = Number(d.c) >= Number(d.o);
+
+                ctx.fillStyle = isBull ? 'rgba(0, 192, 118, 0.18)' : 'rgba(242, 54, 69, 0.18)';
+                ctx.fillRect(cx - barW / 2, H - padBottom - vh, barW, vh);
+            });
+
+            // 5. Gambar Candlestick Saham (Wick + Rounded Body / Dash Doji)
+            const candleW = Math.max(4, Math.min(14, stepW * 0.62));
 
             series.forEach((d, idx) => {
                 const cx = padLeft + idx * stepW + stepW / 2;
@@ -771,70 +810,69 @@
                 const low = Number(d.l || 0);
 
                 const isBull = close >= open;
-                const color = isBull ? '#00B853' : '#FF3B30';
+                const color = isBull ? '#00C076' : '#F23645';
 
                 const yHigh = toY(high);
                 const yLow = toY(low);
                 const yOpen = toY(open);
                 const yClose = toY(close);
 
-                // Upper & Lower Wick (Sumbu Lilin)
                 ctx.save();
+                // Sumbu Atas & Bawah (Wick)
                 ctx.strokeStyle = color;
-                ctx.lineWidth = Math.max(1.8, Math.min(2.5, candleW * 0.16));
+                ctx.lineWidth = 1.5;
                 ctx.beginPath();
                 ctx.moveTo(cx, yHigh);
                 ctx.lineTo(cx, yLow);
                 ctx.stroke();
 
-                // Body Lilin
-                const topBody = Math.min(yOpen, yClose);
-                const bodyH = Math.max(3, Math.abs(yClose - yOpen));
+                const rawBodyH = Math.abs(yClose - yOpen);
                 const leftBody = cx - candleW / 2;
 
-                ctx.fillStyle = color;
-                ctx.fillRect(leftBody, topBody, candleW, bodyH);
-
-                // Outline tipis agar tajam ala Neo-Brutalist
-                ctx.strokeStyle = '#000000';
-                ctx.lineWidth = 1.2;
-                ctx.strokeRect(leftBody, topBody, candleW, bodyH);
+                if (rawBodyH < 2.5) {
+                    // Doji / Datar: Garis horizontal tebal seperti di chart saham
+                    ctx.fillStyle = color;
+                    ctx.fillRect(leftBody, yClose - 1, candleW, 2.2);
+                } else {
+                    // Body Candle Rounded
+                    const topBody = Math.min(yOpen, yClose);
+                    ctx.fillStyle = color;
+                    drawRoundRect(ctx, leftBody, topBody, candleW, rawBodyH, 2.5);
+                    ctx.fill();
+                }
                 ctx.restore();
             });
 
-            // 5. Garis Horizontal Harga/Close Terkini (Dashed Line + Badge Sumbu Y)
+            // 6. Garis Horizontal Harga Terkini + Pill Badge Sumbu Kanan
             const lastCandle = series[series.length - 1];
             const lastClose = Number(lastCandle.c || 0);
-            const lastBull = lastClose >= Number(lastCandle.o || 0);
-            const liveColor = lastBull ? '#00B853' : '#FF3B30';
             const yLive = Math.round(toY(lastClose)) + 0.5;
 
             ctx.save();
-            ctx.setLineDash([4, 4]);
-            ctx.strokeStyle = liveColor;
-            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = '#3B5BDB';
+            ctx.lineWidth = 1.2;
             ctx.beginPath();
             ctx.moveTo(padLeft, yLive);
             ctx.lineTo(W - padRight, yLive);
             ctx.stroke();
-            ctx.setLineDash([]);
 
-            // Badge Nilai Terkini di Sumbu Kanan
-            const badgeW = padRight - 6;
-            const badgeH = 18;
-            ctx.fillStyle = liveColor;
-            ctx.fillRect(W - padRight + 3, yLive - badgeH / 2, badgeW, badgeH);
-            ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 1.5;
-            ctx.strokeRect(W - padRight + 3, yLive - badgeH / 2, badgeW, badgeH);
+            // Pill Badge Biru/Indigo di Sumbu Kanan (mirip 290,63 di gambar referensi)
+            const pillX = W - padRight + 4;
+            const pillW = padRight - 8;
+            const pillH = 20;
+            const pillY = Math.max(padTop, Math.min(H - padBottom - pillH, yLive - pillH / 2));
+
+            ctx.fillStyle = '#3B5BDB';
+            drawRoundRect(ctx, pillX, pillY, pillW, pillH, 10);
+            ctx.fill();
 
             ctx.fillStyle = '#FFFFFF';
             ctx.font = '800 10px "JetBrains Mono", monospace';
             ctx.textAlign = 'center';
-            ctx.fillText(String(lastClose), W - padRight + 3 + badgeW / 2, yLive + 3.5);
+            ctx.fillText(formatCompactAxisVal(lastClose), pillX + pillW / 2, pillY + 13.5);
             ctx.restore();
 
-            // 6. Crosshair & Info Detail Saat Hover / Sentuh
+            // 7. Crosshair & Floating Tooltip Box Saat Hover / Sentuh
             if (hoverCandleIndex >= 0 && hoverCandleIndex < series.length) {
                 const target = series[hoverCandleIndex];
                 const hx = Math.round(padLeft + hoverCandleIndex * stepW + stepW / 2) + 0.5;
@@ -842,62 +880,71 @@
 
                 ctx.save();
                 ctx.setLineDash([3, 3]);
-                ctx.strokeStyle = '#000000';
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.55)';
                 ctx.lineWidth = 1.2;
 
-                // Garis vertikal crosshair
                 ctx.beginPath();
                 ctx.moveTo(hx, padTop);
                 ctx.lineTo(hx, H - padBottom);
                 ctx.stroke();
 
-                // Garis horizontal crosshair
                 ctx.beginPath();
                 ctx.moveTo(padLeft, hy);
                 ctx.lineTo(W - padRight, hy);
                 ctx.stroke();
                 ctx.setLineDash([]);
 
-                // Label Tanggal di Bawah Crosshair
-                const lblW = 54;
+                // Titik fokus pada candle terpilih
                 ctx.fillStyle = '#000000';
-                ctx.fillRect(hx - lblW / 2, H - padBottom + 4, lblW, 18);
+                ctx.beginPath();
+                ctx.arc(hx, hy, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Label waktu di bawah crosshair
+                const lblW = 54;
+                const lblX = Math.max(padLeft, Math.min(W - padRight - lblW, hx - lblW / 2));
+                ctx.fillStyle = '#000000';
+                drawRoundRect(ctx, lblX, H - padBottom + 4, lblW, 18, 4);
+                ctx.fill();
+
                 ctx.fillStyle = '#FFDE59';
                 ctx.font = '800 10px "JetBrains Mono", monospace';
                 ctx.textAlign = 'center';
-                ctx.fillText(target.label, hx, H - padBottom + 16);
+                ctx.fillText(target.label, lblX + lblW / 2, H - padBottom + 16);
                 ctx.restore();
 
                 const hoverInfo = document.getElementById('candleHoverInfo');
                 if (hoverInfo) {
-                    hoverInfo.innerText = `${target.label} • O:${target.o} H:${target.h} L:${target.l} C:${target.c} (Rp ${Number(target.omzet || 0).toLocaleString('id-ID')})`;
+                    hoverInfo.innerText = `${target.label} • O:${formatCompactAxisVal(target.o)} H:${formatCompactAxisVal(target.h)} L:${formatCompactAxisVal(target.l)} C:${formatCompactAxisVal(target.c)} (${target.lunas} Lunas)`;
                 }
             }
         }
 
         function initTradingCanvasEvents() {
             const canvas = document.getElementById('tradingCanvas');
+            const wrapper = document.getElementById('tradingChartWrapper');
             if (!canvas) return;
 
             const handleMove = (clientX) => {
                 const rect = canvas.getBoundingClientRect();
-                const padLeft = 14;
-                const padRight = 54;
+                const padLeft = 12;
+                const padRight = 64;
                 const plotW = rect.width - padLeft - padRight;
                 const series = cachedTradingSeries[activeTradingRange] || [];
                 if (!series.length || plotW <= 0) return;
 
                 const relX = clientX - rect.left - padLeft;
-                const idx = Math.floor((relX / plotW) * series.length);
-                if (idx >= 0 && idx < series.length) {
-                    if (hoverCandleIndex !== idx) {
-                        hoverCandleIndex = idx;
-                        drawCandlestickChart();
-                    }
+                const idx = Math.max(0, Math.min(series.length - 1, Math.floor((relX / plotW) * series.length)));
+                if (hoverCandleIndex !== idx) {
+                    hoverCandleIndex = idx;
+                    drawStockChart();
                 }
             };
 
             canvas.addEventListener('mousemove', (e) => handleMove(e.clientX));
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches[0]) handleMove(e.touches[0].clientX);
+            }, { passive: true });
             canvas.addEventListener('touchmove', (e) => {
                 if (e.touches && e.touches[0]) handleMove(e.touches[0].clientX);
             }, { passive: true });
@@ -906,10 +953,15 @@
                 hoverCandleIndex = -1;
                 const hoverInfo = document.getElementById('candleHoverInfo');
                 if (hoverInfo) hoverInfo.innerText = 'Sentuh grafik untuk detail candle';
-                drawCandlestickChart();
+                drawStockChart();
             });
 
-            window.addEventListener('resize', () => drawCandlestickChart());
+            if (window.ResizeObserver && wrapper) {
+                const ro = new ResizeObserver(() => drawStockChart());
+                ro.observe(wrapper);
+            } else {
+                window.addEventListener('resize', () => drawStockChart());
+            }
         }
 
         function getCustomerBadge(name, avatarUrl) {
@@ -993,7 +1045,6 @@
 
                 return `
                     <tr class="hover:bg-neoBg/75 transition-colors">
-                        <!-- Kolom 1: Order & Waktu -->
                         <td class="p-3.5 align-middle whitespace-nowrap">
                             <span class="inline-block font-mono text-[11px] font-black bg-neoBg border-2 border-black px-2 py-0.5 rounded-md shadow-[2px_2px_0_#000] text-black">
                                 ${maskOrderId(trx.orderId)}
@@ -1005,12 +1056,10 @@
                             </div>
                         </td>
 
-                        <!-- Kolom 2: Pelanggan -->
                         <td class="p-3.5 align-middle">
                             ${getCustomerBadge(trx.pelanggan, trx.avatar)}
                         </td>
 
-                        <!-- Kolom 3: Item & Metode -->
                         <td class="p-3.5 align-middle">
                             <div class="font-extrabold text-black text-xs truncate max-w-[200px]" title="${safeProduk}">
                                 ${safeProduk}
@@ -1020,14 +1069,12 @@
                             </div>
                         </td>
 
-                        <!-- Kolom 4: Nominal -->
                         <td class="p-3.5 align-middle whitespace-nowrap">
                             <span class="inline-block font-mono font-black text-xs sm:text-sm bg-neoPaper border-2 border-black px-2.5 py-1 rounded-lg shadow-[2px_2px_0_#000] text-black">
                                 Rp ${Number(trx.amount || 0).toLocaleString('id-ID')}
                             </span>
                         </td>
 
-                        <!-- Kolom 5: Status -->
                         <td class="p-3.5 text-center align-middle whitespace-nowrap">
                             <span class="inline-flex items-center gap-1.5 text-[11px] font-black font-cyber uppercase px-3 py-1.5 rounded-lg border-2 border-black shadow-[3px_3px_0_#000] ${badgeClass}">
                                 <i class="fa-solid ${icon}"></i> ${statusText}
@@ -1069,7 +1116,7 @@
                 if (data.tradingSeries) {
                     cachedTradingSeries = data.tradingSeries;
                     updateTradingHeader(cachedTradingSeries[activeTradingRange] || []);
-                    drawCandlestickChart();
+                    drawStockChart();
                 }
 
                 renderTransactionRows(data.recentTrx || []);
