@@ -16,7 +16,7 @@
     <meta property="og:type" content="website">
     <meta property="og:locale" content="id_ID">
     <meta property="og:site_name" content="ArulzXD Store">
-    <meta property="og:url" content="https://arulzxd.biz.id/">
+    <meta property="og:url" content="https://www.shoparulzxd.biz.id/">
     <meta property="og:title" content="ArulzXD Store - Katalog Source Code & Produk Digital">
     <meta property="og:description" content="Belanja Source Code, Script, dan Layanan Digital langsung diproses otomatis setelah pembayaran.">
     <meta property="og:image" content="https://cdn.larasxd.my.id/files/7TZ5vL.jpg">
@@ -28,7 +28,7 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://arulzxd.biz.id/">
+    <meta name="twitter:url" content="https://www.shoparulzxd.biz.id/">
     <meta name="twitter:title" content="ArulzXD Store - Katalog Source Code & Produk Digital">
     <meta name="twitter:description" content="Belanja Source Code, Script, dan Layanan Digital langsung diproses otomatis setelah pembayaran.">
     <meta name="twitter:image" content="https://cdn.larasxd.my.id/files/7TZ5vL.jpg">
@@ -36,7 +36,6 @@
 
     <!-- Styles & Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -71,32 +70,47 @@
             box-shadow: 5px 5px 0px #000000;
         }
 
-        .neo-box-sm {
-            border: 2.5px solid #000000;
-            box-shadow: 3px 3px 0px #000000;
-        }
-
         .neo-btn {
-            border: 2.5px solid #000000;
-            box-shadow: 3px 3px 0px #000000;
-            transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+            border: 3px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
         }
         .neo-btn:hover {
-            transform: translate(-1px, -1px);
-            box-shadow: 4px 4px 0px #000000;
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000000;
         }
         .neo-btn:active {
             transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px #000000;
+            box-shadow: 2px 2px 0px #000000;
         }
 
-        /* Grid Forex Light Neo-Brutalism */
-        .forex-grid-bg {
-            background-color: #FFFDF7;
-            background-image:
-                linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
-            background-size: 26px 26px;
+        /* Segmented Tab Timeframe yang Rapi */
+        .tf-group {
+            display: inline-flex;
+            background: #FFFFFF;
+            border: 2.5px solid #000000;
+            border-radius: 12px;
+            box-shadow: 3px 3px 0px #000000;
+            overflow: hidden;
+        }
+        .tf-tab {
+            padding: 7px 13px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: #000000;
+            background: #FFFFFF;
+            border-right: 2.5px solid #000000;
+            transition: background-color 0.15s ease;
+            cursor: pointer;
+        }
+        .tf-tab:last-child {
+            border-right: none;
+        }
+        .tf-tab.active {
+            background: #00E5FF;
         }
 
         /* Garis Pembatas Solid untuk Tabel Status Transaksi */
@@ -319,106 +333,97 @@
             </div>
         </section>
 
-        <!-- ANALITIK PASAR LIGHT NEO-BRUTALISM (TRENDING FOREX) -->
+        <!-- ANALITIK PASAR LIGHT NEO-BRUTALISM (CANDLESTICK TRADING VIEW) -->
         <section class="neo-box rounded-2xl overflow-hidden bg-white text-black">
-            <!-- Header Bar -->
-            <div class="bg-neoYellow border-b-[3px] border-black px-4 sm:px-6 py-4 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <!-- Top Header: Judul Pair & Tombol 1 Hari / 7 Hari / 1 Bulan -->
+            <div class="bg-neoYellow border-b-[3px] border-black px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
                 <div class="flex items-center gap-3">
                     <div class="w-11 h-11 rounded-xl bg-white text-black border-[3px] border-black flex items-center justify-center font-black text-lg shadow-[3px_3px_0_#000] shrink-0">
                         <i class="fa-solid fa-chart-line"></i>
                     </div>
                     <div>
-                        <div class="flex items-center gap-2 flex-wrap">
+                        <div class="flex items-center gap-2">
                             <h3 class="text-base sm:text-lg font-black font-cyber tracking-tight text-black">
                                 ARULZ / IDR
                             </h3>
-                            <span id="forexTfBadge" class="text-[10px] font-mono font-extrabold bg-black text-white px-2 py-0.5 rounded-md">
-                                7 HARI
-                            </span>
-                            <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-extrabold bg-neoGreen text-black border-2 border-black px-2 py-0.5 rounded-md shadow-[2px_2px_0_#000]">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-extrabold bg-neoGreen text-black border-2 border-black px-2 py-0.5 rounded-md">
                                 <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
                                 LIVE
                             </span>
                         </div>
-                        <p id="forexSubtitle" class="text-[11px] font-bold text-black/80 mt-0.5">
-                            Tren transaksi 7 hari terakhir • Diperbarui otomatis
+                        <p id="tradingSubtitle" class="text-xs font-bold text-black/80 mt-0.5">
+                            Pergerakan transaksi 7 hari terakhir
                         </p>
                     </div>
                 </div>
 
-                <!-- Tombol Timeframe Forex: 1 HARI | 7 HARI | 1 BULAN -->
-                <div class="flex items-center gap-2 bg-white p-1.5 rounded-xl border-[2.5px] border-black shadow-[3px_3px_0_#000] self-start lg:self-auto">
-                    <button id="btnTf1d" type="button" onclick="setForexRange('1d')" class="neo-btn px-3 py-1.5 rounded-lg text-[11px] font-black font-cyber uppercase bg-white text-black">
-                        1 Hari
-                    </button>
-                    <button id="btnTf7d" type="button" onclick="setForexRange('7d')" class="neo-btn px-3 py-1.5 rounded-lg text-[11px] font-black font-cyber uppercase bg-neoCyan text-black">
-                        7 Hari
-                    </button>
-                    <button id="btnTf1m" type="button" onclick="setForexRange('1m')" class="neo-btn px-3 py-1.5 rounded-lg text-[11px] font-black font-cyber uppercase bg-white text-black">
-                        1 Bulan
-                    </button>
+                <!-- Tombol Segmented Timeframe -->
+                <div class="tf-group self-start sm:self-auto" role="group" aria-label="Pilih Rentang Waktu">
+                    <button id="btnTf1d" type="button" onclick="setTradingRange('1d')" class="tf-tab">1 Hari</button>
+                    <button id="btnTf7d" type="button" onclick="setTradingRange('7d')" class="tf-tab active">7 Hari</button>
+                    <button id="btnTf1m" type="button" onclick="setTradingRange('1m')" class="tf-tab">1 Bulan</button>
                 </div>
             </div>
 
-            <!-- Ticker Harga & Indikator Forex -->
-            <div class="bg-neoBg border-b-[3px] border-black px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3 font-mono">
-                <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
-                    <!-- Nilai Terkini & Persentase Perubahan -->
-                    <div class="bg-white neo-box-sm px-3.5 py-2 rounded-xl flex items-center gap-2.5">
-                        <div>
-                            <div class="text-[10px] font-extrabold text-gray-500 uppercase">Transaksi Lunas</div>
-                            <div id="forexCurrentVal" class="text-base sm:text-lg font-black text-black leading-tight">0 Order</div>
-                        </div>
-                        <span id="forexTrendBadge" class="text-[11px] font-black px-2.5 py-1 rounded-lg border-2 border-black bg-neoGreen text-black">
-                            <i class="fa-solid fa-arrow-trend-up mr-1"></i>+0.0%
+            <!-- Strip Statistik Terpadu (4 Kolom Sejajar Rapi) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 border-b-[3px] border-black bg-white divide-y-[2.5px] lg:divide-y-0 divide-x-0 lg:divide-x-[2.5px] divide-black font-mono">
+                <div class="p-3.5 sm:px-5 border-r-[2.5px] lg:border-r-0 border-black">
+                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Transaksi Lunas</div>
+                    <div class="flex items-center gap-2 mt-1 flex-wrap">
+                        <span id="tdLunasVal" class="text-base sm:text-lg font-black text-black">0 Order</span>
+                        <span id="tdChangeBadge" class="text-[10px] font-black px-1.5 py-0.5 rounded border-2 border-black bg-neoGreen text-black">
+                            +0.0%
                         </span>
                     </div>
+                </div>
 
-                    <!-- Ringkasan Puncak / Terendah / Total Masuk -->
-                    <div class="grid grid-cols-3 gap-2 bg-white neo-box-sm px-3 py-2 rounded-xl text-xs">
-                        <div class="px-1.5">
-                            <span class="text-[10px] font-extrabold text-gray-500 block">TERTINGGI</span>
-                            <span id="forexHighVal" class="font-black text-emerald-700">0</span>
-                        </div>
-                        <div class="px-1.5 border-l-2 border-black/15">
-                            <span class="text-[10px] font-extrabold text-gray-500 block">TERENDAH</span>
-                            <span id="forexLowVal" class="font-black text-rose-600">0</span>
-                        </div>
-                        <div class="px-1.5 border-l-2 border-black/15">
-                            <span class="text-[10px] font-extrabold text-gray-500 block">ORDER MASUK</span>
-                            <span id="forexTotalPeriod" class="font-black text-sky-700">0</span>
-                        </div>
+                <div class="p-3.5 sm:px-5">
+                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Omzet Periode</div>
+                    <div id="tdOmzetVal" class="text-base sm:text-lg font-black text-black mt-1 truncate">
+                        Rp 0
                     </div>
                 </div>
 
-                <div class="bg-white neo-box-sm px-3 py-2 rounded-xl text-xs">
-                    <span class="text-[10px] font-extrabold text-gray-500 block">OMZET PERIODE</span>
-                    <span id="forexOmzetVal" class="font-black text-black">Rp 0</span>
+                <div class="p-3.5 sm:px-5 border-r-[2.5px] lg:border-r-0 border-black">
+                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Tertinggi / Terendah</div>
+                    <div class="flex items-center gap-2 mt-1 text-sm sm:text-base font-black">
+                        <span class="text-emerald-700" id="tdHighVal">H: 0</span>
+                        <span class="text-gray-400">/</span>
+                        <span class="text-rose-600" id="tdLowVal">L: 0</span>
+                    </div>
+                </div>
+
+                <div class="p-3.5 sm:px-5">
+                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">OHLC Candle Terakhir</div>
+                    <div class="flex items-center gap-2 mt-1 text-xs sm:text-sm font-black">
+                        <span>O:<b id="tdOpenVal">0</b></span>
+                        <span class="text-emerald-700">H:<b id="tdCandleH">0</b></span>
+                        <span class="text-rose-600">L:<b id="tdCandleL">0</b></span>
+                        <span class="text-sky-700">C:<b id="tdCloseVal">0</b></span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Legend Garis Trending Forex -->
-            <div class="bg-white border-b-[3px] border-black px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono font-bold">
-                <div class="flex items-center gap-4 flex-wrap">
+            <!-- Bar Legenda & Info Hover Candle -->
+            <div class="bg-neoBg border-b-[3px] border-black px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono font-bold">
+                <div class="flex items-center gap-4">
                     <span class="flex items-center gap-1.5 text-black">
-                        <span id="legendTrendLine" class="w-5 h-1.5 rounded-full bg-neoGreen border border-black inline-block"></span>
-                        <span>Garis Tren Lunas</span>
+                        <span class="w-3 h-3 rounded-sm bg-[#00B853] border border-black inline-block"></span>
+                        <span>Bullish (Naik)</span>
                     </span>
                     <span class="flex items-center gap-1.5 text-black">
-                        <span class="w-5 h-1.5 rounded-full bg-black/50 inline-block"></span>
-                        <span>Pesanan Masuk (Dashed)</span>
+                        <span class="w-3 h-3 rounded-sm bg-[#FF3B30] border border-black inline-block"></span>
+                        <span>Bearish (Turun)</span>
                     </span>
                 </div>
-                <span id="forexTrendStatusText" class="text-[11px] font-extrabold text-emerald-700">
-                    Tren Stabil
-                </span>
+                <div id="candleHoverInfo" class="text-[11px] font-extrabold text-black">
+                    Sentuh grafik untuk detail candle
+                </div>
             </div>
 
-            <!-- Canvas Area Chart Forex -->
-            <div class="p-4 sm:p-6 forex-grid-bg">
-                <div class="h-72 sm:h-88 relative">
-                    <canvas id="forexChart"></canvas>
-                </div>
+            <!-- Canvas Grafik Candlestick TradingView Style -->
+            <div class="relative w-full bg-[#FFFDF7]">
+                <canvas id="tradingCanvas" class="w-full h-[310px] sm:h-[370px] block cursor-crosshair"></canvas>
             </div>
         </section>
 
@@ -534,14 +539,14 @@
     <noscript id="arulz-noscript-fallback">
         <h1>ArulzXD Store - Katalog Source Code &amp; Produk Digital</h1>
         <p>Tempat belanja Source Code, Script, dan Layanan Digital otomatis 24 jam.</p>
-        <p>Navigasi: <a href="https://arulzxd.biz.id/store">Katalog Toko</a> · <a href="https://arulzxd.biz.id/login">Masuk &amp; Daftar</a> · <a href="https://arulzxd.biz.id/deposit">Isi Saldo</a> · <a href="https://arulzxd.biz.id/riwayat">Riwayat Pesanan</a> · <a href="https://arulzxd.biz.id/privacy">Kebijakan Privasi</a></p>
+        <p>Navigasi: <a href="https://www.shoparulzxd.biz.id/store">Katalog Toko</a> · <a href="https://www.shoparulzxd.biz.id/login">Masuk &amp; Daftar</a> · <a href="https://www.shoparulzxd.biz.id/deposit">Isi Saldo</a> · <a href="https://www.shoparulzxd.biz.id/riwayat">Riwayat Pesanan</a> · <a href="https://www.shoparulzxd.biz.id/privacy">Kebijakan Privasi</a></p>
     </noscript>
 
     <script>
-        let forexChartInstance = null;
         let isInitialLoad = true;
-        let activeForexRange = '7d';
-        let cachedForexSeries = { '1d': [], '7d': [], '1m': [] };
+        let activeTradingRange = '7d';
+        let cachedTradingSeries = { '1d': [], '7d': [], '1m': [] };
+        let hoverCandleIndex = -1;
 
         function maskOrderId(orderId) {
             if (!orderId) return '-';
@@ -607,243 +612,304 @@
             }, stepTime);
         }
 
-        // Plugin garis crosshair vertikal ala Forex saat hover
-        const forexCrosshairPlugin = {
-            id: 'forexCrosshair',
-            afterDatasetsDraw(chart) {
-                const { ctx, tooltip, chartArea } = chart;
-                if (!tooltip || !tooltip._active || !tooltip._active.length) return;
-                const activePoint = tooltip._active[0];
-                const x = activePoint.element.x;
+        function setTradingRange(range) {
+            activeTradingRange = range;
+            hoverCandleIndex = -1;
 
-                ctx.save();
-                ctx.beginPath();
-                ctx.setLineDash([5, 5]);
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#000000';
-                ctx.moveTo(x, chartArea.top);
-                ctx.lineTo(x, chartArea.bottom);
-                ctx.stroke();
-                ctx.restore();
-            }
-        };
-
-        function setForexRange(range) {
-            activeForexRange = range;
-
-            const btnMap = {
-                '1d': document.getElementById('btnTf1d'),
-                '7d': document.getElementById('btnTf7d'),
-                '1m': document.getElementById('btnTf1m')
-            };
-
-            Object.keys(btnMap).forEach(key => {
-                const btn = btnMap[key];
+            ['1d', '7d', '1m'].forEach(key => {
+                const btn = document.getElementById(`btnTf${key}`);
                 if (!btn) return;
-                if (key === range) {
-                    btn.className = 'neo-btn px-3 py-1.5 rounded-lg text-[11px] font-black font-cyber uppercase bg-neoCyan text-black';
-                } else {
-                    btn.className = 'neo-btn px-3 py-1.5 rounded-lg text-[11px] font-black font-cyber uppercase bg-white text-black';
-                }
+                btn.classList.toggle('active', key === range);
             });
 
-            const metaMap = {
-                '1d': { badge: '1 HARI', desc: 'Tren transaksi 24 jam terakhir (per jam) • Diperbarui otomatis' },
-                '7d': { badge: '7 HARI', desc: 'Tren transaksi 7 hari terakhir • Diperbarui otomatis' },
-                '1m': { badge: '1 BULAN', desc: 'Tren transaksi 30 hari terakhir • Diperbarui otomatis' }
+            const descMap = {
+                '1d': 'Pergerakan transaksi 24 jam terakhir (per jam)',
+                '7d': 'Pergerakan transaksi 7 hari terakhir',
+                '1m': 'Pergerakan transaksi 30 hari terakhir'
             };
+            const subEl = document.getElementById('tradingSubtitle');
+            if (subEl) subEl.innerText = descMap[range];
 
-            const tfBadge = document.getElementById('forexTfBadge');
-            const tfSub = document.getElementById('forexSubtitle');
-            if (tfBadge) tfBadge.innerText = metaMap[range].badge;
-            if (tfSub) tfSub.innerText = metaMap[range].desc;
-
-            renderForexChart(cachedForexSeries[range] || []);
+            updateTradingHeader(cachedTradingSeries[range] || []);
+            drawCandlestickChart();
         }
 
-        function renderForexChart(series) {
-            const safeSeries = Array.isArray(series) ? series : [];
-            const labels = safeSeries.map(item => item.label);
-            const lunasData = safeSeries.map(item => Number(item.lunas || 0));
-            const totalData = safeSeries.map(item => Number(item.total || 0));
+        function updateTradingHeader(series) {
+            const safe = Array.isArray(series) ? series : [];
+            const totalLunas = safe.reduce((s, d) => s + Number(d.lunas || 0), 0);
+            const totalOmzet = safe.reduce((s, d) => s + Number(d.omzet || 0), 0);
+            const maxH = safe.length ? Math.max(...safe.map(d => Number(d.h || 0))) : 0;
+            const minL = safe.length ? Math.min(...safe.map(d => Number(d.l || 0))) : 0;
 
-            const totalLunas = lunasData.reduce((a, b) => a + b, 0);
-            const totalMasuk = totalData.reduce((a, b) => a + b, 0);
-            const totalOmzet = safeSeries.reduce((a, b) => a + Number(b.omzet || 0), 0);
-            const highVal = lunasData.length ? Math.max(...lunasData) : 0;
-            const lowVal = lunasData.length ? Math.min(...lunasData) : 0;
+            const last = safe.length ? safe[safe.length - 1] : { o: 0, h: 0, l: 0, c: 0 };
+            const prev = safe.length > 1 ? safe[safe.length - 2] : last;
+            const diff = Number(last.c) - Number(prev.c);
+            const pct = prev.c > 0
+                ? ((diff / prev.c) * 100).toFixed(1)
+                : (last.c > 0 ? '100.0' : '0.0');
 
-            const lastVal = lunasData.length ? lunasData[lunasData.length - 1] : 0;
-            const prevVal = lunasData.length > 1 ? lunasData[lunasData.length - 2] : lastVal;
-            const diff = lastVal - prevVal;
-            const pct = prevVal > 0
-                ? ((diff / prevVal) * 100).toFixed(1)
-                : (lastVal > 0 ? '100.0' : '0.0');
+            document.getElementById('tdLunasVal').innerText = `${totalLunas} Order`;
+            document.getElementById('tdOmzetVal').innerText = `Rp ${totalOmzet.toLocaleString('id-ID')}`;
+            document.getElementById('tdHighVal').innerText = `H: ${maxH}`;
+            document.getElementById('tdLowVal').innerText = `L: ${minL}`;
+            document.getElementById('tdOpenVal').innerText = last.o;
+            document.getElementById('tdCandleH').innerText = last.h;
+            document.getElementById('tdCandleL').innerText = last.l;
+            document.getElementById('tdCloseVal').innerText = last.c;
 
-            // Tentukan arah tren (Bullish = Hijau, Bearish = Pink/Merah)
-            const isBearish = diff < 0;
-            const lineColor = isBearish ? '#FF4D6D' : '#00C853';
-            const fillTopColor = isBearish ? 'rgba(255, 121, 198, 0.42)' : 'rgba(0, 230, 118, 0.38)';
-            const fillBottomColor = isBearish ? 'rgba(255, 121, 198, 0.02)' : 'rgba(0, 230, 118, 0.02)';
-
-            document.getElementById('forexCurrentVal').innerText = `${totalLunas} Order`;
-            document.getElementById('forexHighVal').innerText = highVal;
-            document.getElementById('forexLowVal').innerText = lowVal;
-            document.getElementById('forexTotalPeriod').innerText = totalMasuk;
-            document.getElementById('forexOmzetVal').innerText = `Rp ${totalOmzet.toLocaleString('id-ID')}`;
-
-            const trendBadge = document.getElementById('forexTrendBadge');
-            const legendLine = document.getElementById('legendTrendLine');
-            const trendStatus = document.getElementById('forexTrendStatusText');
-
-            if (isBearish) {
-                trendBadge.className = 'text-[11px] font-black px-2.5 py-1 rounded-lg border-2 border-black bg-neoPink text-black';
-                trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-down mr-1"></i>${pct}%`;
-                if (legendLine) legendLine.className = 'w-5 h-1.5 rounded-full bg-neoPink border border-black inline-block';
-                if (trendStatus) {
-                    trendStatus.className = 'text-[11px] font-extrabold text-rose-600';
-                    trendStatus.innerText = 'Tren Menurun (Bearish)';
-                }
-            } else if (diff > 0) {
-                trendBadge.className = 'text-[11px] font-black px-2.5 py-1 rounded-lg border-2 border-black bg-neoGreen text-black';
-                trendBadge.innerHTML = `<i class="fa-solid fa-arrow-trend-up mr-1"></i>+${pct}%`;
-                if (legendLine) legendLine.className = 'w-5 h-1.5 rounded-full bg-neoGreen border border-black inline-block';
-                if (trendStatus) {
-                    trendStatus.className = 'text-[11px] font-extrabold text-emerald-700';
-                    trendStatus.innerText = 'Tren Menguat (Bullish)';
-                }
+            const badge = document.getElementById('tdChangeBadge');
+            if (diff < 0) {
+                badge.className = 'text-[10px] font-black px-1.5 py-0.5 rounded border-2 border-black bg-neoPink text-black';
+                badge.innerHTML = `<i class="fa-solid fa-caret-down mr-0.5"></i>${pct}%`;
             } else {
-                trendBadge.className = 'text-[11px] font-black px-2.5 py-1 rounded-lg border-2 border-black bg-neoCyan text-black';
-                trendBadge.innerHTML = `<i class="fa-solid fa-minus mr-1"></i>0.0%`;
-                if (legendLine) legendLine.className = 'w-5 h-1.5 rounded-full bg-neoGreen border border-black inline-block';
-                if (trendStatus) {
-                    trendStatus.className = 'text-[11px] font-extrabold text-black';
-                    trendStatus.innerText = 'Tren Stabil (Sideways)';
-                }
+                badge.className = 'text-[10px] font-black px-1.5 py-0.5 rounded border-2 border-black bg-neoGreen text-black';
+                badge.innerHTML = `<i class="fa-solid fa-caret-up mr-0.5"></i>+${pct}%`;
             }
+        }
 
-            const canvas = document.getElementById('forexChart');
+        // Custom Candlestick Renderer ala TradingView Light Neo-Brutalist
+        function drawCandlestickChart() {
+            const canvas = document.getElementById('tradingCanvas');
+            if (!canvas) return;
+
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+
+            canvas.width = Math.round(rect.width * dpr);
+            canvas.height = Math.round(rect.height * dpr);
+
             const ctx = canvas.getContext('2d');
-            const gradient = ctx.createLinearGradient(0, 0, 0, 320);
-            gradient.addColorStop(0, fillTopColor);
-            gradient.addColorStop(1, fillBottomColor);
+            ctx.scale(dpr, dpr);
 
-            if (forexChartInstance) {
-                forexChartInstance.data.labels = labels;
-                forexChartInstance.data.datasets[0].data = lunasData;
-                forexChartInstance.data.datasets[0].borderColor = lineColor;
-                forexChartInstance.data.datasets[0].backgroundColor = gradient;
-                forexChartInstance.data.datasets[0].pointBackgroundColor = lineColor;
-                forexChartInstance.data.datasets[1].data = totalData;
-                forexChartInstance._seriesDetail = safeSeries;
-                forexChartInstance.update('none');
+            const W = rect.width;
+            const H = rect.height;
+            const padLeft = 14;
+            const padRight = 54;
+            const padTop = 22;
+            const padBottom = 34;
+            const plotW = W - padLeft - padRight;
+            const plotH = H - padTop - padBottom;
+
+            // 1. Background Kertas Terang
+            ctx.fillStyle = '#FFFDF7';
+            ctx.fillRect(0, 0, W, H);
+
+            const series = cachedTradingSeries[activeTradingRange] || [];
+            if (series.length === 0) {
+                ctx.fillStyle = '#000000';
+                ctx.font = '800 13px "JetBrains Mono", monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('Memuat grafik transaksi...', W / 2, H / 2);
                 return;
             }
 
-            forexChartInstance = new Chart(ctx, {
-                type: 'line',
-                plugins: [forexCrosshairPlugin],
-                data: {
-                    labels,
-                    datasets: [
-                        {
-                            label: 'Transaksi Lunas',
-                            data: lunasData,
-                            borderColor: lineColor,
-                            backgroundColor: gradient,
-                            borderWidth: 3.5,
-                            fill: true,
-                            tension: 0.35,
-                            pointRadius: 3.5,
-                            pointHoverRadius: 6,
-                            pointBackgroundColor: lineColor,
-                            pointBorderColor: '#000000',
-                            pointBorderWidth: 2
-                        },
-                        {
-                            label: 'Pesanan Masuk',
-                            data: totalData,
-                            borderColor: 'rgba(0, 0, 0, 0.55)',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            borderDash: [5, 5],
-                            fill: false,
-                            tension: 0.35,
-                            pointRadius: 0,
-                            pointHoverRadius: 4,
-                            pointBackgroundColor: '#FFDE59',
-                            pointBorderColor: '#000000',
-                            pointBorderWidth: 2
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#FFFFFF',
-                            titleColor: '#000000',
-                            bodyColor: '#000000',
-                            borderColor: '#000000',
-                            borderWidth: 3,
-                            cornerRadius: 10,
-                            padding: 12,
-                            titleFont: { family: 'Space Grotesk', size: 13, weight: '900' },
-                            bodyFont: { family: 'JetBrains Mono', size: 11, weight: '700' },
-                            callbacks: {
-                                title: function(items) {
-                                    if (!items.length) return '';
-                                    return `Waktu: ${items[0].label}`;
-                                },
-                                afterBody: function(items) {
-                                    if (!items.length) return [];
-                                    const idx = items[0].dataIndex;
-                                    const detail = (forexChartInstance._seriesDetail || [])[idx];
-                                    if (!detail) return [];
-                                    return [`Omzet: Rp ${Number(detail.omzet || 0).toLocaleString('id-ID')}`];
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.08)',
-                                borderColor: '#000000',
-                                borderWidth: 2
-                            },
-                            ticks: {
-                                color: '#000000',
-                                maxTicksLimit: 8,
-                                font: { family: 'JetBrains Mono', size: 10, weight: '800' }
-                            }
-                        },
-                        y: {
-                            position: 'right',
-                            beginAtZero: true,
-                            suggestedMax: 3,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.08)',
-                                borderColor: '#000000',
-                                borderWidth: 2
-                            },
-                            ticks: {
-                                color: '#000000',
-                                precision: 0,
-                                font: { family: 'JetBrains Mono', size: 11, weight: '800' }
-                            }
-                        }
-                    }
+            // 2. Hitung Skala Y Dinamis
+            const allHighs = series.map(d => Number(d.h || 0));
+            const allLows = series.map(d => Number(d.l || 0));
+            const rawMax = Math.max(...allHighs, 2);
+            const rawMin = Math.min(...allLows, 0);
+            const yMax = Math.ceil(rawMax * 1.15);
+            const yMin = Math.max(0, Math.floor(rawMin));
+            const ySpan = Math.max(1, yMax - yMin);
+
+            const toY = (val) => padTop + plotH - ((val - yMin) / ySpan) * plotH;
+
+            // 3. Grid Vertikal & Horizontal ala Trading Terminal
+            const stepW = plotW / series.length;
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.08)';
+
+            // Garis horizontal & Label Sumbu Y Kanan
+            const ySteps = Math.min(5, ySpan);
+            ctx.font = '800 10px "JetBrains Mono", monospace';
+            ctx.textAlign = 'left';
+
+            for (let i = 0; i <= ySteps; i++) {
+                const val = Math.round(yMin + (ySpan * i) / ySteps);
+                const y = Math.round(toY(val)) + 0.5;
+
+                ctx.beginPath();
+                ctx.moveTo(padLeft, y);
+                ctx.lineTo(W - padRight, y);
+                ctx.stroke();
+
+                ctx.fillStyle = '#111827';
+                ctx.fillText(String(val), W - padRight + 8, y + 3.5);
+            }
+
+            // Garis vertikal & Label Tanggal Sumbu X
+            const labelEvery = series.length <= 8 ? 1 : (series.length <= 24 ? 4 : 5);
+            ctx.textAlign = 'center';
+
+            series.forEach((d, idx) => {
+                const cx = Math.round(padLeft + idx * stepW + stepW / 2) + 0.5;
+                if (idx % labelEvery === 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(cx, padTop);
+                    ctx.lineTo(cx, H - padBottom);
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#111827';
+                    ctx.fillText(d.label, cx, H - 12);
                 }
             });
 
-            forexChartInstance._seriesDetail = safeSeries;
+            // Border Area Chart Hitam Tegas
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(padLeft, padTop, plotW, plotH);
+
+            // 4. Gambar Setiap Candlestick (Wick + Body Hijau/Merah)
+            const candleW = Math.max(5, Math.min(24, stepW * 0.62));
+
+            series.forEach((d, idx) => {
+                const cx = padLeft + idx * stepW + stepW / 2;
+                const open = Number(d.o || 0);
+                const close = Number(d.c || 0);
+                const high = Number(d.h || 0);
+                const low = Number(d.l || 0);
+
+                const isBull = close >= open;
+                const color = isBull ? '#00B853' : '#FF3B30';
+
+                const yHigh = toY(high);
+                const yLow = toY(low);
+                const yOpen = toY(open);
+                const yClose = toY(close);
+
+                // Upper & Lower Wick (Sumbu Lilin)
+                ctx.save();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = Math.max(1.8, Math.min(2.5, candleW * 0.16));
+                ctx.beginPath();
+                ctx.moveTo(cx, yHigh);
+                ctx.lineTo(cx, yLow);
+                ctx.stroke();
+
+                // Body Lilin
+                const topBody = Math.min(yOpen, yClose);
+                const bodyH = Math.max(3, Math.abs(yClose - yOpen));
+                const leftBody = cx - candleW / 2;
+
+                ctx.fillStyle = color;
+                ctx.fillRect(leftBody, topBody, candleW, bodyH);
+
+                // Outline tipis agar tajam ala Neo-Brutalist
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 1.2;
+                ctx.strokeRect(leftBody, topBody, candleW, bodyH);
+                ctx.restore();
+            });
+
+            // 5. Garis Horizontal Harga/Close Terkini (Dashed Line + Badge Sumbu Y)
+            const lastCandle = series[series.length - 1];
+            const lastClose = Number(lastCandle.c || 0);
+            const lastBull = lastClose >= Number(lastCandle.o || 0);
+            const liveColor = lastBull ? '#00B853' : '#FF3B30';
+            const yLive = Math.round(toY(lastClose)) + 0.5;
+
+            ctx.save();
+            ctx.setLineDash([4, 4]);
+            ctx.strokeStyle = liveColor;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(padLeft, yLive);
+            ctx.lineTo(W - padRight, yLive);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Badge Nilai Terkini di Sumbu Kanan
+            const badgeW = padRight - 6;
+            const badgeH = 18;
+            ctx.fillStyle = liveColor;
+            ctx.fillRect(W - padRight + 3, yLive - badgeH / 2, badgeW, badgeH);
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(W - padRight + 3, yLive - badgeH / 2, badgeW, badgeH);
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '800 10px "JetBrains Mono", monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(String(lastClose), W - padRight + 3 + badgeW / 2, yLive + 3.5);
+            ctx.restore();
+
+            // 6. Crosshair & Info Detail Saat Hover / Sentuh
+            if (hoverCandleIndex >= 0 && hoverCandleIndex < series.length) {
+                const target = series[hoverCandleIndex];
+                const hx = Math.round(padLeft + hoverCandleIndex * stepW + stepW / 2) + 0.5;
+                const hy = Math.round(toY(Number(target.c || 0))) + 0.5;
+
+                ctx.save();
+                ctx.setLineDash([3, 3]);
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 1.2;
+
+                // Garis vertikal crosshair
+                ctx.beginPath();
+                ctx.moveTo(hx, padTop);
+                ctx.lineTo(hx, H - padBottom);
+                ctx.stroke();
+
+                // Garis horizontal crosshair
+                ctx.beginPath();
+                ctx.moveTo(padLeft, hy);
+                ctx.lineTo(W - padRight, hy);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Label Tanggal di Bawah Crosshair
+                const lblW = 54;
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(hx - lblW / 2, H - padBottom + 4, lblW, 18);
+                ctx.fillStyle = '#FFDE59';
+                ctx.font = '800 10px "JetBrains Mono", monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(target.label, hx, H - padBottom + 16);
+                ctx.restore();
+
+                const hoverInfo = document.getElementById('candleHoverInfo');
+                if (hoverInfo) {
+                    hoverInfo.innerText = `${target.label} • O:${target.o} H:${target.h} L:${target.l} C:${target.c} (Rp ${Number(target.omzet || 0).toLocaleString('id-ID')})`;
+                }
+            }
+        }
+
+        function initTradingCanvasEvents() {
+            const canvas = document.getElementById('tradingCanvas');
+            if (!canvas) return;
+
+            const handleMove = (clientX) => {
+                const rect = canvas.getBoundingClientRect();
+                const padLeft = 14;
+                const padRight = 54;
+                const plotW = rect.width - padLeft - padRight;
+                const series = cachedTradingSeries[activeTradingRange] || [];
+                if (!series.length || plotW <= 0) return;
+
+                const relX = clientX - rect.left - padLeft;
+                const idx = Math.floor((relX / plotW) * series.length);
+                if (idx >= 0 && idx < series.length) {
+                    if (hoverCandleIndex !== idx) {
+                        hoverCandleIndex = idx;
+                        drawCandlestickChart();
+                    }
+                }
+            };
+
+            canvas.addEventListener('mousemove', (e) => handleMove(e.clientX));
+            canvas.addEventListener('touchmove', (e) => {
+                if (e.touches && e.touches[0]) handleMove(e.touches[0].clientX);
+            }, { passive: true });
+
+            canvas.addEventListener('mouseleave', () => {
+                hoverCandleIndex = -1;
+                const hoverInfo = document.getElementById('candleHoverInfo');
+                if (hoverInfo) hoverInfo.innerText = 'Sentuh grafik untuk detail candle';
+                drawCandlestickChart();
+            });
+
+            window.addEventListener('resize', () => drawCandlestickChart());
         }
 
         function getCustomerBadge(name, avatarUrl) {
@@ -1000,9 +1066,10 @@
                 animateCounter('statTrxToday', data.trxToday || 0);
                 animateCounter('statTrxYesterday', data.trxYesterday || 0);
 
-                if (data.forexSeries) {
-                    cachedForexSeries = data.forexSeries;
-                    renderForexChart(cachedForexSeries[activeForexRange] || []);
+                if (data.tradingSeries) {
+                    cachedTradingSeries = data.tradingSeries;
+                    updateTradingHeader(cachedTradingSeries[activeTradingRange] || []);
+                    drawCandlestickChart();
                 }
 
                 renderTransactionRows(data.recentTrx || []);
@@ -1023,6 +1090,7 @@
             }
         }
 
+        initTradingCanvasEvents();
         loadUserStatus();
         refreshRealtimeStats();
 
