@@ -3423,24 +3423,29 @@ app.get('/api/user-status', async (req, res) => {
 
 app.get('/api/dashboard-stats', async (req, res) => {
     try {
-        const startOfToday = new Date();
+        const now = new Date();
+        const startOfToday = new Date(now);
         startOfToday.setHours(0, 0, 0, 0);
 
         const startOfYesterday = new Date(startOfToday);
         startOfYesterday.setDate(startOfYesterday.getDate() - 1);
 
-        const fourteenDaysAgo = new Date(startOfToday);
-        fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 13);
+        const twentyFourHoursAgo = new Date(now.getTime() - 23 * 60 * 60 * 1000);
+        twentyFourHoursAgo.setMinutes(0, 0, 0);
+
+        const thirtyDaysAgo = new Date(startOfToday);
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
 
         const [
-            totalUsers, 
-            totalProducts, 
-            totalTrx, 
-            lunasTrx, 
-            trxToday, 
-            trxYesterday, 
+            totalUsers,
+            totalProducts,
+            totalTrx,
+            lunasTrx,
+            trxToday,
+            trxYesterday,
             recentTrxRaw,
-            dailyChartRaw,
+            hourlyRaw,
+            daily30Raw,
             latencyMetrics
         ] = await Promise.all([
             UserV2.countDocuments(),
@@ -3459,7 +3464,36 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 .select('orderId userEmail amount status itemDetails createdAt type paymentMethod')
                 .lean(),
             TransactionV2.aggregate([
-                { $match: { createdAt: { $gte: fourteenDaysAgo } } },
+                { $match: { createdAt: { $gte: twentyFourHoursAgo } } },
+                {
+                    $group: {
+                        _id: {
+                            $dateToString: {
+                                format: "%Y-%m-%d %H:00",
+                                date: "$createdAt",
+                                timezone: "Asia/Jakarta"
+                            }
+                        },
+                        total: { $sum: 1 },
+                        lunas: {
+                            $sum: {
+                                $cond: [{ $in: ["$status", ["settlement", "success", "paid", "settled"]] }, 1, 0]
+                            }
+                        },
+                        omzet: {
+                            $sum: {
+                                $cond: [
+                                    { $in: ["$status", ["settlement", "success", "paid", "settled"]] },
+                                    { $ifNull: ["$itemDetails.harga_setelah_voucher", "$amount"] },
+                                    0
+                                ]
+                            }
+                        }
+                    }
+                }
+            ]),
+            TransactionV2.aggregate([
+                { $match: { createdAt: { $gte: thirtyDaysAgo } } },
                 {
                     $group: {
                         _id: {
@@ -3473,11 +3507,6 @@ app.get('/api/dashboard-stats', async (req, res) => {
                         lunas: {
                             $sum: {
                                 $cond: [{ $in: ["$status", ["settlement", "success", "paid", "settled"]] }, 1, 0]
-                            }
-                        },
-                        batal: {
-                            $sum: {
-                                $cond: [{ $in: ["$status", ["cancelled", "failed", "expire", "expired", "batal"]] }, 1, 0]
                             }
                         },
                         omzet: {
@@ -3534,57 +3563,56 @@ app.get('/api/dashboard-stats', async (req, res) => {
             };
         });
 
-        // Susun data OHLC Candlestick asli dari transaksi harian (14 hari terakhir)
+        // 1. Series 1 Hari (24 jam terakhir, per jam)
+        const hourlyMap = {};
+        hourlyRaw.forEach(item => { hourlyMap[item._id] = item; });
+
+        const series1d = [];
+        for (let i = 23; i >= 0; i--) {
+            const dt = new Date(now.getTime() - i * 60 * 60 * 1000);
+            const wibStr = dt.toLocaleString('sv-SE', { timeZone: 'Asia/Jakarta' }); // "YYYY-MM-DD HH:mm:ss"
+            const hourKey = wibStr.slice(0, 13) + ':00';
+            const label = wibStr.slice(11, 16);
+            const row = hourlyMap[hourKey] || { total: 0, lunas: 0, omzet: 0 };
+
+            series1d.push({
+                label,
+                total: row.total,
+                lunas: row.lunas,
+                omzet: row.omzet
+            });
+        }
+
+        // 2. Series 30 Hari & 7 Hari (harian)
         const dailyMap = {};
-        dailyChartRaw.forEach(item => {
-            dailyMap[item._id] = item;
-        });
+        daily30Raw.forEach(item => { dailyMap[item._id] = item; });
 
-        const ohlcSeries = [];
-        let prevClose = 0;
-
-        for (let i = 13; i >= 0; i--) {
+        const series30d = [];
+        for (let i = 29; i >= 0; i--) {
             const d = new Date(startOfToday);
             d.setDate(d.getDate() - i);
-
             const yyyy = d.getFullYear();
             const mm = String(d.getMonth() + 1).padStart(2, '0');
             const dd = String(d.getDate()).padStart(2, '0');
             const dateKey = `${yyyy}-${mm}-${dd}`;
             const label = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
+            const row = dailyMap[dateKey] || { total: 0, lunas: 0, omzet: 0 };
 
-            const row = dailyMap[dateKey] || { total: 0, lunas: 0, batal: 0, omzet: 0 };
-
-            // Open = Close hari sebelumnya, Close = jumlah transaksi lunas hari ini
-            // High = total semua pesanan masuk, Low = batas terendah setelah dikurangi batal
-            const open = prevClose;
-            const close = row.lunas;
-            const high = Math.max(open, close, row.total);
-            const low = Math.max(0, Math.min(open, close, Math.max(0, row.lunas - row.batal)));
-
-            ohlcSeries.push({
-                date: dateKey,
+            series30d.push({
                 label,
-                x: d.getTime(),
-                o: open,
-                h: high,
-                l: low,
-                c: close,
                 total: row.total,
                 lunas: row.lunas,
-                batal: row.batal,
                 omzet: row.omzet
             });
-
-            prevClose = close;
         }
+
+        const series7d = series30d.slice(-7);
 
         const systemLatency = latencyMetrics.length > 0 ? Math.round(latencyMetrics[0].avgLatency) : 12;
         const totalRequests = latencyMetrics.length > 0 ? latencyMetrics[0].totalRequests : totalTrx;
 
         res.json({
             status: true,
-            serverTime: new Date().toISOString(),
             totalUsers,
             totalProducts,
             totalTrx,
@@ -3594,7 +3622,11 @@ app.get('/api/dashboard-stats', async (req, res) => {
             systemLatency: `${systemLatency} ms`,
             totalRequests,
             recentTrx,
-            ohlcSeries
+            forexSeries: {
+                '1d': series1d,
+                '7d': series7d,
+                '1m': series30d
+            }
         });
     } catch (err) {
         console.error("Gagal mengambil statistik dashboard:", err);
