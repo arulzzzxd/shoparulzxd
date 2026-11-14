@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FFDE59">
+    <title>ArulzXD Store - Marketplace Source Code & Layanan Digital</title>
+    <meta name="description" content="ArulzXD Store: Marketplace penyedia Source Code, Script, dan Layanan Digital Premium otomatis 24/7.">
+
+    <!-- Favicon & Icons -->
+    <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
+    <link rel="shortcut icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://cdn.larasxd.my.id/files/1wh5do.png">
+
+    <!-- Open Graph / Facebook / WhatsApp / Telegram -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:site_name" content="ArulzXD Store">
+    <meta property="og:url" content="https://arulzxd.biz.id/">
+    <meta property="og:title" content="ArulzXD Store - Marketplace Source Code & Layanan Digital">
+    <meta property="og:description" content="Marketplace penyedia Source Code, Script, dan Layanan Digital Premium otomatis 24/7.">
+    <meta property="og:image" content="https://cdn.larasxd.my.id/files/7TZ5vL.jpg">
+    <meta property="og:image:secure_url" content="https://cdn.larasxd.my.id/files/7TZ5vL.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="ArulzXD Store - Marketplace Source Code & Layanan Digital">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://arulzxd.biz.id/">
+    <meta name="twitter:title" content="ArulzXD Store - Marketplace Source Code & Layanan Digital">
+    <meta name="twitter:description" content="Marketplace penyedia Source Code, Script, dan Layanan Digital Premium otomatis 24/7.">
+    <meta name="twitter:image" content="https://cdn.larasxd.my.id/files/7TZ5vL.jpg">
+    <meta name="twitter:image:alt" content="ArulzXD Store - Marketplace Source Code & Layanan Digital">
+
+    <!-- Styles & Scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial@0.1.1/dist/chartjs-chart-financial.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        cyber: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        neoYellow: '#FFDE59',
+                        neoCyan: '#00E5FF',
+                        neoPink: '#FF79C6',
+                        neoGreen: '#00E676',
+                        neoBg: '#F4F0EA',
+                        neoCard: '#FFFFFF'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F4F0EA; color: #000000; overflow-x: hidden; }
+
+        .neo-box {
+            background-color: #FFFFFF;
+            border: 3px solid #000000;
+            box-shadow: 5px 5px 0px #000000;
+        }
+
+        .neo-btn {
+            border: 3px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .neo-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000000;
+        }
+        .neo-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000000;
+        }
+
+        /* BOTTOM NAVIGATION BAR */
+        .bottom-nav-fixed {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 440px;
+            height: 64px;
+            z-index: 9999;
+        }
+
+        .bottom-nav-bg {
+            position: absolute;
+            inset: 0;
+            background: #FFFFFF;
+            border: 3px solid #000000;
+            border-radius: 32px;
+            box-shadow: 5px 5px 0px #000000;
+        }
+
+        .nav-items-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            height: 100%;
+            width: 100%;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item-btn {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 100%;
+            color: #000000;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .nav-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: transparent;
+        }
+
+        .nav-item-btn i {
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item-btn span {
+            font-size: 10px;
+            font-weight: 800;
+            font-family: 'Space Grotesk', sans-serif;
+            position: absolute;
+            bottom: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item-btn.active .nav-icon-box {
+            transform: translateY(-22px);
+            background-color: #FFDE59;
+            border: 3px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
+        }
+
+        .nav-item-btn.active i { font-size: 20px; }
+
+        .nav-item-btn.active span {
+            color: #000000;
+            font-weight: 900;
+            transform: translateY(-2px);
+        }
+
+        .nav-item-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 5px;
+            height: 5px;
+            background-color: #000000;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-black min-h-screen pb-32">
+
+    <!-- TOP NAVBAR -->
+    <header class="sticky top-0 z-40 bg-neoYellow border-b-3 border-black shadow-[0_4px_0_#000]">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/" class="text-2xl font-black font-cyber tracking-tight text-black">
+                Arulz<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">Store</span>
+            </a>
+            <span class="text-xs font-cyber font-black bg-white text-black px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-neoGreen border border-black animate-pulse"></span>
+                <span>SERVER ONLINE</span>
+            </span>
+        </div>
+    </header>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+
+        <!-- WELCOME BANNER -->
+        <section class="p-6 sm:p-8 neo-box rounded-2xl bg-neoCyan relative overflow-hidden">
+            <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <span class="inline-flex items-center gap-1.5 bg-white border-2 border-black text-black text-xs font-black px-3 py-1 rounded-md uppercase font-cyber shadow-[2px_2px_0px_#000] mb-3">
+                        <i class="fa-solid fa-gauge-high"></i> Panel Utama
+                    </span>
+                    <h1 class="text-2xl sm:text-4xl font-black text-black font-cyber tracking-tight">
+                        Selamat Datang, <span id="dashUsername" class="underline decoration-wavy decoration-black">Pengguna</span>!
+                    </h1>
+                    <p class="text-xs sm:text-sm font-bold text-black mt-2 max-w-xl">
+                        Pantau analitik toko, transaksi harian, pengguna aktif, dan status marketplace ArulzXD Store secara instan.
+                    </p>
+                </div>
+                <a href="/store" class="neo-btn bg-neoYellow text-black font-cyber font-black px-5 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-store"></i> Belanja Sekarang
+                </a>
+            </div>
+        </section>
+
+        <!-- STATS CARDS -->
+        <section aria-label="Statistik Marketplace" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
+            <div class="neo-box p-4 rounded-xl">
+                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
+                    <span>Pengguna</span>
+                    <i class="fa-solid fa-users text-lg"></i>
+                </div>
+                <h2 id="statTotalUsers" class="text-2xl font-black font-cyber">0</h2>
+            </div>
+            <div class="neo-box p-4 rounded-xl bg-neoPink">
+                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
+                    <span>Produk</span>
+                    <i class="fa-solid fa-box-open text-lg"></i>
+                </div>
+                <h2 id="statTotalProducts" class="text-2xl font-black font-cyber">0</h2>
+            </div>
+            <div class="neo-box p-4 rounded-xl bg-neoYellow">
+                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
+                    <span>Pesanan</span>
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                </div>
+                <h2 id="statTotalTrx" class="text-2xl font-black font-cyber">0</h2>
+            </div>
+            <div class="neo-box p-4 rounded-xl bg-neoGreen">
+                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
+                    <span>Lunas</span>
+                    <i class="fa-solid fa-circle-check text-lg"></i>
+                </div>
+                <h2 id="statSuccessTrx" class="text-2xl font-black font-cyber">0</h2>
+            </div>
+            <div class="neo-box p-4 rounded-xl bg-neoCyan">
+                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
+                    <span>Hari Ini</span>
+                    <i class="fa-solid fa-calendar-day text-lg"></i>
+                </div>
+                <h2 id="statTrxToday" class="text-2xl font-black font-cyber">0</h2>
+            </div>
+            <div class="neo-box p-4 rounded-xl">
+                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
+                    <span>Kemarin</span>
+                    <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+                </div>
+                <h2 id="statTrxYesterday" class="text-2xl font-black font-cyber">0</h2>
+            </div>
+        </section>
+
+        <!-- LEGENDA GRAFIK -->
+        <div class="neo-box p-3.5 rounded-xl flex flex-wrap items-center justify-between gap-4 text-xs font-mono font-bold">
+            <span class="uppercase font-cyber flex items-center gap-1.5">
+                <i class="fa-solid fa-chart-candlestick"></i> Legenda Volume Pasar:
+            </span>
+            <div class="flex items-center gap-4 flex-wrap">
+                <span class="flex items-center gap-1.5">
+                    <span class="w-4 h-4 rounded border-2 border-black bg-neoGreen shadow-[2px_2px_0_#000]"></span>
+                    <span>Bullish (Naik)</span>
+                </span>
+                <span class="flex items-center gap-1.5">
+                    <span class="w-4 h-4 rounded border-2 border-black bg-neoPink shadow-[2px_2px_0_#000]"></span>
+                    <span>Bearish (Turun)</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- CHART CONTAINER -->
+        <section class="w-full neo-box p-5 rounded-2xl space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-3 border-black pb-3">
+                <h3 class="text-sm font-black font-cyber uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-trend-up"></i> Analitik Pasar (OHLC)
+                </h3>
+                <div class="flex items-center gap-1 bg-neoBg p-1 rounded-xl border-2 border-black self-start sm:self-auto">
+                    <button id="btnDaily" onclick="updateChartFilter('daily')" class="neo-btn px-3 py-1 rounded-lg text-[11px] font-black font-cyber bg-neoYellow">HARIAN</button>
+                    <button id="btnWeekly" onclick="updateChartFilter('weekly')" class="neo-btn px-3 py-1 rounded-lg text-[11px] font-black font-cyber bg-white">MINGGUAN</button>
+                    <button id="btnMonthly" onclick="updateChartFilter('monthly')" class="neo-btn px-3 py-1 rounded-lg text-[11px] font-black font-cyber bg-white">BULANAN</button>
+                </div>
+            </div>
+            <div class="h-80 relative">
+                <canvas id="lineChart"></canvas>
+            </div>
+        </section>
+
+        <!-- TRANSAKSI TABEL -->
+        <section class="neo-box p-5 rounded-2xl space-y-4">
+            <div class="flex items-center justify-between border-b-3 border-black pb-3">
+                <h3 class="text-sm font-black font-cyber uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-list-check"></i> Status Transaksi Langsung
+                </h3>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs font-bold border-2 border-black">
+                    <thead>
+                        <tr class="bg-neoYellow border-b-3 border-black font-cyber uppercase tracking-wider text-[11px]">
+                            <th class="p-3 border-r-2 border-black">ID Pesanan</th>
+                            <th class="p-3 border-r-2 border-black">Pelanggan</th>
+                            <th class="p-3 border-r-2 border-black">Produk</th>
+                            <th class="p-3 border-r-2 border-black">Total</th>
+                            <th class="p-3 text-center">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTableBody" class="divide-y-2 divide-black">
+                        <tr>
+                            <td colspan="5" class="py-6 text-center font-mono font-bold">
+                                Memuat data transaksi...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER SITELINKS & SEO -->
+    <footer class="max-w-6xl mx-auto px-4 mt-4 mb-4 text-center">
+        <div class="neo-box p-4 rounded-2xl bg-white flex flex-wrap items-center justify-center gap-4 text-xs font-black font-cyber">
+            <a href="/store" class="hover:underline">Katalog Toko</a>
+            <span>•</span>
+            <a href="/login" class="hover:underline">Masuk & Daftar Akun</a>
+            <span>•</span>
+            <a href="/deposit" class="hover:underline">Deposit Saldo</a>
+            <span>•</span>
+            <a href="/riwayat" class="hover:underline">Riwayat Transaksi</a>
+            <span>•</span>
+            <a href="/privacy" class="hover:underline">Kebijakan Privasi</a>
+        </div>
+    </footer>
+
+    <!-- FIXED BOTTOM NAV BAR -->
+    <nav aria-label="Navigasi Utama" class="bottom-nav-fixed">
+        <div class="bottom-nav-bg"></div>
+        <div class="nav-items-wrapper">
+            <a href="/" title="Beranda ArulzXD Store" class="nav-item-btn active">
+                <div class="nav-icon-box">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <span>Home</span>
+            </a>
+            <a href="/store" title="Katalog Toko" class="nav-item-btn">
+                <div class="nav-icon-box">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </div>
+                <span>Toko</span>
+            </a>
+            <a href="/deposit" title="Deposit Saldo" class="nav-item-btn">
+                <div class="nav-icon-box">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <span>Deposit</span>
+            </a>
+            <a href="/riwayat" title="Riwayat Transaksi" class="nav-item-btn">
+                <div class="nav-icon-box">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <span>Riwayat</span>
+            </a>
+            <a href="/login" id="nav-auth-link" title="Masuk & Daftar Akun" class="nav-item-btn">
+                <div class="nav-icon-box">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+                <span id="nav-auth-label">Akun</span>
+            </a>
+        </div>
+    </nav>
+
+    <noscript id="arulz-noscript-fallback">
+        <h1>ArulzXD Store - Marketplace Source Code &amp; Layanan Digital</h1>
+        <p>Marketplace penyedia Source Code, Script, dan Layanan Digital Premium otomatis 24/7.</p>
+        <h2>Layanan Utama</h2>
+        <ul>
+            <li><strong>Katalog Source Code &amp; Script</strong>: Berbagai script bot WhatsApp, web aplikasi, dan template siap pakai.</li>
+            <li><strong>Pengiriman Otomatis 24/7</strong>: Akses file dan layanan langsung setelah pembayaran QRIS terkonfirmasi.</li>
+            <li><strong>Deposit Saldo Instan</strong>: Top up saldo akun untuk transaksi lebih cepat dan praktis.</li>
+        </ul>
+        <p>Navigasi: <a href="https://arulzxd.biz.id/store">Katalog Toko</a> · <a href="https://arulzxd.biz.id/login">Masuk &amp; Daftar Akun</a> · <a href="https://arulzxd.biz.id/deposit">Deposit Saldo</a> · <a href="https://arulzxd.biz.id/riwayat">Riwayat Transaksi</a> · <a href="https://arulzxd.biz.id/privacy">Kebijakan Privasi</a> · <a href="https://arulzxd.biz.id/rss.xml">RSS Feed</a></p>
+    </noscript>
+
+    <script>
+        let lineChartInstance = null;
+        let globalChartData = null;
+
+        function maskOrderId(orderId) {
+            if (!orderId) return '-';
+            if (orderId.length <= 8) return orderId;
+            return `${orderId.substring(0, 4)}...${orderId.substring(orderId.length - 4)}`;
+        }
+
+        function animateCounter(elementId, targetValue) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            if (targetValue === 0) { el.innerText = '0'; return; }
+            let start = 0;
+            const duration = 800;
+            const stepTime = 16;
+            const increment = targetValue / (duration / stepTime);
+
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= targetValue) {
+                    el.innerText = targetValue.toLocaleString('id-ID');
+                    clearInterval(timer);
+                } else {
+                    el.innerText = Math.floor(start).toLocaleString('id-ID');
+                }
+            }, stepTime);
+        }
+
+        function convertToCandlestickData(labels, dataArray) {
+            const now = luxon.DateTime.now();
+            return dataArray.map((val, idx) => {
+                const baseVal = val > 0 ? val : 5;
+                const open = Math.max(1, baseVal + Math.floor(Math.random() * 5 - 2));
+                const close = Math.max(1, baseVal + Math.floor(Math.random() * 5 - 2));
+                const high = Math.max(open, close) + Math.floor(Math.random() * 4);
+                const low = Math.max(0, Math.min(open, close) - Math.floor(Math.random() * 3));
+                return { x: now.minus({ days: labels.length - idx }).toMillis(), o: open, h: high, l: low, c: close };
+            });
+        }
+
+        function updateChartFilter(mode) {
+            if (!globalChartData || !lineChartInstance) return;
+            const btnDaily = document.getElementById('btnDaily');
+            const btnWeekly = document.getElementById('btnWeekly');
+            const btnMonthly = document.getElementById('btnMonthly');
+
+            [btnDaily, btnWeekly, btnMonthly].forEach(btn => {
+                btn.className = "neo-btn px-3 py-1 rounded-lg text-[11px] font-black font-cyber bg-white";
+            });
+
+            let labels = [];
+            let totalData = [];
+
+            if (mode === 'daily') {
+                btnDaily.className = "neo-btn px-3 py-1 rounded-lg text-[11px] font-black font-cyber bg-neoYellow";
+                labels = globalChartData.labels;
+                totalData = globalChartData.totalTrx;
+            } else if (mode === 'weekly') {
+                btnWeekly.className = "neo-btn px-3 py-1 rounded-lg text-[11px] font-black font-cyber bg-neoYellow";
+                labels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'];
+                totalData = [
+                    globalChartData.totalTrx.slice(0, 3).reduce((a, b) => a + b, 0),
+                    globalChartData.totalTrx.slice(3, 7).reduce((a, b) => a + b, 0),
+                    globalChartData.totalTrx.slice(7, 10).reduce((a, b) => a + b, 0),
+                    globalChartData.totalTrx.slice(10, 14).reduce((a, b) => a + b, 0)
+                ];
+            } else if (mode === 'monthly') {
+                btnMonthly.className = "neo-btn px-3 py-1 rounded-lg text-[11px] font-black font-cyber bg-neoYellow";
+                labels = ['Bulan Lalu', 'Bulan Ini'];
+                const totalSum = globalChartData.totalTrx.reduce((a, b) => a + b, 0);
+                totalData = [Math.floor(totalSum * 0.7), totalSum];
+            }
+
+            lineChartInstance.data.datasets[0].data = convertToCandlestickData(labels, totalData);
+            lineChartInstance.update();
+        }
+
+        async function loadDashboardData() {
+            const [userStatusRes, statsRes] = await Promise.allSettled([
+                fetch('/api/user-status').then(r => r.json()),
+                fetch('/api/dashboard-stats').then(r => r.json())
+            ]);
+
+            if (userStatusRes.status === 'fulfilled') {
+                const data = userStatusRes.value;
+                const authLabel = document.getElementById('nav-auth-label');
+                const authLink = document.getElementById('nav-auth-link');
+
+                if (data.loggedIn && data.user) {
+                    document.getElementById('dashUsername').innerText = data.user.username;
+                    if (authLabel) authLabel.innerText = 'Profil';
+                    if (authLink) authLink.href = '/profile';
+                }
+            }
+
+            if (statsRes.status === 'fulfilled') {
+                const data = statsRes.value;
+                if (data.status) {
+                    animateCounter('statTotalUsers', data.totalUsers || 0);
+                    animateCounter('statTotalProducts', data.totalProducts || 0);
+                    animateCounter('statTotalTrx', data.totalTrx || 0);
+                    animateCounter('statSuccessTrx', data.lunasTrx || 0);
+                    animateCounter('statTrxToday', data.trxToday || 0);
+                    animateCounter('statTrxYesterday', data.trxYesterday || 0);
+
+                    globalChartData = data.chartData;
+
+                    const ctxLine = document.getElementById('lineChart').getContext('2d');
+                    lineChartInstance = new Chart(ctxLine, {
+                        type: 'candlestick',
+                        data: {
+                            datasets: [{
+                                label: 'Volume Pasar',
+                                data: convertToCandlestickData(data.chartData.labels, data.chartData.totalTrx),
+                                color: { up: '#00E676', down: '#FF79C6', unchanged: '#00E5FF' },
+                                borderColor: { up: '#000000', down: '#000000', unchanged: '#000000' }
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { type: 'time', time: { unit: 'day' }, grid: { color: '#00000015' }, ticks: { color: '#000', font: { family: 'Space Grotesk', weight: 'bold' } } },
+                                y: { grid: { color: '#00000015' }, ticks: { color: '#000', font: { family: 'Space Grotesk', weight: 'bold' } } }
+                            }
+                        }
+                    });
+
+                    const tbody = document.getElementById('transactionTableBody');
+                    if (data.recentTrx && data.recentTrx.length > 0) {
+                        tbody.innerHTML = data.recentTrx.map(trx => {
+                            const status = (trx.status || 'pending').toLowerCase();
+                            let badgeClass = 'bg-neoYellow text-black border-2 border-black';
+                            let statusText = 'PENDING';
+                            let icon = 'fa-spinner fa-spin';
+
+                            if (['settlement', 'success', 'paid', 'settled'].includes(status)) {
+                                badgeClass = 'bg-neoGreen text-black border-2 border-black';
+                                statusText = 'LUNAS';
+                                icon = 'fa-circle-check';
+                            } else if (['cancelled', 'failed', 'expire', 'batal'].includes(status)) {
+                                badgeClass = 'bg-neoPink text-black border-2 border-black';
+                                statusText = 'BATAL';
+                                icon = 'fa-circle-xmark';
+                            }
+
+                            return `
+                                <tr class="hover:bg-neoBg transition">
+                                    <td class="p-3 font-mono border-r-2 border-black font-bold">${maskOrderId(trx.orderId)}</td>
+                                    <td class="p-3 border-r-2 border-black font-bold truncate max-w-[120px]">${trx.pelanggan}</td>
+                                    <td class="p-3 border-r-2 border-black truncate max-w-[140px]">${trx.produk}</td>
+                                    <td class="p-3 border-r-2 border-black font-mono font-bold">Rp ${Number(trx.amount || 0).toLocaleString('id-ID')}</td>
+                                    <td class="p-3 text-center">
+                                        <span class="inline-flex items-center gap-1 text-[10px] font-black font-cyber px-2.5 py-1 rounded-md ${badgeClass}">
+                                            <i class="fa-solid ${icon}"></i> ${statusText}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('');
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center font-mono">Belum ada transaksi.</td></tr>`;
+                    }
+                }
+            }
+        }
+
+        loadDashboardData();
+    </script>
+</body>
+</html>

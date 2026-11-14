@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Live Chat - ArulzXD Store</title>
+    <!-- Perbaikan Favicon & Apple Touch Icon -->
+    <link rel="icon" type="image/jpeg" sizes="32x32" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
+    <link rel="icon" type="image/jpeg" sizes="16x16" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
+    <link rel="shortcut icon" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
+    <link rel="apple-touch-icon" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        cyber: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        neoYellow: '#FFDE59',
+                        neoCyan: '#00E5FF',
+                        neoPink: '#FF79C6',
+                        neoGreen: '#00E676',
+                        neoBg: '#F4F0EA',
+                        neoCard: '#FFFFFF'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F4F0EA; color: #000000; overflow-x: hidden; }
+        
+        .neo-box {
+            background-color: #FFFFFF;
+            border: 3.5px solid #000000;
+            box-shadow: 5px 5px 0px #000000;
+        }
+
+        .neo-btn {
+            border: 3px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .neo-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000000;
+        }
+        .neo-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000000;
+        }
+
+        /* CAROUSEL HORIZONTAL SCROLL HIDE SCROLLBAR */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .user-pill {
+            border: 3px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
+            transition: all 0.2s ease;
+        }
+        .user-pill.active {
+            background-color: #FFDE59 !important;
+            transform: translate(-1px, -1px);
+            box-shadow: 4.5px 4.5px 0px #000000;
+        }
+
+        .swal2-popup.cyber-swal {
+            background: #FFFFFF !important;
+            border: 3.5px solid #000000 !important;
+            border-radius: 20px !important;
+            color: #000000 !important;
+            box-shadow: 6px 6px 0px #000000 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
+
+        /* FLUID CURVED NOTCH BOTTOM NAVIGATION BAR */
+        .bottom-nav-fixed {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 440px;
+            height: 64px;
+            z-index: 9999;
+        }
+
+        .bottom-nav-bg {
+            position: absolute;
+            inset: 0;
+            background: #FFFFFF;
+            border: 3.5px solid #000000;
+            border-radius: 32px;
+            box-shadow: 5px 5px 0px #000000;
+        }
+
+        .nav-items-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            height: 100%;
+            width: 100%;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item-btn {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 100%;
+            color: #000000;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .nav-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: transparent;
+        }
+
+        .nav-item-btn i { font-size: 18px; transition: all 0.3s ease; }
+        .nav-item-btn span {
+            font-size: 10px;
+            font-weight: 800;
+            font-family: 'Space Grotesk', sans-serif;
+            position: absolute;
+            bottom: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item-btn.active .nav-icon-box {
+            transform: translateY(-22px);
+            background-color: #FFDE59;
+            border: 3.5px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
+        }
+
+        .nav-item-btn.active i { font-size: 20px; }
+        .nav-item-btn.active span {
+            color: #000000;
+            font-weight: 900;
+            transform: translateY(-2px);
+        }
+
+        .nav-item-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 5px;
+            height: 5px;
+            background-color: #000000;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-black min-h-screen pb-32">
+
+    <!-- TOP NAVBAR -->
+    <nav class="sticky top-0 z-40 bg-neoYellow border-b-3 border-black shadow-[0_4px_0_#000]">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/dashboard" class="text-2xl font-black font-cyber tracking-tight text-black flex items-center gap-2">
+                <i class="fa-solid fa-user-shield text-black text-xl"></i>
+                <span>Admin<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">Console</span></span>
+            </a>
+            <span class="text-xs font-cyber font-black bg-neoGreen text-black px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] flex items-center gap-1.5 uppercase">
+                <i class="fa-solid fa-lock"></i> CS Manager
+            </span>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 space-y-5">
+
+        <!-- HEADER BANNER -->
+        <div class="p-5 neo-box rounded-2xl bg-neoPink flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1 class="text-xl sm:text-2xl font-black font-cyber text-black flex items-center gap-2">
+                    <i class="fa-solid fa-headset"></i> Panel Balas Chat Pengguna
+                </h1>
+                <p class="text-xs font-bold text-black mt-1">Geser kanan/kiri pada daftar pilihan pengguna di bawah untuk membaca dan membalas pesan.</p>
+            </div>
+            
+            <button onclick="loadUserList()" class="neo-btn bg-white text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
+                <i class="fa-solid fa-rotate-right"></i> Refresh Percakapan
+            </button>
+        </div>
+
+        <!-- MAIN WINDOW CHAT WITH INTEGRATED USER SELECTOR CAROUSEL -->
+        <div class="neo-box rounded-2xl bg-white overflow-hidden flex flex-col h-[620px]">
+            
+            <!-- SELECTOR & DAFTAR PENGGUNA INTEGRATED (GESER KANAN KIRI) -->
+            <div class="bg-neoCyan p-3.5 border-b-3 border-black space-y-2">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xs font-black font-cyber uppercase tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-users"></i> Pilih Pengguna (<span id="userCountText">0</span>)
+                    </h3>
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="scrollUserCarousel('left')" class="w-7 h-7 rounded-lg bg-white border-2 border-black font-black text-xs shadow-[1.5px_1.5px_0px_#000] hover:bg-neoYellow flex items-center justify-center">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button onclick="scrollUserCarousel('right')" class="w-7 h-7 rounded-lg bg-white border-2 border-black font-black text-xs shadow-[1.5px_1.5px_0px_#000] hover:bg-neoYellow flex items-center justify-center">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CAROUSEL SCROLL CONTAINER -->
+                <div id="adminUserList" class="flex items-center gap-2.5 overflow-x-auto no-scrollbar py-1 scroll-smooth">
+                    <div class="text-xs font-mono font-bold text-slate-700 py-2">Memuat daftar pengguna...</div>
+                </div>
+            </div>
+
+            <!-- MESSAGES CONTAINER -->
+            <div id="adminChatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-neoBg scroll-smooth">
+                <div class="flex flex-col items-center justify-center h-full text-center space-y-2 text-slate-600">
+                    <i class="fa-solid fa-comments text-4xl"></i>
+                    <p class="text-xs font-bold font-cyber">Pilih salah satu pengguna di atas untuk melihat isi pesan.</p>
+                </div>
+            </div>
+
+            <!-- FORM BALAS PESAN -->
+            <form id="adminChatForm" onsubmit="sendAdminReply(event)" class="p-3 bg-white border-t-3 border-black flex items-center gap-3 opacity-50 pointer-events-none">
+                <input type="text" id="adminChatInput" required placeholder="Tuliskan balasan sebagai Admin/Owner..." 
+                       class="flex-1 bg-neoBg border-2 border-black rounded-xl px-4 py-3 text-xs text-black font-bold placeholder-slate-500 focus:outline-none shadow-[2px_2px_0px_#000]">
+                <button type="submit" class="neo-btn bg-neoYellow text-black font-cyber font-black px-5 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 shrink-0">
+                    <i class="fa-solid fa-reply"></i> <span class="hidden sm:inline">Kirim Balasan</span>
+                </button>
+            </form>
+
+        </div>
+
+    </main>
+
+    <!-- CURVED ANIMATED BOTTOM NAV BAR -->
+    <div class="bottom-nav-fixed">
+        <div class="bottom-nav-bg"></div>
+        <div class="nav-items-wrapper">
+            <a href="/dashboard" class="nav-item-btn active">
+                <div class="nav-icon-box">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <span>Home</span>
+            </a>
+            <a href="/store" class="nav-item-btn">
+                <div class="nav-icon-box">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </div>
+                <span>Toko</span>
+            </a>
+            <a href="/deposit" class="nav-item-btn">
+                <div class="nav-icon-box">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <span>Deposit</span>
+            </a>
+            <a href="/riwayat" class="nav-item-btn">
+                <div class="nav-icon-box">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <span>Riwayat</span>
+            </a>
+            <a href="/profile" class="nav-item-btn">
+                <div class="nav-icon-box">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+                <span id="nav-auth-label">Profil</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let selectedUserId = null;
+        let selectedUsername = '';
+        let selectedUserEmail = '';
+        let adminPollInterval = null;
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function scrollUserCarousel(direction) {
+            const container = document.getElementById('adminUserList');
+            const scrollAmount = 240;
+            if (direction === 'left') {
+                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        async function loadUserList() {
+            try {
+                const res = await fetch('/api/bantuan/admin/users');
+                const data = await res.json();
+                const listEl = document.getElementById('adminUserList');
+                document.getElementById('userCountText').innerText = data.users ? data.users.length : 0;
+
+                if (data.status && data.users && data.users.length > 0) {
+                    listEl.innerHTML = data.users.map(u => {
+                        const isActive = u.userId === selectedUserId;
+                        const activeClass = isActive ? 'active' : 'bg-white hover:bg-amber-50';
+                        const userEmailText = u.email || u.userId;
+                        const unreadBadge = u.unreadCount > 0 
+                            ? `<span class="bg-neoPink text-black border border-black text-[9px] font-black font-cyber px-1.5 py-0.2 rounded-full ml-1.5 animate-pulse">${u.unreadCount}</span>` 
+                            : '';
+
+                        const avatarHtml = u.avatar
+                            ? `<img src="${escapeHtml(u.avatar)}" alt="Avatar" class="w-8 h-8 rounded-full border-2 border-black object-cover shrink-0">`
+                            : `<div class="w-8 h-8 rounded-full bg-neoCyan border-2 border-black flex items-center justify-center font-black text-xs shrink-0"><i class="fa-solid fa-user"></i></div>`;
+
+                        return `
+                            <button onclick="selectUserChat('${escapeHtml(u.userId)}', '${escapeHtml(u.username)}', '${escapeHtml(userEmailText)}')" 
+                                    class="user-pill shrink-0 px-3 py-2 rounded-xl text-left flex items-center gap-2.5 cursor-pointer ${activeClass}">
+                                ${avatarHtml}
+                                <div class="whitespace-nowrap">
+                                    <div class="text-xs font-black font-cyber text-black flex items-center">
+                                        <span>${escapeHtml(u.username)}</span>
+                                        ${unreadBadge}
+                                    </div>
+                                    <div class="text-[10px] font-mono font-bold text-slate-600">${escapeHtml(userEmailText)}</div>
+                                    <div class="text-[10px] font-bold text-black/80 truncate max-w-[160px] mt-0.5 pt-0.5 border-t border-black/15">${escapeHtml(u.lastMessage || 'Tidak ada pesan')}</div>
+                                </div>
+                            </button>
+                        `;
+                    }).join('');
+                } else {
+                    listEl.innerHTML = `<div class="p-2 text-center text-xs font-mono font-bold text-slate-700">Belum ada percakapan pengguna.</div>`;
+                }
+            } catch(e) {}
+        }
+
+        async function selectUserChat(userId, username, email) {
+            selectedUserId = userId;
+            selectedUsername = username;
+            selectedUserEmail = email || userId;
+
+            const formEl = document.getElementById('adminChatForm');
+            formEl.classList.remove('opacity-50', 'pointer-events-none');
+
+            loadUserMessages();
+            loadUserList();
+
+            if (!adminPollInterval) {
+                adminPollInterval = setInterval(() => {
+                    if (selectedUserId) loadUserMessages();
+                    loadUserList();
+                }, 3000);
+            }
+        }
+
+        async function loadUserMessages() {
+            if (!selectedUserId) return;
+            try {
+                const res = await fetch(`/api/bantuan/admin/messages/${encodeURIComponent(selectedUserId)}`);
+                const data = await res.json();
+                const container = document.getElementById('adminChatMessages');
+
+                if (data.status && data.messages) {
+                    if (data.messages.length === 0) {
+                        container.innerHTML = `<div class="text-center text-xs font-mono font-bold text-slate-600 my-4">Belum ada pesan dari pengguna ini.</div>`;
+                        return;
+                    }
+
+                    container.innerHTML = data.messages.map(msg => {
+                        const isAdmin = msg.sender === 'admin' || msg.sender === 'owner';
+                        const alignClass = isAdmin ? 'justify-end' : 'justify-start';
+                        const bgClass = isAdmin 
+                            ? 'bg-neoYellow text-black font-bold rounded-br-none border-2 border-black shadow-[3px_3px_0px_#000]' 
+                            : 'bg-white text-black font-bold rounded-bl-none border-2 border-black shadow-[3px_3px_0px_#000]';
+                        
+                        const timeStr = new Date(msg.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                        const displayName = isAdmin ? 'Admin / Owner' : `${selectedUsername} (${selectedUserEmail})`;
+
+                        return `
+                            <div class="flex ${alignClass}">
+                                <div class="max-w-[85%] sm:max-w-[70%] p-3 rounded-2xl text-xs space-y-1 ${bgClass}">
+                                    <div class="flex items-center justify-between gap-3 border-b border-black/20 pb-1">
+                                        <span class="font-black font-cyber text-[10px] text-black">
+                                            ${isAdmin ? '<i class="fa-solid fa-shield-halved"></i>' : '<i class="fa-solid fa-user"></i>'} ${escapeHtml(displayName)}
+                                        </span>
+                                        <span class="text-[9px] font-mono font-bold opacity-75">${timeStr}</span>
+                                    </div>
+                                    <p class="leading-relaxed break-words pt-1">${escapeHtml(msg.message)}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    container.scrollTop = container.scrollHeight;
+                }
+            } catch(e) {}
+        }
+
+        async function sendAdminReply(e) {
+            e.preventDefault();
+            if (!selectedUserId) return;
+
+            const input = document.getElementById('adminChatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            input.value = '';
+
+            try {
+                await fetch('/api/bantuan/admin/reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: selectedUserId, message })
+                });
+                loadUserMessages();
+                loadUserList();
+            } catch(e) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'GAGAL',
+                    text: 'Gagal mengirim balasan admin.',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserList();
+            fetch('/api/user-status')
+                .then(r => r.json())
+                .then(d => {
+                    const authLabel = document.getElementById('nav-auth-label');
+                    if (d.loggedIn && d.user) {
+                        if (authLabel) authLabel.innerText = 'Profil';
+                    }
+                });
+        });
+    </script>
+</body>
+</html>

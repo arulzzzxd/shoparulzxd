@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Profil Saya - ArulzXD Store</title>
+        <!-- Open Graph / Facebook / WhatsApp / Telegram -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://arulzxd.biz.id/profile">
+    <meta property="og:title" content="Profil Saya - ArulzXD Store">
+    <meta property="og:description" content="Kelola informasi akun, cek saldo, riwayat transaksi, dan dapatkan bonus referral di ArulzXD Store.">
+    <meta property="og:image" content="https://cdn.larasxd.my.id/files/jz6nDF8g.jpg">
+    <meta property="og:image:secure_url" content="https://cdn.larasxd.my.id/files/jz6nDF8g.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://arulzxd.biz.id/profile">
+    <meta name="twitter:title" content="Profil Saya - ArulzXD Store">
+    <meta name="twitter:description" content="Kelola informasi akun, cek saldo, riwayat transaksi, dan dapatkan bonus referral di ArulzXD Store.">
+    <meta name="twitter:image" content="https://cdn.larasxd.my.id/files/jz6nDF8g.jpg">
+
+    <!-- Perbaikan Favicon & Apple Touch Icon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
+    <link rel="shortcut icon" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
+    <link rel="apple-touch-icon" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        cyber: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        neoYellow: '#FFDE59',
+                        neoCyan: '#00E5FF',
+                        neoPink: '#FF79C6',
+                        neoGreen: '#00E676',
+                        neoBg: '#F4F0EA',
+                        neoCard: '#FFFFFF'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F4F0EA; color: #000000; overflow-x: hidden; }
+        
+        .neo-box {
+            background-color: #FFFFFF;
+            border: 3px solid #000000;
+            box-shadow: 5px 5px 0px #000000;
+        }
+
+        .neo-btn {
+            border: 3px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .neo-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000000;
+        }
+        .neo-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000000;
+        }
+
+        .swal2-popup.cyber-swal {
+            background: #FFFFFF !important;
+            border: 3px solid #000000 !important;
+            border-radius: 20px !important;
+            color: #000000 !important;
+            box-shadow: 6px 6px 0px #000000 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
+
+        /* FLUID CURVED NOTCH BOTTOM NAVIGATION BAR */
+        .bottom-nav-fixed {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 440px;
+            height: 64px;
+            z-index: 9999;
+        }
+
+        .bottom-nav-bg {
+            position: absolute;
+            inset: 0;
+            background: #FFFFFF;
+            border: 3px solid #000000;
+            border-radius: 32px;
+            box-shadow: 5px 5px 0px #000000;
+        }
+
+        .nav-items-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            height: 100%;
+            width: 100%;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item-btn {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 100%;
+            color: #000000;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .nav-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: transparent;
+        }
+
+        .nav-item-btn i { font-size: 18px; transition: all 0.3s ease; }
+        .nav-item-btn span {
+            font-size: 10px;
+            font-weight: 800;
+            font-family: 'Space Grotesk', sans-serif;
+            position: absolute;
+            bottom: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item-btn.active .nav-icon-box {
+            transform: translateY(-22px);
+            background-color: #FFDE59;
+            border: 3px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
+        }
+
+        .nav-item-btn.active i { font-size: 20px; }
+        .nav-item-btn.active span {
+            color: #000000;
+            font-weight: 900;
+            transform: translateY(-2px);
+        }
+
+        .nav-item-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            width: 5px;
+            height: 5px;
+            background-color: #000000;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-black min-h-screen pb-36">
+
+<!-- FLOATING LIVE CHAT WIDGET POP-UP -->
+<div id="liveChatWidgetContainer">
+    <div id="floatingChatWindow" class="fixed bottom-20 right-4 sm:right-6 z-[99999] hidden w-[calc(100vw-2rem)] max-w-[360px] h-[420px] max-h-[calc(100vh-100px)] bg-white border-3 border-black rounded-2xl shadow-[6px_6px_0px_#000] overflow-hidden flex flex-col transition-all duration-300">
+        
+        <!-- HEADER WINDOW -->
+        <div class="bg-neoYellow p-3 border-b-3 border-black flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-2.5">
+                <div class="relative">
+                    <div class="w-8 h-8 rounded-full bg-white text-black border-2 border-black flex items-center justify-center font-bold text-xs shadow-[2px_2px_0px_#000]">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-neoGreen border border-black rounded-full"></span>
+                </div>
+                <div>
+                    <h3 class="text-xs font-black font-cyber text-black">Customer Support</h3>
+                    <p class="text-[9px] text-black font-mono font-bold flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-neoGreen animate-pulse"></span> Online 24/7
+                    </p>
+                </div>
+            </div>
+            <button onclick="toggleChatWidget()" class="text-black font-black text-base transition p-1 hover:scale-110">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- AREA CHAT MESSAGES -->
+        <div id="widgetChatMessages" class="flex-1 p-3 overflow-y-auto space-y-3 bg-neoBg scroll-smooth">
+            <div class="text-center text-[11px] text-slate-600 font-mono my-2 animate-pulse font-bold">Memuat pesan...</div>
+        </div>
+
+        <!-- FORM KIRIM PESAN -->
+        <form id="widgetChatForm" onsubmit="sendWidgetMessage(event)" class="p-2.5 bg-white border-t-3 border-black flex items-center gap-2 shrink-0">
+            <input type="text" id="widgetChatInput" required placeholder="Tuliskan pesan Anda..." 
+                   class="flex-1 bg-neoBg border-2 border-black rounded-xl px-3 py-2 text-xs text-black font-bold placeholder-slate-500 focus:outline-none">
+            <button type="submit" class="neo-btn w-9 h-9 rounded-xl bg-neoYellow text-black flex items-center justify-center shrink-0 font-black">
+                <i class="fa-solid fa-paper-plane text-xs"></i>
+            </button>
+        </form>
+
+    </div>
+</div>
+
+    <!-- TOP NAVBAR -->
+    <nav class="sticky top-0 z-40 bg-neoYellow border-b-3 border-black shadow-[0_4px_0_#000]">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/store" class="text-2xl font-black font-cyber tracking-tight text-black">
+                Arulz<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">Store</span>
+            </a>
+            <a href="/auth/logout" class="neo-btn text-xs bg-neoPink text-black font-cyber font-black px-4 py-2 rounded-xl flex items-center gap-2 uppercase tracking-wider">
+                <i class="fa-solid fa-right-from-bracket text-sm"></i> Keluar
+            </a>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-6xl mx-auto px-4 py-6 w-full space-y-6">
+
+        <!-- PROFILE CARD (FULL BANNER BACKGROUND DALAM KOTAK LAMA) -->
+        <div class="neo-box rounded-2xl p-6 bg-white text-center space-y-4 relative overflow-hidden">
+            
+            <!-- BACKGROUND BANNER (MP4 / GIF / GAMBAR / GRADIENT) -->
+            <div id="bannerBgContainer" class="absolute inset-0 w-full h-full z-0">
+                <div class="w-full h-full bg-white"></div>
+            </div>
+
+            <!-- BUTTON UBAH BANNER (POJOK KANAN ATAS KOTAK) -->
+            <button onclick="openBannerModal()" title="Ubah Banner Profil" class="neo-btn absolute top-3 right-3 bg-white text-black text-[11px] font-cyber font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-[2px_2px_0px_#000] hover:scale-105 z-20">
+                <i class="fa-solid fa-image"></i> Ubah Banner
+            </button>
+
+            <!-- ISI KONTEN PROFIL (DI ATAS BANNER) -->
+            <div class="relative z-10 space-y-4">
+                <div class="relative w-24 h-24 mx-auto">
+                    <img id="profileAvatar" src="https://arulz-xd.my.id/files/X1F0Cn.png" class="w-24 h-24 rounded-full object-cover border-3 border-black shadow-[4px_4px_0px_#000] bg-white">
+                    <label for="avatarInput" title="Ganti Avatar" class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-neoYellow border-2 border-black text-black flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#000] hover:scale-110 transition z-10">
+                        <i class="fa-solid fa-camera text-xs"></i>
+                    </label>
+                    <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="uploadAvatar(this)">
+                </div>
+
+                <div class="space-y-1">
+                    <div class="flex items-center justify-center gap-1.5">
+                        <h2 id="profileUsername" class="text-xl font-black font-cyber text-black bg-white/80 backdrop-blur-md px-3 py-0.5 rounded-xl border-2 border-black inline-block shadow-[2px_2px_0px_#000]">Loading...</h2>
+                        <button onclick="editUsernameModal()" title="Edit Username" class="text-black hover:text-slate-700 text-xs ml-1 bg-white p-1.5 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000]">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </div>
+                    <div class="pt-1">
+                        <span id="profileEmail" class="text-xs text-black font-mono font-bold bg-white/80 backdrop-blur-md px-2.5 py-0.5 rounded-lg border border-black inline-block">-</span>
+                    </div>
+                    <div class="pt-0.5">
+                        <span id="profileJoined" class="text-[11px] font-bold font-mono text-black bg-white/80 backdrop-blur-md px-2.5 py-0.5 rounded-lg border border-black inline-block">Terdaftar sejak: -</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- WIDGET SALDO TERPISAH -->
+        <div class="neo-box rounded-2xl p-6 bg-neoCyan relative overflow-hidden">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] font-black font-cyber uppercase tracking-wider block text-black">Saldo Akun Anda</span>
+                    <h3 id="profileSaldo" class="text-2xl sm:text-3xl font-black font-cyber text-black mt-0.5">Rp 0</h3>
+                </div>
+                <a href="/deposit" class="neo-btn bg-neoYellow text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 uppercase tracking-wider">
+                    <i class="fa-solid fa-plus-circle"></i> Top Up
+                </a>
+            </div>
+        </div>
+
+        <!-- WIDGET STATISTIK TOTAL DEPOSIT & TOTAL BELANJA -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="neo-box p-4 rounded-2xl bg-neoGreen relative overflow-hidden">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[10px] font-black font-cyber uppercase tracking-wider">Total Deposit</span>
+                    <i class="fa-solid fa-circle-arrow-down text-black text-sm"></i>
+                </div>
+                <h4 id="profileTotalDeposit" class="text-lg font-black font-cyber text-black">Rp 0</h4>
+                <p class="text-[9px] text-slate-800 font-mono font-bold mt-1">Akumulasi Depo Berhasil</p>
+            </div>
+
+            <div class="neo-box p-4 rounded-2xl bg-neoPink relative overflow-hidden">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[10px] font-black font-cyber uppercase tracking-wider">Total Belanja</span>
+                    <i class="fa-solid fa-bag-shopping text-black text-sm"></i>
+                </div>
+                <h4 id="profileTotalBelanja" class="text-lg font-black font-cyber text-black">Rp 0</h4>
+                <p class="text-[9px] text-slate-800 font-mono font-bold mt-1">Akumulasi Belanja Produk</p>
+            </div>
+        </div>
+
+        <!-- WIDGET INFORMASI AKUN -->
+        <div class="neo-box rounded-2xl p-5 bg-white space-y-4">
+            <div class="flex items-center gap-2 pb-2 border-b-3 border-black">
+                <i class="fa-regular fa-user text-black text-base"></i>
+                <h3 class="text-xs font-black font-cyber text-black uppercase tracking-wider">Informasi Akun</h3>
+            </div>
+
+            <div class="space-y-3.5 text-xs font-bold">
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-600">Nama</span>
+                    <span id="infoNama" class="font-black text-black">-</span>
+                </div>
+                <div class="border-b-2 border-black/20"></div>
+
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-600">Email</span>
+                    <div class="text-right space-y-1">
+                        <div class="flex items-center justify-end gap-2">
+                            <span id="infoEmail" class="font-mono text-black">-</span>
+                            <button onclick="toggleEmailVisibility()" title="Tampilkan/Sembunyikan Email" class="text-black transition text-xs">
+                                <i id="toggleEmailIcon" class="fa-solid fa-eye-slash"></i>
+                            </button>
+                        </div>
+
+                        <div id="emailVerifiedBadge" class="hidden flex justify-end">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] bg-neoGreen text-black border border-black px-2.5 py-0.5 rounded-full font-black">
+                                <i class="fa-solid fa-circle-check"></i> Terverifikasi
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-b-2 border-black/20"></div>
+
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-600">Metode Login</span>
+                    <span id="infoLoginMethod" class="font-black text-black">Google OAuth</span>
+                </div>
+                <div class="border-b-2 border-black/20"></div>
+
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-600">Status Akun</span>
+                    <span id="infoStatusAkun" class="text-[10px] font-black bg-neoGreen text-black border border-black px-2.5 py-0.5 rounded-md uppercase tracking-wider">
+                        AKTIF
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- WIDGET REFERAL UNDANGAN -->
+        <div class="neo-box rounded-2xl p-6 bg-white space-y-4">
+            <div class="flex items-center justify-between">
+                <label class="block text-xs font-black font-cyber text-black uppercase tracking-wider">
+                    <i class="fa-solid fa-gift"></i> Undang Teman
+                </label>
+                <span class="text-[10px] bg-neoGreen border border-black font-mono font-black px-2 py-0.5 rounded">+Rp 1.000 / Undangan</span>
+            </div>
+            <p class="text-xs font-bold text-slate-700 leading-relaxed">
+                Bagikan link undangan Anda! User yang mendaftar via link Anda otomatis mendapatkan saldo <strong>Rp 500</strong>, dan Anda mendapatkan bonus <strong>Rp 1.000</strong>.
+            </p>
+
+            <div class="flex items-center gap-2 pt-1">
+                <div class="relative flex-1">
+                    <input type="text" id="referralLinkInput" readonly value="Memuat link..." 
+                           class="w-full px-3 py-2.5 text-xs bg-neoBg border-2 border-black rounded-xl text-black font-mono font-bold focus:outline-none select-all">
+                </div>
+                <button onclick="copyReferralLink()" class="neo-btn bg-neoYellow text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 uppercase tracking-wider">
+                    <i class="fa-solid fa-copy"></i> Salin Link
+                </button>
+            </div>
+
+            <div class="pt-4 border-t-3 border-black space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-black font-cyber text-black uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-users"></i> Daftar Teman Diundang (<span id="invitedCount">0</span>)
+                    </h4>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border-2 border-black bg-white">
+                    <table class="w-full text-left border-collapse text-[11px]">
+                        <thead>
+                            <tr class="bg-neoYellow border-b-2 border-black font-cyber font-black">
+                                <th class="p-2.5">Username</th>
+                                <th class="p-2.5">Email</th>
+                                <th class="p-2.5 text-right">Tgl Bergabung</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invitedUsersTableBody" class="divide-y-2 divide-black font-mono font-bold text-black">
+                            <tr>
+                                <td colspan="3" class="p-4 text-center text-slate-600 italic">Belum ada teman yang diundang.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- CURVED ANIMATED BOTTOM NAV BAR -->
+    <div class="bottom-nav-fixed">
+        <div class="bottom-nav-bg"></div>
+        <div class="nav-items-wrapper">
+            <a href="/dashboard" class="nav-item-btn">
+                <div class="nav-icon-box">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+                <span>Home</span>
+            </a>
+            <a href="/store" class="nav-item-btn">
+                <div class="nav-icon-box">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </div>
+                <span>Toko</span>
+            </a>
+            <a href="/deposit" class="nav-item-btn">
+                <div class="nav-icon-box">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <span>Deposit</span>
+            </a>
+            <a href="/riwayat" class="nav-item-btn">
+                <div class="nav-icon-box">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <span>Riwayat</span>
+            </a>
+            <a href="/profile" class="nav-item-btn active">
+                <div class="nav-icon-box">
+                    <i class="fa-regular fa-user"></i>
+                </div>
+                <span id="nav-auth-label">Profil</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- FLOATING LIVE CHAT BUTTON -->
+    <button id="floatingChatToggleBtn" onclick="toggleChatWidget()" title="Bantuan & Live Chat" class="fixed bottom-24 right-5 z-[99990] flex items-center justify-center w-12 h-12 rounded-full bg-neoYellow border-3 border-black text-black shadow-[4px_4px_0px_#000] hover:scale-110 transition-transform duration-200 font-black">
+        <i class="fa-solid fa-comment-dots text-xl"></i>
+        <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-neoGreen border-2 border-black rounded-full"></span>
+    </button>
+
+    <script>
+        let fullEmail = '';
+        let isEmailShown = false;
+
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
+        }
+
+        function maskEmail(email) {
+            if (!email || !email.includes('@')) return '-';
+            const [name, domain] = email.split('@');
+            return name.substring(0, 2) + '***@' + domain;
+        }
+
+        function toggleEmailVisibility() {
+            isEmailShown = !isEmailShown;
+            const emailElem = document.getElementById('infoEmail');
+            const iconElem = document.getElementById('toggleEmailIcon');
+
+            if (isEmailShown) {
+                emailElem.innerText = fullEmail;
+                iconElem.className = 'fa-solid fa-eye';
+            } else {
+                emailElem.innerText = maskEmail(fullEmail);
+                iconElem.className = 'fa-solid fa-eye-slash';
+            }
+        }
+
+        function renderBannerMedia(url) {
+            const container = document.getElementById('bannerBgContainer');
+            if (!url) {
+                container.innerHTML = `<div class="w-full h-full bg-white"></div>`;
+                return;
+            }
+
+            const cleanUrl = url.toLowerCase();
+            const isVideo = cleanUrl.endsWith('.mp4') || cleanUrl.startsWith('data:video/mp4');
+
+            if (isVideo) {
+                container.innerHTML = `
+                    <video src="${url}" autoplay loop muted playsinline class="w-full h-full object-cover pointer-events-none opacity-90"></video>
+                `;
+            } else {
+                container.innerHTML = `
+                    <img src="${url}" class="w-full h-full object-cover opacity-90">
+                `;
+            }
+        }
+
+        async function loadUserProfile() {
+            try {
+                const res = await fetch('/api/user-status');
+                const data = await res.json();
+                const authLabel = document.getElementById('nav-auth-label');
+
+                if (data.loggedIn && data.user) {
+                    const usernameVal = data.user.username || data.user.name || 'User';
+                    fullEmail = data.user.email || 'user@gmail.com';
+
+                    document.getElementById('profileUsername').innerText = usernameVal;
+                    document.getElementById('profileEmail').innerText = maskEmail(fullEmail);
+
+                    document.getElementById('infoNama').innerText = usernameVal;
+                    document.getElementById('infoEmail').innerText = maskEmail(fullEmail);
+                    
+                    const providerStr = data.user.provider ? data.user.provider.toUpperCase() : 'LOCAL';
+                    document.getElementById('infoLoginMethod').innerText = providerStr === 'LOCAL' ? 'Email & Password' : `${providerStr} OAuth`;
+
+                    const isVerified = data.user.isEmailVerified ?? data.user.isVerified ?? true;
+                    const badgeElem = document.getElementById('emailVerifiedBadge');
+                    if (isVerified) badgeElem.classList.remove('hidden');
+
+                    document.getElementById('profileSaldo').innerText = formatRupiah(data.user.saldo || 0);
+                    document.getElementById('profileTotalDeposit').innerText = formatRupiah(data.user.totalDeposit || 0);
+                    document.getElementById('profileTotalBelanja').innerText = formatRupiah(data.user.totalBelanja || 0);
+
+                    const refCode = data.user.referralCode || '';
+                    const inviteUrl = `${window.location.origin}/login?ref=${refCode}`;
+                    document.getElementById('referralLinkInput').value = inviteUrl;
+
+                    if (data.user.createdAt) {
+                        const joinedDate = new Date(data.user.createdAt).toLocaleDateString('id-ID', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                        });
+                        document.getElementById('profileJoined').innerText = `Terdaftar sejak: ${joinedDate}`;
+                    }
+
+                    if (data.user.avatar) document.getElementById('profileAvatar').src = data.user.avatar;
+                    if (data.user.banner) renderBannerMedia(data.user.banner);
+                    
+                    if (authLabel) authLabel.innerText = 'Profil';
+
+                    renderInvitedUsers(data.user.invitedUsers || []);
+                } else {
+                    window.location.href = '/login';
+                }
+            } catch(e) {}
+        }
+
+        async function openBannerModal() {
+            const { value: formValues } = await Swal.fire({
+                title: 'UBAH BANNER PROFIL',
+                html: `
+                    <div class="space-y-4 text-left text-xs font-bold font-sans">
+                        <div>
+                            <label class="block mb-1 font-cyber uppercase font-black text-black">1. Upload File (GIF / MP4 / Image)</label>
+                            <input type="file" id="swalBannerFile" accept="image/*,video/mp4" class="w-full text-xs p-2 bg-neoBg border-2 border-black rounded-xl">
+                            <p class="text-[10px] text-black font-bold mt-1">* Maksimal ukuran file berkas: <strong>4 MB</strong></p>
+                        </div>
+                        <div class="text-center font-black font-cyber uppercase tracking-wider text-slate-500 text-[10px]">--- ATAU ---</div>
+                        <div>
+                            <label class="block mb-1 font-cyber uppercase font-black text-black">2. Tempel URL Link (GIF / MP4 / Image)</label>
+                            <input type="url" id="swalBannerUrl" placeholder="https://example.com/banner.mp4 atau .gif" class="w-full px-3 py-2 text-xs border-2 border-black rounded-xl focus:outline-none">
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan Banner',
+                cancelButtonText: 'Batal',
+                customClass: { popup: 'cyber-swal' },
+                preConfirm: () => {
+                    const fileInput = document.getElementById('swalBannerFile');
+                    const urlInput = document.getElementById('swalBannerUrl');
+                    
+                    const file = fileInput.files[0];
+                    const url = urlInput.value.trim();
+
+                    if (!file && !url) {
+                        Swal.showValidationMessage('Pilih berkas upload (Maks. 4MB) atau tempel URL link!');
+                        return false;
+                    }
+
+                    if (file && file.size > (4 * 1024 * 1024)) {
+                        Swal.showValidationMessage(`Ukuran berkas upload maksimal 4MB! (File Anda: ${(file.size / (1024*1024)).toFixed(2)}MB)`);
+                        return false;
+                    }
+
+                    return { file, url };
+                }
+            });
+
+            if (formValues) {
+                const formData = new FormData();
+                if (formValues.file) {
+                    formData.append('bannerFile', formValues.file);
+                }
+                if (formValues.url) {
+                    formData.append('bannerUrl', formValues.url);
+                }
+
+                Swal.fire({ 
+                    title: 'MEMPROSES...', 
+                    text: 'Memperbarui banner profil Anda', 
+                    allowOutsideClick: false, 
+                    didOpen: () => { Swal.showLoading(); }, 
+                    customClass: { popup: 'cyber-swal' } 
+                });
+
+                try {
+                    const res = await fetch('/api/user/update-banner', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await res.json();
+                    
+                    if (result.status) {
+                        renderBannerMedia(result.banner);
+                        Swal.fire({ icon: 'success', title: 'BERHASIL', text: 'Banner profil berhasil diperbarui!', timer: 1500, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+                    } else {
+                        throw new Error(result.message || 'Gagal memperbarui banner');
+                    }
+                } catch(err) {
+                    Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+                }
+            }
+        }
+
+        function renderInvitedUsers(users) {
+            const tbody = document.getElementById('invitedUsersTableBody');
+            document.getElementById('invitedCount').innerText = users.length;
+
+            if (!users || users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-600 italic">Belum ada teman yang diundang.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = users.map(u => {
+                const joined = u.createdAt ? new Date(u.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
+                return `
+                    <tr class="hover:bg-neoBg transition">
+                        <td class="p-2.5 font-bold text-black">${u.username}</td>
+                        <td class="p-2.5 text-slate-600">${maskEmail(u.email)}</td>
+                        <td class="p-2.5 text-right font-black text-black">${joined}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function copyReferralLink() {
+            const input = document.getElementById('referralLinkInput');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(input.value);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'LINK DISALIN!',
+                text: 'Link undangan referral berhasil disalin!',
+                timer: 1500,
+                showConfirmButton: false,
+                customClass: { popup: 'cyber-swal' }
+            });
+        }
+
+        async function editUsernameModal() {
+            const currentUsername = document.getElementById('profileUsername').innerText;
+
+            const { value: newUsername } = await Swal.fire({
+                title: 'PERBARUI USERNAME',
+                input: 'text',
+                inputValue: currentUsername,
+                inputPlaceholder: 'Masukkan username baru...',
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal',
+                customClass: { popup: 'cyber-swal' }
+            });
+
+            if (newUsername && newUsername.trim() !== '' && newUsername !== currentUsername) {
+                try {
+                    const res = await fetch('/api/user/update-username', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: newUsername.trim() })
+                    });
+                    const result = await res.json();
+                    if (result.status) {
+                        document.getElementById('profileUsername').innerText = result.username;
+                        document.getElementById('infoNama').innerText = result.username;
+                        Swal.fire({ icon: 'success', title: 'BERHASIL', text: 'Username berhasil diperbarui!', timer: 1500, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+                    } else {
+                        throw new Error(result.message || 'Gagal mengubah username');
+                    }
+                } catch(err) {
+                    Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+                }
+            }
+        }
+
+        async function uploadAvatar(input) {
+            if (!input.files || !input.files[0]) return;
+            const formData = new FormData();
+            formData.append('avatar', input.files[0]);
+
+            Swal.fire({ title: 'MENGUNGGAH...', text: 'Memperbarui gambar profil Anda', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }, customClass: { popup: 'cyber-swal' } });
+
+            try {
+                const res = await fetch('/api/user/update-avatar', { method: 'POST', body: formData });
+                const result = await res.json();
+                if (result.status) {
+                    document.getElementById('profileAvatar').src = result.avatar;
+                    Swal.fire({ icon: 'success', title: 'BERHASIL', text: 'Avatar profil berhasil diperbarui!', timer: 1500, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+                } else {
+                    throw new Error(result.message || 'Gagal unggah gambar');
+                }
+            } catch(err) {
+                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadUserProfile);
+        let widgetChatInterval = null;
+
+        function toggleChatWidget() {
+            const windowEl = document.getElementById('floatingChatWindow');
+            const isHidden = windowEl.classList.contains('hidden');
+
+            if (isHidden) {
+                windowEl.classList.remove('hidden');
+                loadWidgetMessages();
+                if (!widgetChatInterval) widgetChatInterval = setInterval(loadWidgetMessages, 3000);
+            } else {
+                windowEl.classList.add('hidden');
+                if (widgetChatInterval) {
+                    clearInterval(widgetChatInterval);
+                    widgetChatInterval = null;
+                }
+            }
+        }
+
+        async function loadWidgetMessages() {
+            try {
+                const res = await fetch('/api/bantuan/messages');
+                const data = await res.json();
+                const container = document.getElementById('widgetChatMessages');
+
+                if (data.status && data.messages) {
+                    if (data.messages.length === 0) {
+                        container.innerHTML = `
+                            <div class="neo-box p-3 rounded-xl bg-white text-xs text-black space-y-1">
+                                <p class="font-black font-cyber">Halo! Selamat datang 👋</p>
+                                <p class="text-[10px] font-bold text-slate-600">Silakan kirimkan pertanyaan Anda. Customer Service kami siap membantu.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    container.innerHTML = data.messages.map(msg => {
+                        const isUser = msg.sender === 'user';
+                        const alignClass = isUser ? 'justify-end' : 'justify-start';
+                        const bgClass = isUser 
+                            ? 'bg-neoYellow text-black font-bold rounded-br-none border-2 border-black' 
+                            : 'bg-white text-black font-bold rounded-bl-none border-2 border-black';
+                        
+                        const timeStr = new Date(msg.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                        const displayName = isUser ? (msg.senderName || 'Anda') : 'Owner CS';
+
+                        return `
+                            <div class="flex ${alignClass}">
+                                <div class="max-w-[82%] p-2.5 rounded-2xl text-[11px] space-y-1 ${bgClass}">
+                                    <div class="flex items-center justify-between gap-2 border-b border-black/20 pb-1">
+                                        <span class="font-black font-cyber text-[10px] text-black">${displayName}</span>
+                                        <span class="text-[8px] opacity-75 font-mono font-bold">${timeStr}</span>
+                                    </div>
+                                    <p class="leading-relaxed break-words pt-0.5">${msg.message}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    container.scrollTop = container.scrollHeight;
+                }
+            } catch(e) {}
+        }
+
+        async function sendWidgetMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('widgetChatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            input.value = '';
+
+            try {
+                await fetch('/api/bantuan/send-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                loadWidgetMessages();
+            } catch(e) {}
+        }
+    </script>
+</body>
+</html>

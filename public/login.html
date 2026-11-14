@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FFDE59">
+    <title>Masuk & Daftar Akun - ArulzXD Store</title>
+    <meta name="description" content="Masuk atau daftar akun ArulzXD Store untuk menikmati layanan digital premium, source code, dan transaksi otomatis 24/7.">
+
+    <!-- Favicon & Icons -->
+    <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
+    <link rel="shortcut icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://cdn.larasxd.my.id/files/1wh5do.png">
+
+    <!-- Open Graph / Facebook / WhatsApp / Telegram -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:site_name" content="ArulzXD Store">
+    <meta property="og:url" content="https://arulzxd.biz.id/login">
+    <meta property="og:title" content="Masuk & Daftar Akun - ArulzXD Store">
+    <meta property="og:description" content="Masuk atau daftar akun ArulzXD Store untuk menikmati layanan digital premium secara otomatis dan aman.">
+    <meta property="og:image" content="https://cdn.larasxd.my.id/files/Jnaxmr52s6YfY9K2.jpg">
+    <meta property="og:image:secure_url" content="https://cdn.larasxd.my.id/files/Jnaxmr52s6YfY9K2.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://arulzxd.biz.id/login">
+    <meta name="twitter:title" content="Masuk & Daftar Akun - ArulzXD Store">
+    <meta name="twitter:description" content="Masuk atau daftar akun ArulzXD Store untuk menikmati layanan digital premium secara otomatis dan aman.">
+    <meta name="twitter:image" content="https://cdn.larasxd.my.id/files/Jnaxmr52s6YfY9K2.jpg">
+
+    <!-- Styles & Scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: { 
+                extend: {
+                    fontFamily: { 
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        cyber: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        neoYellow: '#FFDE59',
+                        neoCyan: '#00E5FF',
+                        neoPink: '#FF79C6',
+                        neoGreen: '#00E676',
+                        neoBg: '#F5F2EB',
+                        neoCard: '#FFFFFF'
+                    }
+                } 
+            }
+        }
+    </script>
+    <style>
+        body { 
+            background-color: #F5F2EB; 
+            background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1.2px, transparent 1.2px);
+            background-size: 16px 16px;
+            color: #000000;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        .neo-box {
+            background-color: #FFFFFF;
+            border: 3.5px solid #000000;
+            box-shadow: 6px 6px 0px #000000;
+        }
+
+        .neo-btn {
+            border: 3px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease, filter 0.2s ease;
+        }
+        .neo-btn:not(:disabled):hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 5.5px 5.5px 0px #000000;
+        }
+        .neo-btn:not(:disabled):active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000000;
+        }
+
+        .btn-disabled {
+            opacity: 0.45 !important;
+            filter: grayscale(40%) !important;
+            pointer-events: none !important;
+            cursor: not-allowed !important;
+            box-shadow: 2px 2px 0px #000000 !important;
+            transform: none !important;
+        }
+
+        .tab-nav-btn {
+            background-color: #FFFFFF;
+            border: 3px solid #000000;
+            box-shadow: 3.5px 3.5px 0px #000000;
+            transition: all 0.15s ease;
+        }
+        .tab-nav-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4.5px 4.5px 0px #000000;
+        }
+        .tab-nav-btn.active {
+            background-color: #FFDE59;
+            transform: translate(2px, 2px);
+            box-shadow: 1.5px 1.5px 0px #000000;
+        }
+
+        .neo-input {
+            border: 3px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
+            transition: all 0.15s ease;
+        }
+        .neo-input:focus {
+            box-shadow: 4.5px 4.5px 0px #000000;
+            background-color: #FFFFFF;
+        }
+
+        .hidden-form { display: none; }
+
+        .swal2-popup.cyber-swal {
+            background: #FFFFFF !important;
+            border: 3.5px solid #000000 !important;
+            border-radius: 20px !important;
+            color: #000000 !important;
+            box-shadow: 6px 6px 0px #000000 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
+
+        .brutal-glitch {
+            position: relative;
+            display: inline-block;
+            color: #000000;
+        }
+
+        .brutal-glitch::before,
+        .brutal-glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+
+        .brutal-glitch::before {
+            left: -2px;
+            text-shadow: 2px 0 #00E5FF;
+            clip: rect(24px, 550px, 90px, 0);
+            animation: brutal-glitch-anim-1 3.5s infinite ease-in-out;
+        }
+
+        .brutal-glitch::after {
+            left: 2px;
+            text-shadow: -2px 0 #FF79C6;
+            clip: rect(85px, 550px, 140px, 0);
+            animation: brutal-glitch-anim-2 4.2s infinite ease-in-out;
+        }
+
+        @keyframes brutal-glitch-anim-1 {
+            0% { clip: rect(0, 0, 0, 0); transform: none; }
+            5% { clip: rect(10px, 9999px, 35px, 0); transform: skew(3deg) translateX(-3px); }
+            10% { clip: rect(45px, 9999px, 80px, 0); transform: skew(-2deg) translateX(4px); }
+            15% { clip: rect(0, 0, 0, 0); transform: none; }
+            45% { clip: rect(0, 0, 0, 0); transform: none; }
+            50% { clip: rect(20px, 9999px, 55px, 0); transform: skew(4deg) translateX(-4px); }
+            55% { clip: rect(70px, 9999px, 105px, 0); transform: skew(-3deg) translateX(3px); }
+            60% { clip: rect(0, 0, 0, 0); transform: none; }
+            100% { clip: rect(0, 0, 0, 0); transform: none; }
+        }
+
+        @keyframes brutal-glitch-anim-2 {
+            0% { clip: rect(0, 0, 0, 0); transform: none; }
+            20% { clip: rect(0, 0, 0, 0); transform: none; }
+            25% { clip: rect(55px, 9999px, 85px, 0); transform: skew(-4deg) translateX(4px); }
+            30% { clip: rect(15px, 9999px, 45px, 0); transform: skew(2deg) translateX(-3px); }
+            35% { clip: rect(0, 0, 0, 0); transform: none; }
+            75% { clip: rect(0, 0, 0, 0); transform: none; }
+            80% { clip: rect(35px, 9999px, 70px, 0); transform: skew(-3deg) translateX(3px); }
+            85% { clip: rect(80px, 9999px, 115px, 0); transform: skew(4deg) translateX(-4px); }
+            90% { clip: rect(0, 0, 0, 0); transform: none; }
+            100% { clip: rect(0, 0, 0, 0); transform: none; }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 antialiased text-black">
+
+    <!-- MAIN PORTAL AUTHENTICATION CARD -->
+    <main class="neo-box p-5 sm:p-7 rounded-2xl w-full max-w-md bg-white relative overflow-hidden flex flex-col justify-start my-auto z-10 space-y-3.5">
+        
+        <!-- HEADER PORTAL -->
+        <header class="text-center relative z-10 pt-1 pb-2 border-b-3 border-black">
+            <h1 class="text-2xl sm:text-3xl font-black font-cyber tracking-tight uppercase leading-none">
+                <a href="/" class="brutal-glitch" data-text="ARULZXD-STORE">ARULZXD-STORE</a>
+            </h1>
+            <div class="mt-2 flex items-center justify-center">
+                <span class="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono font-bold text-slate-800 tracking-wider uppercase bg-white border-2 border-black px-3 py-0.5 rounded-full shadow-[2px_2px_0px_#000]">
+                    <i class="fa-solid fa-gear text-neoGreen text-xs animate-spin" style="animation-duration: 6s;"></i>
+                    AUTHENTICATION PORTAL
+                </span>
+            </div>
+        </header>
+
+        <!-- BANNER ASPECT 16:9 PRESISI -->
+        <div class="relative w-full aspect-video rounded-xl border-3 border-black shadow-[3px_3px_0px_#000] overflow-hidden bg-black shrink-0">
+            <img src="https://cdn.larasxd.my.id/files/gmNmPPTi.gif" alt="Banner ArulzXD Store" class="w-full h-full object-cover pointer-events-none opacity-90">
+            <div class="absolute bottom-2 left-2 bg-black/75 backdrop-blur-sm text-white text-[9px] font-cyber font-bold px-2 py-0.5 rounded border border-white/30 flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-neoGreen animate-pulse"></span> ARULZXD OFFICIAL
+            </div>
+        </div>
+
+        <!-- TAB NAVIGATION -->
+        <div class="grid grid-cols-3 gap-2">
+            <button type="button" id="tab-login" onclick="switchTab('signin')" class="tab-nav-btn active py-2 text-xs font-black font-cyber uppercase tracking-wider text-black rounded-xl">
+                LOGIN
+            </button>
+            <button type="button" id="tab-register" onclick="switchTab('signup')" class="tab-nav-btn py-2 text-xs font-black font-cyber uppercase tracking-wider text-black rounded-xl">
+                REGISTER
+            </button>
+            <button type="button" id="tab-forgot" onclick="switchTab('forgot')" class="tab-nav-btn py-2 text-xs font-black font-cyber uppercase tracking-wider text-black rounded-xl">
+                RESET PASSWORD
+            </button>
+        </div>
+
+        <!-- ================= FORM SIGN IN ================= -->
+        <div id="signin-form" class="space-y-3 relative z-10">
+            <form id="loginForm" action="/auth/login" method="POST" class="space-y-2.5">
+                <div>
+                    <label for="login-username" class="block text-[11px] font-black uppercase font-cyber text-black mb-1">
+                        USERNAME / EMAIL
+                    </label>
+                    <div class="relative">
+                        <input type="text" id="login-username" name="username" required placeholder="Masukkan username atau email" class="neo-input w-full bg-white rounded-xl pl-3.5 pr-12 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition" oninput="handleUsernameInput(this.value)">
+                        <button type="button" onclick="toggleUsernameVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-black hover:text-amber-600 transition text-sm">
+                            <i id="eye-icon-login-user" class="fa-solid fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label for="login-password" class="block text-[11px] font-black uppercase font-cyber text-black mb-1">
+                        PASSWORD
+                    </label>
+                    <div class="relative">
+                        <input id="login-password" type="password" name="password" required placeholder="Min. 8 karakter" class="neo-input w-full bg-white rounded-xl pl-3.5 pr-12 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition">
+                        <button type="button" onclick="togglePassword('login-password', 'eye-icon-login')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-black hover:text-amber-600 transition text-sm">
+                            <i id="eye-icon-login" class="fa-solid fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="neo-input p-2.5 bg-amber-50/60 rounded-xl flex items-center gap-2.5">
+                    <input type="checkbox" id="terms-login" onchange="toggleFormButtons('login')" class="w-4 h-4 accent-amber-400 border-2 border-black rounded cursor-pointer shrink-0">
+                    <label for="terms-login" class="text-[11px] font-bold text-slate-800 leading-snug cursor-pointer select-none">
+                        Saya menyetujui <a href="/privacy" target="_blank" class="text-amber-700 font-black underline hover:bg-neoYellow px-0.5 rounded">Syarat & Kebijakan Privasi</a> layanan.
+                    </label>
+                </div>
+
+                <button type="submit" id="btnSubmitLogin" disabled class="neo-btn btn-disabled w-full bg-neoYellow text-black font-black font-cyber py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 mt-1">
+                    <i class="fa-solid fa-right-to-bracket text-xs"></i> MASUK KE AKUN
+                </button>
+            </form>
+
+            <div class="relative flex py-0.5 items-center">
+                <div class="flex-grow border-t-2 border-black"></div>
+                <span class="flex-shrink mx-2 text-black text-[9px] font-black font-cyber uppercase bg-neoBg px-2.5 py-0.5 border border-black rounded-md shadow-[1px_1px_0px_#000]">
+                    atau
+                </span>
+                <div class="flex-grow border-t-2 border-black"></div>
+            </div>
+
+            <div class="space-y-2">
+                <a id="btnGithubAuth" href="/auth/github" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-neoCyan text-black py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
+                    <i class="fa-brands fa-github text-lg leading-none"></i> LANJUTKAN DENGAN GITHUB
+                </a>
+                <a id="btnGoogleAuth" href="/auth/google" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-white text-black py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
+                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-5 h-5 object-contain" alt="Google"> LANJUTKAN DENGAN GOOGLE
+                </a>
+            </div>
+        </div>
+
+        <!-- ================= FORM SIGN UP ================= -->
+        <div id="signup-form" class="space-y-3 relative z-10 hidden-form">
+            <form id="registerForm" action="/auth/register" method="POST" class="space-y-2.5">
+                <div>
+                    <label for="register-username" class="block text-[11px] font-black uppercase font-cyber text-black mb-0.5">NAMA LENGKAP / USERNAME</label>
+                    <input type="text" id="register-username" name="username" required placeholder="Nama kamu" class="neo-input w-full bg-white rounded-xl px-3.5 py-2 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition">
+                </div>
+                <div>
+                    <label for="register-email" class="block text-[11px] font-black uppercase font-cyber text-black mb-0.5">EMAIL ADDRESS</label>
+                    <input type="email" id="register-email" name="email" required placeholder="emailkamu@gmail.com" class="neo-input w-full bg-white rounded-xl px-3.5 py-2 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition">
+                </div>
+                <div>
+                    <label for="register-password" class="block text-[11px] font-black uppercase font-cyber text-black mb-0.5">PASSWORD</label>
+                    <div class="relative">
+                        <input id="register-password" type="password" name="password" required placeholder="Min. 8 karakter" class="neo-input w-full bg-white rounded-xl pl-3.5 pr-12 py-2 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition">
+                        <button type="button" onclick="togglePassword('register-password', 'eye-icon-register')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-black hover:text-amber-600 transition text-sm">
+                            <i id="eye-icon-register" class="fa-solid fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="referralCodeInput" class="block text-[11px] font-black uppercase font-cyber text-black mb-0.5 flex items-center justify-between">
+                        <span>KODE REFERAL</span>
+                        <span class="text-[9px] bg-neoGreen text-black border border-black font-bold px-1 rounded lowercase">(Bonus Rp 500)</span>
+                    </label>
+                    <input type="text" id="referralCodeInput" name="referralCode" placeholder="Kode undangan (opsional)" class="neo-input w-full bg-white rounded-xl px-3.5 py-2 text-xs font-mono font-black text-black uppercase placeholder-slate-400 focus:outline-none transition">
+                </div>
+
+                <div class="neo-input p-2 bg-amber-50/60 rounded-xl flex items-center gap-2">
+                    <input type="checkbox" id="terms-register" onchange="toggleFormButtons('register')" class="w-4 h-4 accent-amber-400 border-2 border-black rounded cursor-pointer shrink-0">
+                    <label for="terms-register" class="text-[10px] font-bold text-slate-800 leading-tight cursor-pointer select-none">
+                        Saya menyetujui <a href="/privacy" target="_blank" class="text-amber-700 font-black underline hover:bg-neoYellow px-0.5 rounded">Syarat & Kebijakan Privasi</a> layanan.
+                    </label>
+                </div>
+
+                <button type="submit" id="btnSubmitRegister" disabled class="neo-btn btn-disabled w-full bg-neoGreen text-black font-black font-cyber py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-plus text-xs"></i> DAFTAR SEKARANG
+                </button>
+            </form>
+
+            <div class="relative flex py-0.5 items-center">
+                <div class="flex-grow border-t-2 border-black"></div>
+                <span class="flex-shrink mx-2 text-black text-[9px] font-black font-cyber uppercase bg-neoBg px-2 py-0.5 border border-black rounded-md shadow-[1px_1px_0px_#000]">
+                    atau
+                </span>
+                <div class="flex-grow border-t-2 border-black"></div>
+            </div>
+
+            <div class="space-y-2">
+                <a id="btnGithubAuthRegister" href="/auth/github" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-neoCyan text-black py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
+                    <i class="fa-brands fa-github text-lg leading-none"></i> DAFTAR DENGAN GITHUB
+                </a>
+                <a id="btnGoogleAuthRegister" href="/auth/google" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-white text-black py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
+                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-5 h-5 object-contain" alt="Google"> DAFTAR DENGAN GOOGLE
+                </a>
+            </div>
+        </div>
+
+        <!-- ================= FORM FORGOT PASSWORD (OTP 6 DIGIT) ================= -->
+        <div id="forgot-form" class="space-y-3 relative z-10 hidden-form">
+            <form id="forgotForm" class="space-y-2.5">
+                <div>
+                    <label for="forgot-email" class="block text-[11px] font-black uppercase font-cyber text-black mb-1">EMAIL ADDRESS TERDAFTAR</label>
+                    <div class="flex gap-2">
+                        <input type="email" id="forgot-email" name="email" required placeholder="emailkamu@gmail.com" class="neo-input w-full bg-white rounded-xl px-3.5 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition">
+                        <button type="button" onclick="requestForgotPasswordOTP()" class="neo-btn bg-neoCyan text-black text-xs font-black font-cyber px-3 py-2.5 rounded-xl uppercase whitespace-nowrap">KIRIM OTP</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="forgot-otp" class="block text-[11px] font-black uppercase font-cyber text-black mb-1">KODE OTP 6 DIGIT</label>
+                    <input type="text" id="forgot-otp" maxlength="6" placeholder="123456" class="neo-input w-full bg-white rounded-xl px-3.5 py-2.5 text-xs font-mono font-black tracking-widest text-black placeholder-slate-400 focus:outline-none transition">
+                </div>
+
+                <div>
+                    <label for="forgot-new-password" class="block text-[11px] font-black uppercase font-cyber text-black mb-1">PASSWORD BARU</label>
+                    <div class="relative">
+                        <input type="password" id="forgot-new-password" placeholder="••••••••" class="neo-input w-full bg-white rounded-xl pl-3.5 pr-12 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition">
+                        <button type="button" onclick="togglePassword('forgot-new-password', 'eye-icon-forgot')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-black hover:text-amber-600 transition text-sm">
+                            <i id="eye-icon-forgot" class="fa-solid fa-eye-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="neo-btn w-full bg-neoPink text-black font-black font-cyber py-2.5 rounded-xl text-xs uppercase tracking-wider mt-1">SIMPAN PASSWORD BARU</button>
+            </form>
+        </div>
+
+        <!-- FOOTER BADGES & NAVIGASI -->
+        <footer class="pt-2.5 mt-2 border-t-2 border-black space-y-2">
+            <div class="flex items-center justify-around text-[9px] sm:text-[10px] font-black font-cyber text-black">
+                <span class="flex items-center gap-1"><i class="fa-solid fa-shield-halved text-neoGreen"></i> 100% Aman</span>
+                <span class="flex items-center gap-1"><i class="fa-solid fa-bolt text-neoYellow"></i> Otomatis</span>
+                <span class="flex items-center gap-1"><i class="fa-solid fa-headset text-neoCyan"></i> Fast Response</span>
+            </div>
+            <div class="flex items-center justify-center gap-3 text-[10px] font-bold text-slate-600">
+                <a href="/" class="hover:underline text-black">Beranda</a>
+                <span>•</span>
+                <a href="/store" class="hover:underline text-black">Katalog Toko</a>
+                <span>•</span>
+                <a href="/privacy" class="hover:underline text-black">Kebijakan Privasi</a>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        const swalConfig = {
+            customClass: { popup: 'cyber-swal' },
+            buttonsStyling: false
+        };
+
+        let rawUsernameInput = '';
+        let isUsernameVisible = false;
+
+        function maskInputVal(val) {
+            if (!val) return '';
+            if (val.includes('@')) {
+                const [name, domain] = val.split('@');
+                if (name.length <= 2) return name + '***@' + domain;
+                return name.substring(0, 2) + '***@' + domain;
+            }
+            if (val.length <= 3) return val.substring(0, 1) + '***';
+            return val.substring(0, 2) + '***' + val.substring(val.length - 1);
+        }
+
+        function handleUsernameInput(val) {
+            if (isUsernameVisible) {
+                rawUsernameInput = val;
+            } else if (!val.includes('***')) {
+                rawUsernameInput = val;
+            }
+        }
+
+        function toggleUsernameVisibility() {
+            const input = document.getElementById('login-username');
+            const iconElem = document.getElementById('eye-icon-login-user');
+            isUsernameVisible = !isUsernameVisible;
+
+            if (isUsernameVisible) {
+                input.value = rawUsernameInput;
+                iconElem.className = 'fa-solid fa-eye';
+            } else {
+                input.value = maskInputVal(rawUsernameInput);
+                iconElem.className = 'fa-solid fa-eye-slash';
+            }
+        }
+
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const iconElem = document.getElementById(iconId);
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                iconElem.className = 'fa-solid fa-eye';
+            } else {
+                passwordInput.type = 'password';
+                iconElem.className = 'fa-solid fa-eye-slash';
+            }
+        }
+
+        function toggleFormButtons(mode) {
+            if (mode === 'login') {
+                const isChecked = document.getElementById('terms-login').checked;
+                const btnSubmit = document.getElementById('btnSubmitLogin');
+                const btnGithub = document.getElementById('btnGithubAuth');
+                const btnGoogle = document.getElementById('btnGoogleAuth');
+
+                if (isChecked) {
+                    btnSubmit.removeAttribute('disabled');
+                    btnSubmit.classList.remove('btn-disabled');
+                    btnGithub.classList.remove('btn-disabled');
+                    btnGoogle.classList.remove('btn-disabled');
+                } else {
+                    btnSubmit.setAttribute('disabled', 'true');
+                    btnSubmit.classList.add('btn-disabled');
+                    btnGithub.classList.add('btn-disabled');
+                    btnGoogle.classList.add('btn-disabled');
+                }
+            } else if (mode === 'register') {
+                const isChecked = document.getElementById('terms-register').checked;
+                const btnSubmit = document.getElementById('btnSubmitRegister');
+                const btnGithub = document.getElementById('btnGithubAuthRegister');
+                const btnGoogle = document.getElementById('btnGoogleAuthRegister');
+
+                if (isChecked) {
+                    btnSubmit.removeAttribute('disabled');
+                    btnSubmit.classList.remove('btn-disabled');
+                    btnGithub.classList.remove('btn-disabled');
+                    btnGoogle.classList.remove('btn-disabled');
+                } else {
+                    btnSubmit.setAttribute('disabled', 'true');
+                    btnSubmit.classList.add('btn-disabled');
+                    btnGithub.classList.add('btn-disabled');
+                    btnGoogle.classList.add('btn-disabled');
+                }
+            }
+        }
+
+        function switchTab(formType) {
+            const signinForm = document.getElementById('signin-form');
+            const signupForm = document.getElementById('signup-form');
+            const forgotForm = document.getElementById('forgot-form');
+
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+            const tabForgot = document.getElementById('tab-forgot');
+
+            signinForm.classList.add('hidden-form');
+            signupForm.classList.add('hidden-form');
+            forgotForm.classList.add('hidden-form');
+
+            tabLogin.classList.remove('active');
+            tabRegister.classList.remove('active');
+            tabForgot.classList.remove('active');
+
+            if (formType === 'signin') {
+                signinForm.classList.remove('hidden-form');
+                tabLogin.classList.add('active');
+            } else if (formType === 'signup') {
+                signupForm.classList.remove('hidden-form');
+                tabRegister.classList.add('active');
+            } else if (formType === 'forgot') {
+                forgotForm.classList.remove('hidden-form');
+                tabForgot.classList.add('active');
+            }
+        }
+
+        async function sendOTPRequest(email, type) {
+            const res = await fetch('/auth/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, type })
+            });
+            return await res.json();
+        }
+
+        async function requestForgotPasswordOTP() {
+            const email = document.getElementById('forgot-email').value;
+            if (!email || !email.includes('@')) {
+                Swal.fire({
+                    ...swalConfig,
+                    icon: 'warning',
+                    title: 'Email Diperlukan',
+                    text: 'Masukkan alamat email yang valid terlebih dahulu!'
+                });
+                return;
+            }
+
+            Swal.fire({
+                ...swalConfig,
+                title: 'Mengirim OTP...',
+                text: 'Mohon tunggu sejenak',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                const data = await sendOTPRequest(email, 'forgot');
+                if (data.status) {
+                    Swal.fire({
+                        ...swalConfig,
+                        icon: 'success',
+                        title: 'Kode Dikirim!',
+                        text: data.message
+                    });
+                } else {
+                    Swal.fire({
+                        ...swalConfig,
+                        icon: 'error',
+                        title: 'Gagal Kirim OTP',
+                        text: data.message
+                    });
+                }
+            } catch (err) {
+                Swal.fire({
+                    ...swalConfig,
+                    icon: 'error',
+                    title: 'Error Server',
+                    text: 'Gagal menghubungkan ke server.'
+                });
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+
+            if (refCode) {
+                const cleanRef = refCode.trim().toUpperCase();
+                document.cookie = `pending_ref=${cleanRef}; path=/; max-age=86400`;
+
+                switchTab('signup');
+
+                const refInput = document.getElementById('referralCodeInput');
+                if (refInput) {
+                    refInput.value = cleanRef;
+                    refInput.readOnly = true;
+                    refInput.classList.add('bg-slate-100', 'cursor-not-allowed');
+                }
+
+                const btnGoogleLogin = document.getElementById('btnGoogleAuth');
+                const btnGithubLogin = document.getElementById('btnGithubAuth');
+                const btnGoogleReg = document.getElementById('btnGoogleAuthRegister');
+                const btnGithubReg = document.getElementById('btnGithubAuthRegister');
+
+                if (btnGoogleLogin) btnGoogleLogin.href = `/auth/google?ref=${cleanRef}`;
+                if (btnGithubLogin) btnGithubLogin.href = `/auth/github?ref=${cleanRef}`;
+                if (btnGoogleReg) btnGoogleReg.href = `/auth/google?ref=${cleanRef}`;
+                if (btnGithubReg) btnGithubReg.href = `/auth/github?ref=${cleanRef}`;
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formTarget = e.target;
+            const terms = document.getElementById('terms-login');
+            const targetUserOrEmail = rawUsernameInput || document.getElementById('login-username').value;
+
+            if (!terms.checked) {
+                Swal.fire({
+                    ...swalConfig,
+                    icon: 'warning',
+                    title: 'Persetujuan Diperlukan',
+                    text: 'Anda harus menyetujui Syarat & Kebijakan Privasi terlebih dahulu!'
+                });
+                return;
+            }
+
+            if (!targetUserOrEmail || !targetUserOrEmail.trim()) {
+                Swal.fire({
+                    ...swalConfig,
+                    icon: 'warning',
+                    title: 'Username/Email Diperlukan',
+                    text: 'Masukkan Username atau Email Anda!'
+                });
+                return;
+            }
+
+            document.getElementById('login-username').value = targetUserOrEmail;
+
+            Swal.fire({
+                ...swalConfig,
+                title: 'Mengirim Kode OTP...',
+                text: 'Memproses pengiriman kode verifikasi 6 digit ke email Anda',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                const otpRes = await sendOTPRequest(targetUserOrEmail, 'login');
+
+                if (!otpRes.status) {
+                    Swal.fire({
+                        ...swalConfig,
+                        icon: 'error',
+                        title: 'Gagal Kirim OTP',
+                        text: otpRes.message
+                    });
+                    return;
+                }
+
+                const { value: otpCode } = await Swal.fire({
+                    ...swalConfig,
+                    title: '<span class="font-black font-cyber uppercase tracking-wider text-black">VERIFIKASI KODE OTP</span>',
+                    html: `
+                        <div class="space-y-3 text-left my-2 font-sans">
+                            <p class="text-xs font-bold text-slate-800 leading-relaxed">
+                                Kode verifikasi 6 digit telah dikirim ke email Anda (<strong class="font-mono text-black">${targetUserOrEmail}</strong>).
+                            </p>
+                            <div class="space-y-1">
+                                <label class="block text-[11px] font-black font-cyber uppercase text-black">MASUKKAN KODE OTP</label>
+                                <input id="swal-neo-otp" type="text" maxlength="6" placeholder="123456" 
+                                       class="neo-input w-full bg-neoBg rounded-xl px-3 py-3 text-center text-xl font-mono font-black tracking-[8px] text-black focus:outline-none uppercase">
+                            </div>
+                        </div>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fa-solid fa-check"></i> VERIFIKASI & MASUK',
+                    cancelButtonText: 'BATAL',
+                    customClass: {
+                        popup: 'cyber-swal',
+                        confirmButton: 'neo-btn bg-neoYellow text-black font-black px-4 py-2.5 rounded-xl text-xs uppercase font-cyber mr-2',
+                        cancelButton: 'neo-btn bg-white text-black font-black px-4 py-2.5 rounded-xl text-xs uppercase font-cyber'
+                    },
+                    preConfirm: () => {
+                        const val = document.getElementById('swal-neo-otp').value.trim();
+                        if (!val || val.length !== 6) {
+                            Swal.showValidationMessage('Kode OTP harus berjumlah 6 digit angka!');
+                            return false;
+                        }
+                        return val;
+                    }
+                });
+
+                if (otpCode) {
+                    Swal.fire({
+                        ...swalConfig,
+                        title: 'Memverifikasi...',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading(); }
+                    });
+
+                    const verifyRes = await fetch('/auth/verify-otp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: targetUserOrEmail, code: otpCode, type: 'login' })
+                    });
+
+                    const verifyData = await verifyRes.json();
+                    if (!verifyData.status) {
+                        Swal.fire({
+                            ...swalConfig,
+                            icon: 'error',
+                            title: 'OTP Tidak Valid',
+                            text: verifyData.message
+                        });
+                        return;
+                    }
+
+                    formTarget.submit();
+                }
+            } catch (err) {
+                Swal.fire({
+                    ...swalConfig,
+                    icon: 'error',
+                    title: 'Kesalahan Sistem',
+                    text: 'Gagal memproses verifikasi login.'
+                });
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formTarget = e.target;
+            const terms = document.getElementById('terms-register');
+            const email = document.getElementById('register-email').value;
+
+            if (!terms.checked) {
+                Swal.fire({
+                    ...swalConfig,
+                    icon: 'warning',
+                    title: 'Persetujuan Diperlukan',
+                    text: 'Anda harus menyetujui Syarat & Kebijakan Privasi terlebih dahulu!'
+                });
+                return;
+            }
+
+            if (!email || !email.includes('@')) {
+                Swal.fire({
+                    ...swalConfig,
+                    icon: 'warning',
+                    title: 'Email Tidak Valid',
+                    text: 'Masukkan alamat email yang valid untuk mendaftar!'
+                });
+                return;
+            }
+
+            Swal.fire({
+                ...swalConfig,
+                title: 'Mengirim Kode OTP...',
+                text: 'Memproses pengiriman kode verifikasi 6 digit ke email Anda',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                const otpRes = await sendOTPRequest(email, 'register');
+
+                if (!otpRes.status) {
+                    Swal.fire({
+                        ...swalConfig,
+                        icon: 'error',
+                        title: 'Gagal Kirim OTP',
+                        text: otpRes.message
+                    });
+                    return;
+                }
+
+                const { value: otpCode } = await Swal.fire({
+                    ...swalConfig,
+                    title: '<span class="font-black font-cyber uppercase tracking-wider text-black">VERIFIKASI EMAIL PENDAFTARAN</span>',
+                    html: `
+                        <div class="space-y-3 text-left my-2 font-sans">
+                            <p class="text-xs font-bold text-slate-800 leading-relaxed">
+                                Kode verifikasi 6 digit telah dikirim ke email <strong class="font-mono text-black">${email}</strong>. Masukkan kode di bawah:
+                            </p>
+                            <div class="space-y-1">
+                                <label class="block text-[11px] font-black font-cyber uppercase text-black">MASUKKAN KODE OTP</label>
+                                <input id="swal-neo-otp-reg" type="text" maxlength="6" placeholder="123456" 
+                                       class="neo-input w-full bg-neoBg rounded-xl px-3 py-3 text-center text-xl font-mono font-black tracking-[8px] text-black focus:outline-none uppercase">
+                            </div>
+                        </div>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="fa-solid fa-user-check"></i> VERIFIKASI & DAFTAR',
+                    cancelButtonText: 'BATAL',
+                    customClass: {
+                        popup: 'cyber-swal',
+                        confirmButton: 'neo-btn bg-neoGreen text-black font-black px-4 py-2.5 rounded-xl text-xs uppercase font-cyber mr-2',
+                        cancelButton: 'neo-btn bg-white text-black font-black px-4 py-2.5 rounded-xl text-xs uppercase font-cyber'
+                    },
+                    preConfirm: () => {
+                        const val = document.getElementById('swal-neo-otp-reg').value.trim();
+                        if (!val || val.length !== 6) {
+                            Swal.showValidationMessage('Kode OTP harus berjumlah 6 digit angka!');
+                            return false;
+                        }
+                        return val;
+                    }
+                });
+
+                if (otpCode) {
+                    Swal.fire({
+                        ...swalConfig,
+                        title: 'Memverifikasi...',
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading(); }
+                    });
+
+                    const verifyRes = await fetch('/auth/verify-otp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, code: otpCode, type: 'register' })
+                    });
+
+                    const verifyData = await verifyRes.json();
+                    if (!verifyData.status) {
+                        Swal.fire({
+                            ...swalConfig,
+                            icon: 'error',
+                            title: 'OTP Tidak Valid',
+                            text: verifyData.message
+                        });
+                        return;
+                    }
+
+                    formTarget.submit();
+                }
+            } catch (err) {
+                Swal.fire({
+                    ...swalConfig,
+                    icon: 'error',
+                    title: 'Kesalahan Sistem',
+                    text: 'Gagal memproses pendaftaran.'
+                });
+            }
+        });
+
+        document.getElementById('forgotForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value;
+            const code = document.getElementById('forgot-otp').value;
+            const newPassword = document.getElementById('forgot-new-password').value;
+
+            if (!email || !code || !newPassword) {
+                Swal.fire({
+                    ...swalConfig,
+                    icon: 'warning',
+                    title: 'Wajib Diisi',
+                    text: 'Semua bidang wajib diisi!'
+                });
+                return;
+            }
+
+            Swal.fire({
+                ...swalConfig,
+                title: 'Memproses Reset...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                const res = await fetch('/auth/reset-password-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, code, newPassword })
+                });
+
+                const data = await res.json();
+                if (data.status) {
+                    Swal.fire({
+                        ...swalConfig,
+                        icon: 'success',
+                        title: 'Berhasil Reset Password!',
+                        text: data.message
+                    }).then(() => {
+                        switchTab('signin');
+                    });
+                } else {
+                    Swal.fire({
+                        ...swalConfig,
+                        icon: 'error',
+                        title: 'Gagal Reset Password',
+                        text: data.message
+                    });
+                }
+            } catch (err) {
+                Swal.fire({
+                    ...swalConfig,
+                    icon: 'error',
+                    title: 'Error Server',
+                    text: 'Terjadi kesalahan pada server.'
+                });
+            }
+        });
+    </script>
+</body>
+</html>
