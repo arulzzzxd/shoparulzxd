@@ -223,6 +223,15 @@
         video::-webkit-media-controls { display: none !important; }
         video::-webkit-media-controls-enclosure { display: none !important; }
 
+        /* TOUCH SWIPE AREA UNTUK GAMBAR PRODUK */
+        #modalProductCarousel,
+        #zoomSwipeArea,
+        #lightboxSwipeArea {
+            touch-action: pan-y;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
         .product-card-horizontal {
             width: 280px;
             flex-shrink: 0;
@@ -375,7 +384,7 @@
                 <div class="flex flex-col sm:flex-row gap-4 items-start neo-box p-3.5 rounded-2xl bg-neoBg">
                     
                     <div class="relative w-full sm:w-36 h-36 rounded-xl overflow-hidden bg-white border-2 border-black flex-shrink-0 group cursor-pointer" id="modalProductCarousel">
-                        <div class="flex w-full h-full transition-transform duration-300 ease-out" id="modalCarouselTrack" onclick="zoomCurrentProductImage()">
+                        <div class="flex w-full h-full transition-transform duration-300 ease-out" id="modalCarouselTrack">
                             <img id="detailImg" src="" class="w-full h-full object-cover flex-shrink-0">
                         </div>
                         
@@ -474,8 +483,8 @@
                 <img id="lightboxImage" src="" class="hidden max-w-full max-h-[80vh] rounded-2xl object-contain border-3 border-black bg-white">
                 
                 <div id="videoWrapper" class="video-container hidden max-w-full max-h-[80vh] rounded-2xl overflow-hidden border-3 border-black bg-black" onclick="toggleVideoPlayPause()">
-                    <!-- VIDEO DENGAN AUTO-PLAY SAAT BERPINDAH -->
-                    <video id="lightboxVideo" loop playsinline class="w-full h-full max-h-[80vh] object-contain"></video>
+                    <!-- VIDEO DENGAN AUTO-PLAY & SUARA ASLI -->
+                    <video id="lightboxVideo" loop playsinline webkit-playsinline preload="auto" class="w-full h-full max-h-[80vh] object-contain"></video>
                     <div id="videoPlayOverlayBtn" class="play-overlay-btn">
                         <i class="fa-solid fa-play"></i>
                     </div>
@@ -492,7 +501,7 @@
         </div>
     </div>
 
-    <!-- MODAL LIGHTBOX ZOOM GAMBAR PRODUK -->
+    <!-- MODAL LIGHTBOX ZOOM GAMBAR PRODUK (SWIPE KANAN KIRI TOUCHSCREEN) -->
     <div id="productZoomLightbox" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex flex-col justify-between p-3 sm:p-6 select-none" onclick="closeProductZoomLightbox()">
         <div class="flex items-center justify-between text-white z-20" onclick="event.stopPropagation()">
             <div class="flex items-center gap-2">
@@ -505,8 +514,8 @@
         </div>
 
         <div class="relative flex-1 flex items-center justify-center overflow-hidden my-2" id="zoomSwipeArea" onclick="event.stopPropagation()">
-            <div class="max-w-4xl max-h-[78vh] w-full flex items-center justify-center p-2">
-                <img id="zoomImageElement" src="" class="max-w-full max-h-[78vh] rounded-2xl object-contain border-3 border-black bg-white">
+            <div class="max-w-4xl max-h-[78vh] w-full flex items-center justify-center p-2 overflow-hidden">
+                <img id="zoomImageElement" src="" draggable="false" class="max-w-full max-h-[78vh] rounded-2xl object-contain border-3 border-black bg-white transition-transform duration-200 ease-out">
             </div>
         </div>
 
@@ -921,9 +930,9 @@
             document.getElementById('detailDesc').innerText = product.deskripsi || 'Tidak ada deskripsi.';
 
             let imgList = [];
-            if (Array.isArray(product.gambar)) {
+            if (Array.isArray(product.gambar) && product.gambar.length > 0) {
                 imgList = product.gambar;
-            } else if (typeof product.gambar === 'string') {
+            } else if (typeof product.gambar === 'string' && product.gambar.trim() !== '') {
                 imgList = [product.gambar];
             } else {
                 imgList = ['https://arulz-xd.my.id/files/X1F0Cn.png'];
@@ -942,11 +951,11 @@
             const track = document.getElementById('modalCarouselTrack');
             const dots = document.getElementById('modalCarouselDots');
 
-            track.innerHTML = currentModalImages.map(img => `<img src="${img}" class="w-full h-full object-cover flex-shrink-0">`).join('');
+            track.innerHTML = currentModalImages.map(img => `<img src="${img}" draggable="false" class="w-full h-full object-cover flex-shrink-0">`).join('');
             track.style.transform = `translateX(-${currentModalImageIndex * 100}%)`;
 
             dots.innerHTML = currentModalImages.map((_, i) => `
-                <span class="w-1.5 h-1.5 rounded-full ${i === currentModalImageIndex ? 'bg-black' : 'bg-slate-400'} transition-all"></span>
+                <span class="w-1.5 h-1.5 rounded-full ${i === currentModalImageIndex ? 'bg-black scale-125' : 'bg-slate-400'} transition-all"></span>
             `).join('');
         }
 
@@ -960,27 +969,51 @@
             document.getElementById('productDetailModal').classList.add('hidden');
         }
 
-        /* SWIPE / GESER FOTO PRODUK PADA MODAL DETAIL */
+        /* SWIPE / GESER FOTO PRODUK PADA MODAL DETAIL DENGAN TOUCHSCREEN */
         let modalCarouselTouchStartX = 0;
+        let modalCarouselTouchStartY = 0;
+        let modalCarouselSwiped = false;
         const modalProductCarousel = document.getElementById('modalProductCarousel');
         if (modalProductCarousel) {
             modalProductCarousel.addEventListener('touchstart', e => {
-                modalCarouselTouchStartX = e.changedTouches[0].screenX;
+                modalCarouselTouchStartX = e.touches[0].clientX;
+                modalCarouselTouchStartY = e.touches[0].clientY;
+                modalCarouselSwiped = false;
+            }, { passive: true });
+
+            modalProductCarousel.addEventListener('touchmove', e => {
+                if (currentModalImages.length <= 1) return;
+                const diffX = e.touches[0].clientX - modalCarouselTouchStartX;
+                const diffY = e.touches[0].clientY - modalCarouselTouchStartY;
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+                    modalCarouselSwiped = true;
+                }
             }, { passive: true });
 
             modalProductCarousel.addEventListener('touchend', e => {
-                const diffX = e.changedTouches[0].screenX - modalCarouselTouchStartX;
-                if (Math.abs(diffX) > 30) {
+                const diffX = e.changedTouches[0].clientX - modalCarouselTouchStartX;
+                if (Math.abs(diffX) > 25 && currentModalImages.length > 1) {
                     navigateModalCarousel(diffX < 0 ? 1 : -1);
+                    modalCarouselSwiped = true;
                 }
             }, { passive: true });
+
+            modalProductCarousel.addEventListener('click', () => {
+                if (modalCarouselSwiped) {
+                    modalCarouselSwiped = false;
+                    return;
+                }
+                zoomCurrentProductImage();
+            });
         }
 
         function openProductZoomLightbox(prodIndex, initialImgIndex = 0) {
             const produk = DATA_PRODUK[prodIndex];
             if (!produk) return;
 
-            let imgList = Array.isArray(produk.gambar) ? produk.gambar : [produk.gambar || 'https://arulz-xd.my.id/files/X1F0Cn.png'];
+            let imgList = (Array.isArray(produk.gambar) && produk.gambar.length > 0)
+                ? produk.gambar
+                : [produk.gambar || 'https://arulz-xd.my.id/files/X1F0Cn.png'];
 
             zoomProductImageList = imgList;
             zoomProductActiveIndex = initialImgIndex;
@@ -1002,22 +1035,69 @@
             document.getElementById('productZoomLightbox').classList.remove('hidden');
         }
 
+        function navigateProductZoom(dir) {
+            if (zoomProductImageList.length <= 1) return;
+            zoomProductActiveIndex = (zoomProductActiveIndex + dir + zoomProductImageList.length) % zoomProductImageList.length;
+            renderProductZoomContent();
+        }
+
         function renderProductZoomContent() {
             if (zoomProductImageList.length === 0) return;
 
             const imgEl = document.getElementById('zoomImageElement');
+            imgEl.style.transform = 'translateX(0px)';
             imgEl.src = zoomProductImageList[zoomProductActiveIndex];
 
             document.getElementById('zoomCounterText').innerText = `Gambar ${zoomProductActiveIndex + 1} dari ${zoomProductImageList.length}`;
 
             const dotsContainer = document.getElementById('zoomDotsContainer');
             dotsContainer.innerHTML = zoomProductImageList.map((_, i) => `
-                <span class="w-2 h-2 rounded-full ${i === zoomProductActiveIndex ? 'bg-black scale-125' : 'bg-slate-400'} transition-all"></span>
+                <span onclick="zoomProductActiveIndex=${i}; renderProductZoomContent();" class="w-2.5 h-2.5 rounded-full cursor-pointer ${i === zoomProductActiveIndex ? 'bg-black scale-125' : 'bg-slate-400'} transition-all"></span>
             `).join('');
         }
 
         function closeProductZoomLightbox() {
             document.getElementById('productZoomLightbox').classList.add('hidden');
+        }
+
+        /* GESTURE SWIPE KANAN / KIRI TOUCHSCREEN PADA ZOOM LIGHTBOX PRODUK */
+        let zoomTouchStartX = 0;
+        let zoomTouchStartY = 0;
+        const zoomSwipeArea = document.getElementById('zoomSwipeArea');
+        if (zoomSwipeArea) {
+            zoomSwipeArea.addEventListener('touchstart', e => {
+                zoomTouchStartX = e.touches[0].clientX;
+                zoomTouchStartY = e.touches[0].clientY;
+                const imgEl = document.getElementById('zoomImageElement');
+                if (imgEl) imgEl.style.transition = 'none';
+            }, { passive: true });
+
+            zoomSwipeArea.addEventListener('touchmove', e => {
+                if (zoomProductImageList.length <= 1) return;
+                const diffX = e.touches[0].clientX - zoomTouchStartX;
+                const diffY = e.touches[0].clientY - zoomTouchStartY;
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    const imgEl = document.getElementById('zoomImageElement');
+                    if (imgEl) imgEl.style.transform = `translateX(${diffX * 0.45}px)`;
+                }
+            }, { passive: true });
+
+            zoomSwipeArea.addEventListener('touchend', e => {
+                const imgEl = document.getElementById('zoomImageElement');
+                if (imgEl) {
+                    imgEl.style.transition = 'transform 0.2s ease-out';
+                    imgEl.style.transform = 'translateX(0px)';
+                }
+
+                const diffX = e.changedTouches[0].clientX - zoomTouchStartX;
+                const diffY = e.changedTouches[0].clientY - zoomTouchStartY;
+
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+                    if (zoomProductImageList.length > 1) {
+                        navigateProductZoom(diffX < 0 ? 1 : -1);
+                    }
+                }
+            }, { passive: true });
         }
 
         function openMediaLightboxSlider(reviewIndex, mediaIndex) {
@@ -1028,7 +1108,7 @@
             document.getElementById('mediaLightboxModal').classList.remove('hidden');
         }
 
-        /* RENDERING MEDIA LIGHTBOX DENGAN AUTO PLAY VIDEO SAAT BERPINDAH */
+        /* RENDERING MEDIA LIGHTBOX DENGAN AUTO PLAY & SUARA ASLI VIDEO */
         function renderLightboxMediaContent() {
             if (!currentReviewsListWithMedia || currentReviewsListWithMedia.length === 0) return;
 
@@ -1049,20 +1129,33 @@
             if (currentMedia.type === 'video') {
                 img.classList.add('hidden');
                 videoWrapper.classList.remove('hidden');
-                video.src = currentMedia.url;
+
+                video.pause();
+                video.removeAttribute('muted');
                 video.muted = false;
+                video.defaultMuted = false;
+                video.volume = 1.0;
+                video.src = currentMedia.url;
+                video.load();
                 video.currentTime = 0;
-                
-                // AUTO PLAY SAAT BERPINDAH VIDEO
+
+                // AUTO PLAY DENGAN SUARA ASLI VIDEO
                 videoWrapper.classList.add('playing');
                 const playPromise = video.play();
                 if (playPromise !== undefined) {
-                    playPromise.catch(() => {
+                    playPromise.then(() => {
+                        video.muted = false;
+                        video.volume = 1.0;
+                        videoWrapper.classList.add('playing');
+                    }).catch(() => {
+                        // Jika browser menahan autoplay bersuara, tampilkan tombol play agar user tap 1x untuk dengar suara asli
                         videoWrapper.classList.remove('playing');
                     });
                 }
             } else {
                 video.pause();
+                video.removeAttribute('src');
+                video.load();
                 videoWrapper.classList.add('hidden');
                 img.src = currentMedia.url;
                 img.classList.remove('hidden');
@@ -1072,14 +1165,21 @@
             document.getElementById('lightboxUserCounter').innerText = `Ulasan ${activeUserReviewIndex + 1} dari ${currentReviewsListWithMedia.length}`;
         }
 
-        /* TOGGLE PLAY / PAUSE DENGAN KLIK PADA VIDEO */
+        /* TOGGLE PLAY / PAUSE DENGAN KLIK PADA VIDEO & PASTIKAN SUARA ASLI AKTIF */
         function toggleVideoPlayPause() {
             const video = document.getElementById('lightboxVideo');
             const wrapper = document.getElementById('videoWrapper');
 
             if (video.paused) {
-                video.play();
-                wrapper.classList.add('playing');
+                video.removeAttribute('muted');
+                video.muted = false;
+                video.defaultMuted = false;
+                video.volume = 1.0;
+                video.play().then(() => {
+                    wrapper.classList.add('playing');
+                }).catch(() => {
+                    wrapper.classList.remove('playing');
+                });
             } else {
                 video.pause();
                 wrapper.classList.remove('playing');
@@ -1088,7 +1188,11 @@
 
         function closeMediaLightbox() {
             const video = document.getElementById('lightboxVideo');
-            if (video) video.pause();
+            if (video) {
+                video.pause();
+                video.removeAttribute('src');
+                video.load();
+            }
             document.getElementById('mediaLightboxModal').classList.add('hidden');
         }
 
@@ -1243,7 +1347,7 @@
                         if (m.type === 'video') {
                             return `
                                 <div class="relative w-20 h-20 rounded-xl overflow-hidden bg-white border-2 border-black cursor-pointer flex-shrink-0 group" onclick="openMediaLightboxSlider(${revMediaIdx}, ${mIdx})">
-                                    <video src="${m.url}" class="w-full h-full object-cover pointer-events-none"></video>
+                                    <video src="${m.url}" muted playsinline preload="metadata" class="w-full h-full object-cover pointer-events-none"></video>
                                     <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
                                         <i class="fa-solid fa-play text-white text-xs"></i>
                                     </div>
@@ -1495,7 +1599,13 @@
                     const pId = produk.Id || produk._id;
                     const cachedRev = REVIEWS_CACHE[pId] || { averageRating: 5.0, totalReviews: 0 };
 
-                    let mainImg = Array.isArray(produk.gambar) ? produk.gambar[0] : (produk.gambar || 'https://arulz-xd.my.id/files/X1F0Cn.png');
+                    const imgArray = Array.isArray(produk.gambar) && produk.gambar.length > 0
+                        ? produk.gambar
+                        : [produk.gambar || 'https://arulz-xd.my.id/files/X1F0Cn.png'];
+                    let mainImg = imgArray[0];
+                    const multiPhotoBadge = imgArray.length > 1
+                        ? `<span class="absolute bottom-2 right-2 bg-neoYellow border-2 border-black text-black text-[10px] font-black font-cyber px-2 py-0.5 rounded-md shadow-[2px_2px_0px_#000] pointer-events-none"><i class="fa-regular fa-images"></i> ${imgArray.length} Foto</span>`
+                        : '';
                     const deskripsiTeks = produk.deskripsi || 'Tidak ada deskripsi.';
                     const isLong = deskripsiTeks.length > 60;
 
@@ -1511,6 +1621,7 @@
                             
                             <div class="relative bg-neoBg pt-[70%] overflow-hidden rounded-2xl border-3 border-black flex-shrink-0">
                                 <img src="${mainImg}" onclick="event.stopPropagation(); openProductZoomLightbox(${originalIndex}, 0)" class="absolute inset-0 w-full h-full object-cover">
+                                ${multiPhotoBadge}
                             </div>
 
                             <div class="flex flex-col flex-1 justify-between space-y-2">
