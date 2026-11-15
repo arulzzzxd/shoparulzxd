@@ -643,18 +643,112 @@ function classifyProductLink(rawLink) {
 function normalizeDirectDownloadUrl(rawUrl) {
     let url = (rawUrl || '').trim();
 
-    // Google Drive file link -> direct download
-    const gdriveMatch = url.match(/drive\.google\.com\/file\/d\/([^/]+)/i) || url.match(/drive\.google\.com\/open\?id=([^&]+)/i);
+    // Google Drive (file/d/ID, open?id=ID, uc?id=ID) -> direct download (bypass halaman konfirmasi virus scan)
+    const gdriveMatch =
+        url.match(/drive\.google\.com\/file\/d\/([^/?#]+)/i) ||
+        url.match(/drive\.google\.com\/(?:open|uc)\?(?:[^#]*&)?id=([^&#]+)/i);
     if (gdriveMatch && gdriveMatch[1]) {
-        return `https://drive.google.com/uc?export=download&id=${gdriveMatch[1]}`;
+        return `https://drive.usercontent.google.com/download?id=${gdriveMatch[1]}&export=download&confirm=t`;
     }
 
-    // Dropbox dl=0 -> dl=1
-    if (url.includes('dropbox.com') && url.includes('dl=0')) {
-        return url.replace('dl=0', 'dl=1');
+    // Dropbox -> paksa dl=1 (baik dl=0 maupun tanpa parameter dl)
+    if (/(^|\.)dropbox\.com/i.test(url.replace(/^https?:\/\//i, '').split('/')[0] || '')) {
+        try {
+            const u = new URL(url);
+            u.searchParams.delete('raw');
+            u.searchParams.set('dl', '1');
+            return u.toString();
+        } catch (e) {
+            return url.replace('dl=0', 'dl=1');
+        }
+    }
+
+    // GitHub blob (halaman HTML) -> raw file langsung
+    const ghBlob = url.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+?)(?:[?#].*)?$/i);
+    if (ghBlob) {
+        return `https://raw.githubusercontent.com/${ghBlob[1]}/${ghBlob[2]}/${ghBlob[3]}/${ghBlob[4]}`;
     }
 
     return url;
+}
+
+// Nama file aman untuk header Content-Disposition
+function sanitizeDownloadFilename(name, fallback = 'produk-arulzxd') {
+    let clean = String(name || '')
+        .replace(/[\u0000-\u001f\u007f]/g, '')
+        .replace(/[\\/:*?"<>|]+/g, '-')
+        .replace(/^\.+/, '')
+        .trim();
+    if (!clean) clean = fallback;
+    return clean.slice(0, 180);
+}
+
+function encodeRFC5987(str) {
+    return encodeURIComponent(str).replace(/['()*]/g, (c) => '%' + c.charCodeAt(0).toString(16).toUpperCase());
+}
+
+// Semua file produk SELALU dikirim sebagai attachment (langsung ter-download, tidak pernah dibuka sebagai halaman)
+function setForcedDownloadHeaders(res, filename, contentLength) {
+    const asciiName = filename.replace(/[^\x20-\x7E]/g, '_').replace(/["\\]/g, '');
+    res.setHeader('Content-Disposition', `attachment; filename="${asciiName}"; filename*=UTF-8''${encodeRFC5987(filename)}`);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('X-Download-Filename', encodeURIComponent(filename));
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition, X-Download-Filename');
+    if (contentLength && Number(contentLength) > 0) {
+        res.setHeader('Content-Length', String(contentLength));
+    }
+}
+
+// File lokal (mis. "base-arulz.html" yang ada di folder project) yang tidak boleh ikut ter-download
+const BLOCKED_LOCAL_FILES = new Set([
+    'index.js', 'package.json', 'package-lock.json', 'vercel.json', '.env', '.env.local', '.gitignore'
+]);
+
+function resolveLocalProductFile(rawLink) {
+    let link = (rawLink || '').trim();
+    if (!link || /^[a-z][a-z0-9+.-]*:\/\//i.test(link)) return null;
+
+    link = link.split('#')[0].split('?')[0];
+    try { link = decodeURIComponent(link); } catch (e) {}
+    link = link.replace(/\\/g, '/').replace(/^\/+/, '');
+    if (!link) return null;
+
+    const roots = [__dirname, path.join(__dirname, 'public')];
+    for (const root of roots) {
+        const candidate = path.resolve(root, link);
+        if (!candidate.startsWith(root + path.sep)) continue; // cegah path traversal
+
+        const relParts = path.relative(__dirname, candidate).split(path.sep);
+        if (relParts.some((p) => p.startsWith('.') || p === 'node_modules')) continue;
+        if (BLOCKED_LOCAL_FILES.has(path.basename(candidate).toLowerCase())) continue;
+
+        try {
+            if (fs.statSync(candidate).isFile()) return candidate;
+        } catch (e) {}
+    }
+    return null;
+}
+
+// Tentukan sumber file produk: file lokal di server atau URL remote
+function resolveProductSource(rawLink) {
+    const link = (rawLink || '').trim();
+    if (!link) return null;
+
+    const localPath = resolveLocalProductFile(link);
+    if (localPath) return { type: 'local', filePath: localPath };
+
+    if (/^https?:\/\//i.test(link)) {
+        return { type: 'remote', url: normalizeDirectDownloadUrl(link) };
+    }
+
+    // domain tanpa protokol, mis. "cdn.example.com/files/produk.zip"
+    if (/^[a-z0-9-]+(\.[a-z0-9-]+)+\/.+/i.test(link)) {
+        return { type: 'remote', url: normalizeDirectDownloadUrl(`https://${link}`) };
+    }
+
+    return null;
 }
 
 function sendSweetAlert(res, icon, title, text, redirectUrl) {
@@ -1886,6 +1980,10 @@ app.get('/api/store/download/:orderId', checkAuthSession, async (req, res) => {
             return res.status(403).json({ status: false, message: 'Anda tidak memiliki akses ke transaksi ini!' });
         }
 
+        if (trx.type === 'DEPOSIT') {
+            return res.status(400).json({ status: false, message: 'Transaksi deposit tidak memiliki file produk.' });
+        }
+
         const status = (trx.status || '').toLowerCase();
         if (!['settlement', 'success', 'paid', 'settled'].includes(status)) {
             return res.status(400).json({ status: false, message: 'Pembayaran transaksi belum lunas!' });
@@ -1894,7 +1992,7 @@ app.get('/api/store/download/:orderId', checkAuthSession, async (req, res) => {
         let targetLink = trx.productLink || trx.itemDetails?.link || '';
         if (!targetLink && trx.itemDetails?.nama) {
             const dbProduct = await ProductV2.findOne({
-                nama: { $regex: new RegExp(`^${trx.itemDetails.nama.trim()}$`, 'i') }
+                nama: { $regex: new RegExp(`^${trx.itemDetails.nama.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
             }).lean();
             if (dbProduct?.link) targetLink = dbProduct.link;
         }
@@ -1909,6 +2007,14 @@ app.get('/api/store/download/:orderId', checkAuthSession, async (req, res) => {
                 status: false,
                 isChatLink: true,
                 ...linkInfo
+            });
+        }
+
+        const source = resolveProductSource(targetLink);
+        if (!source) {
+            return res.status(404).json({
+                status: false,
+                message: 'File produk tidak ditemukan di server. Hubungi admin.'
             });
         }
 
@@ -1932,67 +2038,142 @@ app.get('/api/store/download/:orderId', checkAuthSession, async (req, res) => {
             });
         }
 
-        const directUrl = normalizeDirectDownloadUrl(targetLink);
+        // Cache status transaksi harus dibuang agar downloadCount langsung ter-update
+        await deleteCache(`trx_${orderId}`);
 
+        const releaseQuota = async () => {
+            try {
+                await TransactionV2.updateOne(
+                    { orderId },
+                    { $set: { downloadCount: 0, downloadedAt: null } }
+                );
+                await deleteCache(`trx_${orderId}`);
+            } catch (e) {
+                console.error('Gagal mengembalikan kuota download:', e.message);
+            }
+        };
+
+        const fallbackName = sanitizeDownloadFilename(
+            (trx.itemDetails?.nama || 'produk-arulzxd')
+                .replace(/[^a-zA-Z0-9._-]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .toLowerCase()
+        );
+
+        // ---------- FILE LOKAL (mis. base-arulz.html di folder project) ----------
+        if (source.type === 'local') {
+            try {
+                const stat = await fs.promises.stat(source.filePath);
+                const filename = sanitizeDownloadFilename(path.basename(source.filePath), fallbackName);
+                setForcedDownloadHeaders(res, filename, stat.size);
+
+                const fileStream = fs.createReadStream(source.filePath);
+                let sent = 0;
+                fileStream.on('data', (chunk) => { sent += chunk.length; });
+                fileStream.on('error', async (streamErr) => {
+                    console.error('Stream error file lokal:', streamErr.message);
+                    if (sent === 0) await releaseQuota();
+                    if (!res.headersSent) {
+                        res.removeHeader('Content-Disposition');
+                        res.status(500).json({ status: false, message: 'Gagal membaca file produk.' });
+                    } else {
+                        res.destroy();
+                    }
+                });
+                res.on('close', () => {
+                    if (!res.writableFinished) {
+                        fileStream.destroy();
+                        if (sent === 0) releaseQuota();
+                    }
+                });
+                return fileStream.pipe(res);
+            } catch (localErr) {
+                await releaseQuota();
+                console.error('Gagal membaca file lokal produk:', localErr.message);
+                return res.status(500).json({ status: false, message: 'Gagal membaca file produk. Silakan coba lagi.' });
+            }
+        }
+
+        // ---------- FILE REMOTE (URL) ----------
         try {
             const upstream = await axios({
                 method: 'get',
-                url: directUrl,
+                url: source.url,
                 responseType: 'stream',
-                maxRedirects: 5,
+                maxRedirects: 8,
                 timeout: 30000,
                 headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ArulzXD-Downloader/1.0'
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
+                    'Accept': '*/*'
                 }
             });
 
-            const contentType = upstream.headers['content-type'] || 'application/octet-stream';
+            const upstreamType = (upstream.headers['content-type'] || '').toLowerCase();
             const contentDisp = upstream.headers['content-disposition'] || '';
 
+            let urlExt = '';
+            let urlBase = '';
+            try {
+                const finalUrl = upstream.request?.res?.responseUrl || source.url;
+                urlBase = decodeURIComponent(path.basename(new URL(finalUrl).pathname));
+                urlExt = path.extname(urlBase).toLowerCase();
+            } catch (e) {}
+
+            // Jika link mengarah ke halaman HTML (bukan file .html asli), itu bukan file langsung
+            if (upstreamType.includes('text/html') && !['.html', '.htm'].includes(urlExt) && !contentDisp) {
+                upstream.data.destroy();
+                await releaseQuota();
+                return res.status(502).json({
+                    status: false,
+                    message: 'Link produk bukan link file langsung. Hubungi admin untuk memperbaiki link produk.'
+                });
+            }
+
             let filename = '';
-            const filenameMatch = contentDisp.match(/filename\*?=(?:UTF-8'')?["']?([^;"'\n]+)["']?/i);
-            if (filenameMatch && filenameMatch[1]) {
-                filename = decodeURIComponent(filenameMatch[1].trim());
-            } else {
-                try {
-                    const urlPath = new URL(directUrl).pathname;
-                    const base = path.basename(urlPath);
-                    if (base && base.includes('.') && !base.startsWith('uc')) {
-                        filename = decodeURIComponent(base);
-                    }
-                } catch (e) {}
+            const starMatch = contentDisp.match(/filename\*\s*=\s*(?:UTF-8|utf-8)''([^;\n]+)/i);
+            const plainMatch = contentDisp.match(/filename\s*=\s*"?([^";\n]+)"?/i);
+            if (starMatch && starMatch[1]) {
+                try { filename = decodeURIComponent(starMatch[1].trim()); } catch (e) { filename = starMatch[1].trim(); }
+            } else if (plainMatch && plainMatch[1]) {
+                filename = plainMatch[1].trim();
+            } else if (urlBase && urlBase.includes('.')) {
+                filename = urlBase;
             }
 
             if (!filename) {
-                const safeProdName = (trx.itemDetails?.nama || 'produk-arulzxd')
-                    .replace(/[^a-zA-Z0-9._-]+/g, '-')
-                    .replace(/^-+|-+$/g, '')
-                    .toLowerCase();
-                const ext = mime.extension(contentType) || 'zip';
-                filename = `${safeProdName}.${ext}`;
+                const typeOnly = upstreamType.split(';')[0].trim();
+                const ext = (typeOnly && typeOnly !== 'application/octet-stream' && mime.extension(typeOnly)) || 'zip';
+                filename = `${fallbackName}.${ext}`;
             }
+            filename = sanitizeDownloadFilename(filename, fallbackName);
 
-            res.setHeader('Content-Disposition', `attachment; filename="${filename.replace(/"/g, '')}"`);
-            res.setHeader('Content-Type', contentType);
-            res.setHeader('X-Download-Filename', filename);
-            res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition, X-Download-Filename');
+            setForcedDownloadHeaders(res, filename, upstream.headers['content-length']);
 
-            upstream.data.on('error', (streamErr) => {
+            let bytesSent = 0;
+            upstream.data.on('data', (chunk) => { bytesSent += chunk.length; });
+
+            upstream.data.on('error', async (streamErr) => {
                 console.error('Stream error saat download produk:', streamErr.message);
+                if (bytesSent === 0) await releaseQuota();
                 if (!res.headersSent) {
-                    res.status(502).end();
+                    res.removeHeader('Content-Disposition');
+                    res.status(502).json({ status: false, message: 'Gagal mengunduh file produk dari server sumber.' });
                 } else {
-                    res.end();
+                    res.destroy();
+                }
+            });
+
+            res.on('close', () => {
+                if (!res.writableFinished) {
+                    upstream.data.destroy();
+                    if (bytesSent === 0) releaseQuota();
                 }
             });
 
             upstream.data.pipe(res);
         } catch (fetchErr) {
-            // Rollback kuota jika gagal terhubung ke server file sebelum stream dimulai
-            await TransactionV2.updateOne(
-                { orderId },
-                { $set: { downloadCount: 0, downloadedAt: null } }
-            );
+            // Kembalikan kuota jika gagal terhubung ke server file sebelum stream dimulai
+            await releaseQuota();
             console.error('Gagal mengambil file dari upstream:', fetchErr.message);
             return res.status(502).json({
                 status: false,
@@ -2311,17 +2492,49 @@ app.get(['/api/user/transactions', '/api/my-transactions'], checkAuthSession, as
             transactions = [];
         }
 
-        // Sanitasi penuh: hilangkan productLink dan itemDetails.link dari riwayat
-        const sanitizedTransactions = transactions.map(trx => ({
-            orderId: trx.orderId,
-            amount: trx.amount,
-            paymentMethod: trx.paymentMethod,
-            type: trx.type,
-            status: trx.status,
-            productName: trx.itemDetails?.nama || (trx.type === 'DEPOSIT' ? 'Deposit Saldo Akun' : 'Pembelian Produk'),
-            createdAt: trx.createdAt,
-            expiredAt: trx.expiredAt
-        }));
+        const paidStatuses = ['settlement', 'success', 'paid', 'settled'];
+
+        // Sanitasi penuh: productLink & itemDetails.link TIDAK dikirim ke client,
+        // hanya info tipe link + sisa kuota download agar tombol download bisa tampil di riwayat
+        const sanitizedTransactions = transactions.map(trx => {
+            const isDeposit = (trx.type || '').toUpperCase() === 'DEPOSIT';
+            const isPaid = paidStatuses.includes((trx.status || '').toLowerCase());
+            const downloadCount = Number(trx.downloadCount) || 0;
+
+            let linkType = null;
+            let chatUrl = null;
+            let specialDescription = null;
+
+            if (!isDeposit && isPaid) {
+                const rawLink = trx.productLink || trx.itemDetails?.link || '';
+                if (rawLink) {
+                    const info = classifyProductLink(rawLink);
+                    linkType = info.linkType;
+                    chatUrl = info.chatUrl;
+                    specialDescription = info.specialDescription;
+                } else {
+                    // Link belum tersimpan di transaksi; endpoint download yang akan menentukan
+                    linkType = 'download';
+                }
+            }
+
+            return {
+                orderId: trx.orderId,
+                amount: trx.amount,
+                paymentMethod: trx.paymentMethod,
+                type: trx.type,
+                status: trx.status,
+                productName: trx.itemDetails?.nama || (isDeposit ? 'Deposit Saldo Akun' : 'Pembelian Produk'),
+                createdAt: trx.createdAt,
+                expiredAt: trx.expiredAt,
+                linkType,
+                chatUrl,
+                specialDescription,
+                downloadCount,
+                maxDownloads: 1,
+                canDownload: linkType === 'download' && downloadCount < 1
+            };
+        });
 
         return res.json({ status: true, transactions: sanitizedTransactions });
     } catch (err) {
