@@ -38,6 +38,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/id.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.46/moment-timezone-with-data.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -94,7 +97,7 @@
             overflow: hidden;
         }
         .tf-tab {
-            padding: 7px 14px;
+            padding: 7px 12px;
             font-family: 'Space Grotesk', sans-serif;
             font-size: 11px;
             font-weight: 900;
@@ -111,6 +114,42 @@
         }
         .tf-tab.active {
             background: #00E5FF;
+        }
+
+        /* Tombol Slide Pagination Neo-Brutalism */
+        .slide-btn {
+            border: 2.5px solid #000000;
+            box-shadow: 2.5px 2.5px 0px #000000;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 900;
+            font-size: 11px;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+        }
+        .slide-btn:hover:not(:disabled) {
+            transform: translate(-1px, -1px);
+            box-shadow: 3.5px 3.5px 0px #000000;
+        }
+        .slide-btn:active:not(:disabled) {
+            transform: translate(1.5px, 1.5px);
+            box-shadow: 1px 1px 0px #000000;
+        }
+        .slide-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        @keyframes trxSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .trx-slide-anim {
+            animation: trxSlideIn 0.22s ease-out;
         }
 
         /* Garis Pembatas Solid untuk Tabel Status Transaksi */
@@ -335,7 +374,7 @@
 
         <!-- ANALITIK PASAR LIGHT NEO-BRUTALISM (TRADING SAHAM STYLE) -->
         <section class="neo-box rounded-2xl overflow-hidden bg-white text-black">
-            <!-- Top Header: Pair & Tombol 1 Hari / 7 Hari / 1 Bulan -->
+            <!-- Top Header: Pair & Tombol 1 Hari / 7 Hari / 1 Bulan / Semua -->
             <div class="bg-neoYellow border-b-[3px] border-black px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
                 <div class="flex items-center gap-3">
                     <div class="w-11 h-11 rounded-xl bg-white text-black border-[3px] border-black flex items-center justify-center font-black text-lg shadow-[3px_3px_0_#000] shrink-0">
@@ -348,11 +387,11 @@
                             </h3>
                             <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-extrabold bg-neoGreen text-black border-2 border-black px-2 py-0.5 rounded-md">
                                 <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
-                                LIVE
+                                LIVE WIB
                             </span>
                         </div>
                         <p id="tradingSubtitle" class="text-xs font-bold text-black/80 mt-0.5">
-                            Grafik transaksi 7 hari terakhir
+                            Grafik transaksi 7 hari terakhir (seluruh riwayat terakumulasi)
                         </p>
                     </div>
                 </div>
@@ -362,6 +401,7 @@
                     <button id="btnTf1d" type="button" onclick="setTradingRange('1d')" class="tf-tab">1 Hari</button>
                     <button id="btnTf7d" type="button" onclick="setTradingRange('7d')" class="tf-tab active">7 Hari</button>
                     <button id="btnTf1m" type="button" onclick="setTradingRange('1m')" class="tf-tab">1 Bulan</button>
+                    <button id="btnTfall" type="button" onclick="setTradingRange('all')" class="tf-tab">Semua</button>
                 </div>
             </div>
 
@@ -424,7 +464,7 @@
             </div>
         </section>
 
-        <!-- STATUS TRANSAKSI NEO-BRUTALISME DENGAN GARIS PEMBATAS TEGAS -->
+        <!-- STATUS TRANSAKSI NEO-BRUTALISME DENGAN GARIS PEMBATAS TEGAS & SLIDE PAGINATION -->
         <section class="neo-box rounded-2xl overflow-hidden bg-white">
             <div class="bg-neoCyan border-b-[3px] border-black px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
@@ -439,9 +479,12 @@
                             <span id="trxCountBadge" class="text-[10px] font-mono font-extrabold bg-black text-neoYellow px-2 py-0.5 rounded-md">
                                 0 ORDER
                             </span>
+                            <span id="trxSlideBadge" class="hidden text-[10px] font-mono font-extrabold bg-neoYellow text-black border-2 border-black px-2 py-0.5 rounded-md">
+                                SLIDE 1
+                            </span>
                         </div>
                         <p class="text-xs font-bold text-black/80 mt-0.5">
-                            Daftar pesanan yang masuk dan diproses di toko
+                            Semua riwayat pesanan yang masuk dan diproses di toko (WIB)
                         </p>
                     </div>
                 </div>
@@ -454,7 +497,7 @@
             </div>
 
             <div class="p-4 sm:p-5 bg-neoPaper">
-                <div class="overflow-x-auto neo-scroll rounded-xl border-[3px] border-black shadow-[4px_4px_0_#000] bg-white">
+                <div id="trxTableScrollWrapper" class="overflow-x-auto neo-scroll rounded-xl border-[3px] border-black shadow-[4px_4px_0_#000] bg-white">
                     <table class="neo-table text-left text-xs font-bold min-w-[720px]">
                         <thead>
                             <tr class="bg-neoYellow font-cyber uppercase tracking-wider text-[11px] text-black">
@@ -473,6 +516,16 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+
+                <!-- KONTROL SLIDE TRANSAKSI (MUNCUL OTOMATIS JIKA TRANSAKSI > 10) -->
+                <div id="trxPaginationContainer" class="hidden mt-4 pt-4 border-t-[2.5px] border-dashed border-black flex-col sm:flex-row items-center justify-between gap-3">
+                    <div id="trxPaginationInfo" class="text-xs font-mono font-extrabold text-black bg-white border-2 border-black px-3 py-1.5 rounded-lg shadow-[2px_2px_0_#000]">
+                        Menampilkan 1-10 dari 0 transaksi
+                    </div>
+                    <div id="trxPaginationButtons" class="flex flex-wrap items-center justify-center gap-1.5">
+                        <!-- Tombol Slide 1, Slide 2, dst. dirender lewat JavaScript -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -538,10 +591,23 @@
     </noscript>
 
     <script>
+        const STORE_TIMEZONE = 'Asia/Jakarta';
+        if (window.moment) {
+            moment.locale('id');
+            if (moment.tz) {
+                moment.tz.setDefault(STORE_TIMEZONE);
+            }
+        }
+
         let isInitialLoad = true;
         let activeTradingRange = '7d';
-        let cachedTradingSeries = { '1d': [], '7d': [], '1m': [] };
+        let cachedTradingSeries = { '1d': [], '7d': [], '1m': [], 'all': [] };
         let hoverCandleIndex = -1;
+
+        // State untuk Slide Status Transaksi (10 transaksi per slide)
+        let allTransactions = [];
+        let currentTrxSlide = 1;
+        const TRX_PER_SLIDE = 10;
 
         function maskOrderId(orderId) {
             if (!orderId) return '-';
@@ -558,22 +624,32 @@
 
         function formatRelativeTime(dateInput) {
             if (!dateInput) return '-';
+            if (window.moment && moment.tz) {
+                const m = moment.tz(dateInput, STORE_TIMEZONE).locale('id');
+                if (!m.isValid()) return '-';
+                if (moment.tz(STORE_TIMEZONE).diff(m, 'seconds') < 60) return 'Baru saja';
+                return m.fromNow();
+            }
             const diffSec = Math.floor((Date.now() - new Date(dateInput).getTime()) / 1000);
             if (diffSec < 60) return 'Baru saja';
             const diffMin = Math.floor(diffSec / 60);
             if (diffMin < 60) return `${diffMin} menit lalu`;
             const diffHour = Math.floor(diffMin / 60);
             if (diffHour < 24) return `${diffHour} jam lalu`;
-            const diffDay = Math.floor(diffHour / 24);
-            return `${diffDay} hari lalu`;
+            return `${Math.floor(diffHour / 24)} hari lalu`;
         }
 
         function formatClockTime(dateInput) {
             if (!dateInput) return '';
+            if (window.moment && moment.tz) {
+                const m = moment.tz(dateInput, STORE_TIMEZONE);
+                return m.isValid() ? `${m.format('HH:mm')} WIB` : '';
+            }
             return new Date(dateInput).toLocaleTimeString('id-ID', {
+                timeZone: STORE_TIMEZONE,
                 hour: '2-digit',
                 minute: '2-digit'
-            });
+            }) + ' WIB';
         }
 
         function escapeHtml(text) {
@@ -618,19 +694,20 @@
             activeTradingRange = range;
             hoverCandleIndex = -1;
 
-            ['1d', '7d', '1m'].forEach(key => {
+            ['1d', '7d', '1m', 'all'].forEach(key => {
                 const btn = document.getElementById(`btnTf${key}`);
                 if (!btn) return;
                 btn.classList.toggle('active', key === range);
             });
 
             const descMap = {
-                '1d': 'Grafik transaksi 24 jam terakhir (per jam)',
-                '7d': 'Grafik transaksi 7 hari terakhir',
-                '1m': 'Grafik transaksi 30 hari terakhir'
+                '1d': 'Grafik transaksi 24 jam terakhir (per jam WIB)',
+                '7d': 'Grafik transaksi 7 hari terakhir (seluruh riwayat terakumulasi)',
+                '1m': 'Grafik transaksi 30 hari terakhir (seluruh riwayat terakumulasi)',
+                'all': 'Grafik seluruh riwayat transaksi masuk dari awal hingga sekarang'
             };
             const subEl = document.getElementById('tradingSubtitle');
-            if (subEl) subEl.innerText = descMap[range];
+            if (subEl) subEl.innerText = descMap[range] || descMap['7d'];
 
             updateTradingHeader(cachedTradingSeries[range] || []);
             drawStockChart();
@@ -685,7 +762,6 @@
             ctx.closePath();
         }
 
-        // Renderer Grafik Trading Saham (Floating Candlestick + Wicks + Doji + Volume + Pill Axis)
         function drawStockChart() {
             const canvas = document.getElementById('tradingCanvas');
             if (!canvas) return;
@@ -709,7 +785,6 @@
             const plotW = W - padLeft - padRight;
             const plotH = H - padTop - padBottom;
 
-            // 1. Background Kertas Terang Neo-Brutalist
             ctx.fillStyle = '#FFFDF7';
             ctx.fillRect(0, 0, W, H);
 
@@ -722,7 +797,6 @@
                 return;
             }
 
-            // 2. Hitung Rentang Skala Y Mengambang (Floating Price Range)
             const allHighs = series.map(d => Number(d.h || 0));
             const allLows = series.map(d => Number(d.l || 0));
             let rawMax = Math.max(...allHighs);
@@ -740,14 +814,12 @@
 
             const toY = (val) => padTop + plotH - ((val - yMin) / ySpan) * plotH;
 
-            // 3. Grid Putus-putus Halus ala TradingView
             const stepW = plotW / series.length;
             ctx.save();
             ctx.setLineDash([3, 3]);
             ctx.lineWidth = 1;
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.12)';
 
-            // Garis Horizontal & Label Sumbu Y Kanan
             const ySteps = 5;
             ctx.font = '800 10px "JetBrains Mono", monospace';
             ctx.textAlign = 'left';
@@ -765,7 +837,6 @@
                 ctx.fillText(formatCompactAxisVal(val), W - padRight + 8, y + 3.5);
             }
 
-            // Garis Vertikal & Label Sumbu X Bawah
             const labelStep = Math.max(1, Math.ceil(series.length / 5));
             ctx.textAlign = 'center';
 
@@ -783,7 +854,6 @@
             });
             ctx.restore();
 
-            // 4. Volume Histogram Halus di Dasar Grafik (Seperti Gambar Referensi)
             const maxVol = Math.max(...series.map(d => Number(d.volume || 0)), 1);
             const maxVolBarH = plotH * 0.16;
             const barW = Math.max(4, Math.min(18, stepW * 0.65));
@@ -799,7 +869,6 @@
                 ctx.fillRect(cx - barW / 2, H - padBottom - vh, barW, vh);
             });
 
-            // 5. Gambar Candlestick Saham (Wick + Rounded Body / Dash Doji)
             const candleW = Math.max(4, Math.min(14, stepW * 0.62));
 
             series.forEach((d, idx) => {
@@ -818,7 +887,6 @@
                 const yClose = toY(close);
 
                 ctx.save();
-                // Sumbu Atas & Bawah (Wick)
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 1.5;
                 ctx.beginPath();
@@ -830,11 +898,9 @@
                 const leftBody = cx - candleW / 2;
 
                 if (rawBodyH < 2.5) {
-                    // Doji / Datar: Garis horizontal tebal seperti di chart saham
                     ctx.fillStyle = color;
                     ctx.fillRect(leftBody, yClose - 1, candleW, 2.2);
                 } else {
-                    // Body Candle Rounded
                     const topBody = Math.min(yOpen, yClose);
                     ctx.fillStyle = color;
                     drawRoundRect(ctx, leftBody, topBody, candleW, rawBodyH, 2.5);
@@ -843,7 +909,6 @@
                 ctx.restore();
             });
 
-            // 6. Garis Horizontal Harga Terkini + Pill Badge Sumbu Kanan
             const lastCandle = series[series.length - 1];
             const lastClose = Number(lastCandle.c || 0);
             const yLive = Math.round(toY(lastClose)) + 0.5;
@@ -856,7 +921,6 @@
             ctx.lineTo(W - padRight, yLive);
             ctx.stroke();
 
-            // Pill Badge Biru/Indigo di Sumbu Kanan (mirip 290,63 di gambar referensi)
             const pillX = W - padRight + 4;
             const pillW = padRight - 8;
             const pillH = 20;
@@ -872,7 +936,6 @@
             ctx.fillText(formatCompactAxisVal(lastClose), pillX + pillW / 2, pillY + 13.5);
             ctx.restore();
 
-            // 7. Crosshair & Floating Tooltip Box Saat Hover / Sentuh
             if (hoverCandleIndex >= 0 && hoverCandleIndex < series.length) {
                 const target = series[hoverCandleIndex];
                 const hx = Math.round(padLeft + hoverCandleIndex * stepW + stepW / 2) + 0.5;
@@ -894,14 +957,12 @@
                 ctx.stroke();
                 ctx.setLineDash([]);
 
-                // Titik fokus pada candle terpilih
                 ctx.fillStyle = '#000000';
                 ctx.beginPath();
                 ctx.arc(hx, hy, 4, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Label waktu di bawah crosshair
-                const lblW = 54;
+                const lblW = 58;
                 const lblX = Math.max(padLeft, Math.min(W - padRight - lblW, hx - lblW / 2));
                 ctx.fillStyle = '#000000';
                 drawRoundRect(ctx, lblX, H - padBottom + 4, lblW, 18, 4);
@@ -915,7 +976,7 @@
 
                 const hoverInfo = document.getElementById('candleHoverInfo');
                 if (hoverInfo) {
-                    hoverInfo.innerText = `${target.label} • O:${formatCompactAxisVal(target.o)} H:${formatCompactAxisVal(target.h)} L:${formatCompactAxisVal(target.l)} C:${formatCompactAxisVal(target.c)} (${target.lunas} Lunas)`;
+                    hoverInfo.innerText = `${target.label} WIB • O:${formatCompactAxisVal(target.o)} H:${formatCompactAxisVal(target.h)} L:${formatCompactAxisVal(target.l)} C:${formatCompactAxisVal(target.c)} (${target.lunas} Lunas)`;
                 }
             }
         }
@@ -1006,14 +1067,37 @@
             `;
         }
 
-        function renderTransactionRows(recentTrx) {
+        function goToTrxSlide(slideNumber, withAnim = true) {
+            const totalItems = allTransactions.length;
+            const totalSlides = Math.max(1, Math.ceil(totalItems / TRX_PER_SLIDE));
+            currentTrxSlide = Math.max(1, Math.min(totalSlides, Number(slideNumber) || 1));
+            renderTransactionSlide(withAnim);
+        }
+
+        function renderTransactionSlide(withAnim = false) {
             const tbody = document.getElementById('transactionTableBody');
             const countBadge = document.getElementById('trxCountBadge');
+            const slideBadge = document.getElementById('trxSlideBadge');
+            const pagContainer = document.getElementById('trxPaginationContainer');
+            const pagInfo = document.getElementById('trxPaginationInfo');
+            const pagButtons = document.getElementById('trxPaginationButtons');
+
+            const totalItems = allTransactions.length;
+            const totalSlides = Math.max(1, Math.ceil(totalItems / TRX_PER_SLIDE));
+
+            if (currentTrxSlide > totalSlides) currentTrxSlide = totalSlides;
+            if (currentTrxSlide < 1) currentTrxSlide = 1;
+
             if (countBadge) {
-                countBadge.innerText = `${(recentTrx || []).length} ORDER`;
+                countBadge.innerText = `${totalItems} ORDER`;
             }
 
-            if (!recentTrx || recentTrx.length === 0) {
+            if (totalItems === 0) {
+                if (slideBadge) slideBadge.classList.add('hidden');
+                if (pagContainer) {
+                    pagContainer.classList.add('hidden');
+                    pagContainer.classList.remove('flex');
+                }
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="5" class="py-10 text-center font-mono text-gray-700">
@@ -1023,7 +1107,11 @@
                 return;
             }
 
-            tbody.innerHTML = recentTrx.map(trx => {
+            const startIdx = (currentTrxSlide - 1) * TRX_PER_SLIDE;
+            const endIdx = Math.min(startIdx + TRX_PER_SLIDE, totalItems);
+            const sliceItems = allTransactions.slice(startIdx, endIdx);
+
+            tbody.innerHTML = sliceItems.map(trx => {
                 const status = (trx.status || 'pending').toLowerCase();
                 let badgeClass = 'bg-neoYellow text-black';
                 let statusText = 'Menunggu Bayar';
@@ -1040,11 +1128,11 @@
                 }
 
                 const timeAgo = formatRelativeTime(trx.createdAt);
-                const clockStr = formatClockTime(trx.createdAt);
+                const clockStr = trx.clockWib || formatClockTime(trx.createdAt);
                 const safeProduk = escapeHtml(trx.produk || 'Produk Digital');
 
                 return `
-                    <tr class="hover:bg-neoBg/75 transition-colors">
+                    <tr class="hover:bg-neoBg/75 transition-colors ${withAnim ? 'trx-slide-anim' : ''}">
                         <td class="p-3.5 align-middle whitespace-nowrap">
                             <span class="inline-block font-mono text-[11px] font-black bg-neoBg border-2 border-black px-2 py-0.5 rounded-md shadow-[2px_2px_0_#000] text-black">
                                 ${maskOrderId(trx.orderId)}
@@ -1083,6 +1171,113 @@
                     </tr>
                 `;
             }).join('');
+
+            // Tampilkan kontrol slide HANYA jika transaksi melebihi 10
+            if (totalItems > TRX_PER_SLIDE) {
+                if (slideBadge) {
+                    slideBadge.classList.remove('hidden');
+                    slideBadge.innerText = `SLIDE ${currentTrxSlide} / ${totalSlides}`;
+                }
+                if (pagContainer) {
+                    pagContainer.classList.remove('hidden');
+                    pagContainer.classList.add('flex');
+                }
+                if (pagInfo) {
+                    pagInfo.innerText = `Menampilkan ${startIdx + 1}-${endIdx} dari ${totalItems} transaksi • Slide ${currentTrxSlide} / ${totalSlides}`;
+                }
+
+                const slidesToRender = [];
+                if (totalSlides <= 6) {
+                    for (let i = 1; i <= totalSlides; i++) slidesToRender.push(i);
+                } else {
+                    slidesToRender.push(1);
+                    if (currentTrxSlide > 3) slidesToRender.push('...');
+                    const startWin = Math.max(2, currentTrxSlide - 1);
+                    const endWin = Math.min(totalSlides - 1, currentTrxSlide + 1);
+                    for (let i = startWin; i <= endWin; i++) slidesToRender.push(i);
+                    if (currentTrxSlide < totalSlides - 2) slidesToRender.push('...');
+                    slidesToRender.push(totalSlides);
+                }
+
+                let btnsHtml = `
+                    <button type="button"
+                        onclick="goToTrxSlide(${currentTrxSlide - 1}, true)"
+                        ${currentTrxSlide <= 1 ? 'disabled' : ''}
+                        aria-label="Slide Sebelumnya"
+                        class="slide-btn bg-white text-black px-2.5 py-1.5 rounded-lg">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                `;
+
+                slidesToRender.forEach(item => {
+                    if (item === '...') {
+                        btnsHtml += `<span class="px-1.5 py-1 font-mono font-black text-xs text-black">...</span>`;
+                    } else {
+                        const isActive = item === currentTrxSlide;
+                        const activeCls = isActive
+                            ? 'bg-neoYellow text-black'
+                            : 'bg-white text-black hover:bg-neoCyan/40';
+                        btnsHtml += `
+                            <button type="button"
+                                onclick="goToTrxSlide(${item}, true)"
+                                class="slide-btn ${activeCls} px-3 py-1.5 rounded-lg">
+                                Slide ${item}
+                            </button>
+                        `;
+                    }
+                });
+
+                btnsHtml += `
+                    <button type="button"
+                        onclick="goToTrxSlide(${currentTrxSlide + 1}, true)"
+                        ${currentTrxSlide >= totalSlides ? 'disabled' : ''}
+                        aria-label="Slide Berikutnya"
+                        class="slide-btn bg-white text-black px-2.5 py-1.5 rounded-lg">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                `;
+
+                if (pagButtons) pagButtons.innerHTML = btnsHtml;
+            } else {
+                if (slideBadge) slideBadge.classList.add('hidden');
+                if (pagContainer) {
+                    pagContainer.classList.add('hidden');
+                    pagContainer.classList.remove('flex');
+                }
+            }
+        }
+
+        function initTransactionSwipe() {
+            const wrapper = document.getElementById('trxTableScrollWrapper');
+            if (!wrapper) return;
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            wrapper.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches[0]) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                }
+            }, { passive: true });
+
+            wrapper.addEventListener('touchend', (e) => {
+                if (!e.changedTouches || !e.changedTouches[0] || allTransactions.length <= TRX_PER_SLIDE) return;
+                const dx = e.changedTouches[0].clientX - touchStartX;
+                const dy = e.changedTouches[0].clientY - touchStartY;
+
+                if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                    if (dx < 0) {
+                        goToTrxSlide(currentTrxSlide + 1, true);
+                    } else {
+                        goToTrxSlide(currentTrxSlide - 1, true);
+                    }
+                }
+            }, { passive: true });
+        }
+
+        function renderTransactionRows(recentTrx) {
+            allTransactions = Array.isArray(recentTrx) ? recentTrx : [];
+            renderTransactionSlide(false);
         }
 
         async function loadUserStatus() {
@@ -1121,14 +1316,13 @@
 
                 renderTransactionRows(data.recentTrx || []);
 
-                const nowStr = new Date().toLocaleTimeString('id-ID', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
+                const nowStr = (window.moment && moment.tz)
+                    ? moment.tz(STORE_TIMEZONE).format('HH:mm:ss')
+                    : new Date().toLocaleTimeString('id-ID', { timeZone: STORE_TIMEZONE, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
                 const syncEl = document.getElementById('trxLastSync');
                 if (syncEl) {
-                    syncEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-neoGreen border border-black"></span><span>Update ${nowStr}</span>`;
+                    syncEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-neoGreen border border-black"></span><span>Update ${nowStr} WIB</span>`;
                 }
 
                 isInitialLoad = false;
@@ -1137,7 +1331,11 @@
             }
         }
 
+        window.goToTrxSlide = goToTrxSlide;
+        window.setTradingRange = setTradingRange;
+
         initTradingCanvasEvents();
+        initTransactionSwipe();
         loadUserStatus();
         refreshRealtimeStats();
 
