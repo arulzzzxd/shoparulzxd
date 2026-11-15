@@ -7,7 +7,7 @@
     <title>Deposit Saldo Instan - ArulzXD Store</title>
     <meta name="description" content="Isi ulang saldo akun ArulzXD Store secara otomatis 24/7 menggunakan QRIS All Payment (DANA, OVO, GoPay, ShopeePay, M-Banking).">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://arulzxd.biz.id/deposit">
+    <link rel="canonical" href="https://www.shoparulzxd.biz.id/deposit">
 
     <!-- Favicon & Icons -->
     <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
@@ -18,7 +18,7 @@
     <meta property="og:type" content="website">
     <meta property="og:locale" content="id_ID">
     <meta property="og:site_name" content="ArulzXD Store">
-    <meta property="og:url" content="https://arulzxd.biz.id/deposit">
+    <meta property="og:url" content="https://www.shoparulzxd.biz.id/deposit">
     <meta property="og:title" content="Deposit Saldo Instan - ArulzXD Store">
     <meta property="og:description" content="Isi ulang saldo akun Anda secara otomatis 24/7 menggunakan QRIS All Payment di ArulzXD Store.">
     <meta property="og:image" content="https://cdn.larasxd.my.id/files/wWSxaeJ0ka.jpg">
@@ -29,14 +29,14 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://arulzxd.biz.id/deposit">
+    <meta name="twitter:url" content="https://www.shoparulzxd.biz.id/deposit">
     <meta name="twitter:title" content="Deposit Saldo Instan - ArulzXD Store">
     <meta name="twitter:description" content="Isi ulang saldo akun Anda secara otomatis 24/7 menggunakan QRIS All Payment di ArulzXD Store.">
     <meta name="twitter:image" content="https://cdn.larasxd.my.id/files/wWSxaeJ0ka.jpg">
 
     <!-- Styles & Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -48,6 +48,7 @@
                     fontFamily: {
                         sans: ['Plus Jakarta Sans', 'sans-serif'],
                         cyber: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
                         neoYellow: '#FFDE59',
@@ -87,6 +88,12 @@
         .preset-btn.active {
             background-color: #FFDE59 !important;
             box-shadow: 5px 5px 0px #000000 !important;
+        }
+
+        .neo-dots-bg {
+            background-color: #F4F0EA;
+            background-image: radial-gradient(#000000 1.25px, transparent 1.25px);
+            background-size: 16px 16px;
         }
 
         /* BOTTOM NAVIGATION BAR */
@@ -459,57 +466,130 @@
 
     </main>
 
-    <!-- MODAL POPUP QRIS DEPOSIT -->
-    <div id="depositModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4 overflow-y-auto">
-        <div class="neo-box w-full max-w-md rounded-2xl bg-white p-5 space-y-3.5 text-center relative my-auto">
-            <button type="button" onclick="closeDepositModal()" class="w-8 h-8 rounded-lg border-2 border-black bg-neoBg hover:bg-neoPink flex items-center justify-center absolute top-4 right-4 text-black font-black text-sm transition">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+    <!-- MODAL POPUP QRIS DEPOSIT (NEO-BRUTALISM ENHANCED) -->
+    <div id="depositModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="w-full max-w-[430px] rounded-2xl bg-white border-[3px] border-black shadow-[8px_8px_0px_#000] overflow-hidden relative my-auto">
             
-            <div class="space-y-0.5 pt-1">
-                <span class="inline-block bg-neoCyan border-2 border-black px-2.5 py-0.5 rounded-md text-[10px] font-black font-cyber uppercase">
-                    QRIS All Payment
-                </span>
-                <h3 class="text-base font-black font-cyber uppercase pt-1">Scan / Download QRIS</h3>
-                <p class="text-[11px] font-bold text-slate-600">Simpan gambar QRIS lalu upload di aplikasi E-Wallet / M-Banking</p>
-            </div>
-
-            <div class="mx-auto w-fit bg-white rounded-2xl border-3 border-black shadow-[4px_4px_0px_#000] overflow-hidden">
-                <div class="bg-neoBg border-b-2 border-black px-4 py-1.5 flex items-center justify-between gap-4">
-                    <span class="font-cyber font-black text-xs tracking-wider">QRIS</span>
-                    <span class="text-[9px] font-mono font-bold bg-white border border-black px-1.5 py-0.5 rounded">GPN</span>
+            <!-- TOP WINDOW BAR -->
+            <div class="bg-neoYellow border-b-[3px] border-black px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-neoPink border-2 border-black inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-neoCyan border-2 border-black inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-neoGreen border-2 border-black inline-block"></span>
+                    </div>
+                    <span class="font-cyber font-black text-xs uppercase tracking-wider ml-1 text-black">
+                        INVOICE // QRIS INSTAN
+                    </span>
                 </div>
-                <div class="p-4 bg-white flex items-center justify-center">
-                    <div id="depQrcodeContainer"></div>
+                <button type="button" onclick="closeDepositModal()" title="Tutup Modal"
+                        class="w-7 h-7 rounded-lg border-2 border-black bg-white hover:bg-neoPink flex items-center justify-center text-black font-black text-xs shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- MODAL BODY -->
+            <div class="p-4 sm:p-5 neo-dots-bg space-y-3.5 text-center">
+                
+                <!-- BADGES -->
+                <div class="flex items-center justify-center gap-2 flex-wrap">
+                    <span class="bg-neoCyan border-2 border-black px-2.5 py-0.5 rounded-lg text-[10px] font-black font-cyber uppercase shadow-[2px_2px_0px_#000] flex items-center gap-1">
+                        <i class="fa-solid fa-bolt"></i> QRIS ALL PAYMENT
+                    </span>
+                    <span class="bg-neoGreen border-2 border-black px-2.5 py-0.5 rounded-lg text-[10px] font-black font-cyber uppercase shadow-[2px_2px_0px_#000] flex items-center gap-1">
+                        <i class="fa-solid fa-shield-check"></i> OTOMATIS 24/7
+                    </span>
                 </div>
-                <div class="bg-neoBg border-t-2 border-black px-4 py-2 text-center">
-                    <p class="text-[9px] font-black font-cyber uppercase text-slate-600">Total Pembayaran</p>
-                    <h4 id="depTotalAmountText" class="text-xl font-black font-cyber text-black leading-tight">Rp 0</h4>
-                    <p class="text-[9px] font-mono font-bold text-slate-700 mt-0.5">ID: <span id="depOrderIdText">-</span></p>
+
+                <!-- KARTU UTAMA QRIS -->
+                <div class="mx-auto w-full bg-white rounded-2xl border-[3px] border-black shadow-[5px_5px_0px_#000] overflow-hidden">
+                    <!-- QRIS Card Header -->
+                    <div class="bg-black text-white px-4 py-2 flex items-center justify-between border-b-[3px] border-black">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-neoYellow text-black font-cyber font-black text-[11px] px-2 py-0.5 rounded border border-black tracking-wider">
+                                QRIS
+                            </span>
+                            <span class="text-[11px] font-cyber font-black tracking-wide uppercase text-white">
+                                ARULZXD STORE
+                            </span>
+                        </div>
+                        <span class="text-[10px] font-mono font-extrabold bg-neoPink text-black px-2 py-0.5 rounded border border-black">
+                            GPN
+                        </span>
+                    </div>
+
+                    <!-- QR CODE FRAME DENGAN CORNER BRACKETS -->
+                    <div class="p-4 bg-white flex flex-col items-center justify-center relative">
+                        <div class="relative p-3 bg-white border-[3px] border-black rounded-xl shadow-[4px_4px_0px_#000]">
+                            <!-- Sudut Dekoratif Neo-Brutalism -->
+                            <span class="absolute -top-1.5 -left-1.5 w-3.5 h-3.5 bg-neoYellow border-2 border-black rounded-sm"></span>
+                            <span class="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-neoCyan border-2 border-black rounded-sm"></span>
+                            <span class="absolute -bottom-1.5 -left-1.5 w-3.5 h-3.5 bg-neoPink border-2 border-black rounded-sm"></span>
+                            <span class="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 bg-neoGreen border-2 border-black rounded-sm"></span>
+                            
+                            <div id="depQrcodeContainer"></div>
+                        </div>
+                        <p class="text-[10px] font-bold text-slate-700 mt-2.5 flex items-center gap-1">
+                            <i class="fa-solid fa-camera text-black"></i> Scan langsung atau Download gambar QRIS
+                        </p>
+                    </div>
+
+                    <!-- TOTAL BAYAR & ORDER ID -->
+                    <div class="bg-neoBg border-t-[3px] border-black p-3.5 space-y-2">
+                        <div class="bg-neoYellow border-2 border-black rounded-xl px-3.5 py-2 shadow-[3px_3px_0px_#000] flex items-center justify-between">
+                            <div class="text-left">
+                                <span class="text-[9px] font-black font-cyber uppercase tracking-wider block text-black/80">
+                                    Total Pembayaran
+                                </span>
+                                <h4 id="depTotalAmountText" class="text-xl sm:text-2xl font-black font-cyber text-black leading-tight">
+                                    Rp 0
+                                </h4>
+                            </div>
+                            <button type="button" onclick="copyTextValue(String(currentDepAmount), 'Nominal')" title="Salin Nominal"
+                                    class="neo-btn bg-white text-black px-2.5 py-1.5 rounded-lg text-[10px] font-cyber font-black uppercase flex items-center gap-1">
+                                <i class="fa-regular fa-copy"></i> Salin
+                            </button>
+                        </div>
+
+                        <div class="bg-white border-2 border-black rounded-lg px-3 py-1.5 flex items-center justify-between gap-2">
+                            <div class="text-left truncate">
+                                <span class="text-[9px] font-black font-cyber uppercase text-slate-500 block">Order ID</span>
+                                <span id="depOrderIdText" class="text-[11px] font-mono font-extrabold text-black">-</span>
+                            </div>
+                            <button type="button" onclick="copyTextValue(currentDepOrderId, 'Order ID')" title="Salin Order ID"
+                                    class="bg-neoCyan hover:bg-neoYellow border-2 border-black px-2 py-1 rounded-md text-[10px] font-cyber font-black uppercase shrink-0 transition">
+                                <i class="fa-regular fa-copy"></i> ID
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="flex items-center justify-center gap-2 text-xs font-black font-cyber bg-neoYellow py-2 rounded-xl border-2 border-black">
-                <i class="fa-solid fa-spinner fa-spin"></i>
-                <span>Menunggu Pembayaran Masuk...</span>
-            </div>
+                <!-- STATUS BAR -->
+                <div class="flex items-center justify-center gap-2 text-xs font-black font-cyber bg-white py-2.5 px-3 rounded-xl border-[3px] border-black shadow-[3px_3px_0px_#000]">
+                    <span class="w-2.5 h-2.5 rounded-full bg-neoGreen border border-black animate-ping"></span>
+                    <span>Menunggu Pembayaran Masuk...</span>
+                </div>
 
-            <div class="grid grid-cols-2 gap-2">
-                <button type="button" onclick="downloadQrisImage()" class="neo-btn bg-neoCyan text-black text-xs font-black py-3 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
-                    <i class="fa-solid fa-download"></i> Download QRIS
-                </button>
-                <button type="button" id="btnManualCheckStatus" onclick="manualCheckDepositStatus()" class="neo-btn bg-neoGreen text-black text-xs font-black py-3 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
-                    <i class="fa-solid fa-rotate"></i> Cek Status
-                </button>
-            </div>
+                <!-- TOMBOL AKSI UTAMA -->
+                <div class="grid grid-cols-2 gap-2.5">
+                    <button type="button" onclick="downloadQrisImage()" class="neo-btn bg-neoCyan text-black text-xs font-black py-3 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
+                        <i class="fa-solid fa-download"></i> Download QRIS
+                    </button>
+                    <button type="button" id="btnManualCheckStatus" onclick="manualCheckDepositStatus()" class="neo-btn bg-neoGreen text-black text-xs font-black py-3 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
+                        <i class="fa-solid fa-rotate"></i> Cek Status
+                    </button>
+                </div>
 
-            <div class="flex items-center gap-2">
-                <button type="button" onclick="cancelDepositTransaction()" class="neo-btn w-1/2 bg-neoPink text-black text-xs font-black py-2.5 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
-                    <i class="fa-solid fa-trash-can"></i> Batalkan
-                </button>
-                <button type="button" onclick="closeDepositModal()" class="neo-btn w-1/2 bg-white text-black text-xs font-black py-2.5 rounded-xl uppercase font-cyber">
-                    Tutup
-                </button>
+                <!-- TOMBOL SEKUNDER -->
+                <div class="grid grid-cols-2 gap-2.5">
+                    <button type="button" onclick="cancelDepositTransaction()" class="neo-btn bg-neoPink text-black text-xs font-black py-2.5 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
+                        <i class="fa-solid fa-trash-can"></i> Batalkan
+                    </button>
+                    <button type="button" onclick="closeDepositModal()" class="neo-btn bg-white text-black text-xs font-black py-2.5 rounded-xl uppercase font-cyber">
+                        Tutup
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>
@@ -568,6 +648,20 @@
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
         }
 
+        function copyTextValue(text, label) {
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: `${label.toUpperCase()} DISALIN!`,
+                    text: `${text}`,
+                    timer: 1300,
+                    showConfirmButton: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }).catch(() => {});
+        }
+
         function setDepositAmount(val, btnElem) {
             document.getElementById('depositAmountInput').value = val;
             document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
@@ -612,6 +706,27 @@
             });
         }
 
+        function drawCanvasNeoBox(ctx, x, y, w, h, radius, fillColor, shadowOffset = 8, borderWidth = 5) {
+            ctx.save();
+            if (shadowOffset > 0) {
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.roundRect(x + shadowOffset, y + shadowOffset, w, h, radius);
+                ctx.fill();
+            }
+            ctx.fillStyle = fillColor;
+            ctx.beginPath();
+            ctx.roundRect(x, y, w, h, radius);
+            ctx.fill();
+
+            if (borderWidth > 0) {
+                ctx.lineWidth = borderWidth;
+                ctx.strokeStyle = '#000000';
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
         async function downloadQrisImage() {
             const qContainer = document.getElementById('depQrcodeContainer');
             const sourceCanvas = qContainer.querySelector('canvas');
@@ -630,31 +745,120 @@
             const outCanvas = document.createElement('canvas');
             const ctx = outCanvas.getContext('2d');
 
-            const W = 600;
-            const H = 760;
+            const W = 760;
+            const H = 1040;
             outCanvas.width = W;
             outCanvas.height = H;
 
-            ctx.fillStyle = '#FFFFFF';
+            // 1. LATAR BELAKANG NEO-BRUTALISM CREAM + DOT GRID
+            ctx.fillStyle = '#F4F0EA';
             ctx.fillRect(0, 0, W, H);
 
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.16)';
+            for (let gx = 20; gx < W; gx += 24) {
+                for (let gy = 20; gy < H; gy += 24) {
+                    ctx.beginPath();
+                    ctx.arc(gx, gy, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Aksen Geometri Sudut
+            ctx.fillStyle = '#00E5FF';
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(180, 0);
+            ctx.lineTo(0, 180);
+            ctx.closePath();
+            ctx.fill();
+            ctx.lineWidth = 5;
             ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 6;
-            ctx.strokeRect(12, 12, W - 24, H - 24);
+            ctx.stroke();
 
+            ctx.fillStyle = '#FF79C6';
+            ctx.beginPath();
+            ctx.moveTo(W, H);
+            ctx.lineTo(W - 200, H);
+            ctx.lineTo(W, H - 200);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // 2. KARTU UTAMA PUTIH DENGAN HARD SHADOW HITAM TEBAL
+            const cardX = 44;
+            const cardY = 44;
+            const cardW = W - 98;
+            const cardH = H - 98;
+            drawCanvasNeoBox(ctx, cardX, cardY, cardW, cardH, 28, '#FFFFFF', 12, 6);
+
+            // 3. HEADER WINDOW BAR KUNING
+            ctx.save();
+            ctx.beginPath();
+            ctx.roundRect(cardX, cardY, cardW, 92, [28, 28, 0, 0]);
             ctx.fillStyle = '#FFDE59';
-            ctx.fillRect(15, 15, W - 30, 86);
+            ctx.fill();
+            ctx.lineWidth = 6;
+            ctx.strokeStyle = '#000000';
+            ctx.stroke();
+            ctx.restore();
+
+            // 3 Window Dots
+            const dotColors = ['#FF79C6', '#00E5FF', '#00E676'];
+            dotColors.forEach((c, idx) => {
+                ctx.fillStyle = c;
+                ctx.beginPath();
+                ctx.arc(cardX + 36 + idx * 28, cardY + 46, 9, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = '#000000';
+                ctx.stroke();
+            });
+
+            // Judul Store di Header
             ctx.fillStyle = '#000000';
-            ctx.fillRect(15, 101, W - 30, 4);
-
-            ctx.font = '900 28px sans-serif';
+            ctx.font = '900 26px "Space Grotesk", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('QRIS PEMBAYARAN - ARULZXD STORE', W / 2, 68);
+            ctx.fillText('ARULZXD STORE', W / 2 + 24, cardY + 55);
 
+            // 4. BADGE ROW (QRIS ALL PAYMENT & OTOMATIS 24/7)
+            drawCanvasNeoBox(ctx, cardX + 34, cardY + 118, 280, 44, 12, '#00E5FF', 5, 4);
+            ctx.fillStyle = '#000000';
+            ctx.font = '900 17px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('⚡ QRIS ALL PAYMENT', cardX + 34 + 140, cardY + 146);
+
+            drawCanvasNeoBox(ctx, cardX + cardW - 264, cardY + 118, 230, 44, 12, '#00E676', 5, 4);
+            ctx.fillStyle = '#000000';
+            ctx.fillText('✔ PROSES 24/7', cardX + cardW - 264 + 115, cardY + 146);
+
+            // 5. KOTAK FRAME QR CODE DENGAN CORNER ACCENTS
+            const qrFrameSize = 440;
+            const qrFrameX = (W - qrFrameSize) / 2 - 4;
+            const qrFrameY = cardY + 190;
+            drawCanvasNeoBox(ctx, qrFrameX, qrFrameY, qrFrameSize, qrFrameSize, 24, '#FFFFFF', 10, 6);
+
+            // 4 Kotak Sudut Dekorasi
+            const cornerSize = 20;
+            const corners = [
+                { x: qrFrameX - 8, y: qrFrameY - 8, color: '#FFDE59' },
+                { x: qrFrameX + qrFrameSize - 12, y: qrFrameY - 8, color: '#00E5FF' },
+                { x: qrFrameX - 8, y: qrFrameY + qrFrameSize - 12, color: '#FF79C6' },
+                { x: qrFrameX + qrFrameSize - 12, y: qrFrameY + qrFrameSize - 12, color: '#00E676' }
+            ];
+            corners.forEach(c => {
+                ctx.fillStyle = c.color;
+                ctx.fillRect(c.x, c.y, cornerSize, cornerSize);
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = '#000000';
+                ctx.strokeRect(c.x, c.y, cornerSize, cornerSize);
+            });
+
+            // Gambar QR Code
             ctx.imageSmoothingEnabled = false;
-            const qrSize = 420;
-            const qrX = (W - qrSize) / 2;
-            const qrY = 140;
+            const qrPad = 26;
+            const qrSize = qrFrameSize - qrPad * 2;
+            const qrX = qrFrameX + qrPad;
+            const qrY = qrFrameY + qrPad;
 
             try {
                 if (sourceCanvas) {
@@ -667,20 +871,37 @@
                 return;
             }
 
+            // 6. KOTAK TOTAL PEMBAYARAN (KUNING NEO-BRUTALISM)
+            const payBoxX = cardX + 34;
+            const payBoxY = qrFrameY + qrFrameSize + 34;
+            const payBoxW = cardW - 68;
+            const payBoxH = 122;
+            drawCanvasNeoBox(ctx, payBoxX, payBoxY, payBoxW, payBoxH, 18, '#FFDE59', 7, 5);
+
             ctx.fillStyle = '#000000';
-            ctx.font = 'bold 20px sans-serif';
-            ctx.fillText('TOTAL PEMBAYARAN', W / 2, 615);
+            ctx.font = '800 18px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('TOTAL PEMBAYARAN', W / 2 - 4, payBoxY + 38);
 
-            ctx.font = '900 38px sans-serif';
-            ctx.fillText(formatRupiah(currentDepAmount), W / 2, 662);
+            ctx.font = '900 46px "Space Grotesk", sans-serif';
+            ctx.fillText(formatRupiah(currentDepAmount), W / 2 - 4, payBoxY + 94);
 
-            ctx.font = 'bold 16px monospace';
+            // 7. KOTAK ORDER ID
+            const idBoxY = payBoxY + payBoxH + 18;
+            drawCanvasNeoBox(ctx, payBoxX, idBoxY, payBoxW, 56, 14, '#F4F0EA', 5, 4);
+
+            ctx.fillStyle = '#000000';
+            ctx.font = '800 19px "JetBrains Mono", monospace';
+            ctx.fillText(`ID: ${currentDepOrderId || '-'}`, W / 2 - 4, idBoxY + 35);
+
+            // 8. FOOTER INFO E-WALLET
             ctx.fillStyle = '#334155';
-            ctx.fillText(`Order ID: ${currentDepOrderId || '-'}`, W / 2, 705);
+            ctx.font = '700 15px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('DANA • OVO • GOPAY • SHOPEEPAY • M-BANKING', W / 2 - 4, cardY + cardH - 22);
 
             try {
                 const link = document.createElement('a');
-                link.download = `QRIS-${currentDepOrderId || Date.now()}.png`;
+                link.download = `QRIS-ARULZXD-${currentDepOrderId || Date.now()}.png`;
                 link.href = outCanvas.toDataURL('image/png');
                 document.body.appendChild(link);
                 link.click();
