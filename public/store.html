@@ -1853,7 +1853,13 @@
 
                 if (!res.ok) {
                     let errJson = {};
-                    try { errJson = await res.json(); } catch (e) {}
+                    try {
+                        const rawErr = await res.text();
+                        try { errJson = JSON.parse(rawErr); } catch (e) {}
+                    } catch (e) {}
+                    if (!errJson.message && !errJson.alreadyDownloaded && !errJson.isChatLink) {
+                        errJson.message = `Gagal mengunduh file produk (HTTP ${res.status}). Silakan coba lagi.`;
+                    }
 
                     if (errJson.alreadyDownloaded) {
                         state.completed = true;
@@ -1930,8 +1936,12 @@
                     btn.classList.add('bg-neoGreen', 'opacity-75', 'cursor-not-allowed');
                     btn.innerHTML = `<i class="fa-solid fa-circle-check text-sm"></i> Berhasil Didownload (1/1)`;
                 }
-            } catch (err) {
+            } catch (rawErr) {
+                let err = rawErr;
                 state.downloading = false;
+                if (err instanceof TypeError) {
+                    err = new Error('Koneksi terputus saat mengunduh. Kuota Anda belum terpakai, silakan coba lagi.');
+                }
                 if (statusText) {
                     statusText.innerText = 'Klik tombol di bawah untuk mengunduh file produk (1x kesempatan).';
                 }

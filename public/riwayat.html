@@ -500,6 +500,7 @@
                                     <i class="fa-solid ${badgeIcon}"></i> ${badgeLabel}
                                 </span>
                                 <span class="text-[11px] font-mono font-bold text-slate-600">#${trx.orderId || '-'}</span>
+                                ${buildDownloadStatusBadge(trx)}
                             </div>
                             <h2 class="text-sm sm:text-base font-black font-cyber text-black">${title}</h2>
                             <p class="text-[11px] font-bold text-slate-600">
@@ -509,12 +510,9 @@
 
                         <div class="flex sm:flex-col items-center sm:items-end justify-between gap-2 border-t-2 sm:border-t-0 border-black pt-3 sm:pt-0">
                             <span class="text-base sm:text-lg font-black font-cyber text-black">${formatRupiah(trx.amount || 0)}</span>
-                            <div class="flex flex-wrap sm:justify-end items-center gap-2">
-                                ${buildProductActionButton(trx, 'card')}
-                                <button type="button" onclick="openInvoiceModal('${trx.orderId}')" class="neo-btn bg-neoCyan text-black font-cyber font-black px-4 py-2 rounded-xl text-xs uppercase flex items-center gap-1.5">
-                                    <i class="fa-solid fa-file-invoice"></i> Detail Invoice
-                                </button>
-                            </div>
+                            <button type="button" onclick="openInvoiceModal('${trx.orderId}')" class="neo-btn bg-neoCyan text-black font-cyber font-black px-4 py-2 rounded-xl text-xs uppercase flex items-center gap-1.5">
+                                <i class="fa-solid fa-file-invoice"></i> Detail Invoice
+                            </button>
                         </div>
                     </article>
                 `;
@@ -599,10 +597,26 @@
             return (trx.type || '').toUpperCase() !== 'DEPOSIT' && normalizeStatusGroup(trx.status) === 'lunas' && !!trx.linkType;
         }
 
-        function buildProductActionButton(trx, place) {
+        // Penanda status download (muncul di kartu riwayat & modal invoice)
+        function buildDownloadStatusBadge(trx) {
+            if (!isProductPurchase(trx) || trx.linkType !== 'download') return '';
+            if (trx.canDownload) {
+                return `
+                    <span class="inline-flex items-center gap-1 text-[10px] font-black font-cyber px-2.5 py-0.5 rounded-md border-2 border-black bg-neoPink text-black">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> BELUM DIDOWNLOAD
+                    </span>`;
+            }
+            return `
+                <span class="inline-flex items-center gap-1 text-[10px] font-black font-cyber px-2.5 py-0.5 rounded-md border-2 border-black bg-neoCyan text-black">
+                    <i class="fa-solid fa-circle-check"></i> SUDAH DIDOWNLOAD
+                </span>`;
+        }
+
+        // Tombol download / chat (hanya dipakai di modal Detail Invoice)
+        function buildProductActionButton(trx) {
             if (!isProductPurchase(trx)) return '';
             const safeId = String(trx.orderId || '').replace(/'/g, '');
-            const full = place === 'modal' ? 'w-full justify-center py-2.5' : 'px-4 py-2';
+            const full = 'w-full justify-center py-2.5';
 
             if (trx.linkType === 'whatsapp' || trx.linkType === 'telegram') {
                 const isTg = trx.linkType === 'telegram';
@@ -660,12 +674,39 @@
                         <span class="text-[10px] font-black font-cyber uppercase bg-white border border-black px-2 py-0.5 rounded">
                             <i class="fa-solid fa-shield-halved"></i> ${isChat ? 'Chat Admin' : '1x Download / Transaksi'}
                         </span>
-                        ${isChat ? '' : `<span class="text-[10px] font-mono font-black bg-neoYellow border border-black px-2 py-0.5 rounded">Kuota: ${Math.min(used, 1)}/1</span>`}
+                        ${isChat ? '' : buildDownloadStatusBadge(trx)}
                     </div>
-                    <p class="text-xs font-bold text-black leading-relaxed">${note}</p>
-                    ${buildProductActionButton(trx, 'modal')}
+                    <div class="flex items-center justify-between gap-2">
+                        <p class="text-xs font-bold text-black leading-relaxed">${note}</p>
+                        ${isChat ? '' : `<span class="shrink-0 text-[10px] font-mono font-black bg-neoYellow border border-black px-2 py-0.5 rounded">Kuota: ${Math.min(used, 1)}/1</span>`}
+                    </div>
+                    ${buildProductActionButton(trx)}
                 </div>`;
             area.classList.remove('hidden');
+        }
+
+        async function syncHistorySilently() {
+            try {
+                const res = await fetch('/api/my-transactions');
+                const data = await res.json();
+                if (data.status && Array.isArray(data.transactions)) {
+                    allTransactions = data.transactions;
+                    const badge = document.getElementById('totalHistoryBadge');
+                    if (badge) badge.innerText = `${allTransactions.length} Transaksi`;
+                }
+            } catch (e) {}
+        }
+
+        async function readDownloadError(res) {
+            let errJson = {};
+            try {
+                const raw = await res.text();
+                try { errJson = JSON.parse(raw); } catch (e) {}
+            } catch (e) {}
+            if (!errJson.message && !errJson.alreadyDownloaded && !errJson.isChatLink) {
+                errJson.message = `Gagal mengunduh file produk (HTTP ${res.status}). Silakan coba lagi.`;
+            }
+            return errJson;
         }
 
         function refreshHistoryUI() {
@@ -700,8 +741,7 @@
                 const res = await fetch(`/api/store/download/${encodeURIComponent(orderId)}`);
 
                 if (!res.ok) {
-                    let errJson = {};
-                    try { errJson = await res.json(); } catch (e) {}
+                    const errJson = await readDownloadError(res);
 
                     if (errJson.alreadyDownloaded) {
                         trx.downloadCount = 1;
@@ -767,10 +807,14 @@
                     customClass: { popup: 'cyber-swal' }
                 });
             } catch (err) {
+                const isNetwork = err instanceof TypeError;
+                await syncHistorySilently();
                 Swal.fire({
                     icon: 'error',
                     title: 'DOWNLOAD GAGAL',
-                    text: err.message || 'Gagal mengunduh file produk.',
+                    text: isNetwork
+                        ? 'Koneksi terputus saat mengunduh. Kuota Anda belum terpakai, silakan coba lagi.'
+                        : (err.message || 'Gagal mengunduh file produk.'),
                     customClass: { popup: 'cyber-swal' }
                 });
             } finally {
