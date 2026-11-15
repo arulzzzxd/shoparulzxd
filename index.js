@@ -15,6 +15,7 @@ import fs from 'fs';
 import axios from 'axios';
 import mime from 'mime-types';
 import multer from 'multer';
+import moment from 'moment-timezone';
 import nodemailer from 'nodemailer';
 import https from 'https';
 import http from 'http';
@@ -306,7 +307,7 @@ function generateReferralCode() {
 
 // HELPER PENGIRIMAN EMAIL OTP MAKSIMAL 5 KALI SEHARI
 async function checkAndIncrementEmailLimit(email) {
-    const today = new Date().toISOString().split('T')[0];
+    const today = moment().tz('Asia/Jakarta').format('YYYY-MM-DD');
     const cleanEmail = email.toLowerCase().trim();
 
     let limitRecord = await EmailLimit.findOne({ email: cleanEmail, date: today });
@@ -3423,67 +3424,44 @@ app.get('/api/user-status', async (req, res) => {
 
 app.get('/api/dashboard-stats', async (req, res) => {
     try {
-        const now = new Date();
-        const startOfToday = new Date(now);
-        startOfToday.setHours(0, 0, 0, 0);
+        const TIMEZONE = 'Asia/Jakarta';
+        const now = moment().tz(TIMEZONE);
+        const startOfToday = now.clone().startOf('day');
+        const startOfYesterday = startOfToday.clone().subtract(1, 'day');
+        const thirtyDaysAgo = startOfToday.clone().subtract(29, 'days');
 
-        const startOfYesterday = new Date(startOfToday);
-        startOfYesterday.setDate(startOfYesterday.getDate() - 1);
-
-        const thirtyDaysAgo = new Date(startOfToday);
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
+        const getTrxTimeMs = (trx) => {
+            if (trx.createdAt) {
+                const m = moment(trx.createdAt);
+                if (m.isValid()) return m.valueOf();
+            }
+            if (trx.updatedAt) {
+                const m = moment(trx.updatedAt);
+                if (m.isValid()) return m.valueOf();
+            }
+            if (trx._id && typeof trx._id.getTimestamp === 'function') {
+                return moment(trx._id.getTimestamp()).valueOf();
+            }
+            return moment().valueOf();
+        };
 
         const [
             totalUsers,
             totalProducts,
-            totalTrx,
-            lunasTrx,
-            trxToday,
-            trxYesterday,
-            recentTrxRaw,
-            baselineAgg,
-            windowTrxList,
+            allTrxRaw,
             latencyMetrics
         ] = await Promise.all([
             UserV2.countDocuments(),
             ProductV2.countDocuments(),
-            TransactionV2.countDocuments(),
-            TransactionV2.countDocuments({
-                status: { $in: ['settlement', 'success', 'paid', 'settled'] }
-            }),
-            TransactionV2.countDocuments({ createdAt: { $gte: startOfToday } }),
-            TransactionV2.countDocuments({
-                createdAt: { $gte: startOfYesterday,$lt: startOfToday }
-            }),
+            // Ambil semua riwayat transaksi yang masuk tanpa limit
             TransactionV2.find({})
                 .sort({ createdAt: -1 })
-                .limit(10)
-                .select('orderId userEmail amount status itemDetails createdAt type paymentMethod')
-                .lean(),
-            // Saldo kumulatif omzet sebelum 30 hari terakhir sebagai titik awal chart
-            TransactionV2.aggregate([
-                {
-                    $match: {
-                        createdAt: { $lt: thirtyDaysAgo },
-                        status: { $in: ['settlement', 'success', 'paid', 'settled'] }
-                    }
-                },
-                {
-                    $group: {
-                        _id: null,
-                        totalOmzet: {
-                            $sum: {$ifNull: ['$itemDetails.harga_setelah_voucher', '$amount'] }
-                        }
-                    }
-                }
-            ]),
-            // Semua transaksi 30 hari terakhir secara kronologis untuk membentuk candle OHLC asli
-            TransactionV2.find({ createdAt: { $gte: thirtyDaysAgo } })
-                .sort({ createdAt: 1 })
-                .select('amount status itemDetails.harga_setelah_voucher createdAt')
+                .select('orderId userEmail amount status itemDetails createdAt updatedAt type paymentMethod')
                 .lean(),
             SystemMetricsV2.aggregate([
-                { $match: { timestamp: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } } }, {$group: {
+                { $match: { timestamp: { $gte: moment().subtract(24, 'hours').toDate() } } },
+                {
+                    $group: {
                         _id: null,
                         avgLatency: { $avg: '$responseTimeMs' },
                         totalRequests: { $sum: 1 }
@@ -3492,8 +3470,40 @@ app.get('/api/dashboard-stats', async (req, res) => {
             ])
         ]);
 
-        const emails = recentTrxRaw.map(t => t.userEmail).filter(Boolean);
-        const users = await UserV2.find({ email: { $in: emails } }).select('email username avatar').lean();
+        const successStatuses = ['settlement', 'success', 'paid', 'settled'];
+        const cancelStatuses = ['cancelled', 'failed', 'expire', 'expired', 'batal'];
+
+        const todayStartMs = startOfToday.valueOf();
+        const yesterdayStartMs = startOfYesterday.valueOf();
+
+        let lunasTrx = 0;
+        let trxToday = 0;
+        let trxYesterday = 0;
+
+        const emailSet = new Set();
+        allTrxRaw.forEach(trx => {
+            const st = (trx.status || '').toLowerCase();
+            if (successStatuses.includes(st)) lunasTrx++;
+
+            const tMs = getTrxTimeMs(trx);
+            if (tMs >= todayStartMs) {
+                trxToday++;
+            } else if (tMs >= yesterdayStartMs && tMs < todayStartMs) {
+                trxYesterday++;
+            }
+
+            if (trx.userEmail) emailSet.add(trx.userEmail.toLowerCase().trim());
+            if (trx.itemDetails?.buyer && trx.itemDetails.buyer.includes('@')) {
+                emailSet.add(trx.itemDetails.buyer.toLowerCase().trim());
+            }
+        });
+
+        const totalTrx = allTrxRaw.length;
+
+        const users = await UserV2.find({ email: { $in: Array.from(emailSet) } })
+            .select('email username avatar')
+            .lean();
+
         const userMap = {};
         users.forEach(u => {
             if (u.email) {
@@ -3504,11 +3514,18 @@ app.get('/api/dashboard-stats', async (req, res) => {
             }
         });
 
-        const recentTrx = recentTrxRaw.map(trx => {
-            const emailKey = (trx.userEmail || '').toLowerCase().trim();
+        // Urutkan terbaru -> terlama untuk Status Transaksi (seluruh data dikirim untuk slide per 10 item)
+        const allTrxDesc = [...allTrxRaw].sort((a, b) => getTrxTimeMs(b) - getTrxTimeMs(a));
+
+        const recentTrx = allTrxDesc.map(trx => {
+            const emailKey = (trx.userEmail || (trx.itemDetails?.buyer?.includes('@') ? trx.itemDetails.buyer : '') || '')
+                .toLowerCase()
+                .trim();
             const matchedUser = userMap[emailKey];
             let cleanName = matchedUser?.username || trx.itemDetails?.buyer || 'Pembeli Tamu';
             if (cleanName.includes('@')) cleanName = cleanName.split('@')[0];
+
+            const trxMoment = moment(getTrxTimeMs(trx)).tz(TIMEZONE).locale('id');
 
             return {
                 orderId: trx.orderId,
@@ -3518,21 +3535,26 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 metode: trx.paymentMethod || 'QRIS',
                 amount: trx.itemDetails?.harga_setelah_voucher || trx.amount || 0,
                 status: trx.status,
-                createdAt: trx.createdAt
+                createdAt: trxMoment.toISOString(),
+                clockWib: `${trxMoment.format('HH:mm')} WIB`
             };
         });
 
-        // Pembentuk candle OHLC berkesinambungan (Open[i] = Close[i-1]) dari transaksi real-time
-        function generateStockCandles(startMs, stepMs, bucketCount, initialValue, trxItems, labelFormatter) {
-            let runningVal = initialValue;
+        // Urutkan terlama -> terbaru dari seluruh riwayat transaksi untuk membentuk candle OHLC Analisis Pasar
+        const allTrxAsc = [...allTrxDesc].reverse();
+
+        function generateStockCandles(startMs, stepMs, bucketCount, trxItems, labelFormatter) {
+            let runningVal = 0;
             let idx = 0;
 
-            // Akumulasikan transaksi sebelum startMs jika ada
-            while (idx < trxItems.length && new Date(trxItems[idx].createdAt).getTime() < startMs) {
+            while (idx < trxItems.length && getTrxTimeMs(trxItems[idx]) < startMs) {
                 const st = (trxItems[idx].status || '').toLowerCase();
                 const val = Number(trxItems[idx].itemDetails?.harga_setelah_voucher || trxItems[idx].amount || 0);
-                if (['settlement', 'success', 'paid', 'settled'].includes(st)) {
+                if (successStatuses.includes(st)) {
                     runningVal += val;
+                } else if (cancelStatuses.includes(st)) {
+                    const dropStep = Math.max(1000, Math.round(val * 0.5));
+                    runningVal = Math.max(0, runningVal - dropStep);
                 }
                 idx++;
             }
@@ -3541,6 +3563,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
             for (let b = 0; b < bucketCount; b++) {
                 const bucketStart = startMs + b * stepMs;
                 const bucketEnd = bucketStart + stepMs;
+                const isLastBucket = b === bucketCount - 1;
 
                 const open = runningVal;
                 let high = open;
@@ -3550,25 +3573,23 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 let periodOmzet = 0;
 
                 while (idx < trxItems.length) {
-                    const tMs = new Date(trxItems[idx].createdAt).getTime();
-                    if (tMs >= bucketEnd) break;
+                    const tMs = getTrxTimeMs(trxItems[idx]);
+                    if (!isLastBucket && tMs >= bucketEnd) break;
 
                     const st = (trxItems[idx].status || '').toLowerCase();
                     const val = Number(trxItems[idx].itemDetails?.harga_setelah_voucher || trxItems[idx].amount || 0);
                     totalCount++;
 
-                    if (['settlement', 'success', 'paid', 'settled'].includes(st)) {
+                    if (successStatuses.includes(st)) {
                         runningVal += val;
                         periodOmzet += val;
                         lunasCount++;
                         if (runningVal > high) high = runningVal;
-                    } else if (['cancelled', 'failed', 'expire', 'expired', 'batal'].includes(st)) {
-                        // Transaksi batal/kedaluwarsa menekan pergerakan ke bawah (bearish / lower wick)
+                    } else if (cancelStatuses.includes(st)) {
                         const dropStep = Math.max(1000, Math.round(val * 0.5));
                         runningVal = Math.max(0, runningVal - dropStep);
                         if (runningVal < low) low = runningVal;
                     } else {
-                        // Transaksi pending membentuk sumbu atas (upper wick) sementara
                         const spike = runningVal + Math.max(1000, Math.round(val * 0.35));
                         if (spike > high) high = spike;
                     }
@@ -3580,7 +3601,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 if (close < low) low = close;
 
                 candles.push({
-                    label: labelFormatter(new Date(bucketStart)),
+                    label: labelFormatter(bucketStart),
                     o: open,
                     h: high,
                     l: low,
@@ -3594,42 +3615,54 @@ app.get('/api/dashboard-stats', async (req, res) => {
             return candles;
         }
 
-        const baseOmzetBefore30d = baselineAgg.length > 0 ? Number(baselineAgg[0].totalOmzet || 0) : 0;
+        const hourMs = 60 * 60 * 1000;
+        const dayMs = 24 * hourMs;
 
         // 1 Hari: 24 candle (per 1 jam terakhir)
-        const hourMs = 60 * 60 * 1000;
-        const start1d = Math.floor((now.getTime() - 23 * hourMs) / hourMs) * hourMs;
+        const start1d = now.clone().subtract(23, 'hours').startOf('hour').valueOf();
         const candles1d = generateStockCandles(
             start1d,
             hourMs,
             24,
-            baseOmzetBefore30d,
-            windowTrxList,
-            (d) => d.toLocaleTimeString('id-ID', { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit' })
+            allTrxAsc,
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('HH:mm')
         );
 
-        // 7 Hari: 28 candle (per 6 jam selama 7 hari terakhir agar candle rapat & proporsional)
+        // 7 Hari: 28 candle (per 6 jam selama 7 hari terakhir)
         const sixHourMs = 6 * hourMs;
-        const start7d = startOfToday.getTime() - 6 * 24 * hourMs;
+        const start7d = startOfToday.clone().subtract(6, 'days').valueOf();
         const candles7d = generateStockCandles(
             start7d,
             sixHourMs,
             28,
-            baseOmzetBefore30d,
-            windowTrxList,
-            (d) => d.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short' })
+            allTrxAsc,
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM')
         );
 
         // 1 Bulan: 30 candle (per 1 hari selama 30 hari terakhir)
-        const dayMs = 24 * hourMs;
-        const start1m = thirtyDaysAgo.getTime();
+        const start1m = thirtyDaysAgo.valueOf();
         const candles1m = generateStockCandles(
             start1m,
             dayMs,
             30,
-            baseOmzetBefore30d,
-            windowTrxList,
-            (d) => d.toLocaleDateString('id-ID', { timeZone: 'Asia/Jakarta', day: '2-digit', month: 'short' })
+            allTrxAsc,
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM')
+        );
+
+        // Semua Riwayat: dari transaksi pertama hingga sekarang
+        const firstTrxMs = allTrxAsc.length > 0 ? getTrxTimeMs(allTrxAsc[0]) : start1m;
+        const firstMomentWib = moment(firstTrxMs).tz(TIMEZONE).startOf('day');
+        const totalSpanMs = Math.max(dayMs, now.valueOf() - firstMomentWib.valueOf() + hourMs);
+        const allBuckets = 28;
+        const allStepMs = Math.ceil(totalSpanMs / allBuckets);
+        const isMultiYear = now.diff(firstMomentWib, 'days') > 330;
+
+        const candlesAll = generateStockCandles(
+            firstMomentWib.valueOf(),
+            allStepMs,
+            allBuckets,
+            allTrxAsc,
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format(isMultiYear ? 'DD MMM YY' : 'DD MMM')
         );
 
         const systemLatency = latencyMetrics.length > 0 ? Math.round(latencyMetrics[0].avgLatency) : 12;
@@ -3637,6 +3670,8 @@ app.get('/api/dashboard-stats', async (req, res) => {
 
         res.json({
             status: true,
+            timezone: TIMEZONE,
+            serverTimeWib: now.locale('id').format('DD MMM YYYY HH:mm:ss [WIB]'),
             totalUsers,
             totalProducts,
             totalTrx,
@@ -3649,7 +3684,8 @@ app.get('/api/dashboard-stats', async (req, res) => {
             tradingSeries: {
                 '1d': candles1d,
                 '7d': candles7d,
-                '1m': candles1m
+                '1m': candles1m,
+                'all': candlesAll
             }
         });
     } catch (err) {
