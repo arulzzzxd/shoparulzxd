@@ -396,7 +396,10 @@
                     </div>
 
                     <div class="space-y-1.5 overflow-hidden flex-1">
-                        <h2 id="detailTitle" class="text-sm font-black font-cyber text-black truncate"></h2>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h2 id="detailTitle" class="text-sm font-black font-cyber text-black truncate"></h2>
+                            <span id="detailBadge" class="hidden"></span>
+                        </div>
                         <p id="detailPrice" class="text-xs font-black font-cyber text-neoYellow bg-black px-2 py-0.5 rounded inline-block"></p>
                         <div id="detailRatingSummary" class="flex items-center gap-2 text-xs text-black pt-1"></div>
                         <p id="detailDesc" class="text-[11px] font-bold text-slate-700 leading-relaxed pt-1"></p>
@@ -779,6 +782,36 @@
         let activeUserReviewIndex = 0;
         let activeMediaItemIndex = 0;
 
+        function getBadgeMeta(badge) {
+            const cleanText = String(badge || '').trim().toUpperCase();
+            let bgClass = 'bg-neoPink';
+            let iconClass = 'fa-solid fa-bolt';
+
+            if (cleanText.includes('NEW') || cleanText.includes('BARU')) {
+                bgClass = 'bg-neoGreen';
+                iconClass = 'fa-solid fa-star';
+            } else if (cleanText.includes('HOT') || cleanText.includes('PROMO') || cleanText.includes('SALE') || cleanText.includes('DISKON')) {
+                bgClass = 'bg-neoPink';
+                iconClass = 'fa-solid fa-fire';
+            } else if (cleanText.includes('BEST') || cleanText.includes('TOP') || cleanText.includes('LARIS')) {
+                bgClass = 'bg-neoCyan';
+                iconClass = 'fa-solid fa-crown';
+            }
+
+            return { cleanText, bgClass, iconClass };
+        }
+
+        function getProductBadgeHtml(badge) {
+            if (!badge || typeof badge !== 'string' || !badge.trim()) return '';
+            const { cleanText, bgClass, iconClass } = getBadgeMeta(badge);
+            const escapedText = cleanText
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            return `<span class="absolute top-2 right-2 z-10 ${bgClass} border-2 border-black text-black text-[10px] font-black font-cyber px-2.5 py-0.5 rounded-md shadow-[2px_2px_0px_#000] pointer-events-none uppercase tracking-wider inline-flex items-center gap-1"><i class="${iconClass} text-[9px]"></i> ${escapedText}</span>`;
+        }
+
         async function fetchCurrentUserStatus() {
             try {
                 const res = await fetch('/api/user-status');
@@ -928,6 +961,22 @@
             document.getElementById('detailTitle').innerText = product.nama;
             document.getElementById('detailPrice').innerText = formatRupiah(product.harga_diskon || product.harga);
             document.getElementById('detailDesc').innerText = product.deskripsi || 'Tidak ada deskripsi.';
+
+            const detailBadgeEl = document.getElementById('detailBadge');
+            if (detailBadgeEl) {
+                if (product.badge && typeof product.badge === 'string' && product.badge.trim() !== '') {
+                    const { cleanText, bgClass, iconClass } = getBadgeMeta(product.badge);
+                    const escapedText = cleanText
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;');
+                    detailBadgeEl.className = `${bgClass} border-2 border-black text-black text-[10px] font-black font-cyber px-2 py-0.5 rounded-md shadow-[2px_2px_0px_#000] uppercase inline-flex items-center gap-1 flex-shrink-0`;
+                    detailBadgeEl.innerHTML = `<i class="${iconClass} text-[9px]"></i> ${escapedText}`;
+                } else {
+                    detailBadgeEl.className = 'hidden';
+                    detailBadgeEl.innerHTML = '';
+                }
+            }
 
             let imgList = [];
             if (Array.isArray(product.gambar) && product.gambar.length > 0) {
@@ -1603,6 +1652,7 @@
                         ? produk.gambar
                         : [produk.gambar || 'https://cdn.larasxd.my.id/files/1wh5do.png'];
                     let mainImg = imgArray[0];
+                    const productBadge = getProductBadgeHtml(produk.badge);
                     const multiPhotoBadge = imgArray.length > 1
                         ? `<span class="absolute bottom-2 right-2 bg-neoYellow border-2 border-black text-black text-[10px] font-black font-cyber px-2 py-0.5 rounded-md shadow-[2px_2px_0px_#000] pointer-events-none"><i class="fa-regular fa-images"></i> ${imgArray.length} Foto</span>`
                         : '';
@@ -1621,6 +1671,7 @@
                             
                             <div class="relative bg-neoBg pt-[70%] overflow-hidden rounded-2xl border-3 border-black flex-shrink-0">
                                 <img src="${mainImg}" onclick="event.stopPropagation(); openProductZoomLightbox(${originalIndex}, 0)" class="absolute inset-0 w-full h-full object-cover">
+                                ${productBadge}
                                 ${multiPhotoBadge}
                             </div>
 
