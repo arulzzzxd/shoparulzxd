@@ -644,7 +644,7 @@
                     </div>
                 </form>
 
-                <!-- STEP 3: PEMBAYARAN BERHASIL (AUTO DOWNLOAD 1x / CHAT ADMIN WHATSAPP & TELEGRAM) -->
+                <!-- STEP 3: PEMBAYARAN BERHASIL (DOWNLOAD MANUAL 1x / CHAT ADMIN WHATSAPP & TELEGRAM) -->
                 <div id="paymentStep3" class="hidden flex flex-col items-center justify-center space-y-4 text-center">
                     <div class="w-14 h-14 bg-neoGreen border-3 border-black rounded-full flex items-center justify-center text-2xl font-black shadow-[3px_3px_0px_#000]">
                         <i class="fa-solid fa-check"></i>
@@ -654,7 +654,7 @@
                         <p class="text-xs font-bold text-slate-600 mt-1">Transaksi Anda telah dikonfirmasi dan diproses secara otomatis.</p>
                     </div>
 
-                    <!-- PANEL DOWNLOAD LANGSUNG (1x PER TRANSAKSI TANPA MENUJU LINK) -->
+                    <!-- PANEL DOWNLOAD (1x PER TRANSAKSI, BARU DOWNLOAD SETELAH USER KLIK TOMBOL) -->
                     <div id="downloadActionBox" class="hidden w-full neo-box p-4 rounded-xl space-y-3 bg-neoCyan">
                         <div class="flex items-center justify-between">
                             <span class="text-[10px] font-black font-cyber uppercase bg-white border border-black px-2 py-0.5 rounded">
@@ -665,7 +665,7 @@
                             </span>
                         </div>
                         <p id="downloadStatusText" class="text-xs font-bold text-black leading-relaxed">
-                            Memulai download file produk secara otomatis...
+                            Pembayaran berhasil! Klik tombol di bawah untuk mengunduh file produk (hanya 1x kesempatan per transaksi).
                         </p>
                         <button type="button" id="btnDownloadProduct" onclick="handleManualOneTimeDownload()" 
                                 class="neo-btn w-full bg-neoYellow text-black font-cyber font-black py-3 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
@@ -1624,6 +1624,8 @@
             document.getElementById('chatAdminActionBox').classList.add('hidden');
             const quotaBadge = document.getElementById('downloadQuotaBadge');
             if (quotaBadge) quotaBadge.innerText = 'Kuota: 0/1';
+            const dlStatusText = document.getElementById('downloadStatusText');
+            if (dlStatusText) dlStatusText.innerText = 'Pembayaran berhasil! Klik tombol di bawah untuk mengunduh file produk (hanya 1x kesempatan per transaksi).';
             const btnDownload = document.getElementById('btnDownloadProduct');
             if (btnDownload) {
                 btnDownload.disabled = false;
@@ -1789,7 +1791,7 @@
                     btnText.innerText = 'Lanjut ke WhatsApp';
                 }
             } else {
-                // Langsung download file tanpa menuju linknya (1x per transaksi)
+                // File TIDAK didownload otomatis: tunggu user menekan tombol Download Produk (1x per transaksi)
                 chatBox.classList.add('hidden');
                 downloadBox.classList.remove('hidden');
 
@@ -1798,16 +1800,25 @@
                     completed: false
                 };
 
-                triggerOneTimeDownload(paymentData.orderId, true);
+                const statusText = document.getElementById('downloadStatusText');
+                const quotaBadge = document.getElementById('downloadQuotaBadge');
+                const btnDownload = document.getElementById('btnDownloadProduct');
+                if (statusText) statusText.innerText = 'Pembayaran berhasil! Klik tombol di bawah untuk mengunduh file produk (hanya 1x kesempatan per transaksi). Anda juga bisa mengunduhnya nanti lewat menu Riwayat.';
+                if (quotaBadge) quotaBadge.innerText = 'Kuota: 0/1';
+                if (btnDownload) {
+                    btnDownload.disabled = false;
+                    btnDownload.className = 'neo-btn w-full bg-neoYellow text-black font-cyber font-black py-3 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2';
+                    btnDownload.innerHTML = `<i class="fa-solid fa-cloud-arrow-down text-sm"></i> Download Produk`;
+                }
             }
         }
 
         function handleManualOneTimeDownload() {
             if (!ACTIVE_SUCCESS_ORDER_ID) return;
-            triggerOneTimeDownload(ACTIVE_SUCCESS_ORDER_ID, false);
+            triggerOneTimeDownload(ACTIVE_SUCCESS_ORDER_ID);
         }
 
-        async function triggerOneTimeDownload(orderId, isAuto = false) {
+        async function triggerOneTimeDownload(orderId) {
             if (!orderId) return;
             const state = DOWNLOAD_STATE_MAP[orderId] || { downloading: false, completed: false };
             DOWNLOAD_STATE_MAP[orderId] = state;
@@ -1817,14 +1828,12 @@
             const quotaBadge = document.getElementById('downloadQuotaBadge');
 
             if (state.completed) {
-                if (!isAuto) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'KUOTA HABIS',
-                        text: 'Download hanya berlaku 1 kali per transaksi.',
-                        customClass: { popup: 'cyber-swal' }
-                    });
-                }
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'KUOTA HABIS',
+                    text: 'Download hanya berlaku 1 kali per transaksi.',
+                    customClass: { popup: 'cyber-swal' }
+                });
                 return;
             }
 
@@ -1856,14 +1865,23 @@
                             btn.classList.add('opacity-60', 'cursor-not-allowed');
                             btn.innerHTML = `<i class="fa-solid fa-circle-check text-sm"></i> Sudah Didownload (1/1)`;
                         }
-                        if (!isAuto) {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'SUDAH DIDOWNLOAD',
-                                text: errJson.message || 'Download hanya berlaku 1 kali per transaksi.',
-                                customClass: { popup: 'cyber-swal' }
-                            });
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'SUDAH DIDOWNLOAD',
+                            text: errJson.message || 'Download hanya berlaku 1 kali per transaksi.',
+                            customClass: { popup: 'cyber-swal' }
+                        });
+                        return;
+                    }
+
+                    // Link produk ternyata WhatsApp / Telegram -> arahkan ke chat admin
+                    if (errJson.isChatLink && errJson.chatUrl) {
+                        state.downloading = false;
+                        if (btn) {
+                            btn.disabled = false;
+                            btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-down text-sm"></i> Download Produk`;
                         }
+                        window.open(errJson.chatUrl, '_blank', 'noopener');
                         return;
                     }
 
@@ -1871,6 +1889,9 @@
                 }
 
                 let filename = res.headers.get('X-Download-Filename') || '';
+                if (filename) {
+                    try { filename = decodeURIComponent(filename); } catch (e) {}
+                }
                 if (!filename) {
                     const disp = res.headers.get('Content-Disposition') || '';
                     const match = disp.match(/filename="?([^";\n]+)"?/i);
@@ -1883,7 +1904,7 @@
                     filename = `${baseName}.zip`;
                 }
 
-                const blob = await res.blob();
+                const blob = new Blob([await res.arrayBuffer()], { type: 'application/octet-stream' });
                 const blobUrl = window.URL.createObjectURL(blob);
 
                 const tempLink = document.createElement('a');
@@ -1894,7 +1915,7 @@
                 tempLink.click();
                 document.body.removeChild(tempLink);
 
-                setTimeout(() => window.URL.revokeObjectURL(blobUrl), 5000);
+                setTimeout(() => window.URL.revokeObjectURL(blobUrl), 30000);
 
                 state.completed = true;
                 state.downloading = false;
@@ -1916,16 +1937,14 @@
                 }
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-down text-sm"></i> Download Produk (1x)`;
+                    btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-down text-sm"></i> Download Produk`;
                 }
-                if (!isAuto) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'DOWNLOAD GAGAL',
-                        text: err.message || 'Gagal mengunduh file produk.',
-                        customClass: { popup: 'cyber-swal' }
-                    });
-                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'DOWNLOAD GAGAL',
+                    text: err.message || 'Gagal mengunduh file produk.',
+                    customClass: { popup: 'cyber-swal' }
+                });
             }
         }
 
