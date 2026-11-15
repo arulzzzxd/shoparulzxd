@@ -1094,7 +1094,7 @@ const uploadBannerMulter = multer({
 });
 
 const uploadReviewMedia = multer({
-    limits: { fileSize: 10 * 1024 * 1024 }, 
+    limits: { fileSize: 5 * 1024 * 1024 }, // Maksimal 5MB
     fileFilter: (req, file, cb) => {
         if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
             cb(null, true);
@@ -1525,6 +1525,9 @@ app.post('/api/user/update-banner', checkAuthSession, (req, res) => {
 app.post('/api/reviews', checkAuthSession, (req, res) => {
     uploadReviewMedia.array('mediaFiles', 5)(req, res, async (err) => {
         if (err) {
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({ status: false, message: 'Ukuran berkas maksimal 5MB!' });
+            }
             return res.status(400).json({ status: false, message: err.message || 'Gagal mengunggah berkas.' });
         }
 
@@ -1563,6 +1566,8 @@ app.post('/api/reviews', checkAuthSession, (req, res) => {
                 return res.status(404).json({ status: false, message: 'Produk tidak ditemukan.' });
             }
 
+            let existingReview = await ReviewV2.findOne({ productId, userId });
+
             const purchasedList = (product.purchasedBy || []).map(p => p.toLowerCase().trim());
             const isBuyer = purchasedList.some(p => 
                 p === userEmail || 
@@ -1570,7 +1575,7 @@ app.post('/api/reviews', checkAuthSession, (req, res) => {
                 p === userId.toLowerCase()
             );
 
-            if (!isBuyer) {
+            if (!isBuyer && !existingReview) {
                 return res.status(403).json({
                     status: false,
                     message: 'Anda belum pernah membeli produk ini, tidak dapat memberikan penilaian!'
@@ -1592,14 +1597,32 @@ app.post('/api/reviews', checkAuthSession, (req, res) => {
                 }
             }
 
-            let existingReview = await ReviewV2.findOne({ productId, userId });
-
             if (existingReview) {
+                let preservedMedia = Array.isArray(existingReview.media) ? [...existingReview.media] : [];
+
+                if (req.body.keptExistingIndices !== undefined) {
+                    try {
+                        const keptIndices = JSON.parse(req.body.keptExistingIndices);
+                        if (Array.isArray(keptIndices)) {
+                            preservedMedia = keptIndices
+                                .map(idx => preservedMedia[Number(idx)])
+                                .filter(Boolean);
+                        }
+                    } catch (e) {}
+                } else if (req.body.keepExistingMedia === 'false') {
+                    preservedMedia = [];
+                } else if (req.body.removedMediaUrls) {
+                    try {
+                        const removedUrls = JSON.parse(req.body.removedMediaUrls);
+                        if (Array.isArray(removedUrls) && removedUrls.length > 0) {
+                            preservedMedia = preservedMedia.filter(m => !removedUrls.includes(m.url));
+                        }
+                    } catch (e) {}
+                }
+
                 existingReview.rating = Number(rating);
                 existingReview.comment = comment.trim();
-                if (mediaList.length > 0) {
-                    existingReview.media = mediaList; 
-                }
+                existingReview.media = [...preservedMedia, ...mediaList].slice(0, 5);
                 existingReview.updatedAt = new Date();
                 await existingReview.save();
 
@@ -1616,7 +1639,7 @@ app.post('/api/reviews', checkAuthSession, (req, res) => {
                     userAvatar,
                     rating: Number(rating),
                     comment: comment.trim(),
-                    media: mediaList
+                    media: mediaList.slice(0, 5)
                 });
 
                 await newReview.save();
