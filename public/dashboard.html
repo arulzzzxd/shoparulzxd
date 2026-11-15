@@ -179,7 +179,11 @@
             border-right: none;
         }
 
-        /* Custom Scrollbar */
+        /* Custom Scrollbar & Native Touch Scroll untuk Tabel */
+        .neo-scroll {
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
         .neo-scroll::-webkit-scrollbar {
             height: 8px;
         }
@@ -464,7 +468,7 @@
             </div>
         </section>
 
-        <!-- STATUS TRANSAKSI NEO-BRUTALISME DENGAN GARIS PEMBATAS TEGAS & SLIDE PAGINATION -->
+        <!-- STATUS TRANSAKSI NEO-BRUTALISME DENGAN GARIS PEMBATAS TEGAS & SLIDE BUTTONS -->
         <section class="neo-box rounded-2xl overflow-hidden bg-white">
             <div class="bg-neoCyan border-b-[3px] border-black px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
@@ -497,6 +501,7 @@
             </div>
 
             <div class="p-4 sm:p-5 bg-neoPaper">
+                <!-- Geser horizontal touchscreen hanya menggulir kolom tabel yang tersembunyi -->
                 <div id="trxTableScrollWrapper" class="overflow-x-auto neo-scroll rounded-xl border-[3px] border-black shadow-[4px_4px_0_#000] bg-white">
                     <table class="neo-table text-left text-xs font-bold min-w-[720px]">
                         <thead>
@@ -518,7 +523,7 @@
                     </table>
                 </div>
 
-                <!-- KONTROL SLIDE TRANSAKSI (MUNCUL OTOMATIS JIKA TRANSAKSI > 10) -->
+                <!-- KONTROL SLIDE TRANSAKSI (MUNCUL OTOMATIS JIKA TRANSAKSI > 10, PINDAH SLIDE HANYA LEWAT TOMBOL) -->
                 <div id="trxPaginationContainer" class="hidden mt-4 pt-4 border-t-[2.5px] border-dashed border-black flex-col sm:flex-row items-center justify-between gap-3">
                     <div id="trxPaginationInfo" class="text-xs font-mono font-extrabold text-black bg-white border-2 border-black px-3 py-1.5 rounded-lg shadow-[2px_2px_0_#000]">
                         Menampilkan 1-10 dari 0 transaksi
@@ -604,7 +609,7 @@
         let cachedTradingSeries = { '1d': [], '7d': [], '1m': [], 'all': [] };
         let hoverCandleIndex = -1;
 
-        // State untuk Slide Status Transaksi (10 transaksi per slide)
+        // State untuk Slide Status Transaksi (10 transaksi per slide, pindah slide hanya via tombol)
         let allTransactions = [];
         let currentTrxSlide = 1;
         const TRX_PER_SLIDE = 10;
@@ -1172,7 +1177,7 @@
                 `;
             }).join('');
 
-            // Tampilkan kontrol slide HANYA jika transaksi melebihi 10
+            // Tampilkan kontrol tombol slide HANYA jika transaksi melebihi 10
             if (totalItems > TRX_PER_SLIDE) {
                 if (slideBadge) {
                     slideBadge.classList.remove('hidden');
@@ -1247,34 +1252,6 @@
             }
         }
 
-        function initTransactionSwipe() {
-            const wrapper = document.getElementById('trxTableScrollWrapper');
-            if (!wrapper) return;
-            let touchStartX = 0;
-            let touchStartY = 0;
-
-            wrapper.addEventListener('touchstart', (e) => {
-                if (e.touches && e.touches[0]) {
-                    touchStartX = e.touches[0].clientX;
-                    touchStartY = e.touches[0].clientY;
-                }
-            }, { passive: true });
-
-            wrapper.addEventListener('touchend', (e) => {
-                if (!e.changedTouches || !e.changedTouches[0] || allTransactions.length <= TRX_PER_SLIDE) return;
-                const dx = e.changedTouches[0].clientX - touchStartX;
-                const dy = e.changedTouches[0].clientY - touchStartY;
-
-                if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-                    if (dx < 0) {
-                        goToTrxSlide(currentTrxSlide + 1, true);
-                    } else {
-                        goToTrxSlide(currentTrxSlide - 1, true);
-                    }
-                }
-            }, { passive: true });
-        }
-
         function renderTransactionRows(recentTrx) {
             allTransactions = Array.isArray(recentTrx) ? recentTrx : [];
             renderTransactionSlide(false);
@@ -1335,7 +1312,6 @@
         window.setTradingRange = setTradingRange;
 
         initTradingCanvasEvents();
-        initTransactionSwipe();
         loadUserStatus();
         refreshRealtimeStats();
 
