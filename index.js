@@ -250,9 +250,12 @@ const transactionSchemaV2 = new mongoose.Schema({
     amount: { type: Number, required: true },
     paymentNumber: { type: String, default: null }, 
     paymentMethod: { type: String, default: "QRIS" },
+    qrisVersion: { type: String, default: "v1" }, // 'v1' (Paywuz) atau 'v2' (Manual Dynamic QRIS)
+    proofImage: { type: String, default: null },  // Menyimpan Base64 / URL Bukti Pembayaran
+    proofUploadedAt: { type: Date, default: null },
     type: { type: String, enum: ['PURCHASE', 'DEPOSIT'], default: 'PURCHASE' },
     userEmail: { type: String, default: null, index: true },
-    status: { type: String, default: "pending" }, 
+    status: { type: String, default: "pending" }, // pending, waiting_verification, success, cancelled
     itemDetails: {
         nama: String,
         harga: Number,
@@ -262,7 +265,8 @@ const transactionSchemaV2 = new mongoose.Schema({
         gambar: String,
         link: String,
         buyer: String,
-        qty: Number
+        qty: Number,
+        phone: String
     },
     productLink: { type: String, default: null },
     downloadCount: { type: Number, default: 0 },
@@ -442,6 +446,57 @@ function getUserIdentifier(req) {
     return req.ip; 
 }
 
+const STATIC_QRIS_V2_BASE = "00020101021126570011ID.DANA.WWW011893600915396562113302099656211330303UMI51440014ID.CO.QRIS.WWW0215ID10254420078250303UMI5204481453033605802ID5914IDZHARUL STORE600409146105531936304C1E4";
+
+function calcCRC16(str) {
+    let crc = 0xFFFF;
+    for (let c = 0; c < str.length; c++) {
+        crc ^= str.charCodeAt(c) << 8;
+        for (let i = 0; i < 8; i++) {
+            if (crc & 0x8000) {
+                crc = (crc << 1) ^ 0x1021;
+            } else {
+                crc = crc << 1;
+            }
+        }
+    }
+    let hex = (crc & 0xFFFF).toString(16).toUpperCase();
+    return hex.padStart(4, '0');
+}
+
+function generateDynamicQris(staticQris, nominal) {
+    // 1. Hapus 4 karakter CRC lama di akhir (setelah tag 6304)
+    let qrisWithoutCrc = staticQris.slice(0, -4);
+
+    // 2. Ubah Point of Initiation Method dari Statis (010211) menjadi Dinamis (010212)
+    qrisWithoutCrc = qrisWithoutCrc.replace("010211", "010212");
+
+    // 3. Buat Tag 54 (Transaction Amount)
+    const amountStr = String(Math.floor(Number(nominal)));
+    const amountLen = String(amountStr.length).padStart(2, '0');
+    const tag54 = `54${amountLen}${amountStr}`;
+
+    // 4. Sisipkan Tag 54 tepat sebelum Tag 5802ID (Country Code)
+    const countryTagIndex = qrisWithoutCrc.indexOf("5802ID");
+    if (countryTagIndex !== -1) {
+        qrisWithoutCrc =
+            qrisWithoutCrc.slice(0, countryTagIndex) +
+            tag54 +
+            qrisWithoutCrc.slice(countryTagIndex);
+    } else {
+        // Fallback jika 5802ID tidak ditemukan, sisipkan sebelum 6304
+        const crcTagIndex = qrisWithoutCrc.lastIndexOf("6304");
+        qrisWithoutCrc =
+            qrisWithoutCrc.slice(0, crcTagIndex) +
+            tag54 +
+            qrisWithoutCrc.slice(crcTagIndex);
+    }
+
+    // 5. Hitung ulang CRC16-CCITT dan tempelkan di akhir
+    const newCrc = calcCRC16(qrisWithoutCrc);
+    return qrisWithoutCrc + newCrc;
+}
+
 async function sendTelegramNotification(username, userEmail, messageText) {
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_ADMIN_CHAT_ID) return;
 
@@ -471,6 +526,121 @@ ${escapeHtml(messageText)}
     } catch (error) {
         console.error('❌ Gagal mengirim notifikasi ke Telegram:', error.response?.data || error.message);
     }
+}
+
+async function sendTelegramDepositProof(trx, username, imageBuffer, mimeType) {
+    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_ADMIN_CHAT_ID) return;
+
+    const escapeHtml = (str) => String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+    const nominalFormatted = new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(trx.amount);
+
+    const caption = `
+🧾 <b>BUKTI PEMBAYARAN DEPOSIT QRIS V2</b>
+━━━━━━━━━━━━━━━━━━━━
+🆔 <b>Order ID:</b> <code>${escapeHtml(trx.orderId)}</code>
+👤 <b>User:</b> ${escapeHtml(username)}
+📧 <b>Email:</b> <code>${escapeHtml(trx.userEmail)}</code>
+📱 <b>No. HP:</b> ${escapeHtml(trx.itemDetails?.phone || '-')}
+💰 <b>Nominal:</b> <b>${nominalFormatted}</b>
+⏳ <b>Status:</b> MENUNGGU KONFIRMASI ADMIN
+━━━━━━━━━━━━━━━━━━━━
+Pilih tindakan di bawah ini atau cek melalui Web Admin:
+    `.trim();
+
+    const replyMarkup = {
+        inline_keyboard: [
+            [
+                { text: "✅ Konfirmasi Deposit", callback_data: `dep_approve_${trx.orderId}` },
+                { text: "❌ Tolak / Cancel", callback_data: `dep_cancel_${trx.orderId}` }
+            ],
+            [
+                { text: "🌐 Buka Panel Admin", url: `${BASE_URL}/admin` }
+            ]
+        ]
+    };
+
+    try {
+        const formData = new FormData();
+        const ext = mime.extension(mimeType) || 'jpg';
+        const blob = new Blob([imageBuffer], { type: mimeType });
+
+        formData.append('chat_id', TELEGRAM_ADMIN_CHAT_ID);
+        formData.append('photo', blob, `bukti-${trx.orderId}.${ext}`);
+        formData.append('caption', caption);
+        formData.append('parse_mode', 'HTML');
+        formData.append('reply_markup', JSON.stringify(replyMarkup));
+
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
+            method: 'POST',
+            body: formData
+        });
+    } catch (err) {
+        console.error('❌ Gagal kirim foto bukti deposit ke Telegram:', err.message);
+    }
+}
+
+async function approveDepositQrisV2(orderId, adminSource = 'Web Admin') {
+    const trx = await TransactionV2.findOne({ orderId });
+    if (!trx) return { ok: false, message: 'Transaksi tidak ditemukan.' };
+
+    const currentStatus = (trx.status || '').toLowerCase();
+    if (['success', 'settlement', 'paid', 'settled'].includes(currentStatus)) {
+        return { ok: false, message: 'Transaksi ini sudah dikonfirmasi sebelumnya.' };
+    }
+    if (['cancelled', 'failed', 'expired'].includes(currentStatus)) {
+        return { ok: false, message: 'Transaksi ini sudah dibatalkan sebelumnya.' };
+    }
+
+    const depositAmount = Number(trx.itemDetails?.harga || trx.amount || 0);
+    if (trx.userEmail && depositAmount > 0) {
+        await UserV2.findOneAndUpdate(
+            { email: trx.userEmail.toLowerCase().trim() },
+            { $inc: { saldo: depositAmount } }
+        );
+    }
+
+    trx.status = 'success';
+    trx.updatedAt = new Date();
+    await trx.save();
+    await deleteCache(`trx_${orderId}`);
+
+    return {
+        ok: true,
+        message: `Deposit ${orderId} sebesar Rp ${depositAmount.toLocaleString('id-ID')} berhasil dikonfirmasi (${adminSource})!`,
+        trx
+    };
+}
+
+async function cancelDepositQrisV2(orderId, cancelledBy = 'Admin') {
+    const trx = await TransactionV2.findOne({ orderId });
+    if (!trx) return { ok: false, message: 'Transaksi tidak ditemukan.' };
+
+    const currentStatus = (trx.status || '').toLowerCase();
+    if (['success', 'settlement', 'paid', 'settled'].includes(currentStatus)) {
+        return { ok: false, message: 'Transaksi sudah sukses, tidak dapat dibatalkan.' };
+    }
+    if (currentStatus === 'cancelled') {
+        return { ok: false, message: 'Transaksi sudah dibatalkan sebelumnya.' };
+    }
+
+    trx.status = 'cancelled';
+    trx.updatedAt = new Date();
+    await trx.save();
+    await deleteCache(`trx_${orderId}`);
+
+    return {
+        ok: true,
+        message: `Deposit ${orderId} telah dibatalkan oleh ${cancelledBy}.`,
+        trx
+    };
 }
 
 async function axiosPaywuzWithRetry(config, maxRetries = 3, delayMs = 1500) {
@@ -1104,6 +1274,17 @@ const uploadReviewMedia = multer({
     }
 });
 
+const uploadPaymentProofMulter = multer({
+    limits: { fileSize: 5 * 1024 * 1024 }, // Maks 5MB
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Bukti pembayaran harus berupa file gambar (JPG/PNG/WEBP)!'));
+        }
+    }
+});
+
 // ============================================================
 // 7. MIDDLEWARES
 // ============================================================
@@ -1334,12 +1515,12 @@ app.post('/api/bantuan/admin/reply', checkAuthSession, checkAdminRole, async (re
     }
 });
 
-app.get('/admin/livechat', checkAuthSession, (req, res) => {
+app.get(['/admin', '/admin/livechat'], checkAuthSession, (req, res) => {
     const ownerEmail = OWNER_EMAIL;
     if (!req.user || req.user.email?.toLowerCase().trim() !== ownerEmail) {
         return res.redirect('/dashboard');
     }
-    res.sendFile(path.join(__dirname, 'public', 'admin-chat.html'));
+    res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 app.post('/api/user/update-username', checkAuthSession, async (req, res) => {
@@ -2866,6 +3047,383 @@ app.get(['/api/user/transactions', '/api/my-transactions'], checkAuthSession, as
     } catch (err) {
         console.error("Error fetching transaction history:", err);
         return res.status(500).json({ status: false, message: "Gagal mengambil riwayat transaksi" });
+    }
+});
+
+app.post('/api/deposit-qrisv2', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu untuk deposit.' });
+        }
+
+        const amount = Number(req.body.amount);
+        const customerPhone = (req.body.customerPhone || '').toString().replace(/[\s\-()]/g, '').trim();
+
+        if (isNaN(amount) || amount < 1000) {
+            return res.status(400).json({ status: false, message: 'Deposit minimal adalah Rp 1.000!' });
+        }
+
+        if (!isValidIndonesianPhone(customerPhone)) {
+            return res.status(400).json({
+                status: false,
+                message: 'Nomor HP Indonesia aktif wajib diisi dengan format 08xx, 62xx, atau +62!'
+            });
+        }
+
+        const activeUser = await UserV2.findById(req.user.id || req.user._id).lean();
+        const customerEmail = (activeUser?.email || req.user.email).toLowerCase().trim();
+
+        const orderId = `QRV2-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+        const dynamicQrisString = generateDynamicQris(STATIC_QRIS_V2_BASE, amount);
+        const expiredAt = new Date(Date.now() + 30 * 60 * 1000); // Berlaku 30 menit
+
+        const newTrx = new TransactionV2({
+            orderId,
+            amount: amount,
+            paymentNumber: dynamicQrisString,
+            paymentMethod: "QRIS V2",
+            qrisVersion: "v2",
+            type: "DEPOSIT",
+            userEmail: customerEmail,
+            status: "pending",
+            itemDetails: {
+                nama: `Deposit QRISv2 Rp ${amount.toLocaleString('id-ID')}`,
+                harga: amount,
+                buyer: customerEmail,
+                phone: customerPhone
+            },
+            expiredAt
+        });
+
+        await newTrx.save();
+
+        return res.json({
+            status: true,
+            data: {
+                ...newTrx.toObject(),
+                payment: {
+                    qrString: dynamicQrisString
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Error Create Deposit QRISv2:", error);
+        return res.status(500).json({
+            status: false,
+            message: error.message || "Gagal membuat QRISv2 dinamis."
+        });
+    }
+});
+
+app.post('/api/deposit-qrisv2', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu untuk deposit.' });
+        }
+
+        const amount = Number(req.body.amount);
+        const customerPhone = (req.body.customerPhone || '').toString().replace(/[\s\-()]/g, '').trim();
+
+        if (isNaN(amount) || amount < 1000) {
+            return res.status(400).json({ status: false, message: 'Deposit minimal adalah Rp 1.000!' });
+        }
+
+        if (!isValidIndonesianPhone(customerPhone)) {
+            return res.status(400).json({
+                status: false,
+                message: 'Nomor HP Indonesia aktif wajib diisi dengan format 08xx, 62xx, atau +62!'
+            });
+        }
+
+        const activeUser = await UserV2.findById(req.user.id || req.user._id).lean();
+        const customerEmail = (activeUser?.email || req.user.email).toLowerCase().trim();
+
+        const orderId = `QRV2-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
+        const dynamicQrisString = generateDynamicQris(STATIC_QRIS_V2_BASE, amount);
+        const expiredAt = new Date(Date.now() + 30 * 60 * 1000); // Berlaku 30 menit
+
+        const newTrx = new TransactionV2({
+            orderId,
+            amount: amount,
+            paymentNumber: dynamicQrisString,
+            paymentMethod: "QRIS V2",
+            qrisVersion: "v2",
+            type: "DEPOSIT",
+            userEmail: customerEmail,
+            status: "pending",
+            itemDetails: {
+                nama: `Deposit QRISv2 Rp ${amount.toLocaleString('id-ID')}`,
+                harga: amount,
+                buyer: customerEmail,
+                phone: customerPhone
+            },
+            expiredAt
+        });
+
+        await newTrx.save();
+
+        return res.json({
+            status: true,
+            data: {
+                ...newTrx.toObject(),
+                payment: {
+                    qrString: dynamicQrisString
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Error Create Deposit QRISv2:", error);
+        return res.status(500).json({
+            status: false,
+            message: error.message || "Gagal membuat QRISv2 dinamis."
+        });
+    }
+});
+
+app.post('/api/deposit-qrisv2/:orderId/upload-proof', checkAuthSession, (req, res) => {
+    uploadPaymentProofMulter.single('proofImage')(req, res, async (err) => {
+        if (err) {
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({ status: false, message: 'Ukuran foto bukti maksimal 5MB!' });
+            }
+            return res.status(400).json({ status: false, message: err.message || 'Gagal mengunggah bukti pembayaran.' });
+        }
+
+        try {
+            if (!req.user) {
+                return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu!' });
+            }
+
+            const { orderId } = req.params;
+            if (!req.file) {
+                return res.status(400).json({ status: false, message: 'Silakan pilih foto bukti pembayaran terlebih dahulu!' });
+            }
+
+            const trx = await TransactionV2.findOne({ orderId });
+            if (!trx) {
+                return res.status(404).json({ status: false, message: 'Transaksi deposit tidak ditemukan!' });
+            }
+
+            const userEmail = (req.user.email || '').toLowerCase().trim();
+            if (trx.userEmail && trx.userEmail.toLowerCase().trim() !== userEmail) {
+                return res.status(403).json({ status: false, message: 'Akses ditolak untuk transaksi ini.' });
+            }
+
+            if (['success', 'settlement', 'paid', 'settled'].includes(trx.status.toLowerCase())) {
+                return res.status(400).json({ status: false, message: 'Deposit ini sudah dikonfirmasi!' });
+            }
+
+            if (trx.status.toLowerCase() === 'cancelled') {
+                return res.status(400).json({ status: false, message: 'Transaksi ini sudah dibatalkan.' });
+            }
+
+            const mimeType = req.file.mimetype || mime.lookup(req.file.originalname) || 'image/jpeg';
+            const base64 = req.file.buffer.toString('base64');
+            const proofDataUrl = `data:${mimeType};base64,${base64}`;
+
+            trx.proofImage = proofDataUrl;
+            trx.proofUploadedAt = new Date();
+            trx.status = 'waiting_verification';
+            trx.updatedAt = new Date();
+            await trx.save();
+            await deleteCache(`trx_${orderId}`);
+
+            const activeUser = await UserV2.findById(req.user.id || req.user._id).lean();
+            const username = activeUser?.username || req.user.username || userEmail.split('@')[0];
+
+            // Kirim notifikasi foto + tombol inline ke Telegram Admin
+            await sendTelegramDepositProof(trx, username, req.file.buffer, mimeType);
+
+            return res.json({
+                status: true,
+                message: 'Bukti pembayaran berhasil dikirim! Admin akan segera memverifikasi.',
+                data: {
+                    orderId: trx.orderId,
+                    status: trx.status
+                }
+            });
+        } catch (error) {
+            console.error("Error upload proof QRISv2:", error);
+            return res.status(500).json({ status: false, message: 'Terjadi kesalahan server saat mengirim bukti pembayaran.' });
+        }
+    });
+});
+
+app.post('/api/deposit-qrisv2/:orderId/cancel', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu!' });
+        }
+
+        const { orderId } = req.params;
+        const trx = await TransactionV2.findOne({ orderId });
+        if (!trx) {
+            return res.status(404).json({ status: false, message: 'Transaksi tidak ditemukan.' });
+        }
+
+        const userEmail = (req.user.email || '').toLowerCase().trim();
+        if (trx.userEmail && trx.userEmail.toLowerCase().trim() !== userEmail) {
+            return res.status(403).json({ status: false, message: 'Akses ditolak.' });
+        }
+
+        const result = await cancelDepositQrisV2(orderId, 'User');
+        if (!result.ok) {
+            return res.status(400).json({ status: false, message: result.message });
+        }
+
+        // Info pembatalan ke Telegram jika bukti sudah sempat dikirim
+        if (TELEGRAM_BOT_TOKEN && TELEGRAM_ADMIN_CHAT_ID) {
+            axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                chat_id: TELEGRAM_ADMIN_CHAT_ID,
+                text: `🚫 <b>DEPOSIT DIBATALKAN USER</b>\nOrder ID: <code>${orderId}</code>\nEmail: <code>${userEmail}</code>`,
+                parse_mode: 'HTML'
+            }).catch(() => {});
+        }
+
+        return res.json({ status: true, message: result.message });
+    } catch (error) {
+        return res.status(500).json({ status: false, message: 'Gagal membatalkan transaksi.' });
+    }
+});
+
+app.get('/api/admin/deposits-qrisv2', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const deposits = await TransactionV2.find({
+            type: 'DEPOSIT',
+            $or: [{ qrisVersion: 'v2' }, { paymentMethod: 'QRIS V2' }]
+        }).sort({ createdAt: -1 }).lean();
+
+        const emails = [...new Set(deposits.map(d => d.userEmail).filter(Boolean))];
+        const users = await UserV2.find({ email: { $in: emails } }).select('email username avatar').lean();
+        const userMap = {};
+        users.forEach(u => {
+            userMap[u.email.toLowerCase().trim()] = u;
+        });
+
+        const enriched = deposits.map(d => {
+            const u = userMap[(d.userEmail || '').toLowerCase().trim()];
+            return {
+                ...d,
+                username: u?.username || (d.userEmail ? d.userEmail.split('@')[0] : 'User'),
+                userAvatar: u?.avatar || null
+            };
+        });
+
+        return res.json({ status: true, deposits: enriched });
+    } catch (error) {
+        return res.status(500).json({ status: false, message: 'Gagal memuat daftar deposit QRISv2.' });
+    }
+});
+
+app.post('/api/admin/deposits-qrisv2/:orderId/approve', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const result = await approveDepositQrisV2(orderId, 'Web Admin');
+        if (!result.ok) {
+            return res.status(400).json({ status: false, message: result.message });
+        }
+
+        if (TELEGRAM_BOT_TOKEN && TELEGRAM_ADMIN_CHAT_ID) {
+            axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                chat_id: TELEGRAM_ADMIN_CHAT_ID,
+                text: `✅ <b>DEPOSIT DIKONFIRMASI VIA WEB ADMIN</b>\nOrder ID: <code>${orderId}</code>\nNominal: <b>Rp ${result.trx.amount.toLocaleString('id-ID')}</b>`,
+                parse_mode: 'HTML'
+            }).catch(() => {});
+        }
+
+        return res.json({ status: true, message: result.message });
+    } catch (error) {
+        return res.status(500).json({ status: false, message: 'Gagal mengonfirmasi deposit.' });
+    }
+});
+
+app.post('/api/admin/deposits-qrisv2/:orderId/cancel', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const result = await cancelDepositQrisV2(orderId, 'Admin Web');
+        if (!result.ok) {
+            return res.status(400).json({ status: false, message: result.message });
+        }
+
+        if (TELEGRAM_BOT_TOKEN && TELEGRAM_ADMIN_CHAT_ID) {
+            axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                chat_id: TELEGRAM_ADMIN_CHAT_ID,
+                text: `❌ <b>DEPOSIT DIBATALKAN VIA WEB ADMIN</b>\nOrder ID: <code>${orderId}</code>`,
+                parse_mode: 'HTML'
+            }).catch(() => {});
+        }
+
+        return res.json({ status: true, message: result.message });
+    } catch (error) {
+        return res.status(500).json({ status: false, message: 'Gagal membatalkan deposit.' });
+    }
+});
+
+app.post('/api/telegram/webhook', async (req, res) => {
+    try {
+        const update = req.body;
+        if (update && update.callback_query) {
+            const cq = update.callback_query;
+            const data = cq.data || '';
+            const chatId = cq.message?.chat?.id;
+            const messageId = cq.message?.message_id;
+
+            // Validasi hanya chat admin yang berhak klik
+            if (String(chatId) !== String(TELEGRAM_ADMIN_CHAT_ID)) {
+                await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
+                    callback_query_id: cq.id,
+                    text: 'Akses ditolak! Hanya Admin.',
+                    show_alert: true
+                }).catch(() => {});
+                return res.sendStatus(200);
+            }
+
+            if (data.startsWith('dep_approve_')) {
+                const orderId = data.replace('dep_approve_', '');
+                const result = await approveDepositQrisV2(orderId, 'Telegram Admin');
+
+                await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
+                    callback_query_id: cq.id,
+                    text: result.message,
+                    show_alert: true
+                }).catch(() => {});
+
+                if (result.ok && messageId) {
+                    const newCaption = `${cq.message.caption || ''}\n\n✅ <b>DIKONFIRMASI OLEH ADMIN</b> (${moment().tz('Asia/Jakarta').format('HH:mm:ss')} WIB)`;
+                    await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageCaption`, {
+                        chat_id: chatId,
+                        message_id: messageId,
+                        caption: newCaption,
+                        parse_mode: 'HTML',
+                        reply_markup: { inline_keyboard: [] }
+                    }).catch(() => {});
+                }
+            } else if (data.startsWith('dep_cancel_')) {
+                const orderId = data.replace('dep_cancel_', '');
+                const result = await cancelDepositQrisV2(orderId, 'Telegram Admin');
+
+                await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
+                    callback_query_id: cq.id,
+                    text: result.message,
+                    show_alert: true
+                }).catch(() => {});
+
+                if (result.ok && messageId) {
+                    const newCaption = `${cq.message.caption || ''}\n\n❌ <b>DIBATALKAN OLEH ADMIN</b> (${moment().tz('Asia/Jakarta').format('HH:mm:ss')} WIB)`;
+                    await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageCaption`, {
+                        chat_id: chatId,
+                        message_id: messageId,
+                        caption: newCaption,
+                        parse_mode: 'HTML',
+                        reply_markup: { inline_keyboard: [] }
+                    }).catch(() => {});
+                }
+            }
+        }
+        return res.sendStatus(200);
+    } catch (error) {
+        console.error('Telegram Webhook Error:', error.message);
+        return res.sendStatus(200);
     }
 });
 
