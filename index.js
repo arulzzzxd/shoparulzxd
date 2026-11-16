@@ -3949,6 +3949,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
         const yesterdayStartMs = startOfYesterday.valueOf();
 
         let lunasTrx = 0;
+        let cancelTrx = 0;
         let trxToday = 0;
         let trxYesterday = 0;
 
@@ -3956,6 +3957,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
         allTrxRaw.forEach(trx => {
             const st = (trx.status || '').toLowerCase();
             if (successStatuses.includes(st)) lunasTrx++;
+            if (cancelStatuses.includes(st)) cancelTrx++;
 
             const tMs = getTrxTimeMs(trx);
             if (tMs >= todayStartMs) {
@@ -4016,7 +4018,8 @@ app.get('/api/dashboard-stats', async (req, res) => {
         const allTrxAsc = [...allTrxDesc].reverse();
 
         function generateStockCandles(startMs, stepMs, bucketCount, trxItems, labelFormatter) {
-            let runningVal = 0;
+            const BASE_INDEX = 10000;
+            let runningVal = BASE_INDEX;
             let idx = 0;
 
             while (idx < trxItems.length && getTrxTimeMs(trxItems[idx]) < startMs) {
@@ -4026,7 +4029,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
                     runningVal += val;
                 } else if (cancelStatuses.includes(st)) {
                     const dropStep = Math.max(1000, Math.round(val * 0.5));
-                    runningVal = Math.max(0, runningVal - dropStep);
+                    runningVal = Math.max(1000, runningVal - dropStep);
                 }
                 idx++;
             }
@@ -4041,6 +4044,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 let high = open;
                 let low = open;
                 let lunasCount = 0;
+                let cancelCount = 0;
                 let totalCount = 0;
                 let periodOmzet = 0;
 
@@ -4058,8 +4062,9 @@ app.get('/api/dashboard-stats', async (req, res) => {
                         lunasCount++;
                         if (runningVal > high) high = runningVal;
                     } else if (cancelStatuses.includes(st)) {
-                        const dropStep = Math.max(1000, Math.round(val * 0.5));
-                        runningVal = Math.max(0, runningVal - dropStep);
+                        cancelCount++;
+                        const dropStep = Math.max(1500, Math.round(val * 0.6));
+                        runningVal = Math.max(1000, runningVal - dropStep);
                         if (runningVal < low) low = runningVal;
                     } else {
                         const spike = runningVal + Math.max(1000, Math.round(val * 0.35));
@@ -4068,7 +4073,11 @@ app.get('/api/dashboard-stats', async (req, res) => {
                     idx++;
                 }
 
-                const close = runningVal;
+                let close = runningVal;
+                if (cancelCount > 0 && lunasCount === 0 && close >= open) {
+                    close = Math.max(500, open - Math.max(1500, cancelCount * 1500));
+                    runningVal = close;
+                }
                 if (close > high) high = close;
                 if (close < low) low = close;
 
@@ -4080,6 +4089,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
                     c: close,
                     volume: totalCount,
                     lunas: lunasCount,
+                    batal: cancelCount,
                     omzet: periodOmzet
                 });
             }
@@ -4148,6 +4158,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
             totalProducts,
             totalTrx,
             lunasTrx,
+            cancelTrx,
             trxToday,
             trxYesterday,
             systemLatency: `${systemLatency} ms`,
