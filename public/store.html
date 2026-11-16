@@ -340,8 +340,8 @@
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-5 sm:gap-6 items-start">
 
-            <!-- SIDEBAR KATEGORI (z-20 valid Tailwind agar tidak tertimpa kartu & badge saat scroll) -->
-            <div class="neo-box p-3.5 sm:p-4 rounded-xl bg-white sticky top-[62px] sm:top-[68px] z-20">
+            <!-- SIDEBAR KATEGORI -->
+            <div class="neo-box p-3.5 sm:p-4 rounded-xl bg-white sticky top-[68px] sm:top-20 z-25">
                 <h3 class="font-black text-xs font-cyber text-black mb-2.5 sm:mb-3 uppercase tracking-wider flex items-center gap-2">
                     <i class="fa-solid fa-layer-group"></i> Kategori Produk
                 </h3>
@@ -353,7 +353,7 @@
             </div>
 
             <!-- CONTAINER LIST & GRID PRODUK -->
-            <div class="md:col-span-3 space-y-5 sm:space-y-6 relative z-0">
+            <div class="md:col-span-3 space-y-5 sm:space-y-6">
                 <div class="flex items-center justify-between neo-box p-3 sm:p-3.5 rounded-xl bg-white">
                     <p class="text-xs font-bold font-cyber uppercase">
                         Menampilkan <span id="productCount" class="font-black underline">0</span> produk
@@ -551,7 +551,7 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP CHECKOUT METODE PEMBAYARAN (TANPA TOMBOL SILANG, GANTI DENGAN BATALKAN TRANSAKSI) -->
+    <!-- MODAL POPUP CHECKOUT METODE PEMBAYARAN -->
     <div id="checkoutModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="neo-box w-full max-w-lg rounded-2xl bg-white overflow-hidden my-auto max-h-[95vh] flex flex-col" id="modalContent">
 
@@ -559,9 +559,9 @@
                 <h3 class="font-black text-sm font-cyber uppercase flex items-center gap-2">
                     <i class="fa-solid fa-cart-shopping"></i> Form Pemesanan
                 </h3>
-                <span class="text-[10px] font-mono font-black bg-white border-2 border-black px-2 py-0.5 rounded-md">
-                    CHECKOUT
-                </span>
+                <button onclick="closeCheckoutModal()" class="text-black font-black text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
 
             <div class="overflow-y-auto p-4 sm:p-5 flex-1">
@@ -644,16 +644,6 @@
                                 </div>
                             </div>
 
-                            <div onclick="selectCyberPayment('telegram')" id="opt-telegram" class="neo-box p-3 cursor-pointer flex items-center justify-between bg-white">
-                                <div class="flex items-center gap-3">
-                                    <i class="fa-brands fa-telegram text-base"></i>
-                                    <div>
-                                        <p class="text-xs font-black font-cyber">Order Manual via Telegram</p>
-                                        <p class="text-[10px] font-bold text-slate-600">Hubungi Admin via Telegram</p>
-                                    </div>
-                                </div>
-                            </div>
-
                             <div onclick="selectCyberPayment('manual')" id="opt-manual" class="neo-box p-3 cursor-pointer flex items-center justify-between bg-white">
                                 <div class="flex items-center gap-3">
                                     <i class="fa-brands fa-whatsapp text-base"></i>
@@ -678,21 +668,13 @@
                         </div>
                     </div>
 
-                    <div class="pt-2 space-y-2.5">
+                    <div class="pt-2">
                         <button type="button" id="btnPaySaldo" onclick="processSaldoPayment()" class="neo-btn w-full bg-neoGreen text-black font-cyber font-black py-3 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
                             <i class="fa-solid fa-wallet"></i> Bayar Pakai Saldo
                         </button>
 
-                        <button type="submit" id="btnPayTelegram" class="neo-btn w-full hidden bg-neoCyan text-black font-cyber font-black py-3 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
-                            <i class="fa-brands fa-telegram text-sm"></i> Order via Telegram
-                        </button>
-
                         <button type="submit" id="btnPayManual" class="neo-btn w-full hidden bg-neoYellow text-black font-cyber font-black py-3 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
                             <i class="fa-brands fa-whatsapp text-sm"></i> Order via WhatsApp
-                        </button>
-
-                        <button type="button" id="btnCancelOrder" onclick="confirmCancelTransaction()" class="neo-btn w-full bg-neoPink text-black font-cyber font-black py-3 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-ban"></i> Batalkan Transaksi
                         </button>
                     </div>
                 </form>
@@ -851,6 +833,7 @@
             const isManualLaris = rawBadge === 'LARIS' || rawBadge === 'HOT';
             const isDefaultOrNew = !rawBadge || rawBadge === 'NEW' || rawBadge === 'BARU';
 
+            // 1. Tier tertinggi: POPULER (muncul di bagian khusus paling atas)
             if (
                 isManualPopuler ||
                 (terjual >= 25 && totalReviews >= 10) ||
@@ -869,6 +852,7 @@
                 };
             }
 
+            // 2. Tier menengah atas: BEST (terjual & review tinggi)
             if (
                 isManualBest ||
                 (terjual >= 12 && totalReviews >= 5) ||
@@ -887,6 +871,7 @@
                 };
             }
 
+            // 3. Tier menengah: LARIS (mulai banyak terjual & ulasan)
             if (
                 isManualLaris ||
                 (terjual >= 5 && totalReviews >= 2) ||
@@ -905,6 +890,7 @@
                 };
             }
 
+            // 4. Custom badge khusus dari admin tetap dipertahankan
             if (!isDefaultOrNew) {
                 const displayLabel = rawBadge.slice(0, 8);
                 return {
@@ -919,6 +905,7 @@
                 };
             }
 
+            // 5. Default awal: NEW (merah starburst)
             return {
                 label: 'NEW',
                 tier: 'new',
@@ -1759,31 +1746,28 @@
             document.getElementById('paymentMethodSelect').value = method;
 
             const optSaldo = document.getElementById('opt-saldo');
-            const optTelegram = document.getElementById('opt-telegram');
             const optManual = document.getElementById('opt-manual');
             
-            optSaldo.className = `neo-box p-3 cursor-pointer flex items-center justify-between ${method === 'saldo' ? 'bg-neoYellow' : 'bg-white'}`;
-            optTelegram.className = `neo-box p-3 cursor-pointer flex items-center justify-between ${method === 'telegram' ? 'bg-neoCyan' : 'bg-white'}`;
-            optManual.className = `neo-box p-3 cursor-pointer flex items-center justify-between ${method === 'manual' ? 'bg-neoYellow' : 'bg-white'}`;
+            if (method === 'saldo') {
+                optSaldo.className = 'neo-box p-3 cursor-pointer flex items-center justify-between bg-neoYellow';
+                optManual.className = 'neo-box p-3 cursor-pointer flex items-center justify-between bg-white';
+            } else {
+                optSaldo.className = 'neo-box p-3 cursor-pointer flex items-center justify-between bg-white';
+                optManual.className = 'neo-box p-3 cursor-pointer flex items-center justify-between bg-neoYellow';
+            }
 
             const manualFields = document.getElementById('manualFieldsGroup');
             const btnSaldo = document.getElementById('btnPaySaldo');
-            const btnTelegram = document.getElementById('btnPayTelegram');
             const btnManual = document.getElementById('btnPayManual');
 
-            btnSaldo.classList.add('hidden');
-            btnTelegram.classList.add('hidden');
-            btnManual.classList.add('hidden');
-
-            if (method === 'telegram') {
+            if (method === 'manual') {
                 manualFields.classList.remove('hidden');
-                btnTelegram.classList.remove('hidden');
-            } else if (method === 'manual') {
-                manualFields.classList.remove('hidden');
+                btnSaldo.classList.add('hidden');
                 btnManual.classList.remove('hidden');
             } else {
                 manualFields.classList.add('hidden');
                 btnSaldo.classList.remove('hidden');
+                btnManual.classList.add('hidden');
             }
         }
 
@@ -2088,9 +2072,6 @@
             document.getElementById('modalStockInfo').innerText = `Tersisa: ${SELECTED_PRODUCT.stok !== undefined ? SELECTED_PRODUCT.stok : 'Tersedia'}`;
 
             document.getElementById('qtyInput').value = CURRENT_QTY;
-            if (CURRENT_LOGGED_USER?.username) {
-                document.getElementById('usernameInput').value = CURRENT_LOGGED_USER.username;
-            }
             updateTotalPrice();
 
             selectCyberPayment('saldo');
@@ -2177,58 +2158,60 @@
             document.getElementById('modalTotalPrice').innerText = formatRupiah(calc.total);
         }
 
-        async function confirmCancelTransaction() {
-            const confirmResult = await Swal.fire({
-                icon: 'warning',
-                title: 'BATALKAN TRANSAKSI?',
-                text: 'Apakah Anda yakin ingin membatalkan transaksi ini? Pesanan ini akan dicatat sebagai dibatalkan.',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, Batalkan',
-                cancelButtonText: 'Lanjutkan Pesanan',
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#000000',
-                customClass: { popup: 'cyber-swal' }
-            });
-
-            if (!confirmResult.isConfirmed) return;
-
-            if (!CURRENT_ORDER_FINALIZED && SELECTED_PRODUCT && CURRENT_ORDER_ID) {
-                CURRENT_ORDER_FINALIZED = true;
-                const calc = calculateFinalTotal();
-                const method = document.getElementById('paymentMethodSelect')?.value || 'saldo';
-                const methodLabel = method === 'telegram' ? 'TELEGRAM' : (method === 'manual' ? 'WHATSAPP' : 'SALDO');
-                const buyerName = document.getElementById('usernameInput')?.value.trim() || CURRENT_LOGGED_USER?.username || 'Pembeli Tamu';
-
-                try {
-                    await fetch('/api/store/cancel-order', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            orderId: CURRENT_ORDER_ID,
-                            productId: SELECTED_PRODUCT.Id || SELECTED_PRODUCT._id,
-                            qty: CURRENT_QTY,
-                            amount: calc.total,
-                            paymentMethod: methodLabel,
-                            buyer: buyerName
-                        })
-                    });
-                } catch (e) {}
-            }
-
-            document.getElementById('checkoutModal').classList.add('hidden');
-
-            Swal.fire({
-                icon: 'info',
-                title: 'TRANSAKSI DIBATALKAN',
-                text: 'Pesanan Anda telah dibatalkan.',
-                timer: 1600,
-                showConfirmButton: false,
-                customClass: { popup: 'cyber-swal' }
-            });
+        function resolveCheckoutPaymentMethod() {
+            const rawMethod = (document.getElementById('paymentMethodSelect')?.value || 'saldo').toLowerCase();
+            if (rawMethod === 'telegram') return 'TELEGRAM';
+            if (rawMethod === 'manual' || rawMethod === 'whatsapp') return 'WHATSAPP';
+            return 'SALDO';
         }
 
+        function recordCancelledOrder(useBeacon = false) {
+            if (CURRENT_ORDER_FINALIZED || !SELECTED_PRODUCT || !CURRENT_ORDER_ID) return;
+            CURRENT_ORDER_FINALIZED = true;
+
+            const calc = calculateFinalTotal();
+            const paymentMethod = resolveCheckoutPaymentMethod();
+            const manualUser = document.getElementById('usernameInput')?.value?.trim() || '';
+
+            const payload = JSON.stringify({
+                orderId: CURRENT_ORDER_ID,
+                productId: SELECTED_PRODUCT.Id || SELECTED_PRODUCT._id,
+                qty: CURRENT_QTY,
+                amount: calc.total,
+                paymentMethod,
+                username: manualUser || (CURRENT_LOGGED_USER ? CURRENT_LOGGED_USER.username : '')
+            });
+
+            if (useBeacon && navigator.sendBeacon) {
+                const blob = new Blob([payload], { type: 'application/json' });
+                navigator.sendBeacon('/api/store/cancel-order', blob);
+                return;
+            }
+
+            fetch('/api/store/cancel-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: payload,
+                keepalive: true
+            }).catch(() => {});
+        }
+
+        window.addEventListener('beforeunload', () => {
+            const modal = document.getElementById('checkoutModal');
+            if (modal && !modal.classList.contains('hidden') && !CURRENT_ORDER_FINALIZED) {
+                recordCancelledOrder(true);
+            }
+        });
+
         function closeCheckoutModal() {
-            document.getElementById('checkoutModal').classList.add('hidden');
+            const modal = document.getElementById('checkoutModal');
+            const isModalOpen = modal && !modal.classList.contains('hidden');
+
+            if (isModalOpen && !CURRENT_ORDER_FINALIZED && SELECTED_PRODUCT && CURRENT_ORDER_ID) {
+                recordCancelledOrder(false);
+            }
+
+            modal.classList.add('hidden');
         }
 
         async function processSaldoPayment() {
@@ -2503,23 +2486,34 @@
         async function handleFormSubmit(event) {
             event.preventDefault();
             CURRENT_ORDER_FINALIZED = true;
-            const method = document.getElementById('paymentMethodSelect')?.value || 'manual';
             const username = document.getElementById('usernameInput').value.trim();
             const note = document.getElementById('noteInput').value.trim();
             const calc = calculateFinalTotal();
+            const paymentMethod = resolveCheckoutPaymentMethod();
+
+            fetch('/api/store/create-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    orderId: CURRENT_ORDER_ID,
+                    productId: SELECTED_PRODUCT.Id || SELECTED_PRODUCT._id,
+                    qty: CURRENT_QTY,
+                    amount: calc.total,
+                    paymentMethod,
+                    username: username || (CURRENT_LOGGED_USER ? CURRENT_LOGGED_USER.username : ''),
+                    note
+                }),
+                keepalive: true
+            }).catch(() => {});
 
             let message = `Halo Arulz, saya pesan manual:\n`;
             message += `ID TRX: ${CURRENT_ORDER_ID}\n`;
-            if (username) message += `Username: ${username}\n`;
+            message += `Username: ${username}\n`;
             message += `Produk: ${SELECTED_PRODUCT.nama} (${CURRENT_QTY}x)\n`;
             message += `Total Tagihan: ${formatRupiah(calc.total)}\n`;
             if (note) message += `Catatan: ${note}\n`;
 
-            if (method === 'telegram') {
-                window.open(`https://t.me/arulzxd?text=${encodeURIComponent(message)}`, '_blank');
-            } else {
-                window.open(`https://wa.me/6285122629940?text=${encodeURIComponent(message)}`, '_blank');
-            }
+            window.open(`https://wa.me/6285122629940?text=${encodeURIComponent(message)}`, '_blank');
             closeCheckoutModal();
         }
 
