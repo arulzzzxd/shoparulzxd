@@ -5,36 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#FFDE59">
     <title>Deposit Saldo Instan - ArulzXD Store</title>
-    <meta name="description" content="Isi ulang saldo akun ArulzXD Store secara otomatis 24/7 menggunakan QRIS All Payment (DANA, OVO, GoPay, ShopeePay, M-Banking).">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://www.shoparulzxd.biz.id/deposit">
-
-    <!-- Favicon & Icons -->
+    <meta name="description" content="Isi ulang saldo akun ArulzXD Store menggunakan QRIS Otomatis & QRISv2 Dinamis.">
     <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
-    <link rel="shortcut icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
-    <link rel="apple-touch-icon" href="https://cdn.larasxd.my.id/files/1wh5do.png">
-
-    <!-- Open Graph / Facebook / WhatsApp / Telegram -->
-    <meta property="og:type" content="website">
-    <meta property="og:locale" content="id_ID">
-    <meta property="og:site_name" content="ArulzXD Store">
-    <meta property="og:url" content="https://www.shoparulzxd.biz.id/deposit">
-    <meta property="og:title" content="Deposit Saldo Instan - ArulzXD Store">
-    <meta property="og:description" content="Isi ulang saldo akun Anda secara otomatis 24/7 menggunakan QRIS All Payment di ArulzXD Store.">
-    <meta property="og:image" content="https://cdn.larasxd.my.id/files/wWSxaeJ0ka.jpg">
-    <meta property="og:image:secure_url" content="https://cdn.larasxd.my.id/files/wWSxaeJ0ka.jpg">
-    <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://www.shoparulzxd.biz.id/deposit">
-    <meta name="twitter:title" content="Deposit Saldo Instan - ArulzXD Store">
-    <meta name="twitter:description" content="Isi ulang saldo akun Anda secara otomatis 24/7 menggunakan QRIS All Payment di ArulzXD Store.">
-    <meta name="twitter:image" content="https://cdn.larasxd.my.id/files/wWSxaeJ0ka.jpg">
-
-    <!-- Styles & Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -64,161 +36,34 @@
     </script>
     <style>
         body { background-color: #F4F0EA; color: #000000; overflow-x: hidden; }
-        
-        .neo-box {
-            background-color: #FFFFFF;
-            border: 3px solid #000000;
-            box-shadow: 5px 5px 0px #000000;
-        }
-
-        .neo-btn {
-            border: 3px solid #000000;
-            box-shadow: 4px 4px 0px #000000;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-        .neo-btn:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px #000000;
-        }
-        .neo-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px #000000;
-        }
-
-        .preset-btn.active {
-            background-color: #FFDE59 !important;
-            box-shadow: 5px 5px 0px #000000 !important;
-        }
-
-        .neo-dots-bg {
-            background-color: #F4F0EA;
-            background-image: radial-gradient(#000000 1.25px, transparent 1.25px);
-            background-size: 16px 16px;
-        }
-
-        /* BOTTOM NAVIGATION BAR */
-        .bottom-nav-fixed {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            max-width: 440px;
-            height: 64px;
-            z-index: 9999;
-        }
-
-        .bottom-nav-bg {
-            position: absolute;
-            inset: 0;
-            background: #FFFFFF;
-            border: 3px solid #000000;
-            border-radius: 32px;
-            box-shadow: 5px 5px 0px #000000;
-        }
-
-        .nav-items-wrapper {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            height: 100%;
-            width: 100%;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        .nav-item-btn {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 100%;
-            color: #000000;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .nav-icon-box {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            background: transparent;
-        }
-
+        .neo-box { background-color: #FFFFFF; border: 3px solid #000000; box-shadow: 5px 5px 0px #000000; }
+        .neo-btn { border: 3px solid #000000; box-shadow: 4px 4px 0px #000000; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+        .neo-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000000; }
+        .neo-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000000; }
+        .preset-btn.active { background-color: #FFDE59 !important; box-shadow: 5px 5px 0px #000000 !important; }
+        .method-btn.active { background-color: #00E5FF !important; box-shadow: 5px 5px 0px #000000 !important; }
+        .neo-dots-bg { background-color: #F4F0EA; background-image: radial-gradient(#000000 1.25px, transparent 1.25px); background-size: 16px 16px; }
+        .bottom-nav-fixed { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 440px; height: 64px; z-index: 9999; }
+        .bottom-nav-bg { position: absolute; inset: 0; background: #FFFFFF; border: 3px solid #000000; border-radius: 32px; box-shadow: 5px 5px 0px #000000; }
+        .nav-items-wrapper { position: relative; z-index: 10; display: flex; height: 100%; width: 100%; justify-content: space-around; align-items: center; }
+        .nav-item-btn { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60px; height: 100%; color: #000000; text-decoration: none; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .nav-icon-box { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); background: transparent; }
         .nav-item-btn i { font-size: 18px; transition: all 0.3s ease; }
-        .nav-item-btn span {
-            font-size: 10px;
-            font-weight: 800;
-            font-family: 'Space Grotesk', sans-serif;
-            position: absolute;
-            bottom: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item-btn.active .nav-icon-box {
-            transform: translateY(-22px);
-            background-color: #FFDE59;
-            border: 3px solid #000000;
-            box-shadow: 3px 3px 0px #000000;
-        }
-
+        .nav-item-btn span { font-size: 10px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; position: absolute; bottom: 6px; transition: all 0.3s ease; }
+        .nav-item-btn.active .nav-icon-box { transform: translateY(-22px); background-color: #FFDE59; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; }
         .nav-item-btn.active i { font-size: 20px; }
-        .nav-item-btn.active span {
-            color: #000000;
-            font-weight: 900;
-            transform: translateY(-2px);
-        }
-
-        .nav-item-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            width: 5px;
-            height: 5px;
-            background-color: #000000;
-            border-radius: 50%;
-        }
-
-        .swal2-popup.cyber-swal {
-            background: #FFFFFF !important;
-            border: 3px solid #000000 !important;
-            border-radius: 20px !important;
-            color: #000000 !important;
-            box-shadow: 6px 6px 0px #000000 !important;
-            font-family: 'Plus Jakarta Sans', sans-serif !important;
-        }
-
-        #depQrcodeContainer {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 210px;
-            height: 210px;
-            background: #FFFFFF;
-        }
-        #depQrcodeContainer canvas, #depQrcodeContainer img {
-            width: 210px !important;
-            height: 210px !important;
-            max-width: 100% !important;
-            max-height: 100% !important;
-            object-fit: contain;
-            image-rendering: pixelated;
-            display: block;
-        }
+        .nav-item-btn.active span { color: #000000; font-weight: 900; transform: translateY(-2px); }
+        .nav-item-btn.active::after { content: ''; position: absolute; bottom: 4px; width: 5px; height: 5px; background-color: #000000; border-radius: 50%; }
+        .swal2-popup.cyber-swal { background: #FFFFFF !important; border: 3px solid #000000 !important; border-radius: 20px !important; color: #000000 !important; box-shadow: 6px 6px 0px #000000 !important; font-family: 'Plus Jakarta Sans', sans-serif !important; }
+        #depQrcodeContainer { display: flex; align-items: center; justify-content: center; width: 200px; height: 200px; background: #FFFFFF; }
+        #depQrcodeContainer canvas, #depQrcodeContainer img { width: 200px !important; height: 200px !important; max-width: 100% !important; max-height: 100% !important; object-fit: contain; image-rendering: pixelated; display: block; }
     </style>
 </head>
 <body class="font-sans antialiased text-black min-h-screen pb-36">
 
-    <!-- FLOATING LIVE CHAT WIDGET POP-UP -->
+    <!-- FLOATING LIVE CHAT WIDGET -->
     <div id="liveChatWidgetContainer">
         <div id="floatingChatWindow" class="fixed bottom-20 right-4 sm:right-6 z-[99999] hidden w-[calc(100vw-2rem)] max-w-[360px] h-[420px] max-h-[calc(100vh-100px)] bg-white border-3 border-black rounded-2xl shadow-[6px_6px_0px_#000] overflow-hidden flex-col transition-all duration-300">
-            
             <div class="bg-neoYellow p-3 border-b-3 border-black flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-2.5">
                     <div class="relative">
@@ -238,19 +83,13 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-
-            <div id="widgetChatMessages" class="flex-1 p-3 overflow-y-auto space-y-3 bg-neoBg scroll-smooth">
-                <div class="text-center text-[11px] text-slate-600 font-mono my-2 animate-pulse font-bold">Memuat pesan...</div>
-            </div>
-
+            <div id="widgetChatMessages" class="flex-1 p-3 overflow-y-auto space-y-3 bg-neoBg scroll-smooth"></div>
             <form id="widgetChatForm" onsubmit="sendWidgetMessage(event)" class="p-2.5 bg-white border-t-3 border-black flex items-center gap-2 shrink-0">
-                <input type="text" id="widgetChatInput" required placeholder="Tuliskan pesan Anda..." 
-                       class="flex-1 bg-neoBg border-2 border-black rounded-xl px-3 py-2 text-xs text-black font-bold placeholder-slate-500 focus:outline-none">
+                <input type="text" id="widgetChatInput" required placeholder="Tuliskan pesan Anda..." class="flex-1 bg-neoBg border-2 border-black rounded-xl px-3 py-2 text-xs text-black font-bold placeholder-slate-500 focus:outline-none">
                 <button type="submit" class="neo-btn w-9 h-9 rounded-xl bg-neoYellow text-black flex items-center justify-center shrink-0 font-black">
                     <i class="fa-solid fa-paper-plane text-xs"></i>
                 </button>
             </form>
-
         </div>
     </div>
 
@@ -261,11 +100,9 @@
                 <i class="fa-solid fa-bolt text-black text-xl"></i>
                 <span>Arulz<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">Store</span></span>
             </a>
-            <div class="flex items-center gap-2">
-                <span class="text-xs font-cyber font-black bg-white text-black px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] flex items-center gap-1.5 uppercase">
-                    <i class="fa-solid fa-shield-halved"></i> QRIS Ready
-                </span>
-            </div>
+            <span class="text-xs font-cyber font-black bg-white text-black px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] flex items-center gap-1.5 uppercase">
+                <i class="fa-solid fa-shield-halved"></i> QRIS Ready
+            </span>
         </div>
     </header>
 
@@ -278,7 +115,7 @@
                 <h1 class="text-xl sm:text-3xl font-black font-cyber text-black flex items-center gap-2">
                     <i class="fa-solid fa-wallet"></i> Deposit Saldo Instan
                 </h1>
-                <p class="text-xs sm:text-sm font-bold text-black mt-1">Isi ulang saldo akun Anda secara otomatis 24/7 menggunakan QRIS All Payment.</p>
+                <p class="text-xs sm:text-sm font-bold text-black mt-1">Isi ulang saldo akun Anda menggunakan QRIS Otomatis maupun QRIS v2 Dinamis.</p>
             </div>
             
             <div class="bg-white border-3 border-black p-4 rounded-xl flex items-center justify-between md:justify-end gap-4 min-w-[240px] shadow-[4px_4px_0px_#000]">
@@ -299,13 +136,13 @@
                     <i class="fa-solid fa-qrcode text-lg"></i>
                 </div>
                 <div>
-                    <h3 class="text-xs sm:text-sm font-black font-cyber uppercase">Ada Tagihan QRIS Belum Dibayar</h3>
+                    <h3 class="text-xs sm:text-sm font-black font-cyber uppercase">Ada Tagihan Deposit Belum Selesai</h3>
                     <p class="text-[11px] font-mono font-bold">Order ID: <span id="bannerOrderIdText">-</span></p>
                 </div>
             </div>
             <div class="flex items-center gap-2 w-full sm:w-auto">
                 <button onclick="reopenActiveDepositModal()" class="neo-btn flex-1 sm:flex-none bg-neoGreen text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs uppercase flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-eye"></i> Lanjutkan Bayar
+                    <i class="fa-solid fa-eye"></i> Lanjutkan / Upload Bukti
                 </button>
                 <button onclick="manualCheckDepositStatus()" class="neo-btn flex-1 sm:flex-none bg-white text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs uppercase flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-rotate"></i> Cek Status
@@ -316,9 +153,39 @@
         <!-- GRID DUA KOLOM -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-            <!-- KOLOM KIRI: PRESET NOMINAL & FORM -->
+            <!-- KOLOM KIRI -->
             <section class="lg:col-span-7 neo-box rounded-2xl p-5 sm:p-6 bg-white space-y-6">
                 
+                <!-- PILIH METODE QRIS -->
+                <div class="space-y-2.5">
+                    <label class="block text-xs font-black font-cyber text-black uppercase tracking-wider">
+                        <i class="fa-solid fa-layer-group"></i> Pilih Gateway QRIS
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button type="button" id="btnMethodQrisV2" onclick="selectQrisMethod('v2')" class="method-btn active neo-btn bg-white text-black p-3.5 rounded-xl text-left flex items-center justify-between">
+                            <div>
+                                <div class="text-xs font-black font-cyber uppercase flex items-center gap-1.5">
+                                    <span>QRIS v2 (Dinamis)</span>
+                                    <span class="bg-neoGreen border border-black text-[9px] px-1.5 py-0.2 rounded">BEBAS ADMIN</span>
+                                </div>
+                                <p class="text-[10px] font-bold text-slate-700 mt-0.5">Nominal otomatis di QR + Upload Bukti</p>
+                            </div>
+                            <i class="fa-solid fa-qrcode text-xl"></i>
+                        </button>
+
+                        <button type="button" id="btnMethodQrisV1" onclick="selectQrisMethod('v1')" class="method-btn neo-btn bg-white text-black p-3.5 rounded-xl text-left flex items-center justify-between">
+                            <div>
+                                <div class="text-xs font-black font-cyber uppercase flex items-center gap-1.5">
+                                    <span>QRIS v1 (Auto)</span>
+                                    <span class="bg-neoYellow border border-black text-[9px] px-1.5 py-0.2 rounded">INSTAN</span>
+                                </div>
+                                <p class="text-[10px] font-bold text-slate-700 mt-0.5">Cek otomatis oleh sistem gateway</p>
+                            </div>
+                            <i class="fa-solid fa-bolt text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="flex items-center justify-between border-b-3 border-black pb-3">
                     <h2 class="text-xs sm:text-sm font-black font-cyber text-black uppercase tracking-wider flex items-center gap-2">
                         <i class="fa-solid fa-cubes"></i> Pilih Nominal Deposit
@@ -331,50 +198,41 @@
                 <!-- PRESET GRID -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <button type="button" onclick="setDepositAmount(5000, this)" class="preset-btn neo-btn relative bg-white text-black font-cyber font-black py-3.5 px-2 rounded-xl text-xs flex flex-col items-center gap-1">
-                        <span class="absolute -top-2.5 bg-neoPink border border-black text-black font-black text-[8px] uppercase tracking-wider px-2 py-0.5 rounded-full">
-                            🔥 Populer
-                        </span>
+                        <span class="absolute -top-2.5 bg-neoPink border border-black text-black font-black text-[8px] uppercase tracking-wider px-2 py-0.5 rounded-full">🔥 Populer</span>
                         <span class="text-[10px] font-bold">Super Hemat</span>
                         <span class="text-sm">Rp 5.000</span>
                     </button>
-
                     <button type="button" onclick="setDepositAmount(10000, this)" class="preset-btn neo-btn bg-white text-black font-cyber font-black py-3.5 px-2 rounded-xl text-xs flex flex-col items-center gap-1">
                         <span class="text-slate-600 text-[10px]">Hemat</span>
                         <span class="text-sm">Rp 10.000</span>
                     </button>
-
                     <button type="button" onclick="setDepositAmount(20000, this)" class="preset-btn neo-btn bg-white text-black font-cyber font-black py-3.5 px-2 rounded-xl text-xs flex flex-col items-center gap-1">
                         <span class="text-slate-600 text-[10px]">Reguler</span>
                         <span class="text-sm">Rp 20.000</span>
                     </button>
-
                     <button type="button" onclick="setDepositAmount(30000, this)" class="preset-btn neo-btn bg-white text-black font-cyber font-black py-3.5 px-2 rounded-xl text-xs flex flex-col items-center gap-1">
                         <span class="text-slate-600 text-[10px]">Pro</span>
                         <span class="text-sm">Rp 30.000</span>
                     </button>
-
                     <button type="button" onclick="setDepositAmount(50000, this)" class="preset-btn neo-btn bg-white text-black font-cyber font-black py-3.5 px-2 rounded-xl text-xs flex flex-col items-center gap-1">
                         <span class="text-slate-600 text-[10px]">VIP</span>
                         <span class="text-sm">Rp 50.000</span>
                     </button>
-
                     <button type="button" onclick="setDepositAmount(75000, this)" class="preset-btn neo-btn bg-white text-black font-cyber font-black py-3.5 px-2 rounded-xl text-xs flex flex-col items-center gap-1">
                         <span class="text-slate-600 text-[10px]">MVP</span>
                         <span class="text-sm">Rp 75.000</span>
                     </button>
-
                     <button type="button" onclick="setDepositAmount(90000, this)" class="preset-btn neo-btn bg-white text-black font-cyber font-black py-3.5 px-2 rounded-xl text-xs flex flex-col items-center gap-1">
                         <span class="text-slate-600 text-[10px]">Sultan</span>
                         <span class="text-sm">Rp 90.000</span>
                     </button>
-
                     <button type="button" onclick="setDepositAmount(100000, this)" class="preset-btn neo-btn bg-white text-black font-cyber font-black py-3.5 px-2 rounded-xl text-xs flex flex-col items-center gap-1">
                         <span class="text-slate-600 font-extrabold text-[10px]">Super Sultan</span>
                         <span class="text-sm">Rp 100.000</span>
                     </button>
                 </div>
 
-                <!-- INPUT MANUAL, NOMOR HP PEMBELI & TOMBOL -->
+                <!-- INPUT NOMOR HP & NOMINAL -->
                 <div class="space-y-3 pt-2">
                     <div>
                         <label for="customerPhoneInput" class="block text-[11px] font-black font-cyber text-black uppercase tracking-wider mb-1.5">
@@ -384,11 +242,10 @@
                             <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-xs font-black text-black font-cyber">
                                 <i class="fa-solid fa-phone"></i>
                             </span>
-                            <input type="tel" id="customerPhoneInput" placeholder="Contoh: 081234567890 atau 6281234567890" 
+                            <input type="tel" id="customerPhoneInput" placeholder="Contoh: 081234567890" 
                                    onkeydown="if(event.key==='Enter') processDeposit()"
                                    class="w-full pl-11 pr-4 py-3 text-xs bg-white border-3 border-black rounded-xl text-black font-black font-cyber shadow-[3px_3px_0px_#000]">
                         </div>
-                        <p class="text-[10px] font-bold text-slate-600 mt-1">Wajib nomor HP Indonesia asli (08xx / 62xx / +62) untuk validasi penyedia QRIS.</p>
                     </div>
 
                     <label for="depositAmountInput" class="block text-[11px] font-black font-cyber text-black uppercase tracking-wider">
@@ -407,68 +264,47 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- METODE SUPPORT -->
-                <div class="pt-4 border-t-3 border-black space-y-2">
-                    <span class="text-[10px] font-black font-cyber text-black uppercase tracking-wider block">Dukungan Pembayaran QRIS:</span>
-                    <div class="flex flex-wrap items-center gap-2 text-xs font-mono font-bold">
-                        <span class="bg-neoBg px-2.5 py-1 rounded-lg border-2 border-black"><i class="fa-solid fa-wallet mr-1"></i> DANA</span>
-                        <span class="bg-neoBg px-2.5 py-1 rounded-lg border-2 border-black"><i class="fa-solid fa-wallet mr-1"></i> OVO</span>
-                        <span class="bg-neoBg px-2.5 py-1 rounded-lg border-2 border-black"><i class="fa-solid fa-wallet mr-1"></i> GoPay</span>
-                        <span class="bg-neoBg px-2.5 py-1 rounded-lg border-2 border-black"><i class="fa-solid fa-wallet mr-1"></i> ShopeePay</span>
-                        <span class="bg-neoBg px-2.5 py-1 rounded-lg border-2 border-black"><i class="fa-solid fa-building-columns mr-1"></i> M-Banking</span>
-                    </div>
-                </div>
-
             </section>
 
             <!-- KOLOM KANAN: PANDUAN -->
             <aside class="lg:col-span-5 neo-box rounded-2xl p-5 sm:p-6 bg-neoPink space-y-4">
                 <div class="flex items-center gap-2 pb-3 border-b-3 border-black">
                     <i class="fa-solid fa-shield-halved text-black text-base"></i>
-                    <h3 class="text-xs sm:text-sm font-black font-cyber text-black uppercase tracking-wider">Panduan & Ketentuan</h3>
+                    <h3 class="text-xs sm:text-sm font-black font-cyber text-black uppercase tracking-wider">Panduan QRIS v2</h3>
                 </div>
 
                 <div class="space-y-3.5 text-xs font-bold text-black leading-relaxed">
                     <div class="bg-white p-3.5 rounded-xl border-2 border-black shadow-[3px_3px_0px_#000] flex items-start gap-3">
-                        <div class="w-7 h-7 rounded-lg bg-neoYellow border border-black flex items-center justify-center shrink-0 mt-0.5 font-black">
-                            <i class="fa-solid fa-money-bill-wave text-xs"></i>
-                        </div>
+                        <div class="w-7 h-7 rounded-lg bg-neoYellow border border-black flex items-center justify-center shrink-0 mt-0.5 font-black">1</div>
                         <div>
-                            <h4 class="font-black font-cyber">Nominal Minimal</h4>
-                            <p class="text-[11px] mt-0.5">Pengisian saldo minimal adalah <strong>Rp 1.000</strong>.</p>
+                            <h4 class="font-black font-cyber">Scan QRIS Dinamis</h4>
+                            <p class="text-[11px] mt-0.5">Nominal pembayaran otomatis terisi saat Anda scan kode QRIS <strong>IDZHARUL STORE</strong>.</p>
                         </div>
                     </div>
 
                     <div class="bg-white p-3.5 rounded-xl border-2 border-black shadow-[3px_3px_0px_#000] flex items-start gap-3">
-                        <div class="w-7 h-7 rounded-lg bg-neoCyan border border-black flex items-center justify-center shrink-0 mt-0.5 font-black">
-                            <i class="fa-solid fa-qrcode text-xs"></i>
-                        </div>
+                        <div class="w-7 h-7 rounded-lg bg-neoCyan border border-black flex items-center justify-center shrink-0 mt-0.5 font-black">2</div>
                         <div>
-                            <h4 class="font-black font-cyber">QRIS Otomatis</h4>
-                            <p class="text-[11px] mt-0.5">Download atau scan QRIS menggunakan aplikasi e-wallet atau mobile banking favorit Anda.</p>
+                            <h4 class="font-black font-cyber">Upload Bukti Pembayaran</h4>
+                            <p class="text-[11px] mt-0.5">Setelah transfer berhasil, unggah screenshot bukti bayar pada popup tagihan.</p>
                         </div>
                     </div>
 
                     <div class="bg-white p-3.5 rounded-xl border-2 border-black shadow-[3px_3px_0px_#000] flex items-start gap-3">
-                        <div class="w-7 h-7 rounded-lg bg-neoGreen border border-black flex items-center justify-center shrink-0 mt-0.5 font-black">
-                            <i class="fa-solid fa-clock text-xs"></i>
-                        </div>
+                        <div class="w-7 h-7 rounded-lg bg-neoGreen border border-black flex items-center justify-center shrink-0 mt-0.5 font-black">3</div>
                         <div>
-                            <h4 class="font-black font-cyber">Proses Real-time 24/7</h4>
-                            <p class="text-[11px] mt-0.5">Saldo bertambah otomatis hitungan detik setelah transaksi berhasil.</p>
+                            <h4 class="font-black font-cyber">Konfirmasi Cepat Admin</h4>
+                            <p class="text-[11px] mt-0.5">Bukti langsung terkirim ke Telegram & Panel Admin untuk dicek dan saldo segera masuk.</p>
                         </div>
                     </div>
                 </div>
             </aside>
-
         </div>
-
     </main>
 
-    <!-- MODAL POPUP QRIS DEPOSIT (NEO-BRUTALISM ENHANCED) -->
+    <!-- MODAL POPUP QRIS DEPOSIT -->
     <div id="depositModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div class="w-full max-w-[430px] rounded-2xl bg-white border-[3px] border-black shadow-[8px_8px_0px_#000] overflow-hidden relative my-auto">
+        <div class="w-full max-w-[440px] rounded-2xl bg-white border-[3px] border-black shadow-[8px_8px_0px_#000] overflow-hidden relative my-auto">
             
             <!-- TOP WINDOW BAR -->
             <div class="bg-neoYellow border-b-[3px] border-black px-4 py-3 flex items-center justify-between">
@@ -478,75 +314,45 @@
                         <span class="w-3 h-3 rounded-full bg-neoCyan border-2 border-black inline-block"></span>
                         <span class="w-3 h-3 rounded-full bg-neoGreen border-2 border-black inline-block"></span>
                     </div>
-                    <span class="font-cyber font-black text-xs uppercase tracking-wider ml-1 text-black">
-                        INVOICE // QRIS INSTAN
+                    <span id="modalTitleVersion" class="font-cyber font-black text-xs uppercase tracking-wider ml-1 text-black">
+                        INVOICE // QRIS V2 DINAMIS
                     </span>
                 </div>
                 <button type="button" onclick="closeDepositModal()" title="Tutup Modal"
-                        class="w-7 h-7 rounded-lg border-2 border-black bg-white hover:bg-neoPink flex items-center justify-center text-black font-black text-xs shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition">
+                        class="w-7 h-7 rounded-lg border-2 border-black bg-white hover:bg-neoPink flex items-center justify-center text-black font-black text-xs shadow-[2px_2px_0px_#000]">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
             <!-- MODAL BODY -->
-            <div class="p-4 sm:p-5 neo-dots-bg space-y-3.5 text-center">
+            <div class="p-4 sm:p-5 neo-dots-bg space-y-3 text-center max-h-[85vh] overflow-y-auto">
                 
-                <!-- BADGES -->
-                <div class="flex items-center justify-center gap-2 flex-wrap">
-                    <span class="bg-neoCyan border-2 border-black px-2.5 py-0.5 rounded-lg text-[10px] font-black font-cyber uppercase shadow-[2px_2px_0px_#000] flex items-center gap-1">
-                        <i class="fa-solid fa-bolt"></i> QRIS ALL PAYMENT
-                    </span>
-                    <span class="bg-neoGreen border-2 border-black px-2.5 py-0.5 rounded-lg text-[10px] font-black font-cyber uppercase shadow-[2px_2px_0px_#000] flex items-center gap-1">
-                        <i class="fa-solid fa-shield-check"></i> OTOMATIS 24/7
-                    </span>
-                </div>
-
                 <!-- KARTU UTAMA QRIS -->
                 <div class="mx-auto w-full bg-white rounded-2xl border-[3px] border-black shadow-[5px_5px_0px_#000] overflow-hidden">
-                    <!-- QRIS Card Header -->
                     <div class="bg-black text-white px-4 py-2 flex items-center justify-between border-b-[3px] border-black">
                         <div class="flex items-center gap-2">
-                            <span class="bg-neoYellow text-black font-cyber font-black text-[11px] px-2 py-0.5 rounded border border-black tracking-wider">
-                                QRIS
-                            </span>
-                            <span class="text-[11px] font-cyber font-black tracking-wide uppercase text-white">
-                                ARULZXD STORE
-                            </span>
+                            <span class="bg-neoYellow text-black font-cyber font-black text-[11px] px-2 py-0.5 rounded border border-black tracking-wider">QRIS</span>
+                            <span class="text-[11px] font-cyber font-black tracking-wide uppercase text-white">IDZHARUL STORE</span>
                         </div>
-                        <span class="text-[10px] font-mono font-extrabold bg-neoPink text-black px-2 py-0.5 rounded border border-black">
-                            GPN
-                        </span>
+                        <span class="text-[10px] font-mono font-extrabold bg-neoCyan text-black px-2 py-0.5 rounded border border-black">DINAMIS</span>
                     </div>
 
-                    <!-- QR CODE FRAME DENGAN CORNER BRACKETS -->
-                    <div class="p-4 bg-white flex flex-col items-center justify-center relative">
-                        <div class="relative p-3 bg-white border-[3px] border-black rounded-xl shadow-[4px_4px_0px_#000]">
-                            <!-- Sudut Dekoratif Neo-Brutalism -->
-                            <span class="absolute -top-1.5 -left-1.5 w-3.5 h-3.5 bg-neoYellow border-2 border-black rounded-sm"></span>
-                            <span class="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 bg-neoCyan border-2 border-black rounded-sm"></span>
-                            <span class="absolute -bottom-1.5 -left-1.5 w-3.5 h-3.5 bg-neoPink border-2 border-black rounded-sm"></span>
-                            <span class="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 bg-neoGreen border-2 border-black rounded-sm"></span>
-                            
+                    <div class="p-3.5 bg-white flex flex-col items-center justify-center relative">
+                        <div class="relative p-2.5 bg-white border-[3px] border-black rounded-xl shadow-[4px_4px_0px_#000]">
                             <div id="depQrcodeContainer"></div>
                         </div>
-                        <p class="text-[10px] font-bold text-slate-700 mt-2.5 flex items-center gap-1">
-                            <i class="fa-solid fa-camera text-black"></i> Scan langsung atau Download gambar QRIS
+                        <p class="text-[10px] font-bold text-slate-700 mt-2 flex items-center gap-1">
+                            <i class="fa-solid fa-camera text-black"></i> Scan via DANA, GoPay, OVO, ShopeePay, M-Banking
                         </p>
                     </div>
 
-                    <!-- TOTAL BAYAR & ORDER ID -->
-                    <div class="bg-neoBg border-t-[3px] border-black p-3.5 space-y-2">
+                    <div class="bg-neoBg border-t-[3px] border-black p-3 space-y-2">
                         <div class="bg-neoYellow border-2 border-black rounded-xl px-3.5 py-2 shadow-[3px_3px_0px_#000] flex items-center justify-between">
                             <div class="text-left">
-                                <span class="text-[9px] font-black font-cyber uppercase tracking-wider block text-black/80">
-                                    Total Pembayaran
-                                </span>
-                                <h4 id="depTotalAmountText" class="text-xl sm:text-2xl font-black font-cyber text-black leading-tight">
-                                    Rp 0
-                                </h4>
+                                <span class="text-[9px] font-black font-cyber uppercase tracking-wider block text-black/80">Total Pembayaran</span>
+                                <h4 id="depTotalAmountText" class="text-xl font-black font-cyber text-black leading-tight">Rp 0</h4>
                             </div>
-                            <button type="button" onclick="copyTextValue(String(currentDepAmount), 'Nominal')" title="Salin Nominal"
-                                    class="neo-btn bg-white text-black px-2.5 py-1.5 rounded-lg text-[10px] font-cyber font-black uppercase flex items-center gap-1">
+                            <button type="button" onclick="copyTextValue(String(currentDepAmount), 'Nominal')" class="neo-btn bg-white text-black px-2.5 py-1.5 rounded-lg text-[10px] font-cyber font-black uppercase flex items-center gap-1">
                                 <i class="fa-regular fa-copy"></i> Salin
                             </button>
                         </div>
@@ -556,31 +362,59 @@
                                 <span class="text-[9px] font-black font-cyber uppercase text-slate-500 block">Order ID</span>
                                 <span id="depOrderIdText" class="text-[11px] font-mono font-extrabold text-black">-</span>
                             </div>
-                            <button type="button" onclick="copyTextValue(currentDepOrderId, 'Order ID')" title="Salin Order ID"
-                                    class="bg-neoCyan hover:bg-neoYellow border-2 border-black px-2 py-1 rounded-md text-[10px] font-cyber font-black uppercase shrink-0 transition">
+                            <button type="button" onclick="copyTextValue(currentDepOrderId, 'Order ID')" class="bg-neoCyan hover:bg-neoYellow border-2 border-black px-2 py-1 rounded-md text-[10px] font-cyber font-black uppercase shrink-0">
                                 <i class="fa-regular fa-copy"></i> ID
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- STATUS BAR -->
-                <div class="flex items-center justify-center gap-2 text-xs font-black font-cyber bg-white py-2.5 px-3 rounded-xl border-[3px] border-black shadow-[3px_3px_0px_#000]">
-                    <span class="w-2.5 h-2.5 rounded-full bg-neoGreen border border-black animate-ping"></span>
-                    <span>Menunggu Pembayaran Masuk...</span>
+                <!-- FORM UPLOAD BUKTI PEMBAYARAN (KHUSUS QRIS V2) -->
+                <div id="qrisV2ProofSection" class="bg-white border-[3px] border-black rounded-2xl p-3.5 shadow-[4px_4px_0px_#000] text-left space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-black font-cyber uppercase text-black flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-invoice-dollar"></i> Upload Bukti Pembayaran
+                        </span>
+                        <span id="proofStatusBadge" class="text-[9px] font-mono font-black bg-neoYellow border border-black px-2 py-0.5 rounded">
+                            WAJIB UPLOAD
+                        </span>
+                    </div>
+
+                    <div id="proofUploadControls" class="space-y-2">
+                        <input type="file" id="proofImageInput" accept="image/*" onchange="previewProofFile(this)"
+                               class="w-full text-[11px] font-bold bg-neoBg border-2 border-black rounded-xl p-2 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-2 file:border-black file:bg-neoCyan file:font-cyber file:font-black file:text-[10px]">
+                        
+                        <div id="proofPreviewBox" class="hidden border-2 border-black rounded-xl overflow-hidden bg-neoBg p-1.5 text-center">
+                            <img id="proofPreviewImg" src="" class="max-h-36 mx-auto rounded-lg object-contain border border-black">
+                        </div>
+
+                        <button type="button" id="btnSubmitProof" onclick="submitQrisV2Proof()" class="neo-btn w-full bg-neoGreen text-black text-xs font-black py-2.5 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
+                            <i class="fa-solid fa-paper-plane"></i> Kirim Bukti ke Admin
+                        </button>
+                    </div>
+
+                    <div id="proofWaitingInfo" class="hidden bg-neoCyan/30 border-2 border-black rounded-xl p-2.5 text-[11px] font-bold text-black">
+                        <i class="fa-solid fa-hourglass-half animate-spin mr-1"></i>
+                        Bukti pembayaran sudah dikirim ke Admin & Telegram. Menunggu verifikasi...
+                    </div>
                 </div>
 
-                <!-- TOMBOL AKSI UTAMA -->
+                <!-- STATUS BAR -->
+                <div class="flex items-center justify-center gap-2 text-xs font-black font-cyber bg-white py-2 px-3 rounded-xl border-[3px] border-black shadow-[3px_3px_0px_#000]">
+                    <span class="w-2.5 h-2.5 rounded-full bg-neoGreen border border-black animate-ping"></span>
+                    <span id="depStatusBannerText">Menunggu Pembayaran & Bukti...</span>
+                </div>
+
+                <!-- TOMBOL AKSI -->
                 <div class="grid grid-cols-2 gap-2.5">
-                    <button type="button" onclick="downloadQrisImage()" class="neo-btn bg-neoCyan text-black text-xs font-black py-3 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
+                    <button type="button" onclick="downloadQrisImage()" class="neo-btn bg-neoCyan text-black text-xs font-black py-2.5 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
                         <i class="fa-solid fa-download"></i> Download QRIS
                     </button>
-                    <button type="button" id="btnManualCheckStatus" onclick="manualCheckDepositStatus()" class="neo-btn bg-neoGreen text-black text-xs font-black py-3 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
+                    <button type="button" id="btnManualCheckStatus" onclick="manualCheckDepositStatus()" class="neo-btn bg-neoYellow text-black text-xs font-black py-2.5 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
                         <i class="fa-solid fa-rotate"></i> Cek Status
                     </button>
                 </div>
 
-                <!-- TOMBOL SEKUNDER -->
                 <div class="grid grid-cols-2 gap-2.5">
                     <button type="button" onclick="cancelDepositTransaction()" class="neo-btn bg-neoPink text-black text-xs font-black py-2.5 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
                         <i class="fa-solid fa-trash-can"></i> Batalkan
@@ -589,7 +423,6 @@
                         Tutup
                     </button>
                 </div>
-
             </div>
         </div>
     </div>
@@ -598,36 +431,11 @@
     <nav aria-label="Navigasi Utama" class="bottom-nav-fixed">
         <div class="bottom-nav-bg"></div>
         <div class="nav-items-wrapper">
-            <a href="/" title="Beranda" class="nav-item-btn">
-                <div class="nav-icon-box">
-                    <i class="fa-solid fa-house"></i>
-                </div>
-                <span>Home</span>
-            </a>
-            <a href="/store" title="Katalog Toko" class="nav-item-btn">
-                <div class="nav-icon-box">
-                    <i class="fa-solid fa-bag-shopping"></i>
-                </div>
-                <span>Toko</span>
-            </a>
-            <a href="/deposit" title="Deposit Saldo" class="nav-item-btn active">
-                <div class="nav-icon-box">
-                    <i class="fa-solid fa-wallet"></i>
-                </div>
-                <span>Deposit</span>
-            </a>
-            <a href="/riwayat" title="Riwayat Transaksi" class="nav-item-btn">
-                <div class="nav-icon-box">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                </div>
-                <span>Riwayat</span>
-            </a>
-            <a href="/profile" title="Profil Akun" class="nav-item-btn">
-                <div class="nav-icon-box">
-                    <i class="fa-regular fa-user"></i>
-                </div>
-                <span id="nav-auth-label">Profil</span>
-            </a>
+            <a href="/" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-solid fa-house"></i></div><span>Home</span></a>
+            <a href="/store" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-solid fa-bag-shopping"></i></div><span>Toko</span></a>
+            <a href="/deposit" class="nav-item-btn active"><div class="nav-icon-box"><i class="fa-solid fa-wallet"></i></div><span>Deposit</span></a>
+            <a href="/riwayat" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-solid fa-clock-rotate-left"></i></div><span>Riwayat</span></a>
+            <a href="/profile" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-regular fa-user"></i></div><span id="nav-auth-label">Profil</span></a>
         </div>
     </nav>
 
@@ -638,11 +446,18 @@
     </button>
 
     <script>
+        let selectedQrisVersion = 'v2'; // Default QRIS v2
         let depPollInterval = null;
         let currentDepOrderId = '';
         let currentDepAmount = 0;
         let currentQrPayload = '';
         let widgetChatInterval = null;
+
+        function selectQrisMethod(ver) {
+            selectedQrisVersion = ver;
+            document.getElementById('btnMethodQrisV2').classList.toggle('active', ver === 'v2');
+            document.getElementById('btnMethodQrisV1').classList.toggle('active', ver === 'v1');
+        }
 
         function formatRupiah(angka) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
@@ -651,14 +466,7 @@
         function copyTextValue(text, label) {
             if (!text) return;
             navigator.clipboard.writeText(text).then(() => {
-                Swal.fire({
-                    icon: 'success',
-                    title: `${label.toUpperCase()} DISALIN!`,
-                    text: `${text}`,
-                    timer: 1300,
-                    showConfirmButton: false,
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ icon: 'success', title: `${label.toUpperCase()} DISALIN!`, text: `${text}`, timer: 1300, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
             }).catch(() => {});
         }
 
@@ -680,11 +488,25 @@
             modal.classList.remove('flex');
         }
 
+        function previewProofFile(input) {
+            const box = document.getElementById('proofPreviewBox');
+            const img = document.getElementById('proofPreviewImg');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    img.src = e.target.result;
+                    box.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                box.classList.add('hidden');
+            }
+        }
+
         function renderCleanQris(qrValue) {
             currentQrPayload = (qrValue || '').trim();
             const qContainer = document.getElementById('depQrcodeContainer');
             qContainer.innerHTML = '';
-
             if (!currentQrPayload) return;
 
             if (currentQrPayload.startsWith('http://') || currentQrPayload.startsWith('https://') || currentQrPayload.startsWith('data:image/')) {
@@ -706,209 +528,43 @@
             });
         }
 
-        function drawCanvasNeoBox(ctx, x, y, w, h, radius, fillColor, shadowOffset = 8, borderWidth = 5) {
-            ctx.save();
-            if (shadowOffset > 0) {
-                ctx.fillStyle = '#000000';
-                ctx.beginPath();
-                ctx.roundRect(x + shadowOffset, y + shadowOffset, w, h, radius);
-                ctx.fill();
-            }
-            ctx.fillStyle = fillColor;
-            ctx.beginPath();
-            ctx.roundRect(x, y, w, h, radius);
-            ctx.fill();
-
-            if (borderWidth > 0) {
-                ctx.lineWidth = borderWidth;
-                ctx.strokeStyle = '#000000';
-                ctx.stroke();
-            }
-            ctx.restore();
-        }
-
         async function downloadQrisImage() {
             const qContainer = document.getElementById('depQrcodeContainer');
             const sourceCanvas = qContainer.querySelector('canvas');
             const sourceImg = qContainer.querySelector('img');
-
-            if (!sourceCanvas && !sourceImg) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'QRIS BELUM SIAP',
-                    text: 'Kode QRIS belum dimuat.',
-                    customClass: { popup: 'cyber-swal' }
-                });
-                return;
-            }
+            if (!sourceCanvas && !sourceImg) return;
 
             const outCanvas = document.createElement('canvas');
             const ctx = outCanvas.getContext('2d');
+            outCanvas.width = 600;
+            outCanvas.height = 760;
 
-            const W = 760;
-            const H = 1040;
-            outCanvas.width = W;
-            outCanvas.height = H;
-
-            // 1. LATAR BELAKANG NEO-BRUTALISM CREAM + DOT GRID
-            ctx.fillStyle = '#F4F0EA';
-            ctx.fillRect(0, 0, W, H);
-
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.16)';
-            for (let gx = 20; gx < W; gx += 24) {
-                for (let gy = 20; gy < H; gy += 24) {
-                    ctx.beginPath();
-                    ctx.arc(gx, gy, 2, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            // Aksen Geometri Sudut
-            ctx.fillStyle = '#00E5FF';
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.lineTo(180, 0);
-            ctx.lineTo(0, 180);
-            ctx.closePath();
-            ctx.fill();
-            ctx.lineWidth = 5;
-            ctx.strokeStyle = '#000000';
-            ctx.stroke();
-
-            ctx.fillStyle = '#FF79C6';
-            ctx.beginPath();
-            ctx.moveTo(W, H);
-            ctx.lineTo(W - 200, H);
-            ctx.lineTo(W, H - 200);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-
-            // 2. KARTU UTAMA PUTIH DENGAN HARD SHADOW HITAM TEBAL
-            const cardX = 44;
-            const cardY = 44;
-            const cardW = W - 98;
-            const cardH = H - 98;
-            drawCanvasNeoBox(ctx, cardX, cardY, cardW, cardH, 28, '#FFFFFF', 12, 6);
-
-            // 3. HEADER WINDOW BAR KUNING
-            ctx.save();
-            ctx.beginPath();
-            ctx.roundRect(cardX, cardY, cardW, 92, [28, 28, 0, 0]);
             ctx.fillStyle = '#FFDE59';
-            ctx.fill();
+            ctx.fillRect(0, 0, 600, 760);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(30, 30, 540, 700);
             ctx.lineWidth = 6;
             ctx.strokeStyle = '#000000';
-            ctx.stroke();
-            ctx.restore();
+            ctx.strokeRect(30, 30, 540, 700);
 
-            // 3 Window Dots
-            const dotColors = ['#FF79C6', '#00E5FF', '#00E676'];
-            dotColors.forEach((c, idx) => {
-                ctx.fillStyle = c;
-                ctx.beginPath();
-                ctx.arc(cardX + 36 + idx * 28, cardY + 46, 9, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.lineWidth = 3;
-                ctx.strokeStyle = '#000000';
-                ctx.stroke();
-            });
-
-            // Judul Store di Header
             ctx.fillStyle = '#000000';
-            ctx.font = '900 26px "Space Grotesk", sans-serif';
+            ctx.font = '900 28px "Space Grotesk", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('ARULZXD STORE', W / 2 + 24, cardY + 55);
+            ctx.fillText('IDZHARUL STORE - QRIS', 300, 85);
 
-            // 4. BADGE ROW (QRIS ALL PAYMENT & OTOMATIS 24/7)
-            drawCanvasNeoBox(ctx, cardX + 34, cardY + 118, 280, 44, 12, '#00E5FF', 5, 4);
-            ctx.fillStyle = '#000000';
-            ctx.font = '900 17px "Space Grotesk", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('⚡ QRIS ALL PAYMENT', cardX + 34 + 140, cardY + 146);
-
-            drawCanvasNeoBox(ctx, cardX + cardW - 264, cardY + 118, 230, 44, 12, '#00E676', 5, 4);
-            ctx.fillStyle = '#000000';
-            ctx.fillText('✔ PROSES 24/7', cardX + cardW - 264 + 115, cardY + 146);
-
-            // 5. KOTAK FRAME QR CODE DENGAN CORNER ACCENTS
-            const qrFrameSize = 440;
-            const qrFrameX = (W - qrFrameSize) / 2 - 4;
-            const qrFrameY = cardY + 190;
-            drawCanvasNeoBox(ctx, qrFrameX, qrFrameY, qrFrameSize, qrFrameSize, 24, '#FFFFFF', 10, 6);
-
-            // 4 Kotak Sudut Dekorasi
-            const cornerSize = 20;
-            const corners = [
-                { x: qrFrameX - 8, y: qrFrameY - 8, color: '#FFDE59' },
-                { x: qrFrameX + qrFrameSize - 12, y: qrFrameY - 8, color: '#00E5FF' },
-                { x: qrFrameX - 8, y: qrFrameY + qrFrameSize - 12, color: '#FF79C6' },
-                { x: qrFrameX + qrFrameSize - 12, y: qrFrameY + qrFrameSize - 12, color: '#00E676' }
-            ];
-            corners.forEach(c => {
-                ctx.fillStyle = c.color;
-                ctx.fillRect(c.x, c.y, cornerSize, cornerSize);
-                ctx.lineWidth = 4;
-                ctx.strokeStyle = '#000000';
-                ctx.strokeRect(c.x, c.y, cornerSize, cornerSize);
-            });
-
-            // Gambar QR Code
             ctx.imageSmoothingEnabled = false;
-            const qrPad = 26;
-            const qrSize = qrFrameSize - qrPad * 2;
-            const qrX = qrFrameX + qrPad;
-            const qrY = qrFrameY + qrPad;
+            if (sourceCanvas) ctx.drawImage(sourceCanvas, 100, 120, 400, 400);
+            else if (sourceImg) ctx.drawImage(sourceImg, 100, 120, 400, 400);
 
-            try {
-                if (sourceCanvas) {
-                    ctx.drawImage(sourceCanvas, qrX, qrY, qrSize, qrSize);
-                } else if (sourceImg) {
-                    ctx.drawImage(sourceImg, qrX, qrY, qrSize, qrSize);
-                }
-            } catch (err) {
-                if (sourceImg && sourceImg.src) window.open(sourceImg.src, '_blank');
-                return;
-            }
+            ctx.font = '900 34px "Space Grotesk", sans-serif';
+            ctx.fillText(formatRupiah(currentDepAmount), 300, 585);
+            ctx.font = '700 18px "JetBrains Mono", monospace';
+            ctx.fillText(`ID: ${currentDepOrderId}`, 300, 635);
 
-            // 6. KOTAK TOTAL PEMBAYARAN (KUNING NEO-BRUTALISM)
-            const payBoxX = cardX + 34;
-            const payBoxY = qrFrameY + qrFrameSize + 34;
-            const payBoxW = cardW - 68;
-            const payBoxH = 122;
-            drawCanvasNeoBox(ctx, payBoxX, payBoxY, payBoxW, payBoxH, 18, '#FFDE59', 7, 5);
-
-            ctx.fillStyle = '#000000';
-            ctx.font = '800 18px "Space Grotesk", sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('TOTAL PEMBAYARAN', W / 2 - 4, payBoxY + 38);
-
-            ctx.font = '900 46px "Space Grotesk", sans-serif';
-            ctx.fillText(formatRupiah(currentDepAmount), W / 2 - 4, payBoxY + 94);
-
-            // 7. KOTAK ORDER ID
-            const idBoxY = payBoxY + payBoxH + 18;
-            drawCanvasNeoBox(ctx, payBoxX, idBoxY, payBoxW, 56, 14, '#F4F0EA', 5, 4);
-
-            ctx.fillStyle = '#000000';
-            ctx.font = '800 19px "JetBrains Mono", monospace';
-            ctx.fillText(`ID: ${currentDepOrderId || '-'}`, W / 2 - 4, idBoxY + 35);
-
-            // 8. FOOTER INFO E-WALLET
-            ctx.fillStyle = '#334155';
-            ctx.font = '700 15px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('DANA • OVO • GOPAY • SHOPEEPAY • M-BANKING', W / 2 - 4, cardY + cardH - 22);
-
-            try {
-                const link = document.createElement('a');
-                link.download = `QRIS-ARULZXD-${currentDepOrderId || Date.now()}.png`;
-                link.href = outCanvas.toDataURL('image/png');
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } catch (err) {
-                if (sourceImg && sourceImg.src) window.open(sourceImg.src, '_blank');
-            }
+            const link = document.createElement('a');
+            link.download = `QRIS-IDZHARUL-${currentDepOrderId || Date.now()}.png`;
+            link.href = outCanvas.toDataURL('image/png');
+            link.click();
         }
 
         function updateActiveBannerUI() {
@@ -924,6 +580,44 @@
                 banner.classList.add('hidden');
                 banner.classList.remove('flex');
             }
+        }
+
+        function configureModalForTransaction(orderId, amount, qrString, status) {
+            currentDepOrderId = orderId;
+            currentDepAmount = amount;
+            const isV2 = orderId.startsWith('QRV2-');
+
+            document.getElementById('depTotalAmountText').innerText = formatRupiah(amount);
+            document.getElementById('depOrderIdText').innerText = orderId;
+            document.getElementById('modalTitleVersion').innerText = isV2 ? 'INVOICE // QRIS V2 DINAMIS' : 'INVOICE // QRIS V1 AUTO';
+
+            const proofSection = document.getElementById('qrisV2ProofSection');
+            const uploadControls = document.getElementById('proofUploadControls');
+            const waitingInfo = document.getElementById('proofWaitingInfo');
+            const statusBadge = document.getElementById('proofStatusBadge');
+            const bannerText = document.getElementById('depStatusBannerText');
+
+            if (isV2) {
+                proofSection.classList.remove('hidden');
+                if (status === 'waiting_verification') {
+                    uploadControls.classList.add('hidden');
+                    waitingInfo.classList.remove('hidden');
+                    statusBadge.innerText = 'DIVERIFIKASI ADMIN';
+                    statusBadge.className = 'text-[9px] font-mono font-black bg-neoCyan border border-black px-2 py-0.5 rounded';
+                    bannerText.innerText = 'Menunggu Konfirmasi Admin...';
+                } else {
+                    uploadControls.classList.remove('hidden');
+                    waitingInfo.classList.add('hidden');
+                    statusBadge.innerText = 'WAJIB UPLOAD';
+                    statusBadge.className = 'text-[9px] font-mono font-black bg-neoYellow border border-black px-2 py-0.5 rounded';
+                    bannerText.innerText = 'Scan QRIS lalu Upload Bukti Bayar...';
+                }
+            } else {
+                proofSection.classList.add('hidden');
+                bannerText.innerText = 'Menunggu Pembayaran Masuk...';
+            }
+
+            renderCleanQris(qrString);
         }
 
         async function loadDepositPageData() {
@@ -954,18 +648,13 @@
             }
 
             try {
-                const res = await fetch(`/transactions/${activeDepId}`);
+                const res = await fetch(`/transactions/${activeDepId}?refresh=1`);
                 const result = await res.json();
                 const qrDataString = result.data?.payment?.qrString || result.data?.paymentNumber;
+                const st = (result.data?.status || '').toLowerCase();
 
-                if (result.data && result.data.status === 'pending' && qrDataString) {
-                    currentDepOrderId = result.data.orderId;
-                    currentDepAmount = result.data.amount;
-                    document.getElementById('depTotalAmountText').innerText = formatRupiah(currentDepAmount);
-                    document.getElementById('depOrderIdText').innerText = currentDepOrderId;
-
-                    renderCleanQris(qrDataString);
-
+                if (result.data && ['pending', 'waiting_verification'].includes(st) && qrDataString) {
+                    configureModalForTransaction(result.data.orderId, result.data.amount, qrDataString, st);
                     showDepositModal();
                     updateActiveBannerUI();
                     startDepositPolling();
@@ -980,73 +669,44 @@
             checkActiveDepositTransaction();
         }
 
-        async function manualCheckDepositStatus() {
-            const orderIdToCheck = currentDepOrderId || localStorage.getItem('active_deposit_order_id');
-            if (!orderIdToCheck) return;
-
-            const btn = document.getElementById('btnManualCheckStatus');
-            const origHtml = btn ? btn.innerHTML : '';
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mengecek...`;
+        async function submitQrisV2Proof() {
+            if (!currentDepOrderId) return;
+            const fileInput = document.getElementById('proofImageInput');
+            if (!fileInput.files || !fileInput.files[0]) {
+                Swal.fire({ icon: 'warning', title: 'PILIH FOTO BUKTI', text: 'Silakan pilih foto/screenshot bukti transfer terlebih dahulu!', customClass: { popup: 'cyber-swal' } });
+                return;
             }
 
-            try {
-                const res = await fetch(`/transactions/${orderIdToCheck}?refresh=1`);
-                const result = await res.json();
-                const status = (result.data?.status || "").toLowerCase();
+            const formData = new FormData();
+            formData.append('proofImage', fileInput.files[0]);
 
-                if (["settlement", "success", "paid", "settled"].includes(status)) {
-                    if (depPollInterval) {
-                        clearInterval(depPollInterval);
-                        depPollInterval = null;
-                    }
-                    localStorage.removeItem('active_deposit_order_id');
-                    currentDepOrderId = '';
-                    closeDepositModal();
+            const btn = document.getElementById('btnSubmitProof');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mengirim Bukti...`;
+
+            try {
+                const res = await fetch(`/api/deposit-qrisv2/${encodeURIComponent(currentDepOrderId)}/upload-proof`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await res.json();
+
+                if (result.status) {
+                    configureModalForTransaction(currentDepOrderId, currentDepAmount, currentQrPayload, 'waiting_verification');
                     Swal.fire({
                         icon: 'success',
-                        title: 'DEPOSIT BERHASIL!',
-                        text: 'Pembayaran terkonfirmasi! Saldo Anda telah ditambahkan.',
-                        customClass: { popup: 'cyber-swal' }
-                    });
-                    loadDepositPageData();
-                } else if (["cancelled", "failed", "expired"].includes(status)) {
-                    if (depPollInterval) {
-                        clearInterval(depPollInterval);
-                        depPollInterval = null;
-                    }
-                    localStorage.removeItem('active_deposit_order_id');
-                    currentDepOrderId = '';
-                    closeDepositModal();
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'TRANSAKSI BATAL / KEDALUWARSA',
-                        text: 'Transaksi deposit ini telah dibatalkan atau melewati batas waktu.',
+                        title: 'BUKTI TERKIRIM!',
+                        text: 'Bukti pembayaran telah diteruskan ke Admin & Telegram. Saldo akan masuk setelah dikonfirmasi.',
                         customClass: { popup: 'cyber-swal' }
                     });
                 } else {
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'MASIH MENUNGGU PEMBAYARAN',
-                        text: `Status saat ini: ${status.toUpperCase() || 'PENDING'}. Silakan selesaikan pembayaran QRIS Anda.`,
-                        timer: 2200,
-                        showConfirmButton: false,
-                        customClass: { popup: 'cyber-swal' }
-                    });
+                    throw new Error(result.message || 'Gagal mengunggah bukti pembayaran.');
                 }
             } catch (err) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'GAGAL CEK STATUS',
-                    text: 'Terjadi gangguan jaringan saat mengecek status transaksi.',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
             } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = origHtml;
-                }
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Bukti ke Admin`;
             }
         }
 
@@ -1057,43 +717,32 @@
             const customerPhone = (phoneInput?.value || '').replace(/[\s\-()]/g, '').trim();
 
             if (!/^(\+62|62|08)[0-9]{8,12}$/.test(customerPhone)) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'NOMOR HP TIDAK VALID',
-                    text: 'Masukkan nomor HP Indonesia yang valid (format: 08xx, 62xx, atau +62).',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ icon: 'warning', title: 'NOMOR HP TIDAK VALID', text: 'Masukkan nomor HP Indonesia yang valid (format: 08xx / 62xx).', customClass: { popup: 'cyber-swal' } });
                 return;
             }
 
             if (isNaN(amount) || amount < 1000) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'DEPOSIT MINIMAL',
-                    text: 'Nominal deposit minimal adalah Rp 1.000',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ icon: 'warning', title: 'DEPOSIT MINIMAL', text: 'Nominal deposit minimal adalah Rp 1.000', customClass: { popup: 'cyber-swal' } });
                 return;
             }
 
             localStorage.setItem('user_customer_phone', customerPhone);
 
             Swal.fire({
-                title: 'MEMPROSES DEPOSIT...',
-                text: 'Menyiapkan QRIS Pembayaran',
+                title: 'MEMBUAT QRIS DINAMIS...',
+                text: 'Menyiapkan kode QRIS pembayaran',
                 allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading(); },
                 customClass: { popup: 'cyber-swal' }
             });
 
+            const endpoint = selectedQrisVersion === 'v2' ? '/api/deposit-qrisv2' : '/api/deposit';
+
             try {
-                const res = await fetch('/api/deposit', {
+                const res = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        amount: amount,
-                        customerPhone: customerPhone
-                    })
+                    body: JSON.stringify({ amount, customerPhone })
                 });
 
                 const result = await res.json();
@@ -1102,15 +751,11 @@
                 const qrString = result.data?.payment?.qrString || result.data?.paymentNumber;
 
                 if (result.status && result.data && qrString) {
-                    currentDepOrderId = result.data.orderId;
-                    currentDepAmount = result.data.amount;
-                    localStorage.setItem('active_deposit_order_id', currentDepOrderId);
+                    localStorage.setItem('active_deposit_order_id', result.data.orderId);
+                    document.getElementById('proofImageInput').value = '';
+                    document.getElementById('proofPreviewBox').classList.add('hidden');
 
-                    document.getElementById('depTotalAmountText').innerText = formatRupiah(currentDepAmount);
-                    document.getElementById('depOrderIdText').innerText = currentDepOrderId;
-
-                    renderCleanQris(qrString);
-
+                    configureModalForTransaction(result.data.orderId, result.data.amount, qrString, 'pending');
                     showDepositModal();
                     updateActiveBannerUI();
                     startDepositPolling();
@@ -1118,13 +763,37 @@
                     throw new Error(result.message || 'Gagal memproses deposit');
                 }
             } catch(err) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'GAGAL',
-                    text: err.message,
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
             }
+        }
+
+        async function manualCheckDepositStatus() {
+            const orderIdToCheck = currentDepOrderId || localStorage.getItem('active_deposit_order_id');
+            if (!orderIdToCheck) return;
+
+            try {
+                const res = await fetch(`/transactions/${orderIdToCheck}?refresh=1`);
+                const result = await res.json();
+                const status = (result.data?.status || "").toLowerCase();
+
+                if (["settlement", "success", "paid", "settled"].includes(status)) {
+                    if (depPollInterval) clearInterval(depPollInterval);
+                    localStorage.removeItem('active_deposit_order_id');
+                    currentDepOrderId = '';
+                    closeDepositModal();
+                    Swal.fire({ icon: 'success', title: 'DEPOSIT BERHASIL!', text: 'Pembayaran terkonfirmasi! Saldo Anda telah ditambahkan.', customClass: { popup: 'cyber-swal' } });
+                    loadDepositPageData();
+                } else if (["cancelled", "failed", "expired"].includes(status)) {
+                    if (depPollInterval) clearInterval(depPollInterval);
+                    localStorage.removeItem('active_deposit_order_id');
+                    currentDepOrderId = '';
+                    closeDepositModal();
+                    Swal.fire({ icon: 'info', title: 'TRANSAKSI DIBATALKAN', text: 'Transaksi deposit ini telah dibatalkan.', customClass: { popup: 'cyber-swal' } });
+                } else {
+                    const label = status === 'waiting_verification' ? 'MENUNGGU VERIFIKASI ADMIN' : 'MENUNGGU PEMBAYARAN';
+                    Swal.fire({ icon: 'info', title: label, text: 'Silakan selesaikan pembayaran dan pastikan bukti sudah dikirim.', timer: 2200, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+                }
+            } catch (err) {}
         }
 
         function startDepositPolling() {
@@ -1132,7 +801,7 @@
             depPollInterval = setInterval(async () => {
                 if (!currentDepOrderId) return;
                 try {
-                    const res = await fetch(`/transactions/${currentDepOrderId}`);
+                    const res = await fetch(`/transactions/${currentDepOrderId}?refresh=1`);
                     const result = await res.json();
                     const status = (result.data?.status || "").toLowerCase();
 
@@ -1142,12 +811,7 @@
                         localStorage.removeItem('active_deposit_order_id');
                         currentDepOrderId = '';
                         closeDepositModal();
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'DEPOSIT BERHASIL!',
-                            text: 'Saldo Anda telah berhasil ditambahkan.',
-                            customClass: { popup: 'cyber-swal' }
-                        });
+                        Swal.fire({ icon: 'success', title: 'DEPOSIT BERHASIL!', text: 'Saldo Anda telah berhasil ditambahkan.', customClass: { popup: 'cyber-swal' } });
                         loadDepositPageData();
                     } else if (["cancelled", "failed", "expired"].includes(status)) {
                         clearInterval(depPollInterval);
@@ -1155,12 +819,7 @@
                         localStorage.removeItem('active_deposit_order_id');
                         currentDepOrderId = '';
                         closeDepositModal();
-                        Swal.fire({
-                            icon: 'info',
-                            title: 'TRANSAKSI BATAL',
-                            text: 'Transaksi deposit telah dibatalkan atau kedaluwarsa.',
-                            customClass: { popup: 'cyber-swal' }
-                        });
+                        Swal.fire({ icon: 'info', title: 'TRANSAKSI DIBATALKAN', text: 'Transaksi deposit telah dibatalkan.', customClass: { popup: 'cyber-swal' } });
                     }
                 } catch(e) {}
             }, 3000);
@@ -1180,8 +839,12 @@
             });
 
             if (confirmRes.isConfirmed) {
+                const cancelEndpoint = currentDepOrderId.startsWith('QRV2-')
+                    ? `/api/deposit-qrisv2/${encodeURIComponent(currentDepOrderId)}/cancel`
+                    : `/transactions/${encodeURIComponent(currentDepOrderId)}/cancel`;
+
                 try {
-                    await fetch(`/transactions/${currentDepOrderId}/cancel`, { method: 'POST' });
+                    await fetch(cancelEndpoint, { method: 'POST' });
                 } catch(e) {}
 
                 if (depPollInterval) {
@@ -1192,14 +855,7 @@
                 currentDepOrderId = '';
                 closeDepositModal();
 
-                Swal.fire({
-                    icon: 'info',
-                    title: 'DIBATALKAN',
-                    text: 'Transaksi deposit berhasil dibatalkan.',
-                    timer: 1500,
-                    showConfirmButton: false,
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ icon: 'info', title: 'DIBATALKAN', text: 'Transaksi deposit berhasil dibatalkan.', timer: 1500, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
             }
         }
 
@@ -1215,7 +871,6 @@
         function toggleChatWidget() {
             const windowEl = document.getElementById('floatingChatWindow');
             const isHidden = windowEl.classList.contains('hidden');
-
             if (isHidden) {
                 windowEl.classList.remove('hidden');
                 windowEl.classList.add('flex');
@@ -1224,10 +879,7 @@
             } else {
                 windowEl.classList.add('hidden');
                 windowEl.classList.remove('flex');
-                if (widgetChatInterval) {
-                    clearInterval(widgetChatInterval);
-                    widgetChatInterval = null;
-                }
+                if (widgetChatInterval) { clearInterval(widgetChatInterval); widgetChatInterval = null; }
             }
         }
 
@@ -1236,41 +888,15 @@
                 const res = await fetch('/api/bantuan/messages');
                 const data = await res.json();
                 const container = document.getElementById('widgetChatMessages');
-
                 if (data.status && data.messages) {
                     if (data.messages.length === 0) {
-                        container.innerHTML = `
-                            <div class="neo-box p-3 rounded-xl bg-white text-xs text-black space-y-1">
-                                <p class="font-black font-cyber">Halo! Selamat datang 👋</p>
-                                <p class="text-[10px] font-bold text-slate-600">Silakan kirimkan pertanyaan Anda. Customer Service kami siap membantu.</p>
-                            </div>
-                        `;
+                        container.innerHTML = `<div class="neo-box p-3 rounded-xl bg-white text-xs text-black space-y-1"><p class="font-black font-cyber">Halo! Selamat datang 👋</p><p class="text-[10px] font-bold text-slate-600">Silakan kirimkan pertanyaan Anda.</p></div>`;
                         return;
                     }
-
                     container.innerHTML = data.messages.map(msg => {
                         const isUser = msg.sender === 'user';
-                        const alignClass = isUser ? 'justify-end' : 'justify-start';
-                        const bgClass = isUser 
-                            ? 'bg-neoYellow text-black font-bold rounded-br-none border-2 border-black' 
-                            : 'bg-white text-black font-bold rounded-bl-none border-2 border-black';
-                        
-                        const timeStr = new Date(msg.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                        const displayName = isUser ? (msg.senderName || 'Anda') : 'Owner CS';
-
-                        return `
-                            <div class="flex ${alignClass}">
-                                <div class="max-w-[82%] p-2.5 rounded-2xl text-[11px] space-y-1 ${bgClass}">
-                                    <div class="flex items-center justify-between gap-2 border-b border-black/20 pb-1">
-                                        <span class="font-black font-cyber text-[10px] text-black">${displayName}</span>
-                                        <span class="text-[8px] opacity-75 font-mono font-bold">${timeStr}</span>
-                                    </div>
-                                    <p class="leading-relaxed break-words pt-0.5">${msg.message}</p>
-                                </div>
-                            </div>
-                        `;
+                        return `<div class="flex ${isUser ? 'justify-end' : 'justify-start'}"><div class="max-w-[82%] p-2.5 rounded-2xl text-[11px] space-y-1 ${isUser ? 'bg-neoYellow rounded-br-none' : 'bg-white rounded-bl-none'} border-2 border-black font-bold"><div class="flex items-center justify-between gap-2 border-b border-black/20 pb-1"><span class="font-black font-cyber text-[10px]">${isUser ? (msg.senderName || 'Anda') : 'Owner CS'}</span></div><p class="leading-relaxed break-words pt-0.5">${msg.message}</p></div></div>`;
                     }).join('');
-
                     container.scrollTop = container.scrollHeight;
                 }
             } catch(e) {}
@@ -1281,15 +907,9 @@
             const input = document.getElementById('widgetChatInput');
             const message = input.value.trim();
             if (!message) return;
-
             input.value = '';
-
             try {
-                await fetch('/api/bantuan/send-user', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
-                });
+                await fetch('/api/bantuan/send-user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message }) });
                 loadWidgetMessages();
             } catch(e) {}
         }
@@ -1297,4 +917,4 @@
         document.addEventListener('DOMContentLoaded', loadDepositPageData);
     </script>
 </body>
-</html>
+    </html>
