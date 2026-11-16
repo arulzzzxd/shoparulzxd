@@ -2125,14 +2125,9 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
     }
 });
 
-// ENDPOINT PENCATATAN TRANSAKSI BATAL SAAT CHECKOUT SALDO DITUTUP / DIBATALKAN
-app.post('/api/store/cancel-balance-order', checkAuthSession, async (req, res) => {
+app.post(['/api/store/cancel-balance-order', '/api/store/cancel-order'], checkAuthSession, async (req, res) => {
     try {
-        if (!req.user) {
-            return res.status(401).json({ status: false, message: "Unauthorized" });
-        }
-
-        const { orderId, productId, qty, amount } = req.body;
+        const { orderId, productId, qty, amount, paymentMethod, username } = req.body;
         if (!orderId || !productId) {
             return res.status(400).json({ status: false, message: "Data pesanan tidak lengkap." });
         }
@@ -2148,17 +2143,32 @@ app.post('/api/store/cancel-balance-order', checkAuthSession, async (req, res) =
         const buyQty = Math.max(1, Number(qty) || 1);
         const unitPrice = dbProduct.harga_diskon || dbProduct.harga;
         const finalAmount = Number(amount) >= 0 ? Number(amount) : unitPrice * buyQty;
-        const userEmail = (req.user.email || '').toLowerCase().trim();
+
+        const cleanMethodRaw = String(paymentMethod || 'SALDO').trim().toUpperCase();
+        const resolvedMethod = ['SALDO', 'TELEGRAM', 'WHATSAPP'].includes(cleanMethodRaw)
+            ? cleanMethodRaw
+            : (cleanMethodRaw === 'MANUAL' ? 'WHATSAPP' : 'SALDO');
+
+        const userEmail = req.user?.email ? req.user.email.toLowerCase().trim() : null;
+        const buyerLabel = userEmail || (username && String(username).trim()) || 'Pembeli Tamu';
 
         const existingTrx = await TransactionV2.findOne({ orderId: String(orderId).trim() }).lean();
         if (existingTrx) {
+            if (existingTrx.status !== 'cancelled') {
+                const updated = await TransactionV2.findOneAndUpdate(
+                    { orderId: String(orderId).trim() },
+                    { $set: { status: 'cancelled', paymentMethod: resolvedMethod, updatedAt: new Date() } },
+                    { new: true }
+                ).lean();
+                return res.json({ status: true, message: "Status transaksi diperbarui menjadi dibatalkan.", data: updated });
+            }
             return res.json({ status: true, message: "Status transaksi sudah tercatat.", data: existingTrx });
         }
 
         const cancelledTrx = await TransactionV2.create({
             orderId: String(orderId).trim(),
             amount: finalAmount,
-            paymentMethod: "SALDO",
+            paymentMethod: resolvedMethod,
             status: "cancelled",
             type: "PURCHASE",
             userEmail,
@@ -2168,7 +2178,7 @@ app.post('/api/store/cancel-balance-order', checkAuthSession, async (req, res) =
                 harga_setelah_voucher: finalAmount,
                 kategori: dbProduct.kategori,
                 gambar: Array.isArray(dbProduct.gambar) ? dbProduct.gambar[0] : dbProduct.gambar,
-                buyer: userEmail,
+                buyer: buyerLabel,
                 qty: buyQty
             },
             expiredAt: new Date()
@@ -2176,7 +2186,7 @@ app.post('/api/store/cancel-balance-order', checkAuthSession, async (req, res) =
 
         return res.json({ status: true, message: "Transaksi dicatat sebagai dibatalkan.", data: cancelledTrx });
     } catch (err) {
-        console.error("Error cancel balance order:", err);
+        console.error("Error cancel order:", err);
         return res.status(500).json({ status: false, message: "Gagal mencatat pembatalan transaksi." });
     }
 });
@@ -3949,7 +3959,6 @@ app.get('/api/dashboard-stats', async (req, res) => {
         const yesterdayStartMs = startOfYesterday.valueOf();
 
         let lunasTrx = 0;
-        let cancelTrx = 0;
         let trxToday = 0;
         let trxYesterday = 0;
 
@@ -3957,7 +3966,6 @@ app.get('/api/dashboard-stats', async (req, res) => {
         allTrxRaw.forEach(trx => {
             const st = (trx.status || '').toLowerCase();
             if (successStatuses.includes(st)) lunasTrx++;
-            if (cancelStatuses.includes(st)) cancelTrx++;
 
             const tMs = getTrxTimeMs(trx);
             if (tMs >= todayStartMs) {
@@ -4018,7 +4026,8 @@ app.get('/api/dashboard-stats', async (req, res) => {
         const allTrxAsc = [...allTrxDesc].reverse();
 
         function generateStockCandles(startMs, stepMs, bucketCount, trxItems, labelFormatter) {
-            const BASE_INDEX = 10000;
+            // Baseline indeks agar transaksi batal selalu dapat turun membentuk candle merah (close < open)
+            const BASE_INDEX = trxItems.length > 0 ? 25000 : 0;
             let runningVal = BASE_INDEX;
             let idx = 0;
 
@@ -4028,7 +4037,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 if (successStatuses.includes(st)) {
                     runningVal += val;
                 } else if (cancelStatuses.includes(st)) {
-                    const dropStep = Math.max(1000, Math.round(val * 0.5));
+                    const dropStep = Math.max(1000, val);
                     runningVal = Math.max(1000, runningVal - dropStep);
                 }
                 idx++;
@@ -4062,22 +4071,24 @@ app.get('/api/dashboard-stats', async (req, res) => {
                         lunasCount++;
                         if (runningVal > high) high = runningVal;
                     } else if (cancelStatuses.includes(st)) {
-                        cancelCount++;
-                        const dropStep = Math.max(1500, Math.round(val * 0.6));
+                        const dropStep = Math.max(1000, val);
                         runningVal = Math.max(1000, runningVal - dropStep);
+                        cancelCount++;
                         if (runningVal < low) low = runningVal;
                     } else {
-                        const spike = runningVal + Math.max(1000, Math.round(val * 0.35));
+                        const spike = runningVal + Math.max(500, Math.round(val * 0.25));
                         if (spike > high) high = spike;
                     }
                     idx++;
                 }
 
                 let close = runningVal;
+                // Jika dalam periode hanya ada transaksi batal dan nilai menyentuh batas bawah, pastikan close < open agar candle merah tampil
                 if (cancelCount > 0 && lunasCount === 0 && close >= open) {
-                    close = Math.max(500, open - Math.max(1500, cancelCount * 1500));
+                    close = Math.max(500, open - 1000);
                     runningVal = close;
                 }
+
                 if (close > high) high = close;
                 if (close < low) low = close;
 
@@ -4158,7 +4169,6 @@ app.get('/api/dashboard-stats', async (req, res) => {
             totalProducts,
             totalTrx,
             lunasTrx,
-            cancelTrx,
             trxToday,
             trxYesterday,
             systemLatency: `${systemLatency} ms`,
