@@ -2125,6 +2125,63 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
     }
 });
 
+app.post('/api/store/create-order', checkAuthSession, async (req, res) => {
+    try {
+        const { orderId, productId, qty, amount, paymentMethod, username, note } = req.body;
+        if (!orderId || !productId) {
+            return res.status(400).json({ status: false, message: "Data pesanan tidak lengkap." });
+        }
+
+        const dbProduct = await ProductV2.findOne({
+            $or: [{ Id: productId }, { _id: mongoose.Types.ObjectId.isValid(productId) ? productId : null }]
+        }).lean();
+
+        if (!dbProduct) {
+            return res.status(404).json({ status: false, message: "Produk tidak ditemukan." });
+        }
+
+        const existingTrx = await TransactionV2.findOne({ orderId: String(orderId).trim() }).lean();
+        if (existingTrx) {
+            return res.json({ status: true, data: existingTrx });
+        }
+
+        const buyQty = Math.max(1, Number(qty) || 1);
+        const unitPrice = dbProduct.harga_diskon || dbProduct.harga;
+        const finalAmount = Number(amount) >= 0 ? Number(amount) : unitPrice * buyQty;
+
+        const cleanMethod = ['SALDO', 'TELEGRAM', 'WHATSAPP'].includes(String(paymentMethod || '').toUpperCase())
+            ? String(paymentMethod).toUpperCase()
+            : 'WHATSAPP';
+
+        const userEmail = req.user?.email ? req.user.email.toLowerCase().trim() : null;
+        const buyerLabel = userEmail || (username && String(username).trim()) || 'Pembeli Tamu';
+
+        const newTrx = await TransactionV2.create({
+            orderId: String(orderId).trim(),
+            amount: finalAmount,
+            paymentMethod: cleanMethod,
+            status: "pending",
+            type: "PURCHASE",
+            userEmail,
+            itemDetails: {
+                nama: dbProduct.nama,
+                harga: unitPrice,
+                harga_setelah_voucher: finalAmount,
+                kategori: dbProduct.kategori,
+                gambar: Array.isArray(dbProduct.gambar) ? dbProduct.gambar[0] : dbProduct.gambar,
+                buyer: buyerLabel,
+                qty: buyQty,
+                note: note || ''
+            }
+        });
+
+        return res.json({ status: true, data: newTrx });
+    } catch (err) {
+        console.error("Error create order:", err);
+        return res.status(500).json({ status: false, message: "Gagal mencatat pesanan." });
+    }
+});
+
 app.post(['/api/store/cancel-balance-order', '/api/store/cancel-order'], checkAuthSession, async (req, res) => {
     try {
         const { orderId, productId, qty, amount, paymentMethod, username } = req.body;
