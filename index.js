@@ -1981,7 +1981,7 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
             return res.status(401).json({ status: false, message: "Silakan login terlebih dahulu untuk bertransaksi." });
         }
 
-        const { productId, qty, voucherCode } = req.body;
+        const { productId, qty, voucherCode, orderId: clientOrderId } = req.body;
         const buyQty = Number(qty) || 1;
 
         if (!productId) {
@@ -1996,8 +1996,9 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
             return res.status(404).json({ status: false, message: "Produk tidak ditemukan di database." });
         }
 
-        if (dbProduct.stok < buyQty) {
-            return res.status(400).json({ status: false, message: "Stok produk tidak mencukupi!" });
+        const user = await UserV2.findById(req.user.id || req.user._id);
+        if (!user) {
+            return res.status(404).json({ status: false, message: "Data akun tidak ditemukan." });
         }
 
         const unitPrice = dbProduct.harga_diskon || dbProduct.harga;
@@ -2016,15 +2017,48 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
         }
 
         const finalPrice = Math.max(0, totalPrice - discountAmount);
+        const orderId = (clientOrderId && String(clientOrderId).trim())
+            ? String(clientOrderId).trim()
+            : `TRX-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`;
 
-        const user = await UserV2.findById(req.user.id || req.user._id);
-        if (!user) {
-            return res.status(404).json({ status: false, message: "Data akun tidak ditemukan." });
+        const saveCancelledBalanceTrx = async () => {
+            await TransactionV2.findOneAndUpdate(
+                { orderId },
+                {
+                    $setOnInsert: {
+                        orderId,
+                        amount: finalPrice,
+                        paymentMethod: "SALDO",
+                        status: "cancelled",
+                        type: "PURCHASE",
+                        userEmail: user.email.toLowerCase().trim(),
+                        itemDetails: {
+                            nama: dbProduct.nama,
+                            harga: unitPrice,
+                            harga_setelah_voucher: finalPrice,
+                            kategori: dbProduct.kategori,
+                            gambar: Array.isArray(dbProduct.gambar) ? dbProduct.gambar[0] : dbProduct.gambar,
+                            buyer: user.email,
+                            qty: buyQty
+                        },
+                        expiredAt: new Date(),
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    }
+                },
+                { upsert: true, new: true }
+            );
+        };
+
+        if (dbProduct.stok < buyQty) {
+            await saveCancelledBalanceTrx();
+            return res.status(400).json({ status: false, message: "Stok produk tidak mencukupi! Transaksi dibatalkan." });
         }
 
         const currentBalance = user.saldo || 0;
 
         if (currentBalance < finalPrice) {
+            await saveCancelledBalanceTrx();
             return res.status(400).json({ 
                 status: false, 
                 insufficientBalance: true,
@@ -2038,31 +2072,35 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
         await updateProductStockAndSold(dbProduct.nama, buyQty, false);
         await recordProductBuyer(dbProduct.nama, user.email);
 
-        const orderId = `TRX-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`;
-        const newTransaction = new TransactionV2({
-            orderId,
-            amount: finalPrice,
-            paymentMethod: "SALDO",
-            status: "success",
-            type: "PURCHASE",
-            userEmail: user.email.toLowerCase().trim(),
-            itemDetails: {
-                nama: dbProduct.nama,
-                harga: unitPrice,
-                harga_setelah_voucher: finalPrice,
-                kategori: dbProduct.kategori,
-                gambar: Array.isArray(dbProduct.gambar) ? dbProduct.gambar[0] : dbProduct.gambar,
-                link: dbProduct.link,
-                buyer: user.email,
-                qty: buyQty
+        await TransactionV2.findOneAndUpdate(
+            { orderId },
+            {
+                $set: {
+                    orderId,
+                    amount: finalPrice,
+                    paymentMethod: "SALDO",
+                    status: "success",
+                    type: "PURCHASE",
+                    userEmail: user.email.toLowerCase().trim(),
+                    itemDetails: {
+                        nama: dbProduct.nama,
+                        harga: unitPrice,
+                        harga_setelah_voucher: finalPrice,
+                        kategori: dbProduct.kategori,
+                        gambar: Array.isArray(dbProduct.gambar) ? dbProduct.gambar[0] : dbProduct.gambar,
+                        link: dbProduct.link,
+                        buyer: user.email,
+                        qty: buyQty
+                    },
+                    productLink: dbProduct.link,
+                    downloadCount: 0,
+                    downloadedAt: null,
+                    expiredAt: new Date(),
+                    updatedAt: new Date()
+                }
             },
-            productLink: dbProduct.link,
-            downloadCount: 0,
-            downloadedAt: null,
-            expiredAt: new Date()
-        });
-
-        await newTransaction.save();
+            { upsert: true, new: true }
+        );
 
         const linkInfo = classifyProductLink(dbProduct.link);
 
@@ -2084,6 +2122,62 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
     } catch (err) {
         console.error("Error Pay with balance:", err);
         return res.status(500).json({ status: false, message: "Terjadi kesalahan server saat memproses transaksi saldo." });
+    }
+});
+
+// ENDPOINT PENCATATAN TRANSAKSI BATAL SAAT CHECKOUT SALDO DITUTUP / DIBATALKAN
+app.post('/api/store/cancel-balance-order', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: "Unauthorized" });
+        }
+
+        const { orderId, productId, qty, amount } = req.body;
+        if (!orderId || !productId) {
+            return res.status(400).json({ status: false, message: "Data pesanan tidak lengkap." });
+        }
+
+        const dbProduct = await ProductV2.findOne({
+            $or: [{ Id: productId }, { _id: mongoose.Types.ObjectId.isValid(productId) ? productId : null }]
+        }).lean();
+
+        if (!dbProduct) {
+            return res.status(404).json({ status: false, message: "Produk tidak ditemukan." });
+        }
+
+        const buyQty = Math.max(1, Number(qty) || 1);
+        const unitPrice = dbProduct.harga_diskon || dbProduct.harga;
+        const finalAmount = Number(amount) >= 0 ? Number(amount) : unitPrice * buyQty;
+        const userEmail = (req.user.email || '').toLowerCase().trim();
+
+        const existingTrx = await TransactionV2.findOne({ orderId: String(orderId).trim() }).lean();
+        if (existingTrx) {
+            return res.json({ status: true, message: "Status transaksi sudah tercatat.", data: existingTrx });
+        }
+
+        const cancelledTrx = await TransactionV2.create({
+            orderId: String(orderId).trim(),
+            amount: finalAmount,
+            paymentMethod: "SALDO",
+            status: "cancelled",
+            type: "PURCHASE",
+            userEmail,
+            itemDetails: {
+                nama: dbProduct.nama,
+                harga: unitPrice,
+                harga_setelah_voucher: finalAmount,
+                kategori: dbProduct.kategori,
+                gambar: Array.isArray(dbProduct.gambar) ? dbProduct.gambar[0] : dbProduct.gambar,
+                buyer: userEmail,
+                qty: buyQty
+            },
+            expiredAt: new Date()
+        });
+
+        return res.json({ status: true, message: "Transaksi dicatat sebagai dibatalkan.", data: cancelledTrx });
+    } catch (err) {
+        console.error("Error cancel balance order:", err);
+        return res.status(500).json({ status: false, message: "Gagal mencatat pembatalan transaksi." });
     }
 });
 
