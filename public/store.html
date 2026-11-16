@@ -134,7 +134,7 @@
             width: 92%;
             max-width: 440px;
             height: 64px;
-            z-index: 40;
+            z-index: 35;
         }
 
         .bottom-nav-bg {
@@ -249,12 +249,37 @@
             -webkit-user-select: none;
         }
 
-        /* STARBURST STICKER BADGE */
+        /* STARBURST STICKER BADGE - DI BAWAH STICKY KATEGORI (z-20) */
         .starburst-badge-wrap {
             filter: drop-shadow(1.5px 2.5px 0px rgba(0, 0, 0, 0.85));
             pointer-events: none;
             user-select: none;
-            z-index: 10;
+            z-index: 5;
+        }
+
+        /* KEYBOARD-AWARE DETAIL & REVIEW MODAL UNTUK iOS, ANDROID & PC */
+        #productDetailModal {
+            height: 100dvh;
+            max-height: 100dvh;
+        }
+        #productDetailModalContent {
+            max-height: calc(100dvh - 1.5rem);
+            transition: max-height 0.15s ease-out;
+        }
+        @media (max-width: 639px) {
+            #productDetailModal.keyboard-open {
+                align-items: flex-start !important;
+                padding: 0 !important;
+            }
+            #productDetailModal.keyboard-open #productDetailModalContent {
+                border-radius: 0 0 18px 18px !important;
+                border-top: 0 !important;
+                border-left: 0 !important;
+                border-right: 0 !important;
+                box-shadow: 0 4px 0 #000000 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
         }
     </style>
 </head>
@@ -340,8 +365,8 @@
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-5 sm:gap-6 items-start">
 
-            <!-- SIDEBAR KATEGORI -->
-            <div class="neo-box p-3.5 sm:p-4 rounded-xl bg-white sticky top-[68px] sm:top-20 z-25">
+            <!-- SIDEBAR KATEGORI (z-20 PASTI DI ATAS CARD & BADGE PRODUK z-[5]) -->
+            <div class="neo-box p-3.5 sm:p-4 rounded-xl bg-white sticky top-[62px] sm:top-[72px] z-20">
                 <h3 class="font-black text-xs font-cyber text-black mb-2.5 sm:mb-3 uppercase tracking-wider flex items-center gap-2">
                     <i class="fa-solid fa-layer-group"></i> Kategori Produk
                 </h3>
@@ -353,7 +378,7 @@
             </div>
 
             <!-- CONTAINER LIST & GRID PRODUK -->
-            <div class="md:col-span-3 space-y-5 sm:space-y-6">
+            <div class="md:col-span-3 space-y-5 sm:space-y-6 relative z-10">
                 <div class="flex items-center justify-between neo-box p-3 sm:p-3.5 rounded-xl bg-white">
                     <p class="text-xs font-bold font-cyber uppercase">
                         Menampilkan <span id="productCount" class="font-black underline">0</span> produk
@@ -390,19 +415,19 @@
     </div>
 
     <!-- MODAL DETAIL PRODUK & PENILAIAN SHOPEE STYLE -->
-    <div id="productDetailModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div id="productDetailModalContent" class="neo-box w-full max-w-2xl rounded-2xl bg-white overflow-hidden my-auto max-h-[92vh] flex flex-col relative">
+    <div id="productDetailModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-hidden">
+        <div id="productDetailModalContent" class="neo-box w-full max-w-2xl rounded-2xl bg-white overflow-hidden flex flex-col relative">
             
-            <div class="bg-neoYellow p-4 text-black flex justify-between items-center border-b-3 border-black flex-shrink-0">
-                <h3 class="font-black text-sm font-cyber uppercase flex items-center gap-2">
+            <div class="bg-neoYellow p-3.5 sm:p-4 text-black flex justify-between items-center border-b-3 border-black flex-shrink-0">
+                <h3 class="font-black text-xs sm:text-sm font-cyber uppercase flex items-center gap-2">
                     <i class="fa-solid fa-star text-black"></i> DETAIL & PENILAIAN PRODUK
                 </h3>
-                <button onclick="closeProductDetailModal()" class="text-black font-black text-lg">
+                <button onclick="closeProductDetailModal()" class="text-black font-black text-lg px-1">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <div id="modalDetailScrollable" class="overflow-y-auto p-4 sm:p-5 space-y-5 flex-1 scroll-smooth">
+            <div id="modalDetailScrollable" class="overflow-y-auto p-4 sm:p-5 space-y-5 flex-1 min-h-0 scroll-smooth">
                 <!-- Ringkasan Produk -->
                 <div class="flex flex-col sm:flex-row gap-4 items-start neo-box p-3.5 rounded-2xl bg-neoBg">
                     
@@ -430,7 +455,7 @@
                 </div>
 
                 <!-- LIST REVIU / PENILAIAN DARI USER -->
-                <div id="ratingSectionHeader" class="space-y-3 pb-6">
+                <div id="ratingSectionHeader" class="space-y-3 pb-4">
                     <h4 class="text-xs font-black font-cyber text-black uppercase tracking-wider flex items-center gap-2">
                         <i class="fa-solid fa-comments"></i> PENILAIAN PEMBELI
                     </h4>
@@ -438,8 +463,8 @@
                 </div>
             </div>
 
-            <!-- FORM BERI / EDIT PENILAIAN -->
-            <div id="reviewHotbarContainer" class="sticky bottom-0 z-30 p-3 bg-white border-t-3 border-black space-y-2">
+            <!-- FORM BERI / EDIT PENILAIAN (SELALU DI ATAS KEYBOARD HP / iOS / WINDOWS) -->
+            <div id="reviewHotbarContainer" class="flex-shrink-0 z-30 p-2.5 sm:p-3 bg-white border-t-3 border-black space-y-2">
                 <form id="reviewForm" onsubmit="submitReview(event)" class="space-y-2">
                     <input type="hidden" id="reviewProductId">
                     <input type="hidden" id="selectedRatingValue" required>
@@ -466,9 +491,10 @@
                         <div id="mediaPreviewContainer" class="hidden flex gap-2 overflow-x-auto py-1 border-t-2 border-black/20"></div>
 
                         <div class="flex items-center gap-2">
+                            <!-- font-size 16px di mobile mencegah auto-zoom iOS Safari -->
                             <textarea id="reviewComment" rows="1" required placeholder="Tuliskan ulasan produk..."
                                 oninput="this.style.height = ''; this.style.height = Math.min(this.scrollHeight, 90) + 'px'"
-                                class="flex-1 bg-white border-2 border-black rounded-lg text-xs font-bold text-black placeholder-slate-500 focus:outline-none resize-none max-h-24 py-2 px-3 leading-relaxed"></textarea>
+                                class="flex-1 bg-white border-2 border-black rounded-lg text-[16px] sm:text-xs font-bold text-black placeholder-slate-500 focus:outline-none resize-none max-h-24 py-1.5 sm:py-2 px-3 leading-relaxed"></textarea>
                             
                             <div class="flex items-center gap-1.5 flex-shrink-0">
                                 <label for="reviewMediaFiles" title="Lampirkan Gambar/Video (Maks. 5MB)" class="neo-btn w-9 h-9 rounded-lg bg-white text-black flex items-center justify-center cursor-pointer font-black">
@@ -509,7 +535,6 @@
                 <img id="lightboxImage" src="" class="hidden max-w-full max-h-[80vh] rounded-2xl object-contain border-3 border-black bg-white">
                 
                 <div id="videoWrapper" class="video-container hidden max-w-full max-h-[80vh] rounded-2xl overflow-hidden border-3 border-black bg-black" onclick="toggleVideoPlayPause()">
-                    <!-- VIDEO DENGAN AUTO-PLAY & SUARA ASLI -->
                     <video id="lightboxVideo" loop playsinline webkit-playsinline preload="auto" class="w-full h-full max-h-[80vh] object-contain"></video>
                     <div id="videoPlayOverlayBtn" class="play-overlay-btn">
                         <i class="fa-solid fa-play"></i>
@@ -551,17 +576,18 @@
         </div>
     </div>
 
-    <!-- MODAL POPUP CHECKOUT METODE PEMBAYARAN -->
+    <!-- MODAL POPUP CHECKOUT METODE PEMBAYARAN (TANPA TOMBOL SILANG X) -->
     <div id="checkoutModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="neo-box w-full max-w-lg rounded-2xl bg-white overflow-hidden my-auto max-h-[95vh] flex flex-col" id="modalContent">
 
+            <!-- HEADER FORM PEMESANAN TANPA TOMBOL SILANG -->
             <div class="bg-neoYellow p-4 text-black flex justify-between items-center border-b-3 border-black flex-shrink-0">
                 <h3 class="font-black text-sm font-cyber uppercase flex items-center gap-2">
                     <i class="fa-solid fa-cart-shopping"></i> Form Pemesanan
                 </h3>
-                <button onclick="closeCheckoutModal()" class="text-black font-black text-lg">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                <span class="text-[10px] font-black font-cyber bg-white border-2 border-black px-2 py-0.5 rounded uppercase">
+                    Checkout
+                </span>
             </div>
 
             <div class="overflow-y-auto p-4 sm:p-5 flex-1">
@@ -634,6 +660,7 @@
                         <input type="hidden" id="paymentMethodSelect" value="saldo">
 
                         <div class="space-y-2.5" id="customPaymentOptions">
+                            <!-- 1. SALDO AKUN -->
                             <div onclick="selectCyberPayment('saldo')" id="opt-saldo" class="neo-box p-3 cursor-pointer flex items-center justify-between bg-neoYellow">
                                 <div class="flex items-center gap-3">
                                     <i class="fa-solid fa-wallet text-base"></i>
@@ -644,9 +671,21 @@
                                 </div>
                             </div>
 
+                            <!-- 2. ORDER MANUAL VIA TELEGRAM (DI ATAS WHATSAPP) -->
+                            <div onclick="selectCyberPayment('telegram')" id="opt-telegram" class="neo-box p-3 cursor-pointer flex items-center justify-between bg-white">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-brands fa-telegram text-base text-sky-600"></i>
+                                    <div>
+                                        <p class="text-xs font-black font-cyber">Order Manual via Telegram</p>
+                                        <p class="text-[10px] font-bold text-slate-600">Hubungi Admin via Telegram</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. ORDER MANUAL VIA WHATSAPP -->
                             <div onclick="selectCyberPayment('manual')" id="opt-manual" class="neo-box p-3 cursor-pointer flex items-center justify-between bg-white">
                                 <div class="flex items-center gap-3">
-                                    <i class="fa-brands fa-whatsapp text-base"></i>
+                                    <i class="fa-brands fa-whatsapp text-base text-emerald-600"></i>
                                     <div>
                                         <p class="text-xs font-black font-cyber">Order Manual via WhatsApp</p>
                                         <p class="text-[10px] font-bold text-slate-600">Hubungi Admin langsung</p>
@@ -668,13 +707,22 @@
                         </div>
                     </div>
 
-                    <div class="pt-2">
+                    <!-- TOMBOL AKSI & TOMBOL BATALKAN TRANSAKSI DI BAWAHNYA -->
+                    <div class="pt-2 space-y-2.5">
                         <button type="button" id="btnPaySaldo" onclick="processSaldoPayment()" class="neo-btn w-full bg-neoGreen text-black font-cyber font-black py-3 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
                             <i class="fa-solid fa-wallet"></i> Bayar Pakai Saldo
                         </button>
 
+                        <button type="submit" id="btnPayTelegram" class="neo-btn w-full hidden bg-neoCyan text-black font-cyber font-black py-3 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-telegram text-sm"></i> Order via Telegram
+                        </button>
+
                         <button type="submit" id="btnPayManual" class="neo-btn w-full hidden bg-neoYellow text-black font-cyber font-black py-3 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
                             <i class="fa-brands fa-whatsapp text-sm"></i> Order via WhatsApp
+                        </button>
+
+                        <button type="button" onclick="confirmCancelCheckout()" class="neo-btn w-full bg-neoPink text-black font-cyber font-black py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-ban text-xs"></i> Batalkan Transaksi
                         </button>
                     </div>
                 </form>
@@ -775,6 +823,9 @@
         document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
         document.addEventListener('dblclick', function (e) { e.preventDefault(); }, { passive: false });
 
+        const ADMIN_TELEGRAM_USERNAME = 'arulzxd';
+        const ADMIN_WHATSAPP_NUMBER = '6285122629940';
+
         let DATA_PRODUK = [];
         let KATEGORI_AKTIF = 'all';
         let SELECTED_PRODUCT = null;
@@ -789,7 +840,7 @@
         let currentSelectedRating = 0;
         let CURRENT_LOGGED_USER = null;
 
-        const MAX_MEDIA_FILE_BYTES = 5 * 1024 * 1024; // Maksimal 5MB per file
+        const MAX_MEDIA_FILE_BYTES = 5 * 1024 * 1024;
         let SELECTED_FILE_LIST = []; 
         let EXISTING_MEDIA_LIST = []; 
         let REMOVED_MEDIA_URLS = []; 
@@ -807,6 +858,64 @@
         let activeUserReviewIndex = 0;
         let activeMediaItemIndex = 0;
 
+        /* DETEKSI PERANGKAT iOS (iPhone / iPad / iPod) */
+        function isIOSDevice() {
+            const ua = navigator.userAgent || '';
+            const platform = navigator.platform || '';
+            return /iPad|iPhone|iPod/.test(ua) || (platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        }
+
+        /* PENYESUAIAN OTOMATIS FORM ULASAN DI ATAS KEYBOARD (iOS, ANDROID, WINDOWS/PC) */
+        function syncReviewModalViewport() {
+            const modal = document.getElementById('productDetailModal');
+            const modalContent = document.getElementById('productDetailModalContent');
+            if (!modal || !modalContent || modal.classList.contains('hidden')) return;
+
+            if (!window.visualViewport) return;
+
+            const vv = window.visualViewport;
+            const layoutHeight = window.innerHeight;
+            const keyboardHeight = Math.max(0, layoutHeight - vv.height);
+            const isMobileWidth = vv.width < 640;
+
+            if (keyboardHeight > 110 && isMobileWidth) {
+                modal.classList.add('keyboard-open');
+                modal.style.top = `${vv.offsetTop}px`;
+                modal.style.height = `${vv.height}px`;
+                modal.style.maxHeight = `${vv.height}px`;
+                modalContent.style.maxHeight = `${vv.height}px`;
+            } else {
+                modal.classList.remove('keyboard-open');
+                modal.style.top = '0px';
+                modal.style.height = '100dvh';
+                modal.style.maxHeight = '100dvh';
+                modalContent.style.maxHeight = isMobileWidth
+                    ? `calc(${vv.height}px - 1.5rem)`
+                    : '90dvh';
+            }
+        }
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', syncReviewModalViewport);
+            window.visualViewport.addEventListener('scroll', syncReviewModalViewport);
+        }
+        window.addEventListener('resize', syncReviewModalViewport);
+
+        const reviewCommentEl = document.getElementById('reviewComment');
+        if (reviewCommentEl) {
+            reviewCommentEl.addEventListener('focus', () => {
+                setTimeout(syncReviewModalViewport, 80);
+                setTimeout(syncReviewModalViewport, 300);
+                setTimeout(() => {
+                    const hotbar = document.getElementById('reviewHotbarContainer');
+                    if (hotbar) hotbar.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                }, 320);
+            });
+            reviewCommentEl.addEventListener('blur', () => {
+                setTimeout(syncReviewModalViewport, 120);
+            });
+        }
+
         /* GENERATE TITIK GERIGI STARBURST 24 SUDUT SEPERTI STIKER PROMO */
         function buildStarburstPolygonPoints(cx = 50, cy = 50, outerR = 49, innerR = 39, spikes = 24) {
             const pts = [];
@@ -822,7 +931,7 @@
         }
         const STARBURST_POINTS = buildStarburstPolygonPoints(50, 50, 49, 39, 24);
 
-        /* RESOLVE BADGE OTOMATIS BERDASARKAN TERJUAL & REVIEW (TIDAK PERNAH HILANG) */
+        /* RESOLVE BADGE OTOMATIS BERDASARKAN TERJUAL & REVIEW */
         function resolveProductBadge(produk, reviewStats) {
             const rawBadge = String(produk?.badge || '').trim().toUpperCase();
             const terjual = Number(produk?.terjual) || 0;
@@ -833,7 +942,6 @@
             const isManualLaris = rawBadge === 'LARIS' || rawBadge === 'HOT';
             const isDefaultOrNew = !rawBadge || rawBadge === 'NEW' || rawBadge === 'BARU';
 
-            // 1. Tier tertinggi: POPULER (muncul di bagian khusus paling atas)
             if (
                 isManualPopuler ||
                 (terjual >= 25 && totalReviews >= 10) ||
@@ -852,7 +960,6 @@
                 };
             }
 
-            // 2. Tier menengah atas: BEST (terjual & review tinggi)
             if (
                 isManualBest ||
                 (terjual >= 12 && totalReviews >= 5) ||
@@ -871,7 +978,6 @@
                 };
             }
 
-            // 3. Tier menengah: LARIS (mulai banyak terjual & ulasan)
             if (
                 isManualLaris ||
                 (terjual >= 5 && totalReviews >= 2) ||
@@ -890,7 +996,6 @@
                 };
             }
 
-            // 4. Custom badge khusus dari admin tetap dipertahankan
             if (!isDefaultOrNew) {
                 const displayLabel = rawBadge.slice(0, 8);
                 return {
@@ -905,7 +1010,6 @@
                 };
             }
 
-            // 5. Default awal: NEW (merah starburst)
             return {
                 label: 'NEW',
                 tier: 'new',
@@ -1004,7 +1108,6 @@
             });
         }
 
-        /* KOMPRESI GAMBAR OTOMATIS AGAR UPLOAD TIDAK MELEBIHI BATAS PAYLOAD SERVER */
         function compressImageFile(file, maxDimension = 1280, quality = 0.8) {
             return new Promise((resolve) => {
                 if (!file || !file.type.startsWith('image/') || file.type === 'image/gif') {
@@ -1202,6 +1305,7 @@
 
             resetReviewForm();
             document.getElementById('productDetailModal').classList.remove('hidden');
+            syncReviewModalViewport();
 
             loadProductReviews(pIdStr);
         }
@@ -1225,10 +1329,12 @@
         }
 
         function closeProductDetailModal() {
-            document.getElementById('productDetailModal').classList.add('hidden');
+            if (document.activeElement) document.activeElement.blur();
+            const modal = document.getElementById('productDetailModal');
+            modal.classList.remove('keyboard-open');
+            modal.classList.add('hidden');
         }
 
-        /* SWIPE / GESER FOTO PRODUK PADA MODAL DETAIL DENGAN TOUCHSCREEN */
         let modalCarouselTouchStartX = 0;
         let modalCarouselTouchStartY = 0;
         let modalCarouselSwiped = false;
@@ -1319,7 +1425,6 @@
             document.getElementById('productZoomLightbox').classList.add('hidden');
         }
 
-        /* GESTURE SWIPE KANAN / KIRI TOUCHSCREEN PADA ZOOM LIGHTBOX PRODUK */
         let zoomTouchStartX = 0;
         let zoomTouchStartY = 0;
         const zoomSwipeArea = document.getElementById('zoomSwipeArea');
@@ -1367,7 +1472,6 @@
             document.getElementById('mediaLightboxModal').classList.remove('hidden');
         }
 
-        /* RENDERING MEDIA LIGHTBOX DENGAN AUTO PLAY & SUARA ASLI VIDEO */
         function renderLightboxMediaContent() {
             if (!currentReviewsListWithMedia || currentReviewsListWithMedia.length === 0) return;
 
@@ -1398,7 +1502,6 @@
                 video.load();
                 video.currentTime = 0;
 
-                // AUTO PLAY DENGAN SUARA ASLI VIDEO
                 videoWrapper.classList.add('playing');
                 const playPromise = video.play();
                 if (playPromise !== undefined) {
@@ -1423,7 +1526,6 @@
             document.getElementById('lightboxUserCounter').innerText = `Ulasan ${activeUserReviewIndex + 1} dari ${currentReviewsListWithMedia.length}`;
         }
 
-        /* TOGGLE PLAY / PAUSE DENGAN KLIK PADA VIDEO & PASTIKAN SUARA ASLI AKTIF */
         function toggleVideoPlayPause() {
             const video = document.getElementById('lightboxVideo');
             const wrapper = document.getElementById('videoWrapper');
@@ -1454,7 +1556,6 @@
             document.getElementById('mediaLightboxModal').classList.add('hidden');
         }
 
-        /* GESTURE SWIPE ATAS/BAWAH & KIRI/KANAN UNTUK LIGHTBOX REVIEW */
         let touchStartX = 0;
         let touchStartY = 0;
         const lightboxSwipeArea = document.getElementById('lightboxSwipeArea');
@@ -1513,6 +1614,8 @@
                 commentInput.focus();
                 commentInput.style.height = '';
                 commentInput.style.height = Math.min(commentInput.scrollHeight, 90) + 'px';
+                setTimeout(syncReviewModalViewport, 80);
+                setTimeout(syncReviewModalViewport, 300);
             }
             
             SELECTED_FILE_LIST = [];
@@ -1718,6 +1821,7 @@
                 }
 
                 if (res.ok && (result.status || result.success)) {
+                    if (document.activeElement) document.activeElement.blur();
                     Swal.fire({
                         icon: 'success',
                         title: 'BERHASIL!',
@@ -1746,28 +1850,31 @@
             document.getElementById('paymentMethodSelect').value = method;
 
             const optSaldo = document.getElementById('opt-saldo');
+            const optTelegram = document.getElementById('opt-telegram');
             const optManual = document.getElementById('opt-manual');
             
-            if (method === 'saldo') {
-                optSaldo.className = 'neo-box p-3 cursor-pointer flex items-center justify-between bg-neoYellow';
-                optManual.className = 'neo-box p-3 cursor-pointer flex items-center justify-between bg-white';
-            } else {
-                optSaldo.className = 'neo-box p-3 cursor-pointer flex items-center justify-between bg-white';
-                optManual.className = 'neo-box p-3 cursor-pointer flex items-center justify-between bg-neoYellow';
-            }
+            optSaldo.className = `neo-box p-3 cursor-pointer flex items-center justify-between ${method === 'saldo' ? 'bg-neoYellow' : 'bg-white'}`;
+            optTelegram.className = `neo-box p-3 cursor-pointer flex items-center justify-between ${method === 'telegram' ? 'bg-neoCyan' : 'bg-white'}`;
+            optManual.className = `neo-box p-3 cursor-pointer flex items-center justify-between ${method === 'manual' ? 'bg-neoYellow' : 'bg-white'}`;
 
             const manualFields = document.getElementById('manualFieldsGroup');
             const btnSaldo = document.getElementById('btnPaySaldo');
+            const btnTelegram = document.getElementById('btnPayTelegram');
             const btnManual = document.getElementById('btnPayManual');
 
-            if (method === 'manual') {
+            btnSaldo.classList.add('hidden');
+            btnTelegram.classList.add('hidden');
+            btnManual.classList.add('hidden');
+
+            if (method === 'telegram') {
                 manualFields.classList.remove('hidden');
-                btnSaldo.classList.add('hidden');
+                btnTelegram.classList.remove('hidden');
+            } else if (method === 'manual') {
+                manualFields.classList.remove('hidden');
                 btnManual.classList.remove('hidden');
             } else {
                 manualFields.classList.add('hidden');
                 btnSaldo.classList.remove('hidden');
-                btnManual.classList.add('hidden');
             }
         }
 
@@ -1812,7 +1919,6 @@
                 generateKategoriButtons();
                 renderProduk();
 
-                // Jika halaman dibuka lewat link share /store/:productId -> otomatis buka detail produk
                 const params = new URLSearchParams(window.location.search);
                 const shareId = params.get('shareId');
                 if (shareId) {
@@ -1856,7 +1962,6 @@
             renderProduk();
         }
 
-        /* KARTU PRODUK 2 KOLOM ALA SHOPEE DENGAN GAYA NEO-BRUTALISM */
         function buildProductCardHtml(produk) {
             const originalIndex = DATA_PRODUK.findIndex(p => (p.Id || p._id) === (produk.Id || produk._id));
             const pId = produk.Id || produk._id;
@@ -1869,7 +1974,7 @@
             const mainImg = imgArray[0];
             const starburstBadge = getStarburstBadgeHtml(badgeInfo);
             const multiPhotoBadge = imgArray.length > 1
-                ? `<span class="absolute bottom-1.5 right-1.5 z-10 bg-neoYellow border border-black text-black text-[9px] font-black font-cyber px-1.5 py-0.5 rounded shadow-[1.5px_1.5px_0px_#000] pointer-events-none"><i class="fa-regular fa-images"></i> ${imgArray.length}</span>`
+                ? `<span class="absolute bottom-1.5 right-1.5 z-[4] bg-neoYellow border border-black text-black text-[9px] font-black font-cyber px-1.5 py-0.5 rounded shadow-[1.5px_1.5px_0px_#000] pointer-events-none"><i class="fa-regular fa-images"></i> ${imgArray.length}</span>`
                 : '';
             const deskripsiTeks = produk.deskripsi || 'Tidak ada deskripsi.';
             const isLong = deskripsiTeks.length > 50;
@@ -1972,7 +2077,6 @@
 
             emptyState.classList.add('hidden');
 
-            // 1. BAGIAN KHUSUS POPULER DI PALING ATAS (GRID 2 KOLOM ALA SHOPEE)
             const populerItems = filtered
                 .filter(item => {
                     const pId = item.Id || item._id;
@@ -2002,7 +2106,6 @@
                 `;
             }
 
-            // 2. DAFTAR PRODUK PER KATEGORI (GRID 2 KOLOM ALA SHOPEE)
             const categoriesGroup = {};
             filtered.forEach(item => {
                 const catName = item.kategori || 'Umum';
@@ -2033,7 +2136,6 @@
             grid.innerHTML = populerSectionHtml + categoriesHtml;
         }
 
-        /* TOGGLE DESKRIPSI BERBASIS ELEMEN TOMBOL YANG DIKLIK (ANTI DUPLIKAT ID) */
         function toggleWaDesc(btnElem) {
             if (!btnElem) return;
             const textElem = btnElem.previousElementSibling;
@@ -2072,11 +2174,14 @@
             document.getElementById('modalStockInfo').innerText = `Tersisa: ${SELECTED_PRODUCT.stok !== undefined ? SELECTED_PRODUCT.stok : 'Tersedia'}`;
 
             document.getElementById('qtyInput').value = CURRENT_QTY;
+            if (CURRENT_LOGGED_USER && CURRENT_LOGGED_USER.username) {
+                const uInput = document.getElementById('usernameInput');
+                if (uInput && !uInput.value) uInput.value = CURRENT_LOGGED_USER.username;
+            }
             updateTotalPrice();
 
             selectCyberPayment('saldo');
 
-            // Reset Step 3 UI State
             document.getElementById('downloadActionBox').classList.add('hidden');
             document.getElementById('chatAdminActionBox').classList.add('hidden');
             const quotaBadge = document.getElementById('downloadQuotaBadge');
@@ -2194,6 +2299,34 @@
                 body: payload,
                 keepalive: true
             }).catch(() => {});
+        }
+
+        /* KONFIRMASI PERINGATAN PEMBATALAN TRANSAKSI */
+        async function confirmCancelCheckout() {
+            const result = await Swal.fire({
+                icon: 'warning',
+                title: 'BATALKAN TRANSAKSI?',
+                html: `<div class="text-xs font-bold text-slate-700 leading-relaxed">
+                    Peringatan: Pesanan <span class="font-mono font-black text-black">${CURRENT_ORDER_ID}</span> akan dibatalkan dan tercatat sebagai <span class="text-red-600 font-black">DIBATALKAN</span> di riwayat transaksi.
+                </div>`,
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Batalkan',
+                cancelButtonText: 'Lanjut Bayar',
+                confirmButtonColor: '#ef4444',
+                customClass: { popup: 'cyber-swal' }
+            });
+
+            if (result.isConfirmed) {
+                closeCheckoutModal();
+                Swal.fire({
+                    icon: 'info',
+                    title: 'TRANSAKSI DIBATALKAN',
+                    text: 'Pesanan berhasil dibatalkan.',
+                    timer: 1400,
+                    showConfirmButton: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
         }
 
         window.addEventListener('beforeunload', () => {
@@ -2330,6 +2463,53 @@
             triggerOneTimeDownload(ACTIVE_SUCCESS_ORDER_ID);
         }
 
+        /* HELPER SIMPAN FILE KOMPATIBEL iOS SAFARI/CHROME, ANDROID & DESKTOP */
+        async function saveDownloadedBlobCrossPlatform(arrayBuffer, filename) {
+            const fileBlob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
+
+            if (isIOSDevice()) {
+                // 1. Coba iOS Share Sheet ("Simpan ke File") jika didukung
+                try {
+                    const iosFile = new File([fileBlob], filename, { type: 'application/octet-stream' });
+                    if (navigator.canShare && navigator.canShare({ files: [iosFile] })) {
+                        await navigator.share({
+                            files: [iosFile],
+                            title: filename
+                        });
+                        return;
+                    }
+                } catch (shareErr) {
+                    if (shareErr && shareErr.name === 'AbortError') return;
+                }
+
+                // 2. Fallback iOS Safari/Chrome: buka Data URL / Blob URL agar iOS menampilkan sheet "Unduh / Simpan ke File"
+                const dataUrl = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(fileBlob);
+                });
+
+                const opened = window.open(dataUrl, '_blank');
+                if (!opened) {
+                    window.location.href = dataUrl;
+                }
+                return;
+            }
+
+            // Android / PC Windows / macOS Desktop
+            const blobUrl = window.URL.createObjectURL(fileBlob);
+            const tempLink = document.createElement('a');
+            tempLink.style.display = 'none';
+            tempLink.href = blobUrl;
+            tempLink.download = filename;
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+
+            setTimeout(() => window.URL.revokeObjectURL(blobUrl), 30000);
+        }
+
         async function triggerOneTimeDownload(orderId) {
             if (!orderId) return;
             const state = DOWNLOAD_STATE_MAP[orderId] || { downloading: false, completed: false };
@@ -2421,25 +2601,17 @@
                     filename = `${baseName}.zip`;
                 }
 
-                const blob = new Blob([await res.arrayBuffer()], { type: 'application/octet-stream' });
-                const blobUrl = window.URL.createObjectURL(blob);
-
-                const tempLink = document.createElement('a');
-                tempLink.style.display = 'none';
-                tempLink.href = blobUrl;
-                tempLink.download = filename;
-                document.body.appendChild(tempLink);
-                tempLink.click();
-                document.body.removeChild(tempLink);
-
-                setTimeout(() => window.URL.revokeObjectURL(blobUrl), 30000);
+                const arrayBuffer = await res.arrayBuffer();
+                await saveDownloadedBlobCrossPlatform(arrayBuffer, filename);
 
                 state.completed = true;
                 state.downloading = false;
 
                 if (quotaBadge) quotaBadge.innerText = 'Kuota: 1/1';
                 if (statusText) {
-                    statusText.innerText = `File "${filename}" berhasil terdownload! (Maksimal 1x download per transaksi).`;
+                    statusText.innerText = isIOSDevice()
+                        ? `File "${filename}" siap disimpan! Pilih "Simpan ke File" pada perangkat iOS Anda (Maksimal 1x download per transaksi).`
+                        : `File "${filename}" berhasil terdownload! (Maksimal 1x download per transaksi).`;
                 }
                 if (btn) {
                     btn.disabled = true;
@@ -2508,12 +2680,16 @@
 
             let message = `Halo Arulz, saya pesan manual:\n`;
             message += `ID TRX: ${CURRENT_ORDER_ID}\n`;
-            message += `Username: ${username}\n`;
+            message += `Username: ${username || '-'}\n`;
             message += `Produk: ${SELECTED_PRODUCT.nama} (${CURRENT_QTY}x)\n`;
             message += `Total Tagihan: ${formatRupiah(calc.total)}\n`;
             if (note) message += `Catatan: ${note}\n`;
 
-            window.open(`https://wa.me/6285122629940?text=${encodeURIComponent(message)}`, '_blank');
+            if (paymentMethod === 'TELEGRAM') {
+                window.open(`https://t.me/${ADMIN_TELEGRAM_USERNAME}?text=${encodeURIComponent(message)}`, '_blank');
+            } else {
+                window.open(`https://wa.me/${ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+            }
             closeCheckoutModal();
         }
 
