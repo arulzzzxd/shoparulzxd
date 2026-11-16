@@ -395,15 +395,15 @@
                             </span>
                         </div>
                         <p id="tradingSubtitle" class="text-xs font-bold text-black/80 mt-0.5">
-                            Grafik transaksi 7 hari terakhir (seluruh riwayat terakumulasi)
+                            Grafik transaksi per 1 jam WIB (setiap jam membuat candle baru)
                         </p>
                     </div>
                 </div>
 
                 <!-- Tombol Segmented Timeframe -->
                 <div class="tf-group self-start sm:self-auto" role="group" aria-label="Pilih Rentang Waktu">
-                    <button id="btnTf1d" type="button" onclick="setTradingRange('1d')" class="tf-tab">1 Hari</button>
-                    <button id="btnTf7d" type="button" onclick="setTradingRange('7d')" class="tf-tab active">7 Hari</button>
+                    <button id="btnTf1d" type="button" onclick="setTradingRange('1d')" class="tf-tab active">1 Hari</button>
+                    <button id="btnTf7d" type="button" onclick="setTradingRange('7d')" class="tf-tab">7 Hari</button>
                     <button id="btnTf1m" type="button" onclick="setTradingRange('1m')" class="tf-tab">1 Bulan</button>
                     <button id="btnTfall" type="button" onclick="setTradingRange('all')" class="tf-tab">Semua</button>
                 </div>
@@ -605,7 +605,7 @@
         }
 
         let isInitialLoad = true;
-        let activeTradingRange = '7d';
+        let activeTradingRange = '1d';
         let cachedTradingSeries = { '1d': [], '7d': [], '1m': [], 'all': [] };
         let hoverCandleIndex = -1;
 
@@ -706,13 +706,13 @@
             });
 
             const descMap = {
-                '1d': 'Grafik transaksi 24 jam terakhir (per jam WIB)',
-                '7d': 'Grafik transaksi 7 hari terakhir (seluruh riwayat terakumulasi)',
-                '1m': 'Grafik transaksi 30 hari terakhir (seluruh riwayat terakumulasi)',
-                'all': 'Grafik seluruh riwayat transaksi masuk dari awal hingga sekarang'
+                '1d': 'Grafik transaksi per 1 jam WIB (24 jam terakhir — candle baru tiap jam)',
+                '7d': 'Grafik transaksi per 1 jam WIB (7 hari terakhir — candle baru tiap jam)',
+                '1m': 'Grafik transaksi per 1 jam WIB (30 hari terakhir — candle baru tiap jam)',
+                'all': 'Grafik seluruh riwayat transaksi per 1 jam WIB dari awal hingga sekarang'
             };
             const subEl = document.getElementById('tradingSubtitle');
-            if (subEl) subEl.innerText = descMap[range] || descMap['7d'];
+            if (subEl) subEl.innerText = descMap[range] || descMap['1d'];
 
             updateTradingHeader(cachedTradingSeries[range] || []);
             drawStockChart();
@@ -767,6 +767,16 @@
             ctx.closePath();
         }
 
+        function getVisibleCandles() {
+            const full = cachedTradingSeries[activeTradingRange] || [];
+            const canvas = document.getElementById('tradingCanvas');
+            const width = canvas ? canvas.getBoundingClientRect().width : 640;
+            // Jaga jumlah candle per tampilan agar setiap candle hijau & merah punya celah terpisah jelas
+            const maxVisible = width < 480 ? 24 : (width < 768 ? 30 : 36);
+            if (full.length <= maxVisible) return full;
+            return full.slice(full.length - maxVisible);
+        }
+
         function drawStockChart() {
             const canvas = document.getElementById('tradingCanvas');
             if (!canvas) return;
@@ -793,7 +803,7 @@
             ctx.fillStyle = '#FFFDF7';
             ctx.fillRect(0, 0, W, H);
 
-            const series = cachedTradingSeries[activeTradingRange] || [];
+            const series = getVisibleCandles();
             if (series.length === 0) {
                 ctx.fillStyle = '#000000';
                 ctx.font = '800 12px "JetBrains Mono", monospace';
@@ -859,25 +869,27 @@
             });
             ctx.restore();
 
+            // Jarak celah antar candle minimal 4px agar candle hijau & merah terpisah jelas
+            const gapPx = Math.max(4, Math.round(stepW * 0.34));
+            const candleW = Math.max(4, Math.min(14, Math.floor(stepW - gapPx)));
+            const barW = candleW;
+
             const maxVol = Math.max(...series.map(d => Number(d.volume || 0)), 1);
             const maxVolBarH = plotH * 0.16;
-            const barW = Math.max(4, Math.min(18, stepW * 0.65));
 
             series.forEach((d, idx) => {
                 const vol = Number(d.volume || 0);
                 if (vol <= 0) return;
-                const cx = padLeft + idx * stepW + stepW / 2;
+                const cx = Math.round(padLeft + idx * stepW + stepW / 2);
                 const vh = Math.max(4, (vol / maxVol) * maxVolBarH);
                 const isBull = Number(d.c) >= Number(d.o);
 
-                ctx.fillStyle = isBull ? 'rgba(0, 192, 118, 0.18)' : 'rgba(242, 54, 69, 0.18)';
-                ctx.fillRect(cx - barW / 2, H - padBottom - vh, barW, vh);
+                ctx.fillStyle = isBull ? 'rgba(0, 192, 118, 0.22)' : 'rgba(242, 54, 69, 0.22)';
+                ctx.fillRect(Math.round(cx - barW / 2), H - padBottom - vh, barW, vh);
             });
 
-            const candleW = Math.max(4, Math.min(14, stepW * 0.62));
-
             series.forEach((d, idx) => {
-                const cx = padLeft + idx * stepW + stepW / 2;
+                const cx = Math.round(padLeft + idx * stepW + stepW / 2);
                 const open = Number(d.o || 0);
                 const close = Number(d.c || 0);
                 const high = Number(d.h || 0);
@@ -895,23 +907,24 @@
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 1.5;
                 ctx.beginPath();
-                ctx.moveTo(cx, yHigh);
-                ctx.lineTo(cx, yLow);
+                ctx.moveTo(cx + 0.5, yHigh);
+                ctx.lineTo(cx + 0.5, yLow);
                 ctx.stroke();
 
                 const rawBodyH = Math.abs(yClose - yOpen);
-                const leftBody = cx - candleW / 2;
+                const leftBody = Math.round(cx - candleW / 2);
 
-                if (close === open && rawBodyH < 2.5) {
+                if (close === open && rawBodyH < 2) {
+                    // Garis doji datar saat tidak ada transaksi di jam tersebut
                     ctx.fillStyle = color;
-                    ctx.fillRect(leftBody, yClose - 1, candleW, 2.2);
+                    ctx.fillRect(leftBody, Math.round(yClose) - 1, candleW, 2);
                 } else {
-                    const visibleBodyH = Math.max(4, rawBodyH);
-                    const topBody = rawBodyH < 4
-                        ? (Math.min(yOpen, yClose) - (4 - rawBodyH) / 2)
+                    const visibleBodyH = Math.max(5, rawBodyH);
+                    const topBody = rawBodyH < 5
+                        ? (Math.min(yOpen, yClose) - (5 - rawBodyH) / 2)
                         : Math.min(yOpen, yClose);
                     ctx.fillStyle = color;
-                    drawRoundRect(ctx, leftBody, topBody, candleW, visibleBodyH, 2.5);
+                    drawRoundRect(ctx, leftBody, topBody, candleW, visibleBodyH, Math.min(3, candleW / 2));
                     ctx.fill();
                 }
                 ctx.restore();
@@ -970,7 +983,7 @@
                 ctx.arc(hx, hy, 4, 0, Math.PI * 2);
                 ctx.fill();
 
-                const lblW = 58;
+                const lblW = 72;
                 const lblX = Math.max(padLeft, Math.min(W - padRight - lblW, hx - lblW / 2));
                 ctx.fillStyle = '#000000';
                 drawRoundRect(ctx, lblX, H - padBottom + 4, lblW, 18, 4);
@@ -1000,7 +1013,7 @@
                 const padLeft = 12;
                 const padRight = 64;
                 const plotW = rect.width - padLeft - padRight;
-                const series = cachedTradingSeries[activeTradingRange] || [];
+                const series = getVisibleCandles();
                 if (!series.length || plotW <= 0) return;
 
                 const relX = clientX - rect.left - padLeft;
