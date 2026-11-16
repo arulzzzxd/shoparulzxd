@@ -3967,7 +3967,6 @@ app.get('/api/dashboard-stats', async (req, res) => {
         const now = moment().tz(TIMEZONE);
         const startOfToday = now.clone().startOf('day');
         const startOfYesterday = startOfToday.clone().subtract(1, 'day');
-        const thirtyDaysAgo = startOfToday.clone().subtract(29, 'days');
 
         const getTrxTimeMs = (trx) => {
             if (trx.createdAt) {
@@ -4079,11 +4078,11 @@ app.get('/api/dashboard-stats', async (req, res) => {
             };
         });
 
-        // Urutkan terlama -> terbaru dari seluruh riwayat transaksi untuk membentuk candle OHLC Analisis Pasar
+        // Urutkan terlama -> terbaru dari seluruh riwayat transaksi untuk membentuk candle OHLC per 1 jam
         const allTrxAsc = [...allTrxDesc].reverse();
 
-        function generateStockCandles(startMs, stepMs, bucketCount, trxItems, labelFormatter) {
-            // Baseline indeks agar transaksi batal selalu dapat turun membentuk candle merah (close < open)
+        function generateHourlyCandles(startMs, bucketCount, trxItems, labelFormatter) {
+            const hourMs = 60 * 60 * 1000;
             const BASE_INDEX = trxItems.length > 0 ? 25000 : 0;
             let runningVal = BASE_INDEX;
             let idx = 0;
@@ -4102,8 +4101,8 @@ app.get('/api/dashboard-stats', async (req, res) => {
 
             const candles = [];
             for (let b = 0; b < bucketCount; b++) {
-                const bucketStart = startMs + b * stepMs;
-                const bucketEnd = bucketStart + stepMs;
+                const bucketStart = startMs + b * hourMs;
+                const bucketEnd = bucketStart + hourMs;
                 const isLastBucket = b === bucketCount - 1;
 
                 const open = runningVal;
@@ -4140,7 +4139,6 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 }
 
                 let close = runningVal;
-                // Jika dalam periode hanya ada transaksi batal dan nilai menyentuh batas bawah, pastikan close < open agar candle merah tampil
                 if (cancelCount > 0 && lunasCount === 0 && close >= open) {
                     close = Math.max(500, open - 1000);
                     runningVal = close;
@@ -4165,54 +4163,46 @@ app.get('/api/dashboard-stats', async (req, res) => {
             return candles;
         }
 
-        const hourMs = 60 * 60 * 1000;
-        const dayMs = 24 * hourMs;
+        const currentHourStart = now.clone().startOf('hour');
 
-        // 1 Hari: 24 candle (per 1 jam terakhir)
-        const start1d = now.clone().subtract(23, 'hours').startOf('hour').valueOf();
-        const candles1d = generateStockCandles(
+        // 1 Hari: 24 candle per 1 jam (setiap jam membuat candle baru)
+        const start1d = currentHourStart.clone().subtract(23, 'hours').valueOf();
+        const candles1d = generateHourlyCandles(
             start1d,
-            hourMs,
             24,
             allTrxAsc,
             (ms) => moment(ms).tz(TIMEZONE).locale('id').format('HH:mm')
         );
 
-        // 7 Hari: 28 candle (per 6 jam selama 7 hari terakhir)
-        const sixHourMs = 6 * hourMs;
-        const start7d = startOfToday.clone().subtract(6, 'days').valueOf();
-        const candles7d = generateStockCandles(
+        // 7 Hari: 168 candle per 1 jam (7 x 24 jam)
+        const start7d = currentHourStart.clone().subtract(167, 'hours').valueOf();
+        const candles7d = generateHourlyCandles(
             start7d,
-            sixHourMs,
-            28,
+            168,
             allTrxAsc,
-            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM')
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD/MM HH:mm')
         );
 
-        // 1 Bulan: 30 candle (per 1 hari selama 30 hari terakhir)
-        const start1m = thirtyDaysAgo.valueOf();
-        const candles1m = generateStockCandles(
+        // 1 Bulan: 720 candle per 1 jam (30 x 24 jam)
+        const start1m = currentHourStart.clone().subtract(719, 'hours').valueOf();
+        const candles1m = generateHourlyCandles(
             start1m,
-            dayMs,
-            30,
+            720,
             allTrxAsc,
-            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM')
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM HH:mm')
         );
 
-        // Semua Riwayat: dari transaksi pertama hingga sekarang
-        const firstTrxMs = allTrxAsc.length > 0 ? getTrxTimeMs(allTrxAsc[0]) : start1m;
-        const firstMomentWib = moment(firstTrxMs).tz(TIMEZONE).startOf('day');
-        const totalSpanMs = Math.max(dayMs, now.valueOf() - firstMomentWib.valueOf() + hourMs);
-        const allBuckets = 28;
-        const allStepMs = Math.ceil(totalSpanMs / allBuckets);
-        const isMultiYear = now.diff(firstMomentWib, 'days') > 330;
+        // Semua Riwayat: per 1 jam sejak transaksi pertama hingga jam saat ini
+        const firstTrxMs = allTrxAsc.length > 0 ? getTrxTimeMs(allTrxAsc[0]) : start1d;
+        const firstHourWib = moment(firstTrxMs).tz(TIMEZONE).startOf('hour');
+        const totalHoursAll = Math.min(2160, Math.max(24, currentHourStart.diff(firstHourWib, 'hours') + 1));
+        const startAllMs = currentHourStart.clone().subtract(totalHoursAll - 1, 'hours').valueOf();
 
-        const candlesAll = generateStockCandles(
-            firstMomentWib.valueOf(),
-            allStepMs,
-            allBuckets,
+        const candlesAll = generateHourlyCandles(
+            startAllMs,
+            totalHoursAll,
             allTrxAsc,
-            (ms) => moment(ms).tz(TIMEZONE).locale('id').format(isMultiYear ? 'DD MMM YY' : 'DD MMM')
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM HH:mm')
         );
 
         const systemLatency = latencyMetrics.length > 0 ? Math.round(latencyMetrics[0].avgLatency) : 12;
