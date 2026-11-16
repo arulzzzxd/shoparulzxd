@@ -3,44 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#FFDE59">
-    <title>ArulzXD Store - Katalog Source Code &amp; Produk Digital</title>
-    <meta name="description" content="ArulzXD Store: Tempat belanja Source Code, Script, dan Layanan Digital otomatis 24 jam.">
+    <title>ArulzXD Store - Dashboard & Market Analisis</title>
 
-    <!-- Favicon & Icons -->
     <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
     <link rel="shortcut icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
     <link rel="apple-touch-icon" href="https://cdn.larasxd.my.id/files/1wh5do.png">
 
     <!-- Open Graph / Facebook / WhatsApp / Telegram -->
     <meta property="og:type" content="website">
-    <meta property="og:locale" content="id_ID">
-    <meta property="og:site_name" content="ArulzXD Store">
-    <meta property="og:url" content="https://www.shoparulzxd.biz.id/">
-    <meta property="og:title" content="ArulzXD Store - Katalog Source Code & Produk Digital">
-    <meta property="og:description" content="Belanja Source Code, Script, dan Layanan Digital langsung diproses otomatis setelah pembayaran.">
-    <meta property="og:image" content="https://cdn.larasxd.my.id/files/7TZ5vL.jpg">
-    <meta property="og:image:secure_url" content="https://cdn.larasxd.my.id/files/7TZ5vL.jpg">
-    <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="ArulzXD Store">
+    <meta property="og:url" content="https://www.arulzxd.biz.id/dashboard">
+    <meta property="og:title" content="ArulzXD Store - Dashboard & Market Analisis">
+    <meta property="og:description" content="Pantau Statistik Transaksi, Pergerakan Market Candlestick Real-Time, dan Aktivitas Terbaru di ArulzXD Store.">
+    <meta property="og:image" content="https://cdn.larasxd.my.id/files/t19j.jpg">
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://www.shoparulzxd.biz.id/">
-    <meta name="twitter:title" content="ArulzXD Store - Katalog Source Code & Produk Digital">
-    <meta name="twitter:description" content="Belanja Source Code, Script, dan Layanan Digital langsung diproses otomatis setelah pembayaran.">
-    <meta name="twitter:image" content="https://cdn.larasxd.my.id/files/7TZ5vL.jpg">
-    <meta name="twitter:image:alt" content="ArulzXD Store">
-
-    <!-- Styles & Scripts -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/id.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.46/moment-timezone-with-data.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         tailwind.config = {
@@ -49,7 +32,6 @@
                     fontFamily: {
                         sans: ['Plus Jakarta Sans', 'sans-serif'],
                         cyber: ['Space Grotesk', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
                         neoYellow: '#FFDE59',
@@ -57,7 +39,6 @@
                         neoPink: '#FF79C6',
                         neoGreen: '#00E676',
                         neoBg: '#F4F0EA',
-                        neoPaper: '#FFFDF7',
                         neoCard: '#FFFFFF'
                     }
                 }
@@ -65,139 +46,71 @@
         }
     </script>
     <style>
-        body { background-color: #F4F0EA; color: #000000; overflow-x: hidden; }
+        body {
+            background-color: #F4F0EA;
+            color: #000000;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
 
         .neo-box {
             background-color: #FFFFFF;
-            border: 3px solid #000000;
+            border: 3.5px solid #000000;
             box-shadow: 5px 5px 0px #000000;
         }
 
-        .neo-btn {
-            border: 3px solid #000000;
-            box-shadow: 4px 4px 0px #000000;
-            transition: transform 0.12s ease, box-shadow 0.12s ease;
-        }
-        .neo-btn:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px #000000;
-        }
-        .neo-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px #000000;
-        }
-
-        /* Segmented Tab Timeframe */
-        .tf-group {
-            display: inline-flex;
-            background: #FFFFFF;
+        .neo-card-sm {
+            background-color: #FFFFFF;
             border: 2.5px solid #000000;
-            border-radius: 12px;
-            box-shadow: 3px 3px 0px #000000;
-            overflow: hidden;
-        }
-        .tf-tab {
-            padding: 7px 12px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            color: #000000;
-            background: #FFFFFF;
-            border-right: 2.5px solid #000000;
-            transition: background-color 0.15s ease;
-            cursor: pointer;
-        }
-        .tf-tab:last-child {
-            border-right: none;
-        }
-        .tf-tab.active {
-            background: #00E5FF;
-        }
-
-        /* Tombol Slide Pagination Neo-Brutalism */
-        .slide-btn {
-            border: 2.5px solid #000000;
-            box-shadow: 2.5px 2.5px 0px #000000;
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 900;
-            font-size: 11px;
-            transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
-        }
-        .slide-btn:hover:not(:disabled) {
-            transform: translate(-1px, -1px);
             box-shadow: 3.5px 3.5px 0px #000000;
         }
-        .slide-btn:active:not(:disabled) {
-            transform: translate(1.5px, 1.5px);
-            box-shadow: 1px 1px 0px #000000;
+        @media (min-width: 640px) {
+            .neo-card-sm {
+                border: 3.5px solid #000000;
+                box-shadow: 5px 5px 0px #000000;
+            }
         }
-        .slide-btn:disabled {
+
+        .neo-btn {
+            border: 2.5px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        @media (min-width: 640px) {
+            .neo-btn {
+                border: 3px solid #000000;
+                box-shadow: 4px 4px 0px #000000;
+            }
+        }
+        .neo-btn:hover:not(:disabled) {
+            transform: translate(-2px, -2px);
+            box-shadow: 5px 5px 0px #000000;
+        }
+        .neo-btn:active:not(:disabled) {
+            transform: translate(2px, 2px);
+            box-shadow: 1.5px 1.5px 0px #000000;
+        }
+        .neo-btn:disabled {
             opacity: 0.45;
             cursor: not-allowed;
         }
 
-        @keyframes trxSlideIn {
-            from {
-                opacity: 0;
-                transform: translateX(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        .trx-slide-anim {
-            animation: trxSlideIn 0.22s ease-out;
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #F4F0EA; }
+        ::-webkit-scrollbar-thumb { background: #000000; border-radius: 4px; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .swal2-popup.cyber-swal {
+            background: #FFFFFF !important;
+            border: 3.5px solid #000000 !important;
+            border-radius: 20px !important;
+            color: #000000 !important;
+            box-shadow: 6px 6px 0px #000000 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
 
-        /* Garis Pembatas Solid untuk Tabel Status Transaksi */
-        .neo-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .neo-table thead tr {
-            border-bottom: 3px solid #000000;
-        }
-        .neo-table th {
-            border-right: 3px solid #000000;
-        }
-        .neo-table th:last-child {
-            border-right: none;
-        }
-        .neo-table tbody tr {
-            border-bottom: 2.5px solid #000000;
-        }
-        .neo-table tbody tr:last-child {
-            border-bottom: none;
-        }
-        .neo-table td {
-            border-right: 2.5px solid #000000;
-        }
-        .neo-table td:last-child {
-            border-right: none;
-        }
-
-        /* Custom Scrollbar & Native Touch Scroll untuk Tabel */
-        .neo-scroll {
-            -webkit-overflow-scrolling: touch;
-            touch-action: pan-x pan-y;
-        }
-        .neo-scroll::-webkit-scrollbar {
-            height: 8px;
-        }
-        .neo-scroll::-webkit-scrollbar-track {
-            background: #F4F0EA;
-            border-top: 2.5px solid #000000;
-        }
-        .neo-scroll::-webkit-scrollbar-thumb {
-            background: #FFDE59;
-            border: 2px solid #000000;
-            border-radius: 99px;
-        }
-
-        /* BOTTOM NAVIGATION BAR */
+        /* FLUID CURVED NOTCH BOTTOM NAVIGATION BAR */
         .bottom-nav-fixed {
             position: fixed;
             bottom: 20px;
@@ -206,14 +119,14 @@
             width: 92%;
             max-width: 440px;
             height: 64px;
-            z-index: 9999;
+            z-index: 40;
         }
 
         .bottom-nav-bg {
             position: absolute;
             inset: 0;
             background: #FFFFFF;
-            border: 3px solid #000000;
+            border: 3.5px solid #000000;
             border-radius: 32px;
             box-shadow: 5px 5px 0px #000000;
         }
@@ -252,11 +165,7 @@
             background: transparent;
         }
 
-        .nav-item-btn i {
-            font-size: 18px;
-            transition: all 0.3s ease;
-        }
-
+        .nav-item-btn i { font-size: 18px; transition: all 0.3s ease; }
         .nav-item-btn span {
             font-size: 10px;
             font-weight: 800;
@@ -269,611 +178,482 @@
         .nav-item-btn.active .nav-icon-box {
             transform: translateY(-22px);
             background-color: #FFDE59;
-            border: 3px solid #000000;
+            border: 3.5px solid #000000;
             box-shadow: 3px 3px 0px #000000;
         }
 
         .nav-item-btn.active i { font-size: 20px; }
-
         .nav-item-btn.active span {
             color: #000000;
             font-weight: 900;
             transform: translateY(-2px);
         }
 
-        .nav-item-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            width: 5px;
-            height: 5px;
-            background-color: #000000;
-            border-radius: 50%;
+        /* TOUCHSCREEN VERTICAL SCROLL UNTUK RIWAYAT TRANSAKSI (TANPA SWIPE SLIDE) */
+        #trxScrollContainer {
+            max-height: 420px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            touch-action: pan-y;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
-<body class="font-sans antialiased text-black min-h-screen pb-32">
+<body class="font-sans antialiased text-black min-h-screen pb-36">
+
+    <!-- FLOATING LIVE CHAT WIDGET POP-UP -->
+    <div id="liveChatWidgetContainer">
+        <div id="floatingChatWindow" class="fixed bottom-24 right-4 sm:right-6 z-[99999] hidden w-[calc(100vw-2rem)] max-w-[360px] h-[420px] max-h-[calc(100vh-120px)] bg-white border-3 border-black rounded-2xl shadow-[6px_6px_0px_#000] overflow-hidden flex flex-col transition-all duration-300">
+            
+            <!-- HEADER WINDOW -->
+            <div class="bg-neoYellow p-3 border-b-3 border-black flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="relative">
+                        <div class="w-8 h-8 rounded-full bg-white text-black border-2 border-black flex items-center justify-center font-bold text-xs shadow-[2px_2px_0px_#000]">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-neoGreen border border-black rounded-full"></span>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-black font-cyber text-black">Customer Support</h3>
+                        <p class="text-[9px] text-black font-mono font-bold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-neoGreen animate-pulse"></span> Online 24/7
+                        </p>
+                    </div>
+                </div>
+                <button onclick="toggleChatWidget()" class="text-black font-black text-base transition p-1 hover:scale-110">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- AREA CHAT MESSAGES -->
+            <div id="widgetChatMessages" class="flex-1 p-3 overflow-y-auto space-y-3 bg-neoBg scroll-smooth">
+                <div class="text-center text-[11px] text-slate-600 font-mono my-2 font-bold">Halo! Ada yang bisa kami bantu seputar transaksi?</div>
+            </div>
+
+            <!-- FORM KIRIM PESAN -->
+            <form id="widgetChatForm" onsubmit="sendWidgetMessage(event)" class="p-2.5 bg-white border-t-3 border-black flex items-center gap-2 shrink-0">
+                <input type="text" id="widgetChatInput" required placeholder="Tuliskan pesan Anda..." 
+                       class="flex-1 bg-neoBg border-2 border-black rounded-xl px-3 py-2 text-xs text-black font-bold placeholder-slate-500 focus:outline-none">
+                <button type="submit" class="neo-btn w-9 h-9 rounded-xl bg-neoYellow text-black flex items-center justify-center shrink-0 font-black">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </form>
+        </div>
+    </div>
 
     <!-- TOP NAVBAR -->
-    <header class="sticky top-0 z-40 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="/" class="text-2xl font-black font-cyber tracking-tight text-black">
-                Arulz<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">Store</span>
+    <nav class="sticky top-0 z-30 bg-neoYellow border-b-3 border-black shadow-[0_4px_0_#000]">
+        <div class="max-w-6xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2.5">
+            <a href="/dashboard" class="text-xl sm:text-2xl font-black font-cyber tracking-tight text-black flex-shrink-0">
+                Arulz<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">XD</span>
             </a>
-            <span class="text-xs font-cyber font-black bg-white text-black px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] flex items-center gap-1.5">
-                <span class="w-2.5 h-2.5 rounded-full bg-neoGreen border border-black animate-pulse"></span>
-                <span>Layanan Aktif</span>
-            </span>
-        </div>
-    </header>
 
-    <!-- MAIN DASHBOARD CONTENT -->
-    <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
-
-        <!-- WELCOME BANNER -->
-        <section class="p-6 sm:p-8 neo-box rounded-2xl bg-neoCyan relative overflow-hidden">
-            <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div>
-                    <span class="inline-flex items-center gap-1.5 bg-white border-2 border-black text-black text-xs font-black px-3 py-1 rounded-md uppercase font-cyber shadow-[2px_2px_0px_#000] mb-3">
-                        <i class="fa-solid fa-store"></i> Beranda Toko
-                    </span>
-                    <h1 class="text-2xl sm:text-4xl font-black text-black font-cyber tracking-tight">
-                        Halo, <span id="dashUsername" class="underline decoration-wavy decoration-black">Pengunjung</span>!
-                    </h1>
-                    <p class="text-xs sm:text-sm font-bold text-black mt-2 max-w-xl">
-                        Lihat perkembangan penjualan, pergerakan transaksi harian, dan pesanan terbaru di ArulzXD Store.
-                    </p>
-                </div>
-                <a href="/store" class="neo-btn bg-neoYellow text-black font-cyber font-black px-5 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-bag-shopping"></i> Lihat Katalog
+            <div class="flex items-center gap-2">
+                <button onclick="toggleChatWidget()" class="neo-btn bg-white text-black px-3 py-1.5 rounded-xl text-xs font-black font-cyber flex items-center gap-1.5">
+                    <i class="fa-solid fa-headset"></i> <span class="hidden sm:inline">Live Chat</span>
+                </button>
+                <a href="/store" class="neo-btn bg-neoCyan text-black px-3 py-1.5 rounded-xl text-xs font-black font-cyber flex items-center gap-1.5">
+                    <i class="fa-solid fa-bag-shopping"></i> <span>Ke Toko</span>
                 </a>
             </div>
-        </section>
-
-        <!-- STATS CARDS -->
-        <section aria-label="Ringkasan Toko" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
-            <div class="neo-box p-4 rounded-xl">
-                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
-                    <span>Member</span>
-                    <i class="fa-solid fa-users text-lg"></i>
-                </div>
-                <h2 id="statTotalUsers" class="text-2xl font-black font-cyber">0</h2>
-            </div>
-            <div class="neo-box p-4 rounded-xl bg-neoPink">
-                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
-                    <span>Produk</span>
-                    <i class="fa-solid fa-box-open text-lg"></i>
-                </div>
-                <h2 id="statTotalProducts" class="text-2xl font-black font-cyber">0</h2>
-            </div>
-            <div class="neo-box p-4 rounded-xl bg-neoYellow">
-                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
-                    <span>Total Order</span>
-                    <i class="fa-solid fa-cart-shopping text-lg"></i>
-                </div>
-                <h2 id="statTotalTrx" class="text-2xl font-black font-cyber">0</h2>
-            </div>
-            <div class="neo-box p-4 rounded-xl bg-neoGreen">
-                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
-                    <span>Berhasil</span>
-                    <i class="fa-solid fa-circle-check text-lg"></i>
-                </div>
-                <h2 id="statSuccessTrx" class="text-2xl font-black font-cyber">0</h2>
-            </div>
-            <div class="neo-box p-4 rounded-xl bg-neoCyan">
-                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
-                    <span>Hari Ini</span>
-                    <i class="fa-solid fa-calendar-day text-lg"></i>
-                </div>
-                <h2 id="statTrxToday" class="text-2xl font-black font-cyber">0</h2>
-            </div>
-            <div class="neo-box p-4 rounded-xl">
-                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
-                    <span>Kemarin</span>
-                    <i class="fa-solid fa-clock-rotate-left text-lg"></i>
-                </div>
-                <h2 id="statTrxYesterday" class="text-2xl font-black font-cyber">0</h2>
-            </div>
-        </section>
-
-        <!-- ANALITIK PASAR LIGHT NEO-BRUTALISM (TRADING SAHAM STYLE) -->
-        <section class="neo-box rounded-2xl overflow-hidden bg-white text-black">
-            <!-- Top Header: Pair & Tombol 1 Hari / 7 Hari / 1 Bulan / Semua -->
-            <div class="bg-neoYellow border-b-[3px] border-black px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
-                <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-white text-black border-[3px] border-black flex items-center justify-center font-black text-lg shadow-[3px_3px_0_#000] shrink-0">
-                        <i class="fa-solid fa-chart-line"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h3 class="text-base sm:text-lg font-black font-cyber tracking-tight text-black">
-                                ARULZ / IDR
-                            </h3>
-                            <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-extrabold bg-neoGreen text-black border-2 border-black px-2 py-0.5 rounded-md">
-                                <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
-                                LIVE WIB
-                            </span>
-                        </div>
-                        <p id="tradingSubtitle" class="text-xs font-bold text-black/80 mt-0.5">
-                            Grafik transaksi 7 hari terakhir (seluruh riwayat terakumulasi)
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Tombol Segmented Timeframe -->
-                <div class="tf-group self-start sm:self-auto" role="group" aria-label="Pilih Rentang Waktu">
-                    <button id="btnTf1d" type="button" onclick="setTradingRange('1d')" class="tf-tab">1 Hari</button>
-                    <button id="btnTf7d" type="button" onclick="setTradingRange('7d')" class="tf-tab active">7 Hari</button>
-                    <button id="btnTf1m" type="button" onclick="setTradingRange('1m')" class="tf-tab">1 Bulan</button>
-                    <button id="btnTfall" type="button" onclick="setTradingRange('all')" class="tf-tab">Semua</button>
-                </div>
-            </div>
-
-            <!-- Strip Statistik Terpadu -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 border-b-[3px] border-black bg-white divide-y-[2.5px] lg:divide-y-0 divide-x-0 lg:divide-x-[2.5px] divide-black font-mono">
-                <div class="p-3.5 sm:px-5 border-r-[2.5px] lg:border-r-0 border-black">
-                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Indeks Nilai</div>
-                    <div class="flex items-center gap-2 mt-1 flex-wrap">
-                        <span id="tdCloseMain" class="text-base sm:text-lg font-black text-black">Rp 0</span>
-                        <span id="tdChangeBadge" class="text-[10px] font-black px-1.5 py-0.5 rounded border-2 border-black bg-neoGreen text-black">
-                            +0.0%
-                        </span>
-                    </div>
-                </div>
-
-                <div class="p-3.5 sm:px-5">
-                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Omzet Periode</div>
-                    <div id="tdOmzetVal" class="text-base sm:text-lg font-black text-black mt-1 truncate">
-                        Rp 0
-                    </div>
-                </div>
-
-                <div class="p-3.5 sm:px-5 border-r-[2.5px] lg:border-r-0 border-black">
-                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Puncak / Lembah</div>
-                    <div class="flex items-center gap-2 mt-1 text-xs sm:text-sm font-black">
-                        <span class="text-emerald-700" id="tdHighVal">H: 0</span>
-                        <span class="text-gray-400">/</span>
-                        <span class="text-rose-600" id="tdLowVal">L: 0</span>
-                    </div>
-                </div>
-
-                <div class="p-3.5 sm:px-5">
-                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Order Lunas</div>
-                    <div id="tdLunasCount" class="text-base sm:text-lg font-black text-black mt-1">
-                        0 Order
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bar Legenda & Info Hover Candle -->
-            <div class="bg-neoBg border-b-[3px] border-black px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono font-bold">
-                <div class="flex items-center gap-4">
-                    <span class="flex items-center gap-1.5 text-black">
-                        <span class="w-3 h-3 rounded-sm bg-[#00C076] border border-black inline-block"></span>
-                        <span>Naik (Bullish)</span>
-                    </span>
-                    <span class="flex items-center gap-1.5 text-black">
-                        <span class="w-3 h-3 rounded-sm bg-[#F23645] border border-black inline-block"></span>
-                        <span>Turun (Bearish)</span>
-                    </span>
-                </div>
-                <div id="candleHoverInfo" class="text-[11px] font-extrabold text-black">
-                    Sentuh grafik untuk detail candle
-                </div>
-            </div>
-
-            <!-- Canvas Grafik Candlestick Saham -->
-            <div id="tradingChartWrapper" class="relative w-full bg-[#FFFDF7]">
-                <canvas id="tradingCanvas" class="w-full h-[320px] sm:h-[380px] block cursor-crosshair"></canvas>
-            </div>
-        </section>
-
-        <!-- STATUS TRANSAKSI NEO-BRUTALISME DENGAN GARIS PEMBATAS TEGAS & SLIDE BUTTONS -->
-        <section class="neo-box rounded-2xl overflow-hidden bg-white">
-            <div class="bg-neoCyan border-b-[3px] border-black px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-white border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0_#000] shrink-0">
-                        <i class="fa-solid fa-receipt text-lg"></i>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <h3 class="text-base sm:text-lg font-black font-cyber tracking-tight text-black">
-                                Status Transaksi Terbaru
-                            </h3>
-                            <span id="trxCountBadge" class="text-[10px] font-mono font-extrabold bg-black text-neoYellow px-2 py-0.5 rounded-md">
-                                0 ORDER
-                            </span>
-                            <span id="trxSlideBadge" class="hidden text-[10px] font-mono font-extrabold bg-neoYellow text-black border-2 border-black px-2 py-0.5 rounded-md">
-                                SLIDE 1
-                            </span>
-                        </div>
-                        <p class="text-xs font-bold text-black/80 mt-0.5">
-                            Semua riwayat pesanan yang masuk dan diproses di toko (WIB)
-                        </p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 self-start sm:self-auto">
-                    <span id="trxLastSync" class="inline-flex items-center gap-1.5 text-[11px] font-mono font-extrabold bg-white border-2 border-black px-3 py-1.5 rounded-lg shadow-[2px_2px_0_#000]">
-                        <span class="w-2 h-2 rounded-full bg-neoGreen border border-black"></span>
-                        <span>Baru diperbarui</span>
-                    </span>
-                </div>
-            </div>
-
-            <div class="p-4 sm:p-5 bg-neoPaper">
-                <!-- Geser horizontal touchscreen hanya menggulir kolom tabel yang tersembunyi -->
-                <div id="trxTableScrollWrapper" class="overflow-x-auto neo-scroll rounded-xl border-[3px] border-black shadow-[4px_4px_0_#000] bg-white">
-                    <table class="neo-table text-left text-xs font-bold min-w-[720px]">
-                        <thead>
-                            <tr class="bg-neoYellow font-cyber uppercase tracking-wider text-[11px] text-black">
-                                <th class="p-3.5">Order &amp; Waktu</th>
-                                <th class="p-3.5">Pelanggan</th>
-                                <th class="p-3.5">Item &amp; Metode</th>
-                                <th class="p-3.5">Nominal</th>
-                                <th class="p-3.5 text-center">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="transactionTableBody" class="bg-white">
-                            <tr>
-                                <td colspan="5" class="py-10 text-center font-mono font-bold text-gray-700">
-                                    Memuat daftar transaksi...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- KONTROL SLIDE TRANSAKSI (MUNCUL OTOMATIS JIKA TRANSAKSI > 10, PINDAH SLIDE HANYA LEWAT TOMBOL) -->
-                <div id="trxPaginationContainer" class="hidden mt-4 pt-4 border-t-[2.5px] border-dashed border-black flex-col sm:flex-row items-center justify-between gap-3">
-                    <div id="trxPaginationInfo" class="text-xs font-mono font-extrabold text-black bg-white border-2 border-black px-3 py-1.5 rounded-lg shadow-[2px_2px_0_#000]">
-                        Menampilkan 1-10 dari 0 transaksi
-                    </div>
-                    <div id="trxPaginationButtons" class="flex flex-wrap items-center justify-center gap-1.5">
-                        <!-- Tombol Slide 1, Slide 2, dst. dirender lewat JavaScript -->
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- FOOTER SITELINKS -->
-    <footer class="max-w-6xl mx-auto px-4 mt-4 mb-4 text-center">
-        <div class="neo-box p-4 rounded-2xl bg-white flex flex-wrap items-center justify-center gap-4 text-xs font-black font-cyber">
-            <a href="/store" class="hover:underline">Katalog Toko</a>
-            <span>•</span>
-            <a href="/login" class="hover:underline">Masuk &amp; Daftar</a>
-            <span>•</span>
-            <a href="/deposit" class="hover:underline">Isi Saldo</a>
-            <span>•</span>
-            <a href="/riwayat" class="hover:underline">Riwayat Pesanan</a>
-            <span>•</span>
-            <a href="/privacy" class="hover:underline">Kebijakan Privasi</a>
         </div>
-    </footer>
+    </nav>
 
-    <!-- FIXED BOTTOM NAV BAR -->
-    <nav aria-label="Navigasi Utama" class="bottom-nav-fixed">
+    <!-- MAIN CONTAINER -->
+    <div class="max-w-6xl mx-auto px-3 sm:px-4 py-5 sm:py-6 space-y-5 sm:space-y-6">
+
+        <!-- HERO BANNER & USER SALDO -->
+        <div class="neo-box rounded-2xl p-4 sm:p-6 bg-neoCyan flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1.5">
+                <span class="inline-flex items-center gap-1.5 bg-white border-2 border-black text-black text-[10px] sm:text-xs font-black px-2.5 py-0.5 rounded-md uppercase font-cyber shadow-[2px_2px_0px_#000]">
+                    <i class="fa-solid fa-chart-line"></i> Live Market & Store Analytics
+                </span>
+                <h1 id="welcomeGreeting" class="text-xl sm:text-3xl font-black font-cyber text-black tracking-tight">
+                    Selamat Datang di ArulzXD
+                </h1>
+                <p class="text-xs font-bold text-black/80">
+                    Pantau pergerakan order masuk, order dibatalkan, serta riwayat transaksi real-time (WIB).
+                </p>
+            </div>
+
+            <div class="neo-box rounded-xl p-3.5 bg-white flex items-center justify-between sm:justify-end gap-4 shrink-0">
+                <div>
+                    <p class="text-[10px] font-black font-cyber uppercase text-slate-600">Saldo Akun Anda</p>
+                    <p id="userBalanceDisplay" class="text-base sm:text-xl font-black font-cyber text-black">Rp 0</p>
+                </div>
+                <a href="/deposit" class="neo-btn bg-neoGreen text-black px-3.5 py-2 rounded-xl text-xs font-black font-cyber uppercase flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i> Top Up
+                </a>
+            </div>
+        </div>
+
+        <!-- 4 KARTU METRIK UTAMA -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="neo-card-sm rounded-2xl p-3.5 sm:p-4 bg-white space-y-1.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] sm:text-xs font-black font-cyber uppercase text-slate-600">Total Produk</span>
+                    <span class="w-7 h-7 rounded-lg bg-neoYellow border-2 border-black flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-box"></i>
+                    </span>
+                </div>
+                <p id="statTotalProducts" class="text-xl sm:text-2xl font-black font-cyber text-black">0</p>
+                <p class="text-[10px] font-bold text-slate-500">Katalog aktif siap order</p>
+            </div>
+
+            <div class="neo-card-sm rounded-2xl p-3.5 sm:p-4 bg-white space-y-1.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] sm:text-xs font-black font-cyber uppercase text-slate-600">Order Lunas</span>
+                    <span class="w-7 h-7 rounded-lg bg-neoGreen border-2 border-black flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </span>
+                </div>
+                <p id="statTotalSuccess" class="text-xl sm:text-2xl font-black font-cyber text-emerald-600">0</p>
+                <p class="text-[10px] font-bold text-slate-500">Transaksi sukses terkonfirmasi</p>
+            </div>
+
+            <div class="neo-card-sm rounded-2xl p-3.5 sm:p-4 bg-white space-y-1.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] sm:text-xs font-black font-cyber uppercase text-slate-600">Order Batal</span>
+                    <span class="w-7 h-7 rounded-lg bg-neoPink border-2 border-black flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-ban"></i>
+                    </span>
+                </div>
+                <p id="statTotalCancelled" class="text-xl sm:text-2xl font-black font-cyber text-rose-600">0</p>
+                <p class="text-[10px] font-bold text-slate-500">Dibatalkan / Kedaluwarsa</p>
+            </div>
+
+            <div class="neo-card-sm rounded-2xl p-3.5 sm:p-4 bg-white space-y-1.5">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] sm:text-xs font-black font-cyber uppercase text-slate-600">Total Member</span>
+                    <span class="w-7 h-7 rounded-lg bg-neoCyan border-2 border-black flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-users"></i>
+                    </span>
+                </div>
+                <p id="statTotalUsers" class="text-xl sm:text-2xl font-black font-cyber text-black">0</p>
+                <p class="text-[10px] font-bold text-slate-500">Pengguna terdaftar</p>
+            </div>
+        </div>
+
+        <!-- MARKET ANALISIS CANDLESTICK CHART -->
+        <div class="neo-box rounded-2xl p-4 sm:p-5 bg-[#12161C] text-white space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-[#00C076] animate-pulse"></span>
+                        <h2 class="text-sm sm:text-base font-black font-cyber uppercase tracking-wider text-white">
+                            ARULZXD / IDR • MARKET ANALISIS
+                        </h2>
+                    </div>
+                    <p id="candleHoverInfo" class="text-[11px] font-mono text-slate-300 mt-1">
+                        Sentuh atau arahkan kursor pada candle untuk melihat detail Lunas &amp; Batal
+                    </p>
+                </div>
+
+                <!-- TIMEFRAME SELECTOR -->
+                <div class="flex items-center gap-1.5 bg-[#1B2028] p-1 rounded-xl border border-slate-700 self-start sm:self-auto">
+                    <button type="button" onclick="setChartTimeframe('1H')" data-tf="1H" class="tf-btn px-2.5 py-1 rounded-lg text-[11px] font-black font-cyber bg-neoYellow text-black">1J</button>
+                    <button type="button" onclick="setChartTimeframe('24H')" data-tf="24H" class="tf-btn px-2.5 py-1 rounded-lg text-[11px] font-black font-cyber text-slate-300 hover:text-white">24J</button>
+                    <button type="button" onclick="setChartTimeframe('7D')" data-tf="7D" class="tf-btn px-2.5 py-1 rounded-lg text-[11px] font-black font-cyber text-slate-300 hover:text-white">7H</button>
+                    <button type="button" onclick="setChartTimeframe('30D')" data-tf="30D" class="tf-btn px-2.5 py-1 rounded-lg text-[11px] font-black font-cyber text-slate-300 hover:text-white">30H</button>
+                </div>
+            </div>
+
+            <!-- LEGEND HIJAU vs MERAH -->
+            <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono">
+                <div class="flex items-center gap-4">
+                    <span class="flex items-center gap-1.5 text-[#00C076] font-bold">
+                        <span class="w-3 h-3 rounded-sm bg-[#00C076] inline-block"></span> Naik (Order Lunas)
+                    </span>
+                    <span class="flex items-center gap-1.5 text-[#F23645] font-bold">
+                        <span class="w-3 h-3 rounded-sm bg-[#F23645] inline-block"></span> Turun (Order Dibatalkan)
+                    </span>
+                </div>
+                <span id="chartTimezoneBadge" class="text-slate-400">Zona Waktu: Asia/Jakarta (WIB)</span>
+            </div>
+
+            <!-- CANVAS CANDLESTICK -->
+            <div class="relative w-full h-[270px] sm:h-[320px] bg-[#0D1015] rounded-xl border border-slate-800 overflow-hidden">
+                <canvas id="marketCandleCanvas" class="w-full h-full block cursor-crosshair"></canvas>
+            </div>
+        </div>
+
+        <!-- RIWAYAT TRANSAKSI MASUK TERBARU (PAGINATION SLIDE KHUSUS TOMBOL + SCROLL TOUCHSCREEN) -->
+        <div class="neo-box rounded-2xl p-4 sm:p-5 bg-white space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-black pb-3">
+                <div>
+                    <h3 class="text-sm sm:text-base font-black font-cyber uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left bg-neoYellow border border-black px-1.5 py-0.5 rounded"></i>
+                        Riwayat Transaksi Masuk
+                    </h3>
+                    <p class="text-[11px] font-bold text-slate-600 mt-0.5">
+                        Menampilkan seluruh riwayat transaksi terbaru (10 per slide, geser ke bawah untuk melihat item tersembunyi).
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-2 self-end sm:self-auto">
+                    <span id="trxTotalCounter" class="text-[11px] font-black font-cyber bg-neoBg border-2 border-black px-2.5 py-1 rounded-lg">
+                        Total: 0 Transaksi
+                    </span>
+                    <button type="button" onclick="fetchDashboardStats()" title="Muat Ulang Data" class="neo-btn bg-neoCyan text-black w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- AREA LIST TRANSAKSI DENGAN SCROLL VERTIKAL TOUCHSCREEN -->
+            <div id="trxScrollContainer" class="space-y-2.5 pr-1">
+                <div class="text-center py-8 text-xs font-bold text-slate-500 animate-pulse">
+                    Memuat data transaksi real-time...
+                </div>
+            </div>
+
+            <!-- KONTROL SLIDE PAGINATION KHUSUS TOMBOL -->
+            <div id="trxPaginationBar" class="hidden flex items-center justify-between pt-3 border-t-2 border-black">
+                <button type="button" id="btnPrevSlide" onclick="changeTrxSlide(-1)"
+                        class="neo-btn bg-white text-black px-3.5 py-2 rounded-xl text-xs font-black font-cyber flex items-center gap-1.5">
+                    <i class="fa-solid fa-chevron-left"></i> <span>Slide Sebelumnya</span>
+                </button>
+
+                <span id="trxSlideIndicator" class="text-xs font-black font-cyber bg-neoYellow border-2 border-black px-3 py-1 rounded-lg">
+                    Slide 1 / 1
+                </span>
+
+                <button type="button" id="btnNextSlide" onclick="changeTrxSlide(1)"
+                        class="neo-btn bg-neoYellow text-black px-3.5 py-2 rounded-xl text-xs font-black font-cyber flex items-center gap-1.5">
+                    <span>Slide Berikutnya</span> <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CURVED ANIMATED BOTTOM NAV BAR -->
+    <div class="bottom-nav-fixed">
         <div class="bottom-nav-bg"></div>
         <div class="nav-items-wrapper">
-            <a href="/" title="Beranda ArulzXD Store" class="nav-item-btn active">
+            <a href="/dashboard" class="nav-item-btn active">
                 <div class="nav-icon-box">
                     <i class="fa-solid fa-house"></i>
                 </div>
                 <span>Home</span>
             </a>
-            <a href="/store" title="Katalog Toko" class="nav-item-btn">
+            <a href="/store" class="nav-item-btn">
                 <div class="nav-icon-box">
                     <i class="fa-solid fa-bag-shopping"></i>
                 </div>
                 <span>Toko</span>
             </a>
-            <a href="/deposit" title="Isi Saldo" class="nav-item-btn">
+            <a href="/deposit" class="nav-item-btn">
                 <div class="nav-icon-box">
                     <i class="fa-solid fa-wallet"></i>
                 </div>
                 <span>Deposit</span>
             </a>
-            <a href="/riwayat" title="Riwayat Pesanan" class="nav-item-btn">
+            <a href="/riwayat" class="nav-item-btn">
                 <div class="nav-icon-box">
                     <i class="fa-solid fa-clock-rotate-left"></i>
                 </div>
                 <span>Riwayat</span>
             </a>
-            <a href="/login" id="nav-auth-link" title="Akun Saya" class="nav-item-btn">
+            <a href="/profile" class="nav-item-btn">
                 <div class="nav-icon-box">
                     <i class="fa-regular fa-user"></i>
                 </div>
-                <span id="nav-auth-label">Akun</span>
+                <span id="nav-auth-label">Profil</span>
             </a>
         </div>
-    </nav>
-
-    <noscript id="arulz-noscript-fallback">
-        <h1>ArulzXD Store - Katalog Source Code &amp; Produk Digital</h1>
-        <p>Tempat belanja Source Code, Script, dan Layanan Digital otomatis 24 jam.</p>
-        <p>Navigasi: <a href="https://www.shoparulzxd.biz.id/store">Katalog Toko</a> · <a href="https://www.shoparulzxd.biz.id/login">Masuk &amp; Daftar</a> · <a href="https://www.shoparulzxd.biz.id/deposit">Isi Saldo</a> · <a href="https://www.shoparulzxd.biz.id/riwayat">Riwayat Pesanan</a> · <a href="https://www.shoparulzxd.biz.id/privacy">Kebijakan Privasi</a></p>
-    </noscript>
+    </div>
 
     <script>
-        const STORE_TIMEZONE = 'Asia/Jakarta';
-        if (window.moment) {
-            moment.locale('id');
-            if (moment.tz) {
-                moment.tz.setDefault(STORE_TIMEZONE);
-            }
-        }
+        let DASHBOARD_DATA = null;
+        let ACTIVE_TIMEFRAME = '1H';
+        let HOVERED_CANDLE_INDEX = -1;
 
-        let isInitialLoad = true;
-        let activeTradingRange = '7d';
-        let cachedTradingSeries = { '1d': [], '7d': [], '1m': [], 'all': [] };
-        let hoverCandleIndex = -1;
-
-        // State untuk Slide Status Transaksi (10 transaksi per slide, pindah slide hanya via tombol)
-        let allTransactions = [];
-        let currentTrxSlide = 1;
+        let ALL_TRANSACTIONS = [];
+        let CURRENT_TRX_SLIDE = 1;
         const TRX_PER_SLIDE = 10;
 
-        function maskOrderId(orderId) {
-            if (!orderId) return '-';
-            if (orderId.length <= 10) return orderId;
-            return `${orderId.substring(0, 6)}•••${orderId.substring(orderId.length - 4)}`;
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(angka || 0);
         }
 
         function formatCompactAxisVal(val) {
-            const num = Number(val || 0);
-            if (num >= 1000000) return `${(num / 1000000).toFixed(2).replace('.', ',')}Jt`;
-            if (num >= 1000) return `${(num / 1000).toFixed(1).replace('.', ',')}K`;
+            const num = Number(val) || 0;
+            if (Math.abs(num) >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (Math.abs(num) >= 1000) return (num / 1000).toFixed(1) + 'K';
             return String(Math.round(num));
         }
 
-        function formatRelativeTime(dateInput) {
-            if (!dateInput) return '-';
-            if (window.moment && moment.tz) {
-                const m = moment.tz(dateInput, STORE_TIMEZONE).locale('id');
-                if (!m.isValid()) return '-';
-                if (moment.tz(STORE_TIMEZONE).diff(m, 'seconds') < 60) return 'Baru saja';
-                return m.fromNow();
-            }
-            const diffSec = Math.floor((Date.now() - new Date(dateInput).getTime()) / 1000);
-            if (diffSec < 60) return 'Baru saja';
-            const diffMin = Math.floor(diffSec / 60);
-            if (diffMin < 60) return `${diffMin} menit lalu`;
-            const diffHour = Math.floor(diffMin / 60);
-            if (diffHour < 24) return `${diffHour} jam lalu`;
-            return `${Math.floor(diffHour / 24)} hari lalu`;
-        }
-
-        function formatClockTime(dateInput) {
-            if (!dateInput) return '';
-            if (window.moment && moment.tz) {
-                const m = moment.tz(dateInput, STORE_TIMEZONE);
-                return m.isValid() ? `${m.format('HH:mm')} WIB` : '';
-            }
-            return new Date(dateInput).toLocaleTimeString('id-ID', {
-                timeZone: STORE_TIMEZONE,
-                hour: '2-digit',
-                minute: '2-digit'
-            }) + ' WIB';
-        }
-
-        function escapeHtml(text) {
-            return String(text || '')
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
-        }
-
-        function animateCounter(elementId, targetValue) {
-            const el = document.getElementById(elementId);
-            if (!el) return;
-
-            if (!isInitialLoad) {
-                el.innerText = Number(targetValue || 0).toLocaleString('id-ID');
-                return;
-            }
-
-            if (targetValue === 0) {
-                el.innerText = '0';
-                return;
-            }
-
-            let start = 0;
-            const duration = 700;
-            const stepTime = 16;
-            const increment = targetValue / (duration / stepTime);
-
-            const timer = setInterval(() => {
-                start += increment;
-                if (start >= targetValue) {
-                    el.innerText = targetValue.toLocaleString('id-ID');
-                    clearInterval(timer);
-                } else {
-                    el.innerText = Math.floor(start).toLocaleString('id-ID');
-                }
-            }, stepTime);
-        }
-
-        function setTradingRange(range) {
-            activeTradingRange = range;
-            hoverCandleIndex = -1;
-
-            ['1d', '7d', '1m', 'all'].forEach(key => {
-                const btn = document.getElementById(`btnTf${key}`);
-                if (!btn) return;
-                btn.classList.toggle('active', key === range);
-            });
-
-            const descMap = {
-                '1d': 'Grafik transaksi 24 jam terakhir (per jam WIB)',
-                '7d': 'Grafik transaksi 7 hari terakhir (seluruh riwayat terakumulasi)',
-                '1m': 'Grafik transaksi 30 hari terakhir (seluruh riwayat terakumulasi)',
-                'all': 'Grafik seluruh riwayat transaksi masuk dari awal hingga sekarang'
-            };
-            const subEl = document.getElementById('tradingSubtitle');
-            if (subEl) subEl.innerText = descMap[range] || descMap['7d'];
-
-            updateTradingHeader(cachedTradingSeries[range] || []);
-            drawStockChart();
-        }
-
-        function updateTradingHeader(series) {
-            const safe = Array.isArray(series) ? series : [];
-            const totalLunas = safe.reduce((s, d) => s + Number(d.lunas || 0), 0);
-            const totalOmzet = safe.reduce((s, d) => s + Number(d.omzet || 0), 0);
-
-            const first = safe.length ? safe[0] : { o: 0, h: 0, l: 0, c: 0 };
-            const last = safe.length ? safe[safe.length - 1] : { o: 0, h: 0, l: 0, c: 0 };
-
-            const maxH = safe.length ? Math.max(...safe.map(d => Number(d.h || 0))) : 0;
-            const minL = safe.length ? Math.min(...safe.map(d => Number(d.l || 0))) : 0;
-
-            const startVal = Number(first.o || 0);
-            const endVal = Number(last.c || 0);
-            const diff = endVal - startVal;
-            const pct = startVal > 0
-                ? ((diff / startVal) * 100).toFixed(1)
-                : (endVal > 0 ? '100.0' : '0.0');
-
-            document.getElementById('tdCloseMain').innerText = `Rp ${endVal.toLocaleString('id-ID')}`;
-            document.getElementById('tdOmzetVal').innerText = `Rp ${totalOmzet.toLocaleString('id-ID')}`;
-            document.getElementById('tdHighVal').innerText = `H: ${formatCompactAxisVal(maxH)}`;
-            document.getElementById('tdLowVal').innerText = `L: ${formatCompactAxisVal(minL)}`;
-            document.getElementById('tdLunasCount').innerText = `${totalLunas} Order`;
-
-            const badge = document.getElementById('tdChangeBadge');
-            if (diff < 0) {
-                badge.className = 'text-[10px] font-black px-1.5 py-0.5 rounded border-2 border-black bg-neoPink text-black';
-                badge.innerHTML = `<i class="fa-solid fa-caret-down mr-0.5"></i>${pct}%`;
-            } else {
-                badge.className = 'text-[10px] font-black px-1.5 py-0.5 rounded border-2 border-black bg-neoGreen text-black';
-                badge.innerHTML = `<i class="fa-solid fa-caret-up mr-0.5"></i>+${pct}%`;
-            }
-        }
-
-        function drawRoundRect(ctx, x, y, w, h, r) {
-            const radius = Math.min(r, w / 2, h / 2);
+        function drawRoundRect(ctx, x, y, width, height, radius) {
+            const r = Math.min(radius, width / 2, height / 2);
             ctx.beginPath();
-            ctx.moveTo(x + radius, y);
-            ctx.lineTo(x + w - radius, y);
-            ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
-            ctx.lineTo(x + w, y + h - radius);
-            ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
-            ctx.lineTo(x + radius, y + h);
-            ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
-            ctx.lineTo(x, y + radius);
-            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.moveTo(x + r, y);
+            ctx.arcTo(x + width, y, x + width, y + height, r);
+            ctx.arcTo(x + width, y + height, x, y + height, r);
+            ctx.arcTo(x, y + height, x, y, r);
+            ctx.arcTo(x, y, x + width, y, r);
             ctx.closePath();
         }
 
-        function drawStockChart() {
-            const canvas = document.getElementById('tradingCanvas');
-            if (!canvas) return;
+        async function fetchUserStatus() {
+            try {
+                const res = await fetch('/api/user-status');
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data.loggedIn && data.user) {
+                    const greetEl = document.getElementById('welcomeGreeting');
+                    const balEl = document.getElementById('userBalanceDisplay');
+                    if (greetEl) greetEl.innerText = `Halo, ${data.user.username}!`;
+                    if (balEl) balEl.innerText = formatRupiah(data.user.saldo || 0);
+                }
+            } catch (e) {}
+        }
 
+        async function fetchDashboardStats() {
+            try {
+                const res = await fetch('/api/dashboard-stats');
+                if (!res.ok) throw new Error('Gagal memuat statistik');
+                const data = await res.json();
+                DASHBOARD_DATA = data;
+
+                document.getElementById('statTotalProducts').innerText = data.totalProducts ?? 0;
+                document.getElementById('statTotalSuccess').innerText = data.totalSuccessOrders ?? data.totalOrders ?? 0;
+                document.getElementById('statTotalCancelled').innerText = data.totalCancelledOrders ?? 0;
+                document.getElementById('statTotalUsers').innerText = data.totalUsers ?? 0;
+
+                ALL_TRANSACTIONS = Array.isArray(data.recentTransactions) ? data.recentTransactions : [];
+                const totalSlides = Math.max(1, Math.ceil(ALL_TRANSACTIONS.length / TRX_PER_SLIDE));
+                if (CURRENT_TRX_SLIDE > totalSlides) CURRENT_TRX_SLIDE = 1;
+
+                renderTransactionSlide();
+                drawStockChart();
+            } catch (err) {
+                console.error('Error dashboard stats:', err);
+                const container = document.getElementById('trxScrollContainer');
+                if (container) {
+                    container.innerHTML = `<div class="text-center py-6 text-xs font-bold text-rose-600">Gagal memuat data statistik dari server.</div>`;
+                }
+            }
+        }
+
+        function setChartTimeframe(tf) {
+            ACTIVE_TIMEFRAME = tf;
+            HOVERED_CANDLE_INDEX = -1;
+
+            document.querySelectorAll('.tf-btn').forEach(btn => {
+                if (btn.getAttribute('data-tf') === tf) {
+                    btn.className = 'tf-btn px-2.5 py-1 rounded-lg text-[11px] font-black font-cyber bg-neoYellow text-black';
+                } else {
+                    btn.className = 'tf-btn px-2.5 py-1 rounded-lg text-[11px] font-black font-cyber text-slate-300 hover:text-white';
+                }
+            });
+
+            drawStockChart();
+        }
+
+        function drawStockChart() {
+            const canvas = document.getElementById('marketCandleCanvas');
+            if (!canvas || !DASHBOARD_DATA || !DASHBOARD_DATA.candles) return;
+
+            const series = DASHBOARD_DATA.candles[ACTIVE_TIMEFRAME] || [];
             const dpr = window.devicePixelRatio || 1;
             const rect = canvas.getBoundingClientRect();
-            if (!rect.width || !rect.height) return;
+            const W = Math.max(300, rect.width);
+            const H = Math.max(220, rect.height);
 
-            canvas.width = Math.round(rect.width * dpr);
-            canvas.height = Math.round(rect.height * dpr);
+            canvas.width = W * dpr;
+            canvas.height = H * dpr;
 
             const ctx = canvas.getContext('2d');
             ctx.scale(dpr, dpr);
 
-            const W = rect.width;
-            const H = rect.height;
-            const padLeft = 12;
-            const padRight = 64;
-            const padTop = 20;
-            const padBottom = 32;
-            const plotW = W - padLeft - padRight;
-            const plotH = H - padTop - padBottom;
-
-            ctx.fillStyle = '#FFFDF7';
+            // Background gelap ala trading terminal
+            ctx.fillStyle = '#0D1015';
             ctx.fillRect(0, 0, W, H);
 
-            const series = cachedTradingSeries[activeTradingRange] || [];
             if (series.length === 0) {
-                ctx.fillStyle = '#000000';
-                ctx.font = '800 12px "JetBrains Mono", monospace';
+                ctx.fillStyle = '#94A3B8';
+                ctx.font = 'bold 12px "Space Grotesk", sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText('Memuat data grafik...', W / 2, H / 2);
+                ctx.fillText('Belum ada data pergerakan candle pada periode ini', W / 2, H / 2);
                 return;
             }
 
-            const allHighs = series.map(d => Number(d.h || 0));
-            const allLows = series.map(d => Number(d.l || 0));
-            let rawMax = Math.max(...allHighs);
-            let rawMin = Math.min(...allLows);
+            const padLeft = 14;
+            const padRight = 54;
+            const padTop = 18;
+            const padBottom = 28;
+            const plotW = W - padLeft - padRight;
+            const plotH = H - padTop - padBottom;
 
-            if (rawMax === rawMin) {
-                rawMin = Math.max(0, rawMin - 2000);
-                rawMax = rawMax + 8000;
+            let minVal = Infinity;
+            let maxVal = -Infinity;
+            let maxVol = 1;
+
+            series.forEach(d => {
+                const lo = Number(d.l ?? d.o ?? 0);
+                const hi = Number(d.h ?? d.c ?? 0);
+                const vol = Number(d.volume ?? 0);
+                if (lo < minVal) minVal = lo;
+                if (hi > maxVal) maxVal = hi;
+                if (vol > maxVol) maxVol = vol;
+            });
+
+            if (minVal === maxVal) {
+                minVal = Math.max(0, minVal - 2000);
+                maxVal = maxVal + 2000;
             }
 
-            const rangeSpan = rawMax - rawMin;
-            const yMin = Math.max(0, rawMin - rangeSpan * 0.14);
-            const yMax = rawMax + rangeSpan * 0.14;
-            const ySpan = Math.max(1, yMax - yMin);
+            const range = maxVal - minVal;
+            const paddedMin = Math.max(0, minVal - range * 0.12);
+            const paddedMax = maxVal + range * 0.12;
+            const effectiveRange = Math.max(1, paddedMax - paddedMin);
 
-            const toY = (val) => padTop + plotH - ((val - yMin) / ySpan) * plotH;
+            const toY = (val) => padTop + plotH - ((val - paddedMin) / effectiveRange) * plotH;
 
-            const stepW = plotW / series.length;
-            ctx.save();
-            ctx.setLineDash([3, 3]);
+            // Grid horizontal & Label sumbu Y kanan
+            const gridLines = 4;
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.12)';
             ctx.lineWidth = 1;
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.12)';
-
-            const ySteps = 5;
-            ctx.font = '800 10px "JetBrains Mono", monospace';
+            ctx.font = '10px monospace';
+            ctx.fillStyle = '#94A3B8';
             ctx.textAlign = 'left';
 
-            for (let i = 0; i <= ySteps; i++) {
-                const val = yMin + (ySpan * i) / ySteps;
-                const y = Math.round(toY(val)) + 0.5;
+            for (let g = 0; g <= gridLines; g++) {
+                const ratio = g / gridLines;
+                const y = padTop + ratio * plotH;
+                const priceVal = paddedMax - ratio * effectiveRange;
 
                 ctx.beginPath();
                 ctx.moveTo(padLeft, y);
                 ctx.lineTo(W - padRight, y);
                 ctx.stroke();
 
-                ctx.fillStyle = '#1F2937';
-                ctx.fillText(formatCompactAxisVal(val), W - padRight + 8, y + 3.5);
+                ctx.fillText(formatCompactAxisVal(priceVal), W - padRight + 6, y + 3);
             }
 
-            const labelStep = Math.max(1, Math.ceil(series.length / 5));
-            ctx.textAlign = 'center';
+            const stepW = plotW / series.length;
+            const barW = Math.max(3, Math.min(12, stepW * 0.52));
+            const maxVolBarH = plotH * 0.22;
 
-            series.forEach((d, idx) => {
-                if (idx % labelStep === 0 || idx === series.length - 1) {
-                    const cx = Math.round(padLeft + idx * stepW + stepW / 2) + 0.5;
-                    ctx.beginPath();
-                    ctx.moveTo(cx, padTop);
-                    ctx.lineTo(cx, H - padBottom);
-                    ctx.stroke();
-
-                    ctx.fillStyle = '#111827';
-                    ctx.fillText(d.label, cx, H - 11);
-                }
-            });
-            ctx.restore();
-
-            const maxVol = Math.max(...series.map(d => Number(d.volume || 0)), 1);
-            const maxVolBarH = plotH * 0.16;
-            const barW = Math.max(4, Math.min(18, stepW * 0.65));
-
+            // Volume bars di bawah
             series.forEach((d, idx) => {
                 const vol = Number(d.volume || 0);
                 if (vol <= 0) return;
                 const cx = padLeft + idx * stepW + stepW / 2;
                 const vh = Math.max(4, (vol / maxVol) * maxVolBarH);
-                const isBull = Number(d.c) >= Number(d.o);
+                const isBull = Number(d.c) > Number(d.o) || (Number(d.c) === Number(d.o) && Number(d.batal || 0) === 0);
 
-                ctx.fillStyle = isBull ? 'rgba(0, 192, 118, 0.18)' : 'rgba(242, 54, 69, 0.18)';
+                ctx.fillStyle = isBull ? 'rgba(0, 192, 118, 0.22)' : 'rgba(242, 54, 69, 0.24)';
                 ctx.fillRect(cx - barW / 2, H - padBottom - vh, barW, vh);
             });
 
+            // Batang Candlestick (Hijau Naik / Merah Turun untuk Batal)
             const candleW = Math.max(4, Math.min(14, stepW * 0.62));
 
             series.forEach((d, idx) => {
@@ -883,7 +663,7 @@
                 const high = Number(d.h || 0);
                 const low = Number(d.l || 0);
 
-                const isBull = close >= open;
+                const isBull = close > open || (close === open && Number(d.batal || 0) === 0);
                 const color = isBull ? '#00C076' : '#F23645';
 
                 const yHigh = toY(high);
@@ -904,7 +684,7 @@
 
                 if (rawBodyH < 2.5) {
                     ctx.fillStyle = color;
-                    ctx.fillRect(leftBody, yClose - 1, candleW, 2.2);
+                    ctx.fillRect(leftBody, yClose - 1.5, candleW, 3);
                 } else {
                     const topBody = Math.min(yOpen, yClose);
                     ctx.fillStyle = color;
@@ -914,413 +694,220 @@
                 ctx.restore();
             });
 
-            const lastCandle = series[series.length - 1];
-            const lastClose = Number(lastCandle.c || 0);
-            const yLive = Math.round(toY(lastClose)) + 0.5;
-
-            ctx.save();
-            ctx.strokeStyle = '#3B5BDB';
-            ctx.lineWidth = 1.2;
-            ctx.beginPath();
-            ctx.moveTo(padLeft, yLive);
-            ctx.lineTo(W - padRight, yLive);
-            ctx.stroke();
-
-            const pillX = W - padRight + 4;
-            const pillW = padRight - 8;
-            const pillH = 20;
-            const pillY = Math.max(padTop, Math.min(H - padBottom - pillH, yLive - pillH / 2));
-
-            ctx.fillStyle = '#3B5BDB';
-            drawRoundRect(ctx, pillX, pillY, pillW, pillH, 10);
-            ctx.fill();
-
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = '800 10px "JetBrains Mono", monospace';
+            // Label Waktu Sumbu X (WIB)
+            ctx.fillStyle = '#94A3B8';
+            ctx.font = '10px monospace';
             ctx.textAlign = 'center';
-            ctx.fillText(formatCompactAxisVal(lastClose), pillX + pillW / 2, pillY + 13.5);
-            ctx.restore();
+            const labelStep = Math.max(1, Math.ceil(series.length / 6));
+            series.forEach((d, idx) => {
+                if (idx % labelStep === 0 || idx === series.length - 1) {
+                    const cx = padLeft + idx * stepW + stepW / 2;
+                    ctx.fillText(d.label || '', cx, H - 9);
+                }
+            });
 
-            if (hoverCandleIndex >= 0 && hoverCandleIndex < series.length) {
-                const target = series[hoverCandleIndex];
-                const hx = Math.round(padLeft + hoverCandleIndex * stepW + stepW / 2) + 0.5;
-                const hy = Math.round(toY(Number(target.c || 0))) + 0.5;
+            // Crosshair & Info Candle Terpilih (Hover / Sentuh)
+            const targetIdx = HOVERED_CANDLE_INDEX >= 0 && HOVERED_CANDLE_INDEX < series.length
+                ? HOVERED_CANDLE_INDEX
+                : series.length - 1;
+            const target = series[targetIdx];
 
-                ctx.save();
-                ctx.setLineDash([3, 3]);
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.55)';
-                ctx.lineWidth = 1.2;
+            if (target) {
+                if (HOVERED_CANDLE_INDEX >= 0) {
+                    const hx = padLeft + targetIdx * stepW + stepW / 2;
+                    const hy = toY(Number(target.c || 0));
 
-                ctx.beginPath();
-                ctx.moveTo(hx, padTop);
-                ctx.lineTo(hx, H - padBottom);
-                ctx.stroke();
+                    ctx.save();
+                    ctx.setLineDash([4, 4]);
+                    ctx.strokeStyle = 'rgba(255, 222, 89, 0.55)';
+                    ctx.lineWidth = 1;
 
-                ctx.beginPath();
-                ctx.moveTo(padLeft, hy);
-                ctx.lineTo(W - padRight, hy);
-                ctx.stroke();
-                ctx.setLineDash([]);
+                    ctx.beginPath();
+                    ctx.moveTo(hx, padTop);
+                    ctx.lineTo(hx, H - padBottom);
+                    ctx.stroke();
 
-                ctx.fillStyle = '#000000';
-                ctx.beginPath();
-                ctx.arc(hx, hy, 4, 0, Math.PI * 2);
-                ctx.fill();
-
-                const lblW = 58;
-                const lblX = Math.max(padLeft, Math.min(W - padRight - lblW, hx - lblW / 2));
-                ctx.fillStyle = '#000000';
-                drawRoundRect(ctx, lblX, H - padBottom + 4, lblW, 18, 4);
-                ctx.fill();
-
-                ctx.fillStyle = '#FFDE59';
-                ctx.font = '800 10px "JetBrains Mono", monospace';
-                ctx.textAlign = 'center';
-                ctx.fillText(target.label, lblX + lblW / 2, H - padBottom + 16);
-                ctx.restore();
+                    ctx.beginPath();
+                    ctx.moveTo(padLeft, hy);
+                    ctx.lineTo(W - padRight, hy);
+                    ctx.stroke();
+                    ctx.restore();
+                }
 
                 const hoverInfo = document.getElementById('candleHoverInfo');
                 if (hoverInfo) {
-                    hoverInfo.innerText = `${target.label} WIB • O:${formatCompactAxisVal(target.o)} H:${formatCompactAxisVal(target.h)} L:${formatCompactAxisVal(target.l)} C:${formatCompactAxisVal(target.c)} (${target.lunas} Lunas)`;
+                    hoverInfo.innerText = `${target.label} WIB • O:${formatCompactAxisVal(target.o)} H:${formatCompactAxisVal(target.h)} L:${formatCompactAxisVal(target.l)} C:${formatCompactAxisVal(target.c)} (${target.lunas || 0} Lunas, ${target.batal || 0} Batal)`;
                 }
             }
         }
 
-        function initTradingCanvasEvents() {
-            const canvas = document.getElementById('tradingCanvas');
-            const wrapper = document.getElementById('tradingChartWrapper');
+        function handleCanvasPointer(clientX) {
+            const canvas = document.getElementById('marketCandleCanvas');
+            if (!canvas || !DASHBOARD_DATA || !DASHBOARD_DATA.candles) return;
+            const series = DASHBOARD_DATA.candles[ACTIVE_TIMEFRAME] || [];
+            if (series.length === 0) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const padLeft = 14;
+            const padRight = 54;
+            const plotW = Math.max(1, rect.width - padLeft - padRight);
+            const relX = clientX - rect.left - padLeft;
+            const idx = Math.floor((relX / plotW) * series.length);
+
+            if (idx >= 0 && idx < series.length && idx !== HOVERED_CANDLE_INDEX) {
+                HOVERED_CANDLE_INDEX = idx;
+                drawStockChart();
+            }
+        }
+
+        function initChartEvents() {
+            const canvas = document.getElementById('marketCandleCanvas');
             if (!canvas) return;
 
-            const handleMove = (clientX) => {
-                const rect = canvas.getBoundingClientRect();
-                const padLeft = 12;
-                const padRight = 64;
-                const plotW = rect.width - padLeft - padRight;
-                const series = cachedTradingSeries[activeTradingRange] || [];
-                if (!series.length || plotW <= 0) return;
-
-                const relX = clientX - rect.left - padLeft;
-                const idx = Math.max(0, Math.min(series.length - 1, Math.floor((relX / plotW) * series.length)));
-                if (hoverCandleIndex !== idx) {
-                    hoverCandleIndex = idx;
-                    drawStockChart();
-                }
-            };
-
-            canvas.addEventListener('mousemove', (e) => handleMove(e.clientX));
-            canvas.addEventListener('touchstart', (e) => {
-                if (e.touches && e.touches[0]) handleMove(e.touches[0].clientX);
-            }, { passive: true });
-            canvas.addEventListener('touchmove', (e) => {
-                if (e.touches && e.touches[0]) handleMove(e.touches[0].clientX);
-            }, { passive: true });
-
+            canvas.addEventListener('mousemove', (e) => handleCanvasPointer(e.clientX));
             canvas.addEventListener('mouseleave', () => {
-                hoverCandleIndex = -1;
-                const hoverInfo = document.getElementById('candleHoverInfo');
-                if (hoverInfo) hoverInfo.innerText = 'Sentuh grafik untuk detail candle';
+                HOVERED_CANDLE_INDEX = -1;
                 drawStockChart();
             });
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.touches && e.touches[0]) handleCanvasPointer(e.touches[0].clientX);
+            }, { passive: true });
+            canvas.addEventListener('touchmove', (e) => {
+                if (e.touches && e.touches[0]) handleCanvasPointer(e.touches[0].clientX);
+            }, { passive: true });
 
-            if (window.ResizeObserver && wrapper) {
-                const ro = new ResizeObserver(() => drawStockChart());
-                ro.observe(wrapper);
-            } else {
-                window.addEventListener('resize', () => drawStockChart());
-            }
+            window.addEventListener('resize', () => drawStockChart());
         }
 
-        function getCustomerBadge(name, avatarUrl) {
-            const safeName = escapeHtml(name || 'Pembeli Tamu');
-            const initial = safeName.charAt(0).toUpperCase() || 'P';
-            const avatarColors = ['bg-neoYellow', 'bg-neoCyan', 'bg-neoPink', 'bg-neoGreen'];
-            const colorClass = avatarColors[safeName.charCodeAt(0) % avatarColors.length];
-
-            if (avatarUrl) {
-                return `
-                    <div class="flex items-center gap-2.5">
-                        <img src="${escapeHtml(avatarUrl)}" alt="${safeName}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" class="w-8 h-8 rounded-lg object-cover border-2 border-black shadow-[2px_2px_0_#000] shrink-0">
-                        <div style="display:none;" class="w-8 h-8 rounded-lg ${colorClass} border-2 border-black shadow-[2px_2px_0_#000] items-center justify-center font-cyber font-black text-xs shrink-0">${initial}</div>
-                        <span class="font-extrabold text-black truncate max-w-[125px]">${safeName}</span>
-                    </div>
-                `;
+        /* RENDER RIWAYAT TRANSAKSI DENGAN PAGINATION SLIDE TOMBOL SAJA */
+        function getStatusBadgeHtml(statusRaw) {
+            const st = String(statusRaw || '').toLowerCase();
+            if (['paid', 'success', 'settlement', 'lunas'].includes(st)) {
+                return `<span class="bg-neoGreen border border-black text-black text-[10px] font-black font-cyber px-2 py-0.5 rounded uppercase">LUNAS</span>`;
             }
-
-            return `
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg ${colorClass} border-2 border-black shadow-[2px_2px_0_#000] flex items-center justify-center font-cyber font-black text-xs shrink-0">
-                        ${initial}
-                    </div>
-                    <span class="font-extrabold text-black truncate max-w-[125px]">${safeName}</span>
-                </div>
-            `;
+            if (['cancelled', 'canceled', 'failed', 'expired', 'batal'].includes(st)) {
+                return `<span class="bg-neoPink border border-black text-black text-[10px] font-black font-cyber px-2 py-0.5 rounded uppercase">DIBATALKAN</span>`;
+            }
+            return `<span class="bg-neoYellow border border-black text-black text-[10px] font-black font-cyber px-2 py-0.5 rounded uppercase">PENDING</span>`;
         }
 
-        function getMethodPill(metodeRaw) {
-            const metode = (metodeRaw || 'QRIS').toUpperCase();
-            if (metode === 'SALDO') {
-                return `
-                    <span class="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold bg-neoCyan text-black border-2 border-black px-2 py-0.5 rounded-md">
-                        <i class="fa-solid fa-wallet"></i> SALDO
-                    </span>
-                `;
-            }
-            return `
-                <span class="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold bg-neoYellow text-black border-2 border-black px-2 py-0.5 rounded-md">
-                    <i class="fa-solid fa-qrcode"></i> ${escapeHtml(metode)}
-                </span>
-            `;
-        }
+        function renderTransactionSlide() {
+            const container = document.getElementById('trxScrollContainer');
+            const paginationBar = document.getElementById('trxPaginationBar');
+            const totalCounter = document.getElementById('trxTotalCounter');
+            const slideIndicator = document.getElementById('trxSlideIndicator');
+            const btnPrev = document.getElementById('btnPrevSlide');
+            const btnNext = document.getElementById('btnNextSlide');
 
-        function goToTrxSlide(slideNumber, withAnim = true) {
-            const totalItems = allTransactions.length;
-            const totalSlides = Math.max(1, Math.ceil(totalItems / TRX_PER_SLIDE));
-            currentTrxSlide = Math.max(1, Math.min(totalSlides, Number(slideNumber) || 1));
-            renderTransactionSlide(withAnim);
-        }
-
-        function renderTransactionSlide(withAnim = false) {
-            const tbody = document.getElementById('transactionTableBody');
-            const countBadge = document.getElementById('trxCountBadge');
-            const slideBadge = document.getElementById('trxSlideBadge');
-            const pagContainer = document.getElementById('trxPaginationContainer');
-            const pagInfo = document.getElementById('trxPaginationInfo');
-            const pagButtons = document.getElementById('trxPaginationButtons');
-
-            const totalItems = allTransactions.length;
-            const totalSlides = Math.max(1, Math.ceil(totalItems / TRX_PER_SLIDE));
-
-            if (currentTrxSlide > totalSlides) currentTrxSlide = totalSlides;
-            if (currentTrxSlide < 1) currentTrxSlide = 1;
-
-            if (countBadge) {
-                countBadge.innerText = `${totalItems} ORDER`;
-            }
+            const totalItems = ALL_TRANSACTIONS.length;
+            if (totalCounter) totalCounter.innerText = `Total: ${totalItems} Transaksi`;
 
             if (totalItems === 0) {
-                if (slideBadge) slideBadge.classList.add('hidden');
-                if (pagContainer) {
-                    pagContainer.classList.add('hidden');
-                    pagContainer.classList.remove('flex');
-                }
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="py-10 text-center font-mono text-gray-700">
-                            Belum ada transaksi masuk.
-                        </td>
-                    </tr>`;
+                container.innerHTML = `<div class="text-center py-8 text-xs font-bold text-slate-500">Belum ada riwayat transaksi masuk.</div>`;
+                if (paginationBar) paginationBar.classList.add('hidden');
                 return;
             }
 
-            const startIdx = (currentTrxSlide - 1) * TRX_PER_SLIDE;
-            const endIdx = Math.min(startIdx + TRX_PER_SLIDE, totalItems);
-            const sliceItems = allTransactions.slice(startIdx, endIdx);
+            const totalSlides = Math.ceil(totalItems / TRX_PER_SLIDE);
+            if (CURRENT_TRX_SLIDE < 1) CURRENT_TRX_SLIDE = 1;
+            if (CURRENT_TRX_SLIDE > totalSlides) CURRENT_TRX_SLIDE = totalSlides;
 
-            tbody.innerHTML = sliceItems.map(trx => {
-                const status = (trx.status || 'pending').toLowerCase();
-                let badgeClass = 'bg-neoYellow text-black';
-                let statusText = 'Menunggu Bayar';
-                let icon = 'fa-hourglass-half';
+            const startIdx = (CURRENT_TRX_SLIDE - 1) * TRX_PER_SLIDE;
+            const pageItems = ALL_TRANSACTIONS.slice(startIdx, startIdx + TRX_PER_SLIDE);
 
-                if (['settlement', 'success', 'paid', 'settled'].includes(status)) {
-                    badgeClass = 'bg-neoGreen text-black';
-                    statusText = 'Berhasil';
-                    icon = 'fa-circle-check';
-                } else if (['cancelled', 'failed', 'expire', 'expired', 'batal'].includes(status)) {
-                    badgeClass = 'bg-neoPink text-black';
-                    statusText = 'Dibatalkan';
-                    icon = 'fa-circle-xmark';
-                }
-
-                const timeAgo = formatRelativeTime(trx.createdAt);
-                const clockStr = trx.clockWib || formatClockTime(trx.createdAt);
-                const safeProduk = escapeHtml(trx.produk || 'Produk Digital');
+            container.innerHTML = pageItems.map(trx => {
+                const productName = trx.itemDetails?.nama || trx.productName || 'Produk Digital';
+                const buyerName = trx.itemDetails?.buyer || trx.buyer || 'Pembeli';
+                const method = trx.paymentMethod || 'SALDO';
+                const amount = Number(trx.itemDetails?.harga_setelah_voucher ?? trx.amount ?? 0);
+                const waktuWib = trx.waktuWib || (trx.createdAt ? new Date(trx.createdAt).toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }) + ' WIB' : '-');
 
                 return `
-                    <tr class="hover:bg-neoBg/75 transition-colors ${withAnim ? 'trx-slide-anim' : ''}">
-                        <td class="p-3.5 align-middle whitespace-nowrap">
-                            <span class="inline-block font-mono text-[11px] font-black bg-neoBg border-2 border-black px-2 py-0.5 rounded-md shadow-[2px_2px_0_#000] text-black">
-                                ${maskOrderId(trx.orderId)}
-                            </span>
-                            <div class="flex items-center gap-1.5 text-[11px] font-bold text-gray-600 mt-1.5">
-                                <i class="fa-regular fa-clock text-[10px] text-black"></i>
-                                <span>${timeAgo}</span>
-                                ${clockStr ? `<span class="text-gray-400">•</span><span class="font-mono text-[10px]">${clockStr}</span>` : ''}
+                    <div class="neo-card-sm rounded-xl p-3 bg-neoBg flex items-center justify-between gap-3">
+                        <div class="min-w-0 flex-1 space-y-0.5">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-[10px] font-mono font-black bg-white border border-black px-1.5 py-0.5 rounded">
+                                    ${trx.orderId || '-'}
+                                </span>
+                                ${getStatusBadgeHtml(trx.status)}
+                                <span class="text-[10px] font-black font-cyber text-slate-600 uppercase">• ${method}</span>
                             </div>
-                        </td>
+                            <p class="text-xs sm:text-sm font-black font-cyber text-black truncate pt-0.5">
+                                ${productName}
+                            </p>
+                            <p class="text-[10px] font-bold text-slate-600 truncate">
+                                Pembeli: <span class="text-black">${buyerName}</span> • ${waktuWib}
+                            </p>
+                        </div>
 
-                        <td class="p-3.5 align-middle">
-                            ${getCustomerBadge(trx.pelanggan, trx.avatar)}
-                        </td>
-
-                        <td class="p-3.5 align-middle">
-                            <div class="font-extrabold text-black text-xs truncate max-w-[200px]" title="${safeProduk}">
-                                ${safeProduk}
-                            </div>
-                            <div class="mt-1.5">
-                                ${getMethodPill(trx.metode)}
-                            </div>
-                        </td>
-
-                        <td class="p-3.5 align-middle whitespace-nowrap">
-                            <span class="inline-block font-mono font-black text-xs sm:text-sm bg-neoPaper border-2 border-black px-2.5 py-1 rounded-lg shadow-[2px_2px_0_#000] text-black">
-                                Rp ${Number(trx.amount || 0).toLocaleString('id-ID')}
-                            </span>
-                        </td>
-
-                        <td class="p-3.5 text-center align-middle whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 text-[11px] font-black font-cyber uppercase px-3 py-1.5 rounded-lg border-2 border-black shadow-[3px_3px_0_#000] ${badgeClass}">
-                                <i class="fa-solid ${icon}"></i> ${statusText}
-                            </span>
-                        </td>
-                    </tr>
+                        <div class="text-right shrink-0">
+                            <p class="text-xs sm:text-sm font-black font-cyber text-black">
+                                ${formatRupiah(amount)}
+                            </p>
+                            <p class="text-[10px] font-bold text-slate-500">
+                                Qty: ${trx.itemDetails?.qty || 1}x
+                            </p>
+                        </div>
+                    </div>
                 `;
             }).join('');
 
-            // Tampilkan kontrol tombol slide HANYA jika transaksi melebihi 10
+            // Reset scroll vertikal ke atas saat berpindah slide lewat tombol
+            container.scrollTop = 0;
+
             if (totalItems > TRX_PER_SLIDE) {
-                if (slideBadge) {
-                    slideBadge.classList.remove('hidden');
-                    slideBadge.innerText = `SLIDE ${currentTrxSlide} / ${totalSlides}`;
-                }
-                if (pagContainer) {
-                    pagContainer.classList.remove('hidden');
-                    pagContainer.classList.add('flex');
-                }
-                if (pagInfo) {
-                    pagInfo.innerText = `Menampilkan ${startIdx + 1}-${endIdx} dari ${totalItems} transaksi • Slide ${currentTrxSlide} / ${totalSlides}`;
-                }
-
-                const slidesToRender = [];
-                if (totalSlides <= 6) {
-                    for (let i = 1; i <= totalSlides; i++) slidesToRender.push(i);
-                } else {
-                    slidesToRender.push(1);
-                    if (currentTrxSlide > 3) slidesToRender.push('...');
-                    const startWin = Math.max(2, currentTrxSlide - 1);
-                    const endWin = Math.min(totalSlides - 1, currentTrxSlide + 1);
-                    for (let i = startWin; i <= endWin; i++) slidesToRender.push(i);
-                    if (currentTrxSlide < totalSlides - 2) slidesToRender.push('...');
-                    slidesToRender.push(totalSlides);
-                }
-
-                let btnsHtml = `
-                    <button type="button"
-                        onclick="goToTrxSlide(${currentTrxSlide - 1}, true)"
-                        ${currentTrxSlide <= 1 ? 'disabled' : ''}
-                        aria-label="Slide Sebelumnya"
-                        class="slide-btn bg-white text-black px-2.5 py-1.5 rounded-lg">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-                `;
-
-                slidesToRender.forEach(item => {
-                    if (item === '...') {
-                        btnsHtml += `<span class="px-1.5 py-1 font-mono font-black text-xs text-black">...</span>`;
-                    } else {
-                        const isActive = item === currentTrxSlide;
-                        const activeCls = isActive
-                            ? 'bg-neoYellow text-black'
-                            : 'bg-white text-black hover:bg-neoCyan/40';
-                        btnsHtml += `
-                            <button type="button"
-                                onclick="goToTrxSlide(${item}, true)"
-                                class="slide-btn ${activeCls} px-3 py-1.5 rounded-lg">
-                                Slide ${item}
-                            </button>
-                        `;
-                    }
-                });
-
-                btnsHtml += `
-                    <button type="button"
-                        onclick="goToTrxSlide(${currentTrxSlide + 1}, true)"
-                        ${currentTrxSlide >= totalSlides ? 'disabled' : ''}
-                        aria-label="Slide Berikutnya"
-                        class="slide-btn bg-white text-black px-2.5 py-1.5 rounded-lg">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-                `;
-
-                if (pagButtons) pagButtons.innerHTML = btnsHtml;
+                paginationBar.classList.remove('hidden');
+                slideIndicator.innerText = `Slide ${CURRENT_TRX_SLIDE} / ${totalSlides}`;
+                btnPrev.disabled = CURRENT_TRX_SLIDE <= 1;
+                btnNext.disabled = CURRENT_TRX_SLIDE >= totalSlides;
             } else {
-                if (slideBadge) slideBadge.classList.add('hidden');
-                if (pagContainer) {
-                    pagContainer.classList.add('hidden');
-                    pagContainer.classList.remove('flex');
-                }
+                paginationBar.classList.add('hidden');
             }
         }
 
-        function renderTransactionRows(recentTrx) {
-            allTransactions = Array.isArray(recentTrx) ? recentTrx : [];
-            renderTransactionSlide(false);
+        function changeTrxSlide(direction) {
+            const totalSlides = Math.max(1, Math.ceil(ALL_TRANSACTIONS.length / TRX_PER_SLIDE));
+            const nextSlide = CURRENT_TRX_SLIDE + direction;
+            if (nextSlide < 1 || nextSlide > totalSlides) return;
+            CURRENT_TRX_SLIDE = nextSlide;
+            renderTransactionSlide();
         }
 
-        async function loadUserStatus() {
-            try {
-                const res = await fetch('/api/user-status');
-                const data = await res.json();
-                const authLabel = document.getElementById('nav-auth-label');
-                const authLink = document.getElementById('nav-auth-link');
+        /* LIVE CHAT WIDGET */
+        function toggleChatWidget() {
+            const win = document.getElementById('floatingChatWindow');
+            if (win) win.classList.toggle('hidden');
+        }
 
-                if (data.loggedIn && data.user) {
-                    document.getElementById('dashUsername').innerText = data.user.username;
-                    if (authLabel) authLabel.innerText = 'Profil';
-                    if (authLink) authLink.href = '/profile';
-                }
+        async function sendWidgetMessage(event) {
+            event.preventDefault();
+            const input = document.getElementById('widgetChatInput');
+            const box = document.getElementById('widgetChatMessages');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+            const bubble = document.createElement('div');
+            bubble.className = 'bg-neoYellow border-2 border-black rounded-xl p-2.5 text-xs font-bold text-black ml-auto max-w-[82%] shadow-[2px_2px_0px_#000]';
+            bubble.innerText = text;
+            box.appendChild(bubble);
+            box.scrollTop = box.scrollHeight;
+
+            try {
+                await fetch('/api/live-chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
             } catch (e) {}
         }
 
-        async function refreshRealtimeStats() {
-            try {
-                const res = await fetch('/api/dashboard-stats', { cache: 'no-store' });
-                const data = await res.json();
-                if (!data.status) return;
-
-                animateCounter('statTotalUsers', data.totalUsers || 0);
-                animateCounter('statTotalProducts', data.totalProducts || 0);
-                animateCounter('statTotalTrx', data.totalTrx || 0);
-                animateCounter('statSuccessTrx', data.lunasTrx || 0);
-                animateCounter('statTrxToday', data.trxToday || 0);
-                animateCounter('statTrxYesterday', data.trxYesterday || 0);
-
-                if (data.tradingSeries) {
-                    cachedTradingSeries = data.tradingSeries;
-                    updateTradingHeader(cachedTradingSeries[activeTradingRange] || []);
-                    drawStockChart();
-                }
-
-                renderTransactionRows(data.recentTrx || []);
-
-                const nowStr = (window.moment && moment.tz)
-                    ? moment.tz(STORE_TIMEZONE).format('HH:mm:ss')
-                    : new Date().toLocaleTimeString('id-ID', { timeZone: STORE_TIMEZONE, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-                const syncEl = document.getElementById('trxLastSync');
-                if (syncEl) {
-                    syncEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-neoGreen border border-black"></span><span>Update ${nowStr} WIB</span>`;
-                }
-
-                isInitialLoad = false;
-            } catch (err) {
-                console.error('Gagal memperbarui data:', err);
-            }
+        async function initDashboard() {
+            initChartEvents();
+            await Promise.allSettled([fetchUserStatus(), fetchDashboardStats()]);
         }
 
-        window.goToTrxSlide = goToTrxSlide;
-        window.setTradingRange = setTradingRange;
-
-        initTradingCanvasEvents();
-        loadUserStatus();
-        refreshRealtimeStats();
-
-        // Pembaruan real-time otomatis setiap 10 detik saat tab aktif
-        setInterval(() => {
-            if (!document.hidden) {
-                refreshRealtimeStats();
-            }
-        }, 10000);
+        initDashboard();
     </script>
 </body>
 </html>
