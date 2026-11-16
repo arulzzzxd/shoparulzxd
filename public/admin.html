@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Console - ArulzXD Store</title>
+    <link rel="icon" type="image/png" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        cyber: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        neoYellow: '#FFDE59',
+                        neoCyan: '#00E5FF',
+                        neoPink: '#FF79C6',
+                        neoGreen: '#00E676',
+                        neoBg: '#F4F0EA',
+                        neoCard: '#FFFFFF'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F4F0EA; color: #000000; overflow-x: hidden; }
+        .neo-box { background-color: #FFFFFF; border: 3.5px solid #000000; box-shadow: 5px 5px 0px #000000; }
+        .neo-btn { border: 3px solid #000000; box-shadow: 4px 4px 0px #000000; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+        .neo-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000000; }
+        .neo-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000000; }
+        .tab-btn.active { background-color: #FFDE59 !important; box-shadow: 5px 5px 0px #000000 !important; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .user-pill { border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; transition: all 0.2s ease; }
+        .user-pill.active { background-color: #FFDE59 !important; transform: translate(-1px, -1px); box-shadow: 4.5px 4.5px 0px #000000; }
+        .swal2-popup.cyber-swal { background: #FFFFFF !important; border: 3.5px solid #000000 !important; border-radius: 20px !important; color: #000000 !important; box-shadow: 6px 6px 0px #000000 !important; font-family: 'Plus Jakarta Sans', sans-serif !important; }
+        .bottom-nav-fixed { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 440px; height: 64px; z-index: 9999; }
+        .bottom-nav-bg { position: absolute; inset: 0; background: #FFFFFF; border: 3.5px solid #000000; border-radius: 32px; box-shadow: 5px 5px 0px #000000; }
+        .nav-items-wrapper { position: relative; z-index: 10; display: flex; height: 100%; width: 100%; justify-content: space-around; align-items: center; }
+        .nav-item-btn { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60px; height: 100%; color: #000000; text-decoration: none; }
+        .nav-icon-box { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .nav-item-btn i { font-size: 18px; }
+        .nav-item-btn span { font-size: 10px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; position: absolute; bottom: 6px; }
+    </style>
+</head>
+<body class="font-sans antialiased text-black min-h-screen pb-32">
+
+    <!-- TOP NAVBAR -->
+    <nav class="sticky top-0 z-40 bg-neoYellow border-b-3 border-black shadow-[0_4px_0_#000]">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/dashboard" class="text-2xl font-black font-cyber tracking-tight text-black flex items-center gap-2">
+                <i class="fa-solid fa-user-shield text-black text-xl"></i>
+                <span>Admin<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">Panel</span></span>
+            </a>
+            <span class="text-xs font-cyber font-black bg-neoGreen text-black px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] flex items-center gap-1.5 uppercase">
+                <i class="fa-solid fa-lock"></i> Owner Access
+            </span>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 space-y-5">
+
+        <!-- TAB SWITCHER -->
+        <div class="grid grid-cols-2 gap-3">
+            <button id="tabBtnDeposits" onclick="switchAdminTab('deposits')" class="tab-btn active neo-btn bg-white text-black font-cyber font-black py-3.5 px-4 rounded-2xl text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
+                <i class="fa-solid fa-qrcode"></i>
+                <span>Deposit QRIS v2</span>
+                <span id="pendingDepositBadge" class="bg-neoPink border border-black text-[10px] px-2 py-0.5 rounded-full">0</span>
+            </button>
+
+            <button id="tabBtnChat" onclick="switchAdminTab('chat')" class="tab-btn neo-btn bg-white text-black font-cyber font-black py-3.5 px-4 rounded-2xl text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
+                <i class="fa-solid fa-headset"></i>
+                <span>Live Chat CS</span>
+            </button>
+        </div>
+
+        <!-- ======================================================= -->
+        <!-- SECTION 1: VERIFIKASI BUKTI DEPOSIT QRIS V2             -->
+        <!-- ======================================================= -->
+        <section id="sectionDeposits" class="space-y-4">
+            <div class="p-5 neo-box rounded-2xl bg-neoCyan flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black font-cyber text-black flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> Verifikasi Deposit QRIS v2
+                    </h1>
+                    <p class="text-xs font-bold text-black mt-1">Periksa bukti pembayaran user, konfirmasi penambahan saldo, atau batalkan deposit.</p>
+                </div>
+                <button onclick="loadDepositsQrisV2()" class="neo-btn bg-white text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh Data
+                </button>
+            </div>
+
+            <!-- FILTER STATUS -->
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="setDepositFilter('all')" id="filterAll" class="neo-btn bg-neoYellow px-3 py-1.5 rounded-xl text-xs font-cyber font-black uppercase">Semua</button>
+                <button onclick="setDepositFilter('waiting_verification')" id="filterWaiting" class="neo-btn bg-white px-3 py-1.5 rounded-xl text-xs font-cyber font-black uppercase">Perlu Dicek</button>
+                <button onclick="setDepositFilter('pending')" id="filterPending" class="neo-btn bg-white px-3 py-1.5 rounded-xl text-xs font-cyber font-black uppercase">Belum Upload</button>
+                <button onclick="setDepositFilter('success')" id="filterSuccess" class="neo-btn bg-white px-3 py-1.5 rounded-xl text-xs font-cyber font-black uppercase">Sukses</button>
+                <button onclick="setDepositFilter('cancelled')" id="filterCancelled" class="neo-btn bg-white px-3 py-1.5 rounded-xl text-xs font-cyber font-black uppercase">Dibatalkan</button>
+            </div>
+
+            <!-- DAFTAR KARTU DEPOSIT QRIS V2 -->
+            <div id="adminDepositsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="neo-box p-6 rounded-2xl text-center text-xs font-mono font-bold col-span-full">
+                    Memuat data deposit QRIS v2...
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================= -->
+        <!-- SECTION 2: PANEL LIVE CHAT PENGGUNA                     -->
+        <!-- ======================================================= -->
+        <section id="sectionChat" class="hidden space-y-5">
+            <div class="p-5 neo-box rounded-2xl bg-neoPink flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black font-cyber text-black flex items-center gap-2">
+                        <i class="fa-solid fa-headset"></i> Panel Balas Chat Pengguna
+                    </h1>
+                    <p class="text-xs font-bold text-black mt-1">Pilih pengguna di bawah untuk membaca dan membalas pesan CS.</p>
+                </div>
+                <button onclick="loadUserList()" class="neo-btn bg-white text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh Percakapan
+                </button>
+            </div>
+
+            <div class="neo-box rounded-2xl bg-white overflow-hidden flex flex-col h-[580px]">
+                <div class="bg-neoCyan p-3.5 border-b-3 border-black space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-black font-cyber uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-users"></i> Pilih Pengguna (<span id="userCountText">0</span>)
+                        </h3>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="scrollUserCarousel('left')" class="w-7 h-7 rounded-lg bg-white border-2 border-black font-black text-xs"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button onclick="scrollUserCarousel('right')" class="w-7 h-7 rounded-lg bg-white border-2 border-black font-black text-xs"><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <div id="adminUserList" class="flex items-center gap-2.5 overflow-x-auto no-scrollbar py-1 scroll-smooth"></div>
+                </div>
+
+                <div id="adminChatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-neoBg scroll-smooth">
+                    <div class="flex flex-col items-center justify-center h-full text-center space-y-2 text-slate-600">
+                        <i class="fa-solid fa-comments text-4xl"></i>
+                        <p class="text-xs font-bold font-cyber">Pilih salah satu pengguna di atas untuk melihat isi pesan.</p>
+                    </div>
+                </div>
+
+                <form id="adminChatForm" onsubmit="sendAdminReply(event)" class="p-3 bg-white border-t-3 border-black flex items-center gap-3 opacity-50 pointer-events-none">
+                    <input type="text" id="adminChatInput" required placeholder="Tuliskan balasan sebagai Admin/Owner..." class="flex-1 bg-neoBg border-2 border-black rounded-xl px-4 py-3 text-xs text-black font-bold focus:outline-none">
+                    <button type="submit" class="neo-btn bg-neoYellow text-black font-cyber font-black px-5 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 shrink-0">
+                        <i class="fa-solid fa-reply"></i> <span>Kirim</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- BOTTOM NAV BAR -->
+    <div class="bottom-nav-fixed">
+        <div class="bottom-nav-bg"></div>
+        <div class="nav-items-wrapper">
+            <a href="/dashboard" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-solid fa-house"></i></div><span>Home</span></a>
+            <a href="/store" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-solid fa-bag-shopping"></i></div><span>Toko</span></a>
+            <a href="/deposit" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-solid fa-wallet"></i></div><span>Deposit</span></a>
+            <a href="/riwayat" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-solid fa-clock-rotate-left"></i></div><span>Riwayat</span></a>
+            <a href="/profile" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-regular fa-user"></i></div><span>Profil</span></a>
+        </div>
+    </div>
+
+    <script>
+        let allDepositsData = [];
+        let currentDepositFilter = 'all';
+        let selectedUserId = null;
+        let selectedUsername = '';
+        let selectedUserEmail = '';
+        let adminPollInterval = null;
+
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        }
+
+        function switchAdminTab(tab) {
+            document.getElementById('sectionDeposits').classList.toggle('hidden', tab !== 'deposits');
+            document.getElementById('sectionChat').classList.toggle('hidden', tab !== 'chat');
+            document.getElementById('tabBtnDeposits').classList.toggle('active', tab === 'deposits');
+            document.getElementById('tabBtnChat').classList.toggle('active', tab === 'chat');
+        }
+
+        function setDepositFilter(filter) {
+            currentDepositFilter = filter;
+            ['all', 'waiting_verification', 'pending', 'success', 'cancelled'].forEach(f => {
+                const mapId = { all: 'filterAll', waiting_verification: 'filterWaiting', pending: 'filterPending', success: 'filterSuccess', cancelled: 'filterCancelled' };
+                const el = document.getElementById(mapId[f]);
+                if (el) {
+                    el.classList.toggle('bg-neoYellow', f === filter);
+                    el.classList.toggle('bg-white', f !== filter);
+                }
+            });
+            renderDepositsGrid();
+        }
+
+        async function loadDepositsQrisV2() {
+            try {
+                const res = await fetch('/api/admin/deposits-qrisv2');
+                const data = await res.json();
+                if (data.status && Array.isArray(data.deposits)) {
+                    allDepositsData = data.deposits;
+                    const waitingCount = allDepositsData.filter(d => d.status === 'waiting_verification').length;
+                    document.getElementById('pendingDepositBadge').innerText = waitingCount;
+                    renderDepositsGrid();
+                }
+            } catch (e) {}
+        }
+
+        function renderDepositsGrid() {
+            const grid = document.getElementById('adminDepositsGrid');
+            const filtered = currentDepositFilter === 'all'
+                ? allDepositsData
+                : allDepositsData.filter(d => (d.status || '').toLowerCase() === currentDepositFilter);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="neo-box p-6 rounded-2xl text-center text-xs font-mono font-bold col-span-full bg-white">Tidak ada transaksi deposit QRIS v2 pada kategori ini.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(dep => {
+                const st = (dep.status || 'pending').toLowerCase();
+                let badgeHtml = `<span class="bg-neoYellow border border-black px-2 py-0.5 rounded text-[10px] font-black font-cyber">PENDING</span>`;
+                if (st === 'waiting_verification') {
+                    badgeHtml = `<span class="bg-neoCyan border border-black px-2 py-0.5 rounded text-[10px] font-black font-cyber animate-pulse">PERLU VERIFIKASI</span>`;
+                } else if (['success', 'paid', 'settlement'].includes(st)) {
+                    badgeHtml = `<span class="bg-neoGreen border border-black px-2 py-0.5 rounded text-[10px] font-black font-cyber">SUKSES</span>`;
+                } else if (st === 'cancelled') {
+                    badgeHtml = `<span class="bg-neoPink border border-black px-2 py-0.5 rounded text-[10px] font-black font-cyber">DIBATALKAN</span>`;
+                }
+
+                const dateStr = new Date(dep.createdAt).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                const proofHtml = dep.proofImage
+                    ? `<div class="border-2 border-black rounded-xl overflow-hidden bg-neoBg p-2 text-center">
+                           <img src="${dep.proofImage}" onclick="viewFullProof('${dep.orderId}')" title="Klik untuk memperbesar"
+                                class="max-h-44 mx-auto rounded-lg object-contain border border-black cursor-zoom-in">
+                           <button type="button" onclick="viewFullProof('${dep.orderId}')" class="mt-1.5 text-[10px] font-cyber font-black underline text-black">
+                               <i class="fa-solid fa-magnifying-glass-plus"></i> Perbesar Bukti Pembayaran
+                           </button>
+                       </div>`
+                    : `<div class="border-2 border-dashed border-black rounded-xl p-4 text-center text-[11px] font-bold text-slate-500 bg-neoBg">
+                           <i class="fa-regular fa-image text-lg block mb-1"></i> User belum mengunggah bukti pembayaran
+                       </div>`;
+
+                const canAction = ['pending', 'waiting_verification'].includes(st);
+                const actionButtons = canAction
+                    ? `<div class="grid grid-cols-2 gap-2 pt-1">
+                           <button onclick="adminApproveDeposit('${escapeHtml(dep.orderId)}')" class="neo-btn bg-neoGreen text-black font-cyber font-black py-2.5 rounded-xl text-xs uppercase flex items-center justify-center gap-1.5">
+                               <i class="fa-solid fa-check"></i> Konfirmasi
+                           </button>
+                           <button onclick="adminCancelDeposit('${escapeHtml(dep.orderId)}')" class="neo-btn bg-neoPink text-black font-cyber font-black py-2.5 rounded-xl text-xs uppercase flex items-center justify-center gap-1.5">
+                               <i class="fa-solid fa-xmark"></i> Batalkan
+                           </button>
+                       </div>`
+                    : `<div class="text-center text-[10px] font-mono font-bold text-slate-600 pt-1">Tindakan selesai (${st.toUpperCase()})</div>`;
+
+                return `
+                    <div class="neo-box rounded-2xl p-4 bg-white space-y-3 flex flex-col justify-between">
+                        <div class="space-y-2.5">
+                            <div class="flex items-center justify-between gap-2 border-b-2 border-black pb-2">
+                                <span class="text-[11px] font-mono font-black text-black">${escapeHtml(dep.orderId)}</span>
+                                ${badgeHtml}
+                            </div>
+
+                            <div class="flex items-center justify-between text-xs">
+                                <div>
+                                    <div class="font-black font-cyber text-black">${escapeHtml(dep.username)}</div>
+                                    <div class="text-[11px] font-mono text-slate-600">${escapeHtml(dep.userEmail || '-')}</div>
+                                    <div class="text-[10px] font-bold text-slate-500 mt-0.5">${dateStr}</div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[9px] font-black uppercase text-slate-500 block">Nominal</span>
+                                    <span class="text-base font-black font-cyber bg-neoYellow border-2 border-black px-2.5 py-0.5 rounded-lg inline-block">
+                                        ${formatRupiah(dep.amount)}
+                                    </span>
+                                </div>
+                            </div>
+
+                            ${proofHtml}
+                        </div>
+                        ${actionButtons}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function viewFullProof(orderId) {
+            const dep = allDepositsData.find(d => d.orderId === orderId);
+            if (!dep || !dep.proofImage) return;
+            Swal.fire({
+                title: `BUKTI // ${dep.orderId}`,
+                html: `<img src="${dep.proofImage}" class="max-h-[70vh] mx-auto rounded-xl border-2 border-black">`,
+                width: 600,
+                confirmButtonText: 'Tutup',
+                customClass: { popup: 'cyber-swal' }
+            });
+        }
+
+        async function adminApproveDeposit(orderId) {
+            const conf = await Swal.fire({
+                title: 'KONFIRMASI DEPOSIT?',
+                text: `Saldo user untuk ${orderId} akan langsung ditambahkan.`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Konfirmasi',
+                cancelButtonText: 'Batal',
+                customClass: { popup: 'cyber-swal' }
+            });
+            if (!conf.isConfirmed) return;
+
+            try {
+                const res = await fetch(`/api/admin/deposits-qrisv2/${encodeURIComponent(orderId)}/approve`, { method: 'POST' });
+                const result = await res.json();
+                if (result.status) {
+                    Swal.fire({ icon: 'success', title: 'BERHASIL', text: result.message, timer: 1600, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+                    loadDepositsQrisV2();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+            }
+        }
+
+        async function adminCancelDeposit(orderId) {
+            const conf = await Swal.fire({
+                title: 'BATALKAN DEPOSIT?',
+                text: `Yakin ingin menolak & membatalkan ${orderId}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Batalkan',
+                cancelButtonText: 'Kembali',
+                customClass: { popup: 'cyber-swal' }
+            });
+            if (!conf.isConfirmed) return;
+
+            try {
+                const res = await fetch(`/api/admin/deposits-qrisv2/${encodeURIComponent(orderId)}/cancel`, { method: 'POST' });
+                const result = await res.json();
+                if (result.status) {
+                    Swal.fire({ icon: 'info', title: 'DIBATALKAN', text: result.message, timer: 1600, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+                    loadDepositsQrisV2();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+            }
+        }
+
+        // LIVE CHAT FUNCTIONS
+        function scrollUserCarousel(direction) {
+            const container = document.getElementById('adminUserList');
+            container.scrollBy({ left: direction === 'left' ? -240 : 240, behavior: 'smooth' });
+        }
+
+        async function loadUserList() {
+            try {
+                const res = await fetch('/api/bantuan/admin/users');
+                const data = await res.json();
+                const listEl = document.getElementById('adminUserList');
+                document.getElementById('userCountText').innerText = data.users ? data.users.length : 0;
+
+                if (data.status && data.users && data.users.length > 0) {
+                    listEl.innerHTML = data.users.map(u => {
+                        const isActive = u.userId === selectedUserId;
+                        const unreadBadge = u.unreadCount > 0 ? `<span class="bg-neoPink text-black border border-black text-[9px] font-black px-1.5 rounded-full ml-1.5">${u.unreadCount}</span>` : '';
+                        return `
+                            <button onclick="selectUserChat('${escapeHtml(u.userId)}', '${escapeHtml(u.username)}', '${escapeHtml(u.email || u.userId)}')" 
+                                    class="user-pill shrink-0 px-3 py-2 rounded-xl text-left flex items-center gap-2.5 cursor-pointer ${isActive ? 'active' : 'bg-white'}">
+                                <div class="whitespace-nowrap">
+                                    <div class="text-xs font-black font-cyber text-black flex items-center">${escapeHtml(u.username)}${unreadBadge}</div>
+                                    <div class="text-[10px] font-mono text-slate-600">${escapeHtml(u.email || u.userId)}</div>
+                                </div>
+                            </button>`;
+                    }).join('');
+                } else {
+                    listEl.innerHTML = `<div class="p-2 text-xs font-mono font-bold text-slate-700">Belum ada percakapan pengguna.</div>`;
+                }
+            } catch(e) {}
+        }
+
+        function selectUserChat(userId, username, email) {
+            selectedUserId = userId;
+            selectedUsername = username;
+            selectedUserEmail = email || userId;
+            document.getElementById('adminChatForm').classList.remove('opacity-50', 'pointer-events-none');
+            loadUserMessages();
+            loadUserList();
+        }
+
+        async function loadUserMessages() {
+            if (!selectedUserId) return;
+            try {
+                const res = await fetch(`/api/bantuan/admin/messages/${encodeURIComponent(selectedUserId)}`);
+                const data = await res.json();
+                const container = document.getElementById('adminChatMessages');
+                if (data.status && data.messages) {
+                    container.innerHTML = data.messages.map(msg => {
+                        const isAdmin = msg.sender === 'admin' || msg.sender === 'owner';
+                        return `
+                            <div class="flex ${isAdmin ? 'justify-end' : 'justify-start'}">
+                                <div class="max-w-[80%] p-3 rounded-2xl text-xs space-y-1 ${isAdmin ? 'bg-neoYellow rounded-br-none' : 'bg-white rounded-bl-none'} border-2 border-black font-bold">
+                                    <div class="font-black font-cyber text-[10px] border-b border-black/20 pb-1">${isAdmin ? 'Admin / Owner' : escapeHtml(selectedUsername)}</div>
+                                    <p class="pt-1">${escapeHtml(msg.message)}</p>
+                                </div>
+                            </div>`;
+                    }).join('');
+                    container.scrollTop = container.scrollHeight;
+                }
+            } catch(e) {}
+        }
+
+        async function sendAdminReply(e) {
+            e.preventDefault();
+            if (!selectedUserId) return;
+            const input = document.getElementById('adminChatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            input.value = '';
+            await fetch('/api/bantuan/admin/reply', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: selectedUserId, message })
+            });
+            loadUserMessages();
+            loadUserList();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDepositsQrisV2();
+            loadUserList();
+            adminPollInterval = setInterval(() => {
+                loadDepositsQrisV2();
+                if (selectedUserId) loadUserMessages();
+                loadUserList();
+            }, 5000);
+        });
+    </script>
+</body>
+</html>
