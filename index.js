@@ -3228,6 +3228,49 @@ app.post('/api/deposit-qrisv2/:orderId/upload-proof', checkAuthSession, (req, re
     });
 });
 
+app.delete('/api/deposit-qrisv2/:orderId/proof', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu!' });
+        }
+
+        const { orderId } = req.params;
+        const trx = await TransactionV2.findOne({ orderId });
+        if (!trx) {
+            return res.status(404).json({ status: false, message: 'Transaksi deposit tidak ditemukan!' });
+        }
+
+        const userEmail = (req.user.email || '').toLowerCase().trim();
+        if (trx.userEmail && trx.userEmail.toLowerCase().trim() !== userEmail) {
+            return res.status(403).json({ status: false, message: 'Akses ditolak untuk transaksi ini.' });
+        }
+
+        const currentStatus = (trx.status || '').toLowerCase();
+        if (['success', 'settlement', 'paid', 'settled'].includes(currentStatus)) {
+            return res.status(400).json({ status: false, message: 'Deposit sudah dikonfirmasi, bukti tidak dapat dihapus.' });
+        }
+        if (currentStatus === 'cancelled') {
+            return res.status(400).json({ status: false, message: 'Transaksi sudah dibatalkan.' });
+        }
+
+        trx.proofImage = null;
+        trx.proofUploadedAt = null;
+        trx.status = 'pending';
+        trx.updatedAt = new Date();
+        await trx.save();
+        await deleteCache(`trx_${orderId}`);
+
+        return res.json({
+            status: true,
+            message: 'Bukti pembayaran berhasil dihapus. Silakan unggah ulang bukti yang benar.',
+            data: { orderId: trx.orderId, status: trx.status }
+        });
+    } catch (error) {
+        console.error('Error hapus bukti QRISv2:', error);
+        return res.status(500).json({ status: false, message: 'Gagal menghapus bukti pembayaran.' });
+    }
+});
+
 app.post('/api/deposit-qrisv2/:orderId/cancel', checkAuthSession, async (req, res) => {
     try {
         if (!req.user) {
