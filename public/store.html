@@ -440,13 +440,13 @@
                     <!-- SKELETON PLACEHOLDER 2 KOLOM -->
                     <div class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
                         <div class="neo-card-sm rounded-2xl p-2.5 sm:p-4 space-y-2.5 bg-white animate-pulse">
-                            <div class="bg-slate-200 pt-[100%] rounded-xl border-2 border-black"></div>
+                            <div class="bg-slate-200 aspect-video rounded-xl border-2 border-black"></div>
                             <div class="h-3.5 bg-slate-200 rounded w-3/4"></div>
                             <div class="h-3 bg-slate-200 rounded w-full"></div>
                             <div class="h-8 bg-slate-200 rounded-xl"></div>
                         </div>
                         <div class="neo-card-sm rounded-2xl p-2.5 sm:p-4 space-y-2.5 bg-white animate-pulse">
-                            <div class="bg-slate-200 pt-[100%] rounded-xl border-2 border-black"></div>
+                            <div class="bg-slate-200 aspect-video rounded-xl border-2 border-black"></div>
                             <div class="h-3.5 bg-slate-200 rounded w-3/4"></div>
                             <div class="h-3 bg-slate-200 rounded w-full"></div>
                             <div class="h-8 bg-slate-200 rounded-xl"></div>
@@ -481,9 +481,9 @@
                 <!-- Ringkasan Produk -->
                 <div class="flex flex-col sm:flex-row gap-4 items-start neo-box p-3.5 rounded-2xl bg-neoBg">
                     
-                    <div class="relative w-full sm:w-36 h-36 rounded-xl overflow-hidden bg-white border-2 border-black flex-shrink-0 group cursor-pointer" id="modalProductCarousel">
+                    <div class="relative w-full sm:w-52 aspect-video rounded-xl overflow-hidden bg-white border-2 border-black flex-shrink-0 group cursor-pointer" id="modalProductCarousel">
                         <div class="flex w-full h-full transition-transform duration-300 ease-out" id="modalCarouselTrack">
-                            <img id="detailImg" src="" class="w-full h-full object-cover flex-shrink-0">
+                            <img id="detailImg" src="" class="w-full h-full object-contain bg-white flex-shrink-0">
                         </div>
                         
                         <span class="absolute top-1.5 right-1.5 bg-neoYellow border border-black text-black text-[10px] p-1 rounded font-black pointer-events-none">
@@ -648,7 +648,7 @@
                     </div>
 
                     <div class="neo-box p-3 rounded-xl bg-neoCyan flex items-center gap-3">
-                        <img id="modalProductImage" src="" class="w-12 h-12 rounded-lg object-cover border-2 border-black bg-white">
+                        <img id="modalProductImage" src="" class="w-16 h-10 rounded-lg object-contain border-2 border-black bg-white flex-shrink-0">
                         <div class="overflow-hidden flex-1">
                             <p id="modalProductName" class="text-xs font-black font-cyber truncate"></p>
                             <div class="flex items-center justify-between mt-1">
@@ -1537,7 +1537,7 @@
             const track = document.getElementById('modalCarouselTrack');
             const dots = document.getElementById('modalCarouselDots');
 
-            track.innerHTML = currentModalImages.map(img => `<img src="${img}" draggable="false" class="w-full h-full object-cover flex-shrink-0">`).join('');
+            track.innerHTML = currentModalImages.map(img => `<img src="${img}" draggable="false" class="w-full h-full object-contain bg-white flex-shrink-0">`).join('');
             track.style.transform = `translateX(-${currentModalImageIndex * 100}%)`;
 
             dots.innerHTML = currentModalImages.map((_, i) => `
@@ -1817,7 +1817,7 @@
             }, { passive: true });
         }
         
-                function editMyReviewById(reviewId) {
+        function editMyReviewById(reviewId) {
             const productId = document.getElementById('reviewProductId').value;
             const cachedData = REVIEWS_CACHE[productId];
             if (!cachedData || !Array.isArray(cachedData.reviews)) return;
@@ -1915,7 +1915,7 @@
 
             document.getElementById('detailRatingSummary').innerHTML = `
                 ${renderStarRating(data.averageRating || 0)}
-                <span class="text-[11px] font-bold text-slate-600">(${data.totalReviews || 0} Penilaian)</span>
+                <span class="text-[11px] font-bold text-slate-600">(${formatCompactNumber(data.totalReviews || 0)} Penilaian)</span>
             `;
 
             if (!data.reviews || data.reviews.length === 0) {
@@ -2101,9 +2101,21 @@
             }
         }
 
+        /* FORMAT ANGKA RINGKAS: <1000 UTUH, >=1000 JADI 1rb+, 10rb+, 1jt+, 1M+ */
+        function formatCompactNumber(num) {
+            const n = Math.floor(Number(num) || 0);
+            if (n < 1000) return String(n);
+            if (n < 1_000_000) {
+                return `${Math.floor(n / 1000)}rb+`;
+            }
+            if (n < 1_000_000_000) {
+                return `${Math.floor(n / 1_000_000)}jt+`;
+            }
+            return `${Math.floor(n / 1_000_000_000)}M+`;
+        }
+
         function formatTerjual(jumlah) {
-            if (!jumlah) return '0 terjual';
-            return jumlah + ' terjual';
+            return `${formatCompactNumber(jumlah)} terjual`;
         }
 
         function generateUniqueOrderId() {
@@ -2202,6 +2214,9 @@
             const deskripsiTeks = produk.deskripsi || 'Tidak ada deskripsi.';
             const isLong = deskripsiTeks.length > 50;
 
+            const stokFormatted = formatCompactNumber(produk.stok !== undefined ? produk.stok : 99);
+            const reviewTotalFormatted = formatCompactNumber(cachedRev.totalReviews || 0);
+
             const hargaCorethtml = produk.harga_diskon ? `
                 <div class="text-[10px] sm:text-[11px] font-bold text-slate-400 line-through leading-none">Rp ${new Intl.NumberFormat('id-ID').format(produk.harga)}</div>
                 <div class="text-sm sm:text-base font-black font-cyber text-amber-500 leading-tight">Rp ${new Intl.NumberFormat('id-ID').format(produk.harga_diskon)}</div>
@@ -2216,9 +2231,9 @@
                     
                     ${starburstBadge}
 
-                    <div class="relative bg-neoBg pt-[100%] rounded-xl sm:rounded-2xl border-2 sm:border-3 border-black flex-shrink-0">
-                        <div class="absolute inset-0 overflow-hidden rounded-[10px] sm:rounded-[13px]">
-                            <img src="${mainImg}" onclick="event.stopPropagation(); openProductZoomLightbox(${originalIndex}, 0)" class="w-full h-full object-cover">
+                    <div class="relative bg-white aspect-video w-full rounded-xl sm:rounded-2xl border-2 sm:border-3 border-black flex-shrink-0">
+                        <div class="absolute inset-0 overflow-hidden rounded-[10px] sm:rounded-[13px] flex items-center justify-center bg-white">
+                            <img src="${mainImg}" onclick="event.stopPropagation(); openProductZoomLightbox(${originalIndex}, 0)" class="w-full h-full object-contain">
                         </div>
                         ${multiPhotoBadge}
                     </div>
@@ -2239,13 +2254,13 @@
                             </div>
 
                             <div class="flex items-center justify-between text-[10px] sm:text-xs font-black pt-1 gap-1">
-                                <span class="text-emerald-600 truncate">Stok: ${produk.stok !== undefined ? produk.stok : 99}</span>
+                                <span class="text-emerald-600 truncate">Stok: ${stokFormatted}</span>
                                 <span class="text-black whitespace-nowrap">${formatTerjual(produk.terjual)}</span>
                             </div>
 
                             <div class="flex items-center justify-between gap-1">
                                 <div class="flex items-center">${renderStarRating(cachedRev.averageRating, true)}</div>
-                                <span class="text-[10px] sm:text-xs font-bold text-slate-500 whitespace-nowrap">(${cachedRev.totalReviews})</span>
+                                <span class="text-[10px] sm:text-xs font-bold text-slate-500 whitespace-nowrap">(${reviewTotalFormatted})</span>
                             </div>
 
                             <div class="pt-0.5">
@@ -2431,7 +2446,8 @@
 
             let modalImgSrc = Array.isArray(SELECTED_PRODUCT.gambar) ? SELECTED_PRODUCT.gambar[0] : (SELECTED_PRODUCT.gambar || 'https://cdn.larasxd.my.id/files/1wh5do.png');
             document.getElementById('modalProductImage').src = modalImgSrc;
-            document.getElementById('modalStockInfo').innerText = `Tersisa: ${SELECTED_PRODUCT.stok !== undefined ? SELECTED_PRODUCT.stok : 'Tersedia'}`;
+            const stokVal = SELECTED_PRODUCT.stok !== undefined ? formatCompactNumber(SELECTED_PRODUCT.stok) : 'Tersedia';
+            document.getElementById('modalStockInfo').innerText = `Tersisa: ${stokVal}`;
 
             document.getElementById('qtyInput').value = CURRENT_QTY;
             if (CURRENT_LOGGED_USER && CURRENT_LOGGED_USER.username) {
@@ -3122,7 +3138,6 @@
                 if (localStorage.getItem(key) === 'true') return false;
             } catch (e) {}
 
-            // Deteksi akun baru / pertama kali login (jika server mengirim flag isNewUser / firstLogin, atau belum pernah menyelesaikan tur di browser ini)
             if (
                 CURRENT_LOGGED_USER.isNewUser === true ||
                 CURRENT_LOGGED_USER.firstLogin === true ||
@@ -3170,7 +3185,6 @@
             spotlight.style.width = `${width}px`;
             spotlight.style.height = `${height}px`;
 
-            // Hitung posisi kartu tooltip agar tidak keluar layar HP maupun desktop
             const tooltipRect = tooltip.getBoundingClientRect();
             const tooltipH = tooltipRect.height || 210;
             const tooltipW = tooltipRect.width || Math.min(370, window.innerWidth - 24);
@@ -3269,8 +3283,7 @@
                 localStorage.setItem(getOnboardingStorageKey(), 'true');
             } catch (e) {}
 
-            // Opsional sinkronisasi status selesai tur ke backend jika endpoint tersedia
-            fetch('/api/user/onboarding-complete', {
+            fetch('/api/user/complete-onboarding', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ page: 'store', completed: true })
