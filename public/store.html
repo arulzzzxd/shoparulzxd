@@ -296,6 +296,34 @@
                 max-width: 100% !important;
             }
         }
+
+        /* =========================================================
+           ONBOARDING TUTORIAL INTERAKTIF (SPOTLIGHT NEO-BRUTALISM)
+           ========================================================= */
+        #onboardingSpotlightBox {
+            position: fixed;
+            z-index: 99990;
+            border: 3.5px solid #FFDE59;
+            border-radius: 16px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.72), 0 0 24px rgba(255, 222, 89, 0.65);
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        #onboardingTooltipCard {
+            position: fixed;
+            z-index: 99995;
+            width: calc(100vw - 24px);
+            max-width: 370px;
+            background: #FFFFFF;
+            border: 3.5px solid #000000;
+            border-radius: 20px;
+            box-shadow: 6px 6px 0px #000000;
+            transition: top 0.35s cubic-bezier(0.22, 1, 0.36, 1), left 0.35s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+        }
+        .onboarding-target-elevated {
+            position: relative !important;
+            z-index: 99985 !important;
+        }
     </style>
 </head>
 <body class="font-sans antialiased text-black min-h-screen pb-36">
@@ -350,13 +378,20 @@
             </a>
 
             <!-- Form Pencarian Presisi -->
-            <div class="flex-1 max-w-xl relative flex items-center">
+            <div id="tour-search-box" class="flex-1 max-w-xl relative flex items-center">
                 <input type="text" id="searchInput" oninput="filterProduk()" placeholder="Cari modul / layanan..." 
                        class="w-full pl-3.5 pr-10 py-2 text-xs font-bold bg-white border-2 border-black rounded-xl text-black placeholder-slate-500 focus:outline-none shadow-[2px_2px_0px_#000]">
                 <button onclick="filterProduk()" class="absolute right-3 top-1/2 -translate-y-1/2 text-black flex items-center justify-center p-1">
                     <i class="fa-solid fa-magnifying-glass text-sm"></i>
                 </button>
             </div>
+
+            <!-- Tombol Panduan / Ulangi Tutorial -->
+            <button type="button" onclick="startOnboardingTour()" title="Panduan Penggunaan Toko"
+                    class="neo-btn bg-white text-black px-2.5 py-2 rounded-xl text-xs font-black font-cyber flex items-center gap-1.5 flex-shrink-0">
+                <i class="fa-solid fa-circle-question text-sm"></i>
+                <span class="hidden sm:inline">Panduan</span>
+            </button>
         </div>
     </nav>
 
@@ -364,7 +399,7 @@
     <div class="max-w-6xl mx-auto px-3 sm:px-4 py-5 sm:py-6 space-y-5 sm:space-y-6">
 
         <!-- HEADER HERO -->
-        <div class="p-5 sm:p-8 neo-box rounded-2xl bg-neoCyan relative overflow-hidden">
+        <div id="tour-hero-banner" class="p-5 sm:p-8 neo-box rounded-2xl bg-neoCyan relative overflow-hidden">
             <div class="relative z-10 max-w-2xl">
                 <span class="inline-flex items-center gap-1.5 bg-white border-2 border-black text-black text-xs font-black px-3 py-1 rounded-md uppercase font-cyber shadow-[2px_2px_0px_#000] mb-3">
                     <i class="fa-solid fa-store"></i> Digital Marketplace
@@ -381,7 +416,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-5 sm:gap-6 items-start">
 
             <!-- SIDEBAR KATEGORI (z-20 PASTI DI ATAS CARD & BADGE PRODUK z-[5]) -->
-            <div class="neo-box p-3.5 sm:p-4 rounded-xl bg-white sticky top-[62px] sm:top-[72px] z-20">
+            <div id="tour-category-box" class="neo-box p-3.5 sm:p-4 rounded-xl bg-white sticky top-[62px] sm:top-[72px] z-20">
                 <h3 class="font-black text-xs font-cyber text-black mb-2.5 sm:mb-3 uppercase tracking-wider flex items-center gap-2">
                     <i class="fa-solid fa-layer-group"></i> Kategori Produk
                 </h3>
@@ -636,14 +671,15 @@
                     </div>
 
                     <div class="neo-box p-3 rounded-xl bg-white space-y-2">
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between gap-2">
                             <label class="block text-xs font-black font-cyber flex items-center gap-1.5" for="voucherInput">
                                 <i class="fa-solid fa-ticket"></i> Kode Voucher
                             </label>
-                            <span id="voucherStatusLabel" class="text-[10px] font-bold">Bisa diisi / dikosongkan</span>
+                            <span id="voucherStatusLabel" class="text-[10px] font-bold text-slate-600 text-right">Bisa diisi / dikosongkan</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <input type="text" id="voucherInput" placeholder="Masukkan kode jika ada..." 
+                                   onkeydown="if(event.key==='Enter'){event.preventDefault();claimVoucher();}"
                                    class="flex-1 bg-white border-2 border-black rounded-xl px-3 py-2 text-xs font-mono font-bold text-black uppercase">
                             <button type="button" id="btnClaimVoucher" onclick="claimVoucher()" 
                                     class="neo-btn bg-neoYellow font-cyber font-black px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 uppercase">
@@ -657,8 +693,8 @@
                             <span>Subtotal Harga:</span>
                             <span id="modalSubtotalPrice" class="font-mono">Rp 0</span>
                         </div>
-                        <div id="voucherDiscountRow" class="hidden flex items-center justify-between text-xs font-bold text-emerald-600">
-                            <span>Diskon Voucher:</span>
+                        <div id="voucherDiscountRow" class="hidden flex items-center justify-between text-xs font-black text-emerald-700 bg-neoGreen/30 border border-black px-2 py-1 rounded-lg">
+                            <span id="modalDiscountLabel">Diskon Voucher:</span>
                             <span id="modalDiscountAmount" class="font-mono">- Rp 0</span>
                         </div>
                         <div class="flex items-center justify-between pt-1.5 border-t-2 border-black">
@@ -819,155 +855,193 @@
             <i class="fa-solid fa-bag-shopping"></i>
             <span>Toko</span>
         </a>
-        <a href="/deposit" data-index="2" data-icon="fa-solid fa-wallet" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+        <a id="tour-nav-deposit" href="/deposit" data-index="2" data-icon="fa-solid fa-wallet" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
             <i class="fa-solid fa-wallet"></i>
             <span>Deposit</span>
         </a>
-        <a href="/riwayat" data-index="3" data-icon="fa-solid fa-clock-rotate-left" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+        <a id="tour-nav-riwayat" href="/riwayat" data-index="3" data-icon="fa-solid fa-clock-rotate-left" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
             <i class="fa-solid fa-clock-rotate-left"></i>
             <span>Riwayat</span>
         </a>
-        <a href="/profile" data-index="4" data-icon="fa-regular fa-user" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+        <a id="tour-nav-profile" href="/profile" data-index="4" data-icon="fa-regular fa-user" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
             <i class="fa-regular fa-user"></i>
             <span id="nav-auth-label">Profil</span>
         </a>
     </div>
 </nav>
 
-    <!-- JAVASCRIPT LOGIC FULL INTEGRATED -->
+    <!-- =========================================================
+         ONBOARDING TUTORIAL INTERAKTIF (SPOTLIGHT + TOOLTIP CARD)
+         ========================================================= -->
+    <div id="onboardingSpotlightBox" class="hidden"></div>
+
+    <div id="onboardingTooltipCard" class="hidden p-4 space-y-3">
+        <div class="flex items-center justify-between gap-2">
+            <span id="tourStepBadge" class="inline-flex items-center gap-1.5 bg-neoYellow border-2 border-black text-black text-[10px] font-black font-cyber px-2.5 py-0.5 rounded-md uppercase shadow-[2px_2px_0px_#000]">
+                <i class="fa-solid fa-compass"></i> Langkah 1/6
+            </span>
+            <button type="button" onclick="finishOnboardingTour()" class="text-[11px] font-black font-cyber text-slate-600 hover:text-black underline">
+                Lewati Tur
+            </button>
+        </div>
+
+        <div class="space-y-1">
+            <h4 id="tourStepTitle" class="text-sm sm:text-base font-black font-cyber text-black leading-snug">
+                Selamat Datang di ArulzXD Store!
+            </h4>
+            <p id="tourStepDesc" class="text-xs font-bold text-slate-700 leading-relaxed">
+                Mari kenali fitur-fitur utama toko dalam 30 detik agar transaksi Anda makin cepat dan mudah.
+            </p>
+        </div>
+
+        <div id="tourDotsContainer" class="flex items-center gap-1.5 pt-0.5"></div>
+
+        <div class="flex items-center justify-between gap-2 pt-1">
+            <button type="button" id="btnTourPrev" onclick="prevOnboardingStep()"
+                    class="neo-btn bg-white text-black font-cyber font-black px-3 py-2 rounded-xl text-xs uppercase flex items-center gap-1">
+                <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali
+            </button>
+            <button type="button" id="btnTourNext" onclick="nextOnboardingStep()"
+                    class="neo-btn flex-1 bg-neoGreen text-black font-cyber font-black px-4 py-2 rounded-xl text-xs uppercase flex items-center justify-center gap-1.5">
+                <span>Lanjut</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </button>
+        </div>
+    </div>
+    
+        <!-- JAVASCRIPT LOGIC FULL INTEGRATED -->
     <script>
-/* =========================================================
-   LIQUID NOTCH CURVE NAVIGATION (MENTOK FULL-WIDTH & SIMETRIS)
-   ========================================================= */
-let liquidNavAnimationFrame = null;
-let currentNotchPixelX = 0;
-let activeNavIndex = 1;
+        /* =========================================================
+           LIQUID NOTCH CURVE NAVIGATION (MENTOK FULL-WIDTH & SIMETRIS)
+           ========================================================= */
+        let liquidNavAnimationFrame = null;
+        let currentNotchPixelX = 0;
+        let activeNavIndex = 1;
 
-function buildPixelNotchPath(cx, totalW, totalH) {
-    const notchHalfW = 46;
-    const notchDepth = 28;
-    const c1 = 21;
-    const c2 = 19;
+        function buildPixelNotchPath(cx, totalW, totalH) {
+            const notchHalfW = 46;
+            const notchDepth = 28;
+            const c1 = 21;
+            const c2 = 19;
 
-    const leftEdge = Math.max(2, cx - notchHalfW);
-    const rightEdge = Math.min(totalW - 2, cx + notchHalfW);
+            const leftEdge = Math.max(2, cx - notchHalfW);
+            const rightEdge = Math.min(totalW - 2, cx + notchHalfW);
 
-    return [
-        `M 0,1.5`,
-        `L ${leftEdge},1.5`,
-        `C ${leftEdge + c1},1.5 ${cx - c2},${notchDepth} ${cx},${notchDepth}`,
-        `C ${cx + c2},${notchDepth} ${rightEdge - c1},1.5 ${rightEdge},1.5`,
-        `L ${totalW},1.5`,
-        `L ${totalW},${totalH}`,
-        `L 0,${totalH}`,
-        `Z`
-    ].join(' ');
-}
-
-function syncSvgViewBox() {
-    const nav = document.getElementById('liquidBottomNav');
-    const svg = document.getElementById('liquidNavSvg');
-    if (!nav || !svg) return { w: 360, h: 66 };
-    const rect = nav.getBoundingClientRect();
-    const w = Math.max(300, Math.round(rect.width));
-    const h = Math.max(66, Math.round(rect.height));
-    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    svg.setAttribute('preserveAspectRatio', 'none');
-    return { w, h };
-}
-
-function animateLiquidNotchTo(targetPxX) {
-    if (liquidNavAnimationFrame) cancelAnimationFrame(liquidNavAnimationFrame);
-    const pathEl = document.getElementById('liquidNavPath');
-    if (!pathEl) return;
-    const { w, h } = syncSvgViewBox();
-    const startPxX = currentNotchPixelX || targetPxX;
-    const distance = targetPxX - startPxX;
-    const duration = 450;
-    const startTime = performance.now();
-
-    function easeOutBack(t) {
-        const c1 = 1.4;
-        const c3 = c1 + 1;
-        return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
-    }
-
-    function step(now) {
-        const elapsed = Math.min((now - startTime) / duration, 1);
-        const eased = easeOutBack(elapsed);
-        currentNotchPixelX = startPxX + distance * eased;
-        pathEl.setAttribute('d', buildPixelNotchPath(currentNotchPixelX, w, h));
-
-        if (elapsed < 1) {
-            liquidNavAnimationFrame = requestAnimationFrame(step);
-        } else {
-            currentNotchPixelX = targetPxX;
-            pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
+            return [
+                `M 0,1.5`,
+                `L ${leftEdge},1.5`,
+                `C ${leftEdge + c1},1.5 ${cx - c2},${notchDepth} ${cx},${notchDepth}`,
+                `C ${cx + c2},${notchDepth} ${rightEdge - c1},1.5 ${rightEdge},1.5`,
+                `L ${totalW},1.5`,
+                `L ${totalW},${totalH}`,
+                `L 0,${totalH}`,
+                `Z`
+            ].join(' ');
         }
-    }
-    liquidNavAnimationFrame = requestAnimationFrame(step);
-}
 
-function setLiquidNavActive(index, animate = true) {
-    activeNavIndex = index;
-    const items = document.querySelectorAll('.liquid-nav-item');
-    const orb = document.getElementById('liquidFloatingOrb');
-    const orbIcon = document.getElementById('liquidOrbIcon');
-    const pathEl = document.getElementById('liquidNavPath');
+        function syncSvgViewBox() {
+            const nav = document.getElementById('liquidBottomNav');
+            const svg = document.getElementById('liquidNavSvg');
+            if (!nav || !svg) return { w: 360, h: 66 };
+            const rect = nav.getBoundingClientRect();
+            const w = Math.max(300, Math.round(rect.width));
+            const h = Math.max(66, Math.round(rect.height));
+            svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+            svg.setAttribute('preserveAspectRatio', 'none');
+            return { w, h };
+        }
 
-    if (!items.length || !orb || !orbIcon || !pathEl) return;
+        function animateLiquidNotchTo(targetPxX) {
+            if (liquidNavAnimationFrame) cancelAnimationFrame(liquidNavAnimationFrame);
+            const pathEl = document.getElementById('liquidNavPath');
+            if (!pathEl) return;
+            const { w, h } = syncSvgViewBox();
+            const startPxX = currentNotchPixelX || targetPxX;
+            const distance = targetPxX - startPxX;
+            const duration = 450;
+            const startTime = performance.now();
 
-    items.forEach((item, idx) => {
-        item.classList.toggle('active', idx === index);
-    });
+            function easeOutBack(t) {
+                const c1 = 1.4;
+                const c3 = c1 + 1;
+                return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+            }
 
-    const activeItem = items[index];
-    if (!activeItem) return;
+            function step(now) {
+                const elapsed = Math.min((now - startTime) / duration, 1);
+                const eased = easeOutBack(elapsed);
+                currentNotchPixelX = startPxX + distance * eased;
+                pathEl.setAttribute('d', buildPixelNotchPath(currentNotchPixelX, w, h));
 
-    const { w, h } = syncSvgViewBox();
-    const percentLeft = ((index + 0.5) / 5) * 100;
-    const targetPxX = ((index + 0.5) / 5) * w;
+                if (elapsed < 1) {
+                    liquidNavAnimationFrame = requestAnimationFrame(step);
+                } else {
+                    currentNotchPixelX = targetPxX;
+                    pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
+                }
+            }
+            liquidNavAnimationFrame = requestAnimationFrame(step);
+        }
 
-    orb.style.left = `${percentLeft}%`;
-    orbIcon.className = `${activeItem.dataset.icon} text-lg`;
+        function setLiquidNavActive(index, animate = true) {
+            activeNavIndex = index;
+            const items = document.querySelectorAll('.liquid-nav-item');
+            const orb = document.getElementById('liquidFloatingOrb');
+            const orbIcon = document.getElementById('liquidOrbIcon');
+            const pathEl = document.getElementById('liquidNavPath');
 
-    if (animate) {
-        orb.classList.remove('orb-bounce');
-        void orb.offsetWidth;
-        orb.classList.add('orb-bounce');
-        animateLiquidNotchTo(targetPxX);
-    } else {
-        currentNotchPixelX = targetPxX;
-        pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
-    }
-}
+            if (!items.length || !orb || !orbIcon || !pathEl) return;
 
-function handleLiquidNavClick(e, el) {
-    const targetHref = el.getAttribute('href');
-    const index = Number(el.dataset.index);
-    const currentPath = window.location.pathname;
+            items.forEach((item, idx) => {
+                item.classList.toggle('active', idx === index);
+            });
 
-    setLiquidNavActive(index, true);
+            const activeItem = items[index];
+            if (!activeItem) return;
 
-    if (targetHref && targetHref !== currentPath) {
-        e.preventDefault();
-        setTimeout(() => {
-            window.location.href = targetHref;
-        }, 320);
-    } else {
-        e.preventDefault();
-    }
-}
+            const { w, h } = syncSvgViewBox();
+            const percentLeft = ((index + 0.5) / 5) * 100;
+            const targetPxX = ((index + 0.5) / 5) * w;
 
-window.addEventListener('resize', () => {
-    setLiquidNavActive(activeNavIndex, false);
-});
+            orb.style.left = `${percentLeft}%`;
+            orbIcon.className = `${activeItem.dataset.icon} text-lg`;
 
-document.addEventListener('DOMContentLoaded', () => {
-    const activeEl = document.querySelector('.liquid-nav-item.active');
-    const initialIdx = activeEl ? Number(activeEl.dataset.index) : 1;
-    setLiquidNavActive(initialIdx, false);
-});
+            if (animate) {
+                orb.classList.remove('orb-bounce');
+                void orb.offsetWidth;
+                orb.classList.add('orb-bounce');
+                animateLiquidNotchTo(targetPxX);
+            } else {
+                currentNotchPixelX = targetPxX;
+                pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
+            }
+        }
+
+        function handleLiquidNavClick(e, el) {
+            const targetHref = el.getAttribute('href');
+            const index = Number(el.dataset.index);
+            const currentPath = window.location.pathname;
+
+            setLiquidNavActive(index, true);
+
+            if (targetHref && targetHref !== currentPath) {
+                e.preventDefault();
+                setTimeout(() => {
+                    window.location.href = targetHref;
+                }, 320);
+            } else {
+                e.preventDefault();
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            setLiquidNavActive(activeNavIndex, false);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeEl = document.querySelector('.liquid-nav-item.active');
+            const initialIdx = activeEl ? Number(activeEl.dataset.index) : 1;
+            setLiquidNavActive(initialIdx, false);
+        });
 
         document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
         document.addEventListener('dblclick', function (e) { e.preventDefault(); }, { passive: false });
@@ -990,9 +1064,9 @@ document.addEventListener('DOMContentLoaded', () => {
         let CURRENT_LOGGED_USER = null;
 
         const MAX_MEDIA_FILE_BYTES = 5 * 1024 * 1024;
-        let SELECTED_FILE_LIST = []; 
-        let EXISTING_MEDIA_LIST = []; 
-        let REMOVED_MEDIA_URLS = []; 
+        let SELECTED_FILE_LIST = [];
+        let EXISTING_MEDIA_LIST = [];
+        let REMOVED_MEDIA_URLS = [];
         let KEEP_EXISTING_MEDIA = true;
 
         const REVIEWS_CACHE = {};
@@ -1366,7 +1440,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             container.classList.remove('hidden');
-            
+
             let html = EXISTING_MEDIA_LIST.map((media, idx) => {
                 const isVideo = media.type === 'video';
                 return `
@@ -1742,8 +1816,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }, { passive: true });
         }
-
-        function editMyReviewById(reviewId) {
+        
+                function editMyReviewById(reviewId) {
             const productId = document.getElementById('reviewProductId').value;
             const cachedData = REVIEWS_CACHE[productId];
             if (!cachedData || !Array.isArray(cachedData.reviews)) return;
@@ -1766,7 +1840,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(syncReviewModalViewport, 80);
                 setTimeout(syncReviewModalViewport, 300);
             }
-            
+
             SELECTED_FILE_LIST = [];
             REMOVED_MEDIA_URLS = [];
             KEEP_EXISTING_MEDIA = true;
@@ -1838,7 +1912,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function renderReviewsToDOM(data) {
             const container = document.getElementById('reviewsListContainer');
-            
+
             document.getElementById('detailRatingSummary').innerHTML = `
                 ${renderStarRating(data.averageRating || 0)}
                 <span class="text-[11px] font-bold text-slate-600">(${data.totalReviews || 0} Penilaian)</span>
@@ -1856,7 +1930,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let mediaHtml = '';
                 if (rev.media && rev.media.length > 0) {
                     const revMediaIdx = currentReviewsListWithMedia.findIndex(r => r._id === rev._id);
-                    
+
                     mediaHtml = `<div class="flex gap-2 mt-2 overflow-x-auto scrollbar-hide py-1">` + rev.media.map((m, mIdx) => {
                         if (m.type === 'video') {
                             return `
@@ -1979,7 +2053,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         showConfirmButton: false,
                         customClass: { popup: 'cyber-swal' }
                     });
-                    
+
                     delete REVIEWS_CACHE[productId];
                     resetReviewForm();
                     await loadProductReviews(productId, true);
@@ -2001,7 +2075,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const optSaldo = document.getElementById('opt-saldo');
             const optTelegram = document.getElementById('opt-telegram');
             const optManual = document.getElementById('opt-manual');
-            
+
             optSaldo.className = `neo-box p-3 cursor-pointer flex items-center justify-between ${method === 'saldo' ? 'bg-neoYellow' : 'bg-white'}`;
             optTelegram.className = `neo-box p-3 cursor-pointer flex items-center justify-between ${method === 'telegram' ? 'bg-neoCyan' : 'bg-white'}`;
             optManual.className = `neo-box p-3 cursor-pointer flex items-center justify-between ${method === 'manual' ? 'bg-neoYellow' : 'bg-white'}`;
@@ -2111,7 +2185,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderProduk();
         }
 
-        function buildProductCardHtml(produk) {
+        function buildProductCardHtml(produk, cardElementId = '') {
             const originalIndex = DATA_PRODUK.findIndex(p => (p.Id || p._id) === (produk.Id || produk._id));
             const pId = produk.Id || produk._id;
             const cachedRev = REVIEWS_CACHE[pId] || { averageRating: 0, totalReviews: 0 };
@@ -2135,8 +2209,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="text-sm sm:text-base font-black font-cyber text-amber-500 leading-tight">Rp ${new Intl.NumberFormat('id-ID').format(produk.harga)}</div>
             `;
 
+            const idAttr = cardElementId ? `id="${cardElementId}"` : '';
+
             return `
-                <div class="neo-card-sm relative overflow-visible rounded-2xl p-2.5 sm:p-4 bg-white flex flex-col justify-between space-y-2 sm:space-y-3 cursor-pointer min-w-0" onclick="openProductDetailModal('${pId}')">
+                <div ${idAttr} class="neo-card-sm relative overflow-visible rounded-2xl p-2.5 sm:p-4 bg-white flex flex-col justify-between space-y-2 sm:space-y-3 cursor-pointer min-w-0" onclick="openProductDetailModal('${pId}')">
                     
                     ${starburstBadge}
 
@@ -2225,6 +2301,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             emptyState.classList.add('hidden');
+            let firstTourCardAssigned = false;
 
             const populerItems = filtered
                 .filter(item => {
@@ -2236,7 +2313,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let populerSectionHtml = '';
             if (populerItems.length > 0) {
-                const populerCardsHtml = populerItems.map(produk => buildProductCardHtml(produk)).join('');
+                const populerCardsHtml = populerItems.map((produk, idx) => {
+                    const assignId = (!firstTourCardAssigned && idx === 0) ? 'tour-first-product-card' : '';
+                    if (assignId) firstTourCardAssigned = true;
+                    return buildProductCardHtml(produk, assignId);
+                }).join('');
                 populerSectionHtml = `
                     <div class="neo-box rounded-2xl p-3 sm:p-4 bg-neoYellow/30 space-y-3">
                         <div class="flex items-center justify-between border-b-2 border-black pb-2">
@@ -2264,7 +2345,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const categoriesHtml = Object.keys(categoriesGroup).map(catName => {
                 const itemsList = [...categoriesGroup[catName]].sort((a, b) => getPopularityScore(b) - getPopularityScore(a));
-                const cardItemsHtml = itemsList.map(produk => buildProductCardHtml(produk)).join('');
+                const cardItemsHtml = itemsList.map((produk, idx) => {
+                    const assignId = (!firstTourCardAssigned && idx === 0) ? 'tour-first-product-card' : '';
+                    if (assignId) firstTourCardAssigned = true;
+                    return buildProductCardHtml(produk, assignId);
+                }).join('');
 
                 return `
                     <div class="space-y-3">
@@ -2301,15 +2386,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function filterProduk() { renderProduk(); }
 
+        function resetVoucherUI() {
+            ACTIVE_VOUCHER = null;
+            const vInput = document.getElementById('voucherInput');
+            const statusLabel = document.getElementById('voucherStatusLabel');
+            const btnClaim = document.getElementById('btnClaimVoucher');
+            const btnClaimText = document.getElementById('btnClaimText');
+
+            if (vInput) {
+                vInput.value = '';
+                vInput.readOnly = false;
+                vInput.classList.remove('bg-neoBg');
+            }
+            if (statusLabel) {
+                statusLabel.innerText = 'Bisa diisi / dikosongkan';
+                statusLabel.className = 'text-[10px] font-bold text-slate-600 text-right';
+            }
+            if (btnClaim) {
+                btnClaim.disabled = false;
+                btnClaim.className = 'neo-btn bg-neoYellow font-cyber font-black px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 uppercase';
+            }
+            if (btnClaimText) {
+                btnClaimText.innerText = 'Claim';
+            }
+        }
+
         function openCheckoutModal(index) {
             SELECTED_PRODUCT = DATA_PRODUK[index];
             if (!SELECTED_PRODUCT) return;
 
             CURRENT_ORDER_ID = generateUniqueOrderId();
             CURRENT_QTY = 1;
-            ACTIVE_VOUCHER = null;
             ACTIVE_SUCCESS_ORDER_ID = null;
             CURRENT_ORDER_FINALIZED = false;
+
+            resetVoucherUI();
 
             const hargaFinal = SELECTED_PRODUCT.harga_diskon || SELECTED_PRODUCT.harga;
 
@@ -2317,7 +2428,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('modalProductName').innerText = SELECTED_PRODUCT.nama;
             document.getElementById('modalProductPrice').innerText = formatRupiah(hargaFinal);
             document.getElementById('modalProductSold').innerText = formatTerjual(SELECTED_PRODUCT.terjual);
-            
+
             let modalImgSrc = Array.isArray(SELECTED_PRODUCT.gambar) ? SELECTED_PRODUCT.gambar[0] : (SELECTED_PRODUCT.gambar || 'https://cdn.larasxd.my.id/files/1wh5do.png');
             document.getElementById('modalProductImage').src = modalImgSrc;
             document.getElementById('modalStockInfo').innerText = `Tersisa: ${SELECTED_PRODUCT.stok !== undefined ? SELECTED_PRODUCT.stok : 'Tersedia'}`;
@@ -2370,9 +2481,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         async function claimVoucher() {
             const vInput = document.getElementById('voucherInput');
+            const statusLabel = document.getElementById('voucherStatusLabel');
+            const btnClaim = document.getElementById('btnClaimVoucher');
+            const btnClaimText = document.getElementById('btnClaimText');
             const voucherCode = vInput ? vInput.value.trim().toUpperCase() : '';
 
-            if (!voucherCode) return;
+            if (!voucherCode) {
+                if (statusLabel) {
+                    statusLabel.innerText = 'Masukkan kode voucher terlebih dahulu!';
+                    statusLabel.className = 'text-[10px] font-black text-red-600 text-right';
+                }
+                if (vInput) vInput.focus();
+                return;
+            }
+
+            if (btnClaim) btnClaim.disabled = true;
+            if (btnClaimText) btnClaimText.innerText = 'Cek...';
 
             try {
                 const res = await fetch('/api/vouchers/claim', {
@@ -2382,34 +2506,133 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 const result = await res.json();
-                if (res.ok && result.status) {
-                    ACTIVE_VOUCHER = result.voucher;
-                    document.getElementById('voucherStatusLabel').innerText = `● Voucher Valid (${ACTIVE_VOUCHER.code})`;
+                const voucherData = result.voucher || result.data;
+
+                if (res.ok && result.status && voucherData) {
+                    ACTIVE_VOUCHER = {
+                        code: voucherData.code || voucherCode,
+                        discount: Number(voucherData.discount) || 0,
+                        type: voucherData.type || 'percentage'
+                    };
+
+                    const potonganTeks = ACTIVE_VOUCHER.type === 'percentage'
+                        ? `Diskon ${ACTIVE_VOUCHER.discount}%`
+                        : `Diskon ${formatRupiah(ACTIVE_VOUCHER.discount)}`;
+
+                    if (vInput) {
+                        vInput.value = ACTIVE_VOUCHER.code;
+                        vInput.readOnly = true;
+                        vInput.classList.add('bg-neoBg');
+                    }
+                    if (statusLabel) {
+                        statusLabel.innerText = `● Aktif: ${ACTIVE_VOUCHER.code} (${potonganTeks})`;
+                        statusLabel.className = 'text-[10px] font-black text-emerald-700 text-right';
+                    }
+                    if (btnClaim) {
+                        btnClaim.disabled = true;
+                        btnClaim.className = 'neo-btn bg-neoGreen font-cyber font-black px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 uppercase cursor-default';
+                    }
+                    if (btnClaimText) btnClaimText.innerText = 'Aktif';
+
                     updateTotalPrice();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'VOUCHER DIKLAIM!',
+                        text: `Kode ${ACTIVE_VOUCHER.code} (${potonganTeks}) berhasil diterapkan ke pesanan Anda.`,
+                        timer: 1500,
+                        showConfirmButton: false,
+                        customClass: { popup: 'cyber-swal' }
+                    });
+                } else {
+                    ACTIVE_VOUCHER = null;
+                    updateTotalPrice();
+
+                    const errMsg = result.message || 'Kode voucher tidak valid atau sudah habis!';
+                    if (statusLabel) {
+                        statusLabel.innerText = `✕ ${errMsg}`;
+                        statusLabel.className = 'text-[10px] font-black text-red-600 text-right';
+                    }
+                    if (btnClaim) btnClaim.disabled = false;
+                    if (btnClaimText) btnClaimText.innerText = 'Claim';
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'VOUCHER GAGAL',
+                        text: errMsg,
+                        customClass: { popup: 'cyber-swal' }
+                    });
                 }
-            } catch (err) {}
+            } catch (err) {
+                ACTIVE_VOUCHER = null;
+                updateTotalPrice();
+
+                if (statusLabel) {
+                    statusLabel.innerText = '✕ Gagal memeriksa voucher';
+                    statusLabel.className = 'text-[10px] font-black text-red-600 text-right';
+                }
+                if (btnClaim) btnClaim.disabled = false;
+                if (btnClaimText) btnClaimText.innerText = 'Claim';
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'KESALAHAN KONEKSI',
+                    text: 'Gagal menghubungi server untuk memvalidasi voucher.',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
         }
 
         function calculateFinalTotal() {
             if (!SELECTED_PRODUCT) return { subtotal: 0, discount: 0, total: 0 };
-            const hargaUnit = SELECTED_PRODUCT.harga_diskon || SELECTED_PRODUCT.harga;
+            const hargaUnit = Number(SELECTED_PRODUCT.harga_diskon || SELECTED_PRODUCT.harga) || 0;
             const subtotal = hargaUnit * CURRENT_QTY;
             let discountAmount = 0;
 
             if (ACTIVE_VOUCHER) {
+                const discVal = Number(ACTIVE_VOUCHER.discount) || 0;
                 if (ACTIVE_VOUCHER.type === 'percentage') {
-                    discountAmount = (subtotal * ACTIVE_VOUCHER.discount) / 100;
+                    discountAmount = Math.floor((subtotal * discVal) / 100);
                 } else {
-                    discountAmount = ACTIVE_VOUCHER.discount;
+                    discountAmount = discVal;
                 }
+                discountAmount = Math.min(subtotal, Math.max(0, discountAmount));
             }
-            return { subtotal, discount: discountAmount, total: Math.max(0, subtotal - discountAmount) };
+            return {
+                subtotal,
+                discount: discountAmount,
+                total: Math.max(0, subtotal - discountAmount)
+            };
         }
 
         function updateTotalPrice() {
             const calc = calculateFinalTotal();
-            document.getElementById('modalSubtotalPrice').innerText = formatRupiah(calc.subtotal);
-            document.getElementById('modalTotalPrice').innerText = formatRupiah(calc.total);
+            const subtotalEl = document.getElementById('modalSubtotalPrice');
+            const discountRow = document.getElementById('voucherDiscountRow');
+            const discountLabel = document.getElementById('modalDiscountLabel');
+            const discountAmountEl = document.getElementById('modalDiscountAmount');
+            const totalEl = document.getElementById('modalTotalPrice');
+
+            if (ACTIVE_VOUCHER && calc.discount > 0) {
+                if (subtotalEl) {
+                    subtotalEl.innerHTML = `<span class="line-through text-slate-400 mr-1.5">${formatRupiah(calc.subtotal)}</span><span class="text-black font-black">${formatRupiah(calc.total)}</span>`;
+                }
+                if (discountRow) discountRow.classList.remove('hidden');
+                if (discountLabel) {
+                    discountLabel.innerText = ACTIVE_VOUCHER.type === 'percentage'
+                        ? `Diskon Voucher (${ACTIVE_VOUCHER.code} - ${ACTIVE_VOUCHER.discount}%):`
+                        : `Diskon Voucher (${ACTIVE_VOUCHER.code}):`;
+                }
+                if (discountAmountEl) {
+                    discountAmountEl.innerText = `- ${formatRupiah(calc.discount)}`;
+                }
+            } else {
+                if (subtotalEl) subtotalEl.innerText = formatRupiah(calc.subtotal);
+                if (discountRow) discountRow.classList.add('hidden');
+                if (discountAmountEl) discountAmountEl.innerText = '- Rp 0';
+            }
+
+            if (totalEl) totalEl.innerText = formatRupiah(calc.total);
         }
 
         function resolveCheckoutPaymentMethod() {
@@ -2617,7 +2840,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const fileBlob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
 
             if (isIOSDevice()) {
-                // 1. Coba iOS Share Sheet ("Simpan ke File") jika didukung
                 try {
                     const iosFile = new File([fileBlob], filename, { type: 'application/octet-stream' });
                     if (navigator.canShare && navigator.canShare({ files: [iosFile] })) {
@@ -2631,7 +2853,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (shareErr && shareErr.name === 'AbortError') return;
                 }
 
-                // 2. Fallback iOS Safari/Chrome: buka Data URL / Blob URL agar iOS menampilkan sheet "Unduh / Simpan ke File"
                 const dataUrl = await new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onload = () => resolve(reader.result);
@@ -2646,7 +2867,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Android / PC Windows / macOS Desktop
             const blobUrl = window.URL.createObjectURL(fileBlob);
             const tempLink = document.createElement('a');
             tempLink.style.display = 'none';
@@ -2822,7 +3042,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     amount: calc.total,
                     paymentMethod,
                     username: username || (CURRENT_LOGGED_USER ? CURRENT_LOGGED_USER.username : ''),
-                    note
+                    note,
+                    voucherCode: ACTIVE_VOUCHER ? ACTIVE_VOUCHER.code : null
                 }),
                 keepalive: true
             }).catch(() => {});
@@ -2831,6 +3052,10 @@ document.addEventListener('DOMContentLoaded', () => {
             message += `ID TRX: ${CURRENT_ORDER_ID}\n`;
             message += `Username: ${username || '-'}\n`;
             message += `Produk: ${SELECTED_PRODUCT.nama} (${CURRENT_QTY}x)\n`;
+            if (ACTIVE_VOUCHER && calc.discount > 0) {
+                message += `Subtotal: ${formatRupiah(calc.subtotal)}\n`;
+                message += `Voucher (${ACTIVE_VOUCHER.code}): -${formatRupiah(calc.discount)}\n`;
+            }
             message += `Total Tagihan: ${formatRupiah(calc.total)}\n`;
             if (note) message += `Catatan: ${note}\n`;
 
@@ -2842,8 +3067,231 @@ document.addEventListener('DOMContentLoaded', () => {
             closeCheckoutModal();
         }
 
+        /* =========================================================
+           ENGINE TUTORIAL INTERAKTIF (USER PERTAMA KALI LOGIN)
+           ========================================================= */
+        let ONBOARDING_ACTIVE = false;
+        let ONBOARDING_STEP_INDEX = 0;
+        let ONBOARDING_ELEVATED_EL = null;
+
+        const ONBOARDING_STEPS = [
+            {
+                targetId: 'tour-hero-banner',
+                title: 'Selamat Datang di ArulzXD Store!',
+                desc: 'Tempat beli Source Code, Script, & Layanan Digital otomatis 24/7. Yuk ikuti panduan singkat ini untuk mengenal fitur-fiturnya!'
+            },
+            {
+                targetId: 'tour-search-box',
+                title: 'Cari Produk Lebih Cepat',
+                desc: 'Ketik nama script, modul, atau kata kunci di kolom pencarian ini untuk menyaring katalog secara instan.'
+            },
+            {
+                targetId: 'tour-category-box',
+                title: 'Filter Kategori & Produk Populer',
+                desc: 'Pilih kategori yang Anda butuhkan di sini. Produk paling laris & banyak diulas otomatis tampil di bagian paling atas.'
+            },
+            {
+                targetId: 'tour-first-product-card',
+                title: 'Detail, Ulasan & Checkout Instan',
+                desc: 'Ketuk kartu produk untuk melihat foto lengkap, deskripsi, dan penilaian pembeli. Tekan "Beli Sekarang" untuk checkout memakai Saldo Akun, Voucher, atau order via Telegram/WhatsApp.'
+            },
+            {
+                targetId: 'tour-nav-deposit',
+                title: 'Isi Saldo Instan (QRIS)',
+                desc: 'Gunakan menu Deposit di navigasi bawah untuk top up saldo otomatis agar bisa langsung membeli & mengunduh produk tanpa menunggu admin.'
+            },
+            {
+                targetId: 'tour-nav-riwayat',
+                title: 'Riwayat Transaksi & Download',
+                desc: 'Semua pesanan berhasil, status transaksi, serta tombol download ulang produk tersimpan rapi di menu Riwayat.'
+            }
+        ];
+
+        function getOnboardingStorageKey() {
+            if (CURRENT_LOGGED_USER && (CURRENT_LOGGED_USER.id || CURRENT_LOGGED_USER._id || CURRENT_LOGGED_USER.username)) {
+                const uid = CURRENT_LOGGED_USER.id || CURRENT_LOGGED_USER._id || CURRENT_LOGGED_USER.username;
+                return `arulzxd_store_tour_done_${String(uid)}`;
+            }
+            return 'arulzxd_store_tour_done_guest';
+        }
+
+        function shouldAutoStartOnboarding() {
+            if (!CURRENT_LOGGED_USER) return false;
+            const key = getOnboardingStorageKey();
+            try {
+                if (localStorage.getItem(key) === 'true') return false;
+            } catch (e) {}
+
+            // Deteksi akun baru / pertama kali login (jika server mengirim flag isNewUser / firstLogin, atau belum pernah menyelesaikan tur di browser ini)
+            if (
+                CURRENT_LOGGED_USER.isNewUser === true ||
+                CURRENT_LOGGED_USER.firstLogin === true ||
+                CURRENT_LOGGED_USER.onboardingCompleted === false
+            ) {
+                return true;
+            }
+            return true;
+        }
+
+        function clearElevatedOnboardingTarget() {
+            if (ONBOARDING_ELEVATED_EL) {
+                ONBOARDING_ELEVATED_EL.classList.remove('onboarding-target-elevated');
+                ONBOARDING_ELEVATED_EL = null;
+            }
+        }
+
+        function positionOnboardingOverlay() {
+            if (!ONBOARDING_ACTIVE) return;
+            const step = ONBOARDING_STEPS[ONBOARDING_STEP_INDEX];
+            if (!step) return;
+
+            const spotlight = document.getElementById('onboardingSpotlightBox');
+            const tooltip = document.getElementById('onboardingTooltipCard');
+            let targetEl = document.getElementById(step.targetId);
+
+            if (!targetEl) {
+                targetEl = document.getElementById('productGrid') || document.getElementById('tour-hero-banner');
+            }
+            if (!targetEl || !spotlight || !tooltip) return;
+
+            clearElevatedOnboardingTarget();
+            targetEl.classList.add('onboarding-target-elevated');
+            ONBOARDING_ELEVATED_EL = targetEl;
+
+            const rect = targetEl.getBoundingClientRect();
+            const pad = 6;
+            const top = Math.max(6, rect.top - pad);
+            const left = Math.max(6, rect.left - pad);
+            const width = Math.min(window.innerWidth - 12, rect.width + pad * 2);
+            const height = Math.min(window.innerHeight - 12, rect.height + pad * 2);
+
+            spotlight.style.top = `${top}px`;
+            spotlight.style.left = `${left}px`;
+            spotlight.style.width = `${width}px`;
+            spotlight.style.height = `${height}px`;
+
+            // Hitung posisi kartu tooltip agar tidak keluar layar HP maupun desktop
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const tooltipH = tooltipRect.height || 210;
+            const tooltipW = tooltipRect.width || Math.min(370, window.innerWidth - 24);
+            const gap = 14;
+
+            let cardTop = rect.bottom + gap;
+            if (cardTop + tooltipH > window.innerHeight - 16) {
+                cardTop = rect.top - tooltipH - gap;
+            }
+            if (cardTop < 12) {
+                cardTop = Math.max(12, Math.min(window.innerHeight - tooltipH - 16, (window.innerHeight - tooltipH) / 2));
+            }
+
+            let cardLeft = rect.left + (rect.width / 2) - (tooltipW / 2);
+            cardLeft = Math.max(12, Math.min(window.innerWidth - tooltipW - 12, cardLeft));
+
+            tooltip.style.top = `${cardTop}px`;
+            tooltip.style.left = `${cardLeft}px`;
+        }
+
+        function renderOnboardingStep(index) {
+            ONBOARDING_STEP_INDEX = index;
+            const step = ONBOARDING_STEPS[index];
+            if (!step) return;
+
+            const spotlight = document.getElementById('onboardingSpotlightBox');
+            const tooltip = document.getElementById('onboardingTooltipCard');
+            const badge = document.getElementById('tourStepBadge');
+            const title = document.getElementById('tourStepTitle');
+            const desc = document.getElementById('tourStepDesc');
+            const dots = document.getElementById('tourDotsContainer');
+            const btnPrev = document.getElementById('btnTourPrev');
+            const btnNext = document.getElementById('btnTourNext');
+
+            spotlight.classList.remove('hidden');
+            tooltip.classList.remove('hidden');
+
+            badge.innerHTML = `<i class="fa-solid fa-compass"></i> Langkah ${index + 1}/${ONBOARDING_STEPS.length}`;
+            title.innerText = step.title;
+            desc.innerText = step.desc;
+
+            dots.innerHTML = ONBOARDING_STEPS.map((_, i) => `
+                <button type="button" onclick="renderOnboardingStep(${i})"
+                        class="h-2 rounded-full border border-black transition-all ${i === index ? 'w-6 bg-neoYellow' : 'w-2 bg-slate-300'}"></button>
+            `).join('');
+
+            if (index === 0) {
+                btnPrev.classList.add('opacity-40', 'pointer-events-none');
+            } else {
+                btnPrev.classList.remove('opacity-40', 'pointer-events-none');
+            }
+
+            const isLast = index === ONBOARDING_STEPS.length - 1;
+            btnNext.innerHTML = isLast
+                ? `<span>Selesai & Mulai Belanja</span> <i class="fa-solid fa-check text-xs"></i>`
+                : `<span>Lanjut</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>`;
+
+            let targetEl = document.getElementById(step.targetId) || document.getElementById('productGrid');
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            positionOnboardingOverlay();
+            setTimeout(positionOnboardingOverlay, 360);
+        }
+
+        function startOnboardingTour() {
+            ONBOARDING_ACTIVE = true;
+            renderOnboardingStep(0);
+        }
+
+        function nextOnboardingStep() {
+            if (ONBOARDING_STEP_INDEX < ONBOARDING_STEPS.length - 1) {
+                renderOnboardingStep(ONBOARDING_STEP_INDEX + 1);
+            } else {
+                finishOnboardingTour();
+            }
+        }
+
+        function prevOnboardingStep() {
+            if (ONBOARDING_STEP_INDEX > 0) {
+                renderOnboardingStep(ONBOARDING_STEP_INDEX - 1);
+            }
+        }
+
+        function finishOnboardingTour() {
+            ONBOARDING_ACTIVE = false;
+            clearElevatedOnboardingTarget();
+
+            const spotlight = document.getElementById('onboardingSpotlightBox');
+            const tooltip = document.getElementById('onboardingTooltipCard');
+            if (spotlight) spotlight.classList.add('hidden');
+            if (tooltip) tooltip.classList.add('hidden');
+
+            try {
+                localStorage.setItem(getOnboardingStorageKey(), 'true');
+            } catch (e) {}
+
+            // Opsional sinkronisasi status selesai tur ke backend jika endpoint tersedia
+            fetch('/api/user/onboarding-complete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ page: 'store', completed: true })
+            }).catch(() => {});
+        }
+
+        window.addEventListener('resize', () => {
+            if (ONBOARDING_ACTIVE) positionOnboardingOverlay();
+        });
+        window.addEventListener('scroll', () => {
+            if (ONBOARDING_ACTIVE) positionOnboardingOverlay();
+        }, { passive: true });
+
         async function initStorePage() {
             await Promise.allSettled([fetchCurrentUserStatus(), fetchProduk()]);
+
+            if (shouldAutoStartOnboarding()) {
+                setTimeout(() => {
+                    startOnboardingTour();
+                }, 450);
+            }
         }
 
         initStorePage();
