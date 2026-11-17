@@ -54,16 +54,50 @@
         .nav-item-btn.active i { font-size: 20px; }
         .nav-item-btn.active span { color: #000000; font-weight: 900; transform: translateY(-2px); }
         .nav-item-btn.active::after { content: ''; position: absolute; bottom: 4px; width: 5px; height: 5px; background-color: #000000; border-radius: 50%; }
-        .swal2-popup.cyber-swal { background: #FFFFFF !important; border: 3px solid #000000 !important; border-radius: 20px !important; color: #000000 !important; box-shadow: 6px 6px 0px #000000 !important; font-family: 'Plus Jakarta Sans', sans-serif !important; }
-        #depQrcodeContainer { display: flex; align-items: center; justify-content: center; width: 200px; height: 200px; background: #FFFFFF; }
-        #depQrcodeContainer canvas, #depQrcodeContainer img { width: 200px !important; height: 200px !important; max-width: 100% !important; max-height: 100% !important; object-fit: contain; image-rendering: pixelated; display: block; }
+
+        /* SweetAlert2 Neo-Brutalism Styling & Anti-Glitch */
+        .swal2-container { z-index: 999999 !important; }
+        .swal2-popup.cyber-swal {
+            background: #FFFFFF !important;
+            border: 3px solid #000000 !important;
+            border-radius: 20px !important;
+            color: #000000 !important;
+            box-shadow: 6px 6px 0px #000000 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
+        .swal2-popup.cyber-swal .swal2-title {
+            font-family: 'Space Grotesk', sans-serif !important;
+            font-weight: 900 !important;
+            color: #000000 !important;
+        }
+        .swal2-popup.cyber-swal .swal2-confirm {
+            background: #00E5FF !important;
+            color: #000000 !important;
+            border: 3px solid #000000 !important;
+            border-radius: 12px !important;
+            font-family: 'Space Grotesk', sans-serif !important;
+            font-weight: 900 !important;
+            box-shadow: 4px 4px 0px #000000 !important;
+        }
+        .swal2-popup.cyber-swal .swal2-cancel {
+            background: #FFFFFF !important;
+            color: #000000 !important;
+            border: 3px solid #000000 !important;
+            border-radius: 12px !important;
+            font-family: 'Space Grotesk', sans-serif !important;
+            font-weight: 900 !important;
+            box-shadow: 4px 4px 0px #000000 !important;
+        }
+
+        #depQrcodeContainer { display: flex; align-items: center; justify-content: center; width: 185px; height: 185px; background: #FFFFFF; }
+        #depQrcodeContainer canvas, #depQrcodeContainer img { width: 185px !important; height: 185px !important; max-width: 100% !important; max-height: 100% !important; object-fit: contain; image-rendering: pixelated; display: block; }
     </style>
 </head>
 <body class="font-sans antialiased text-black min-h-screen pb-36">
 
     <!-- FLOATING LIVE CHAT WIDGET -->
     <div id="liveChatWidgetContainer">
-        <div id="floatingChatWindow" class="fixed bottom-20 right-4 sm:right-6 z-[99999] hidden w-[calc(100vw-2rem)] max-w-[360px] h-[420px] max-h-[calc(100vh-100px)] bg-white border-3 border-black rounded-2xl shadow-[6px_6px_0px_#000] overflow-hidden flex-col transition-all duration-300">
+        <div id="floatingChatWindow" class="fixed bottom-24 right-4 sm:right-6 z-[99999] hidden w-[calc(100vw-2rem)] max-w-[360px] h-[420px] max-h-[calc(100vh-120px)] bg-white border-3 border-black rounded-2xl shadow-[6px_6px_0px_#000] overflow-hidden flex-col transition-all duration-300">
             <div class="bg-neoYellow p-3 border-b-3 border-black flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-2.5">
                     <div class="relative">
@@ -294,7 +328,7 @@
                         <div class="w-7 h-7 rounded-lg bg-neoGreen border border-black flex items-center justify-center shrink-0 mt-0.5 font-black">3</div>
                         <div>
                             <h4 class="font-black font-cyber">Konfirmasi Cepat Admin</h4>
-                            <p class="text-[11px] mt-0.5">Bukti langsung terkirim ke Telegram & Panel Admin untuk dicek dan saldo segera masuk.</p>
+                            <p class="text-[11px] mt-0.5">Bukti langsung terkirim ke Admin untuk dicek dan saldo segera masuk ke akun Anda.</p>
                         </div>
                     </div>
                 </div>
@@ -303,11 +337,11 @@
     </main>
 
     <!-- MODAL POPUP QRIS DEPOSIT -->
-    <div id="depositModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
-        <div class="w-full max-w-[440px] rounded-2xl bg-white border-[3px] border-black shadow-[8px_8px_0px_#000] overflow-hidden relative my-auto">
+    <div id="depositModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[10050] hidden items-start sm:items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="w-full max-w-[440px] rounded-2xl bg-white border-[3px] border-black shadow-[8px_8px_0px_#000] overflow-hidden relative my-3 sm:my-auto flex flex-col max-h-[calc(100dvh-24px)]">
             
             <!-- TOP WINDOW BAR -->
-            <div class="bg-neoYellow border-b-[3px] border-black px-4 py-3 flex items-center justify-between">
+            <div class="bg-neoYellow border-b-[3px] border-black px-4 py-3 flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-2">
                     <div class="flex items-center gap-1.5">
                         <span class="w-3 h-3 rounded-full bg-neoPink border-2 border-black inline-block"></span>
@@ -325,7 +359,7 @@
             </div>
 
             <!-- MODAL BODY -->
-            <div class="p-4 sm:p-5 neo-dots-bg space-y-3 text-center max-h-[85vh] overflow-y-auto">
+            <div class="p-4 sm:p-5 neo-dots-bg space-y-3 text-center overflow-y-auto flex-1 pb-6">
                 
                 <!-- KARTU UTAMA QRIS -->
                 <div class="mx-auto w-full bg-white rounded-2xl border-[3px] border-black shadow-[5px_5px_0px_#000] overflow-hidden">
@@ -337,8 +371,8 @@
                         <span class="text-[10px] font-mono font-extrabold bg-neoCyan text-black px-2 py-0.5 rounded border border-black">DINAMIS</span>
                     </div>
 
-                    <div class="p-3.5 bg-white flex flex-col items-center justify-center relative">
-                        <div class="relative p-2.5 bg-white border-[3px] border-black rounded-xl shadow-[4px_4px_0px_#000]">
+                    <div class="p-3 bg-white flex flex-col items-center justify-center relative">
+                        <div class="relative p-2 bg-white border-[3px] border-black rounded-xl shadow-[4px_4px_0px_#000]">
                             <div id="depQrcodeContainer"></div>
                         </div>
                         <p class="text-[10px] font-bold text-slate-700 mt-2 flex items-center gap-1">
@@ -384,8 +418,12 @@
                         <input type="file" id="proofImageInput" accept="image/*" onchange="previewProofFile(this)"
                                class="w-full text-[11px] font-bold bg-neoBg border-2 border-black rounded-xl p-2 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-2 file:border-black file:bg-neoCyan file:font-cyber file:font-black file:text-[10px]">
                         
-                        <div id="proofPreviewBox" class="hidden border-2 border-black rounded-xl overflow-hidden bg-neoBg p-1.5 text-center">
-                            <img id="proofPreviewImg" src="" class="max-h-36 mx-auto rounded-lg object-contain border border-black">
+                        <div id="proofPreviewBox" class="hidden relative border-2 border-black rounded-xl overflow-hidden bg-neoBg p-2 text-center">
+                            <button type="button" onclick="removeProofPreview()" title="Hapus Foto Bukti"
+                                    class="neo-btn absolute top-2 right-2 bg-neoPink text-black text-[10px] font-cyber font-black px-2.5 py-1 rounded-lg uppercase flex items-center gap-1 z-10">
+                                <i class="fa-solid fa-trash-can"></i> Hapus
+                            </button>
+                            <img id="proofPreviewImg" src="" class="max-h-28 mx-auto rounded-lg object-contain border border-black">
                         </div>
 
                         <button type="button" id="btnSubmitProof" onclick="submitQrisV2Proof()" class="neo-btn w-full bg-neoGreen text-black text-xs font-black py-2.5 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
@@ -393,9 +431,14 @@
                         </button>
                     </div>
 
-                    <div id="proofWaitingInfo" class="hidden bg-neoCyan/30 border-2 border-black rounded-xl p-2.5 text-[11px] font-bold text-black">
-                        <i class="fa-solid fa-hourglass-half animate-spin mr-1"></i>
-                        Bukti pembayaran sudah dikirim ke Admin & Telegram. Menunggu verifikasi...
+                    <div id="proofWaitingInfo" class="hidden bg-neoCyan/30 border-2 border-black rounded-xl p-2.5 text-[11px] font-bold text-black space-y-2">
+                        <div>
+                            <i class="fa-solid fa-hourglass-half animate-spin mr-1"></i>
+                            Bukti pembayaran sudah dikirim ke Admin. Menunggu verifikasi...
+                        </div>
+                        <button type="button" id="btnDeleteSubmittedProof" onclick="deleteSubmittedProof()" class="neo-btn w-full bg-white hover:bg-neoPink text-black text-[11px] font-black py-2 rounded-xl uppercase flex items-center justify-center gap-1.5 font-cyber">
+                            <i class="fa-solid fa-trash-can"></i> Hapus & Ganti Bukti Pembayaran
+                        </button>
                     </div>
                 </div>
 
@@ -447,7 +490,9 @@
 
     <script>
         let selectedQrisVersion = 'v2'; // Default QRIS v2
-        let depPollInterval = null;
+        let depPollTimer = null;
+        let isPollingRequestActive = false;
+        let isHandlingTerminalState = false;
         let currentDepOrderId = '';
         let currentDepAmount = 0;
         let currentQrPayload = '';
@@ -466,7 +511,15 @@
         function copyTextValue(text, label) {
             if (!text) return;
             navigator.clipboard.writeText(text).then(() => {
-                Swal.fire({ icon: 'success', title: `${label.toUpperCase()} DISALIN!`, text: `${text}`, timer: 1300, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+                Swal.fire({
+                    icon: 'success',
+                    title: `${label.toUpperCase()} DISALIN!`,
+                    text: `${text}`,
+                    timer: 1300,
+                    showConfirmButton: false,
+                    scrollbarPadding: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
             }).catch(() => {});
         }
 
@@ -500,6 +553,74 @@
                 reader.readAsDataURL(input.files[0]);
             } else {
                 box.classList.add('hidden');
+            }
+        }
+
+        function removeProofPreview() {
+            const input = document.getElementById('proofImageInput');
+            const box = document.getElementById('proofPreviewBox');
+            const img = document.getElementById('proofPreviewImg');
+            if (input) input.value = '';
+            if (img) img.src = '';
+            if (box) box.classList.add('hidden');
+        }
+
+        async function deleteSubmittedProof() {
+            if (!currentDepOrderId) return;
+
+            const confirmRes = await Swal.fire({
+                title: 'HAPUS BUKTI PEMBAYARAN?',
+                text: 'Bukti yang sudah terkirim akan dihapus agar Anda bisa mengunggah ulang foto yang benar.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus Bukti',
+                cancelButtonText: 'Batal',
+                scrollbarPadding: false,
+                customClass: { popup: 'cyber-swal' }
+            });
+
+            if (!confirmRes.isConfirmed) return;
+
+            const btn = document.getElementById('btnDeleteSubmittedProof');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menghapus Bukti...`;
+            }
+
+            try {
+                const res = await fetch(`/api/deposit-qrisv2/${encodeURIComponent(currentDepOrderId)}/proof`, {
+                    method: 'DELETE'
+                });
+                const result = await res.json();
+
+                if (result.status) {
+                    removeProofPreview();
+                    configureModalForTransaction(currentDepOrderId, currentDepAmount, currentQrPayload, 'pending');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'BUKTI DIHAPUS',
+                        text: result.message || 'Silakan unggah ulang bukti pembayaran yang benar.',
+                        timer: 1800,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                        customClass: { popup: 'cyber-swal' }
+                    });
+                } else {
+                    throw new Error(result.message || 'Gagal menghapus bukti pembayaran.');
+                }
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'GAGAL',
+                    text: err.message,
+                    scrollbarPadding: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-trash-can"></i> Hapus & Ganti Bukti Pembayaran`;
+                }
             }
         }
 
@@ -620,6 +741,48 @@
             renderCleanQris(qrString);
         }
 
+        function stopDepositPolling() {
+            if (depPollTimer) {
+                clearTimeout(depPollTimer);
+                depPollTimer = null;
+            }
+            isPollingRequestActive = false;
+        }
+
+        async function handleDepositTerminalStatus(status) {
+            if (isHandlingTerminalState) return;
+            isHandlingTerminalState = true;
+            stopDepositPolling();
+
+            localStorage.removeItem('active_deposit_order_id');
+            currentDepOrderId = '';
+            hideDepositModal();
+            updateActiveBannerUI();
+
+            if (["settlement", "success", "paid", "settled"].includes(status)) {
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'DEPOSIT BERHASIL!',
+                    text: 'Pembayaran terkonfirmasi! Saldo Anda telah ditambahkan.',
+                    confirmButtonText: 'Mantap!',
+                    scrollbarPadding: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+                loadDepositPageData();
+            } else if (["cancelled", "failed", "expired"].includes(status)) {
+                await Swal.fire({
+                    icon: 'info',
+                    title: 'TRANSAKSI DIBATALKAN',
+                    text: 'Transaksi deposit ini telah dibatalkan.',
+                    confirmButtonText: 'OK',
+                    scrollbarPadding: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
+
+            isHandlingTerminalState = false;
+        }
+
         async function loadDepositPageData() {
             const savedPhone = localStorage.getItem('user_customer_phone');
             if (savedPhone) {
@@ -654,6 +817,7 @@
                 const st = (result.data?.status || '').toLowerCase();
 
                 if (result.data && ['pending', 'waiting_verification'].includes(st) && qrDataString) {
+                    isHandlingTerminalState = false;
                     configureModalForTransaction(result.data.orderId, result.data.amount, qrDataString, st);
                     showDepositModal();
                     updateActiveBannerUI();
@@ -673,7 +837,13 @@
             if (!currentDepOrderId) return;
             const fileInput = document.getElementById('proofImageInput');
             if (!fileInput.files || !fileInput.files[0]) {
-                Swal.fire({ icon: 'warning', title: 'PILIH FOTO BUKTI', text: 'Silakan pilih foto/screenshot bukti transfer terlebih dahulu!', customClass: { popup: 'cyber-swal' } });
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'PILIH FOTO BUKTI',
+                    text: 'Silakan pilih foto/screenshot bukti transfer terlebih dahulu!',
+                    scrollbarPadding: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
                 return;
             }
 
@@ -696,14 +866,21 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'BUKTI TERKIRIM!',
-                        text: 'Bukti pembayaran telah diteruskan ke Admin & Telegram. Saldo akan masuk setelah dikonfirmasi.',
+                        text: 'Bukti pembayaran telah diteruskan ke Admin. Saldo akan segera masuk setelah dikonfirmasi.',
+                        scrollbarPadding: false,
                         customClass: { popup: 'cyber-swal' }
                     });
                 } else {
                     throw new Error(result.message || 'Gagal mengunggah bukti pembayaran.');
                 }
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'GAGAL',
+                    text: err.message,
+                    scrollbarPadding: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Kirim Bukti ke Admin`;
@@ -717,12 +894,24 @@
             const customerPhone = (phoneInput?.value || '').replace(/[\s\-()]/g, '').trim();
 
             if (!/^(\+62|62|08)[0-9]{8,12}$/.test(customerPhone)) {
-                Swal.fire({ icon: 'warning', title: 'NOMOR HP TIDAK VALID', text: 'Masukkan nomor HP Indonesia yang valid (format: 08xx / 62xx).', customClass: { popup: 'cyber-swal' } });
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'NOMOR HP TIDAK VALID',
+                    text: 'Masukkan nomor HP Indonesia yang valid (format: 08xx / 62xx).',
+                    scrollbarPadding: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
                 return;
             }
 
             if (isNaN(amount) || amount < 1000) {
-                Swal.fire({ icon: 'warning', title: 'DEPOSIT MINIMAL', text: 'Nominal deposit minimal adalah Rp 1.000', customClass: { popup: 'cyber-swal' } });
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'DEPOSIT MINIMAL',
+                    text: 'Nominal deposit minimal adalah Rp 1.000',
+                    scrollbarPadding: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
                 return;
             }
 
@@ -732,6 +921,7 @@
                 title: 'MEMBUAT QRIS DINAMIS...',
                 text: 'Menyiapkan kode QRIS pembayaran',
                 allowOutsideClick: false,
+                scrollbarPadding: false,
                 didOpen: () => { Swal.showLoading(); },
                 customClass: { popup: 'cyber-swal' }
             });
@@ -751,9 +941,9 @@
                 const qrString = result.data?.payment?.qrString || result.data?.paymentNumber;
 
                 if (result.status && result.data && qrString) {
+                    isHandlingTerminalState = false;
                     localStorage.setItem('active_deposit_order_id', result.data.orderId);
-                    document.getElementById('proofImageInput').value = '';
-                    document.getElementById('proofPreviewBox').classList.add('hidden');
+                    removeProofPreview();
 
                     configureModalForTransaction(result.data.orderId, result.data.amount, qrString, 'pending');
                     showDepositModal();
@@ -763,66 +953,86 @@
                     throw new Error(result.message || 'Gagal memproses deposit');
                 }
             } catch(err) {
-                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'GAGAL',
+                    text: err.message,
+                    scrollbarPadding: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
             }
         }
 
         async function manualCheckDepositStatus() {
             const orderIdToCheck = currentDepOrderId || localStorage.getItem('active_deposit_order_id');
-            if (!orderIdToCheck) return;
+            if (!orderIdToCheck || isHandlingTerminalState) return;
+
+            const btn = document.getElementById('btnManualCheckStatus');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Mengecek...`;
+            }
 
             try {
                 const res = await fetch(`/transactions/${orderIdToCheck}?refresh=1`);
                 const result = await res.json();
                 const status = (result.data?.status || "").toLowerCase();
 
-                if (["settlement", "success", "paid", "settled"].includes(status)) {
-                    if (depPollInterval) clearInterval(depPollInterval);
-                    localStorage.removeItem('active_deposit_order_id');
-                    currentDepOrderId = '';
-                    closeDepositModal();
-                    Swal.fire({ icon: 'success', title: 'DEPOSIT BERHASIL!', text: 'Pembayaran terkonfirmasi! Saldo Anda telah ditambahkan.', customClass: { popup: 'cyber-swal' } });
-                    loadDepositPageData();
-                } else if (["cancelled", "failed", "expired"].includes(status)) {
-                    if (depPollInterval) clearInterval(depPollInterval);
-                    localStorage.removeItem('active_deposit_order_id');
-                    currentDepOrderId = '';
-                    closeDepositModal();
-                    Swal.fire({ icon: 'info', title: 'TRANSAKSI DIBATALKAN', text: 'Transaksi deposit ini telah dibatalkan.', customClass: { popup: 'cyber-swal' } });
+                if (["settlement", "success", "paid", "settled", "cancelled", "failed", "expired"].includes(status)) {
+                    await handleDepositTerminalStatus(status);
                 } else {
                     const label = status === 'waiting_verification' ? 'MENUNGGU VERIFIKASI ADMIN' : 'MENUNGGU PEMBAYARAN';
-                    Swal.fire({ icon: 'info', title: label, text: 'Silakan selesaikan pembayaran dan pastikan bukti sudah dikirim.', timer: 2200, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+                    Swal.fire({
+                        icon: 'info',
+                        title: label,
+                        text: 'Silakan selesaikan pembayaran dan pastikan bukti sudah dikirim.',
+                        timer: 2000,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                        customClass: { popup: 'cyber-swal' }
+                    });
                 }
-            } catch (err) {}
+            } catch (err) {
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-rotate"></i> Cek Status`;
+                }
+            }
         }
 
         function startDepositPolling() {
-            if (depPollInterval) clearInterval(depPollInterval);
-            depPollInterval = setInterval(async () => {
-                if (!currentDepOrderId) return;
+            stopDepositPolling();
+
+            const pollOnce = async () => {
+                if (!currentDepOrderId || isHandlingTerminalState) return;
+                if (isPollingRequestActive) {
+                    depPollTimer = setTimeout(pollOnce, 3000);
+                    return;
+                }
+
+                isPollingRequestActive = true;
                 try {
                     const res = await fetch(`/transactions/${currentDepOrderId}?refresh=1`);
                     const result = await res.json();
                     const status = (result.data?.status || "").toLowerCase();
 
-                    if (["settlement", "success", "paid", "settled"].includes(status)) {
-                        clearInterval(depPollInterval);
-                        depPollInterval = null;
-                        localStorage.removeItem('active_deposit_order_id');
-                        currentDepOrderId = '';
-                        closeDepositModal();
-                        Swal.fire({ icon: 'success', title: 'DEPOSIT BERHASIL!', text: 'Saldo Anda telah berhasil ditambahkan.', customClass: { popup: 'cyber-swal' } });
-                        loadDepositPageData();
-                    } else if (["cancelled", "failed", "expired"].includes(status)) {
-                        clearInterval(depPollInterval);
-                        depPollInterval = null;
-                        localStorage.removeItem('active_deposit_order_id');
-                        currentDepOrderId = '';
-                        closeDepositModal();
-                        Swal.fire({ icon: 'info', title: 'TRANSAKSI DIBATALKAN', text: 'Transaksi deposit telah dibatalkan.', customClass: { popup: 'cyber-swal' } });
+                    if (["settlement", "success", "paid", "settled", "cancelled", "failed", "expired"].includes(status)) {
+                        isPollingRequestActive = false;
+                        await handleDepositTerminalStatus(status);
+                        return;
                     }
-                } catch(e) {}
-            }, 3000);
+                } catch (e) {
+                } finally {
+                    isPollingRequestActive = false;
+                }
+
+                if (currentDepOrderId && !isHandlingTerminalState) {
+                    depPollTimer = setTimeout(pollOnce, 3500);
+                }
+            };
+
+            depPollTimer = setTimeout(pollOnce, 3500);
         }
 
         async function cancelDepositTransaction() {
@@ -835,10 +1045,14 @@
                 showCancelButton: true,
                 confirmButtonText: 'Ya, Batalkan',
                 cancelButtonText: 'Kembali',
+                scrollbarPadding: false,
                 customClass: { popup: 'cyber-swal' }
             });
 
             if (confirmRes.isConfirmed) {
+                isHandlingTerminalState = true;
+                stopDepositPolling();
+
                 const cancelEndpoint = currentDepOrderId.startsWith('QRV2-')
                     ? `/api/deposit-qrisv2/${encodeURIComponent(currentDepOrderId)}/cancel`
                     : `/transactions/${encodeURIComponent(currentDepOrderId)}/cancel`;
@@ -847,23 +1061,26 @@
                     await fetch(cancelEndpoint, { method: 'POST' });
                 } catch(e) {}
 
-                if (depPollInterval) {
-                    clearInterval(depPollInterval);
-                    depPollInterval = null;
-                }
                 localStorage.removeItem('active_deposit_order_id');
                 currentDepOrderId = '';
-                closeDepositModal();
+                hideDepositModal();
+                updateActiveBannerUI();
 
-                Swal.fire({ icon: 'info', title: 'DIBATALKAN', text: 'Transaksi deposit berhasil dibatalkan.', timer: 1500, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+                await Swal.fire({
+                    icon: 'info',
+                    title: 'DIBATALKAN',
+                    text: 'Transaksi deposit berhasil dibatalkan.',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    scrollbarPadding: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+                isHandlingTerminalState = false;
             }
         }
 
         function closeDepositModal() {
-            if (depPollInterval) {
-                clearInterval(depPollInterval);
-                depPollInterval = null;
-            }
+            stopDepositPolling();
             hideDepositModal();
             updateActiveBannerUI();
         }
@@ -917,4 +1134,4 @@
         document.addEventListener('DOMContentLoaded', loadDepositPageData);
     </script>
 </body>
-    </html>
+</html>
