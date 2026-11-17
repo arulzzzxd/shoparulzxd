@@ -554,7 +554,7 @@ async function ensureTelegramWebhook() {
 
 async function sendTelegramDepositProof(trx, username, imageBuffer, mimeType) {
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_ADMIN_CHAT_ID) return;
-    await ensureTelegramWebhook
+    await ensureTelegramWebhook();
 
     const escapeHtml = (str) => String(str || '')
         .replace(/&/g, '&amp;')
@@ -2743,13 +2743,16 @@ app.get('/transactions/:orderId', async (req, res) => {
             });
         }
 
-        // Jika masih pending, cek ulang ke GET /v2/transactions/:orderId jika diperlukan
+        const isQrisV2 = localTrx.qrisVersion === 'v2' ||
+                         localTrx.paymentMethod === 'QRIS V2' ||
+                         String(orderId).startsWith('QRV2-');
+
         if (localTrx.status.toLowerCase() === "pending") {
-            if (new Date() > new Date(localTrx.expiredAt)) {
+            if (localTrx.expiredAt && new Date() > new Date(localTrx.expiredAt)) {
                 localTrx.status = "cancelled";
                 localTrx.updatedAt = new Date();
                 await localTrx.save();
-            } else {
+            } else if (!isQrisV2) {
                 try {
                     const checkRes = await axiosPaywuzWithRetry({
                         method: 'get',
@@ -2784,9 +2787,9 @@ app.get('/transactions/:orderId', async (req, res) => {
         const currentStatus = localTrx.status.toLowerCase();
         const isSuccess = ["settlement", "success", "paid", "settled"].includes(currentStatus);
 
-        if (isSuccess && !localTrx.productLink && localTrx.itemDetails?.nama) {
+        if (isSuccess && !localTrx.productLink && localTrx.itemDetails?.nama && localTrx.type !== 'DEPOSIT') {
             const dbProduct = await ProductV2.findOne({
-                nama: { $regex: new RegExp(`^${localTrx.itemDetails.nama.trim()}$`, 'i') }
+                nama: { $regex: new RegExp(`^${localTrx.itemDetails.nama.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
             }).lean();
             if (dbProduct && dbProduct.link) {
                 localTrx.productLink = dbProduct.link;
@@ -2801,10 +2804,15 @@ app.get('/transactions/:orderId', async (req, res) => {
             orderId: localTrx.orderId,
             status: currentStatus,
             amount: localTrx.amount,
+            paymentMethod: localTrx.paymentMethod,
+            qrisVersion: localTrx.qrisVersion || (isQrisV2 ? 'v2' : 'v1'),
+            type: localTrx.type,
             paymentNumber: localTrx.paymentNumber,
             payment: {
                 qrString: localTrx.paymentNumber
             },
+            proofUploaded: Boolean(localTrx.proofImage),
+            proofUploadedAt: localTrx.proofUploadedAt || null,
             expiredAt: localTrx.expiredAt,
             linkType: isSuccess ? linkInfo.linkType : null,
             chatUrl: isSuccess ? linkInfo.chatUrl : null,
@@ -2825,15 +2833,26 @@ app.get('/transactions/:orderId', async (req, res) => {
 
         await setCache(`trx_${orderId}`, responseData);
 
-        res.json({ data: responseData });
+        return res.json({ data: responseData });
 
     } catch (error) {
         console.error("Error Status TRX v2:", error.message);
-        const localTrx = await TransactionV2.findOne({ orderId: req.params.orderId });
+        const localTrx = await TransactionV2.findOne({ orderId: req.params.orderId }).lean();
         if (localTrx) {
-            return res.json({ data: localTrx });
+            return res.json({
+                data: {
+                    orderId: localTrx.orderId,
+                    status: (localTrx.status || 'pending').toLowerCase(),
+                    amount: localTrx.amount,
+                    paymentMethod: localTrx.paymentMethod,
+                    paymentNumber: localTrx.paymentNumber,
+                    payment: { qrString: localTrx.paymentNumber },
+                    expiredAt: localTrx.expiredAt,
+                    itemDetails: localTrx.itemDetails || null
+                }
+            });
         }
-        res.status(500).json({ 
+        return res.status(500).json({ 
             error: "TRANSACTION_FETCH_FAILED", 
             message: "Gagal mengambil status transaksi" 
         });
@@ -3335,6 +3354,7 @@ app.get('/api/telegram/setup-webhook', async (req, res) => {
 
 app.post('/api/telegram/webhook', async (req, res) => {
     try {
+        await connectDB();
         const update = req.body;
         if (update && update.callback_query) {
             const cq = update.callback_query;
@@ -3342,7 +3362,7 @@ app.post('/api/telegram/webhook', async (req, res) => {
             const chatId = cq.message?.chat?.id;
             const messageId = cq.message?.message_id;
 
-            // Validasi hanya chat/grup admin yang berhak klik
+            // Validasi hanya channel/grup admin yang berhak klik
             if (String(chatId) !== String(TELEGRAM_ADMIN_CHAT_ID)) {
                 await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
                     callback_query_id: cq.id,
