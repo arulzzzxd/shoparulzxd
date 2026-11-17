@@ -1944,17 +1944,54 @@ app.delete('/api/reviews/:reviewId', checkAuthSession, async (req, res) => {
     }
 });
 
+async function consumeVoucherCode(voucherCode, userIdentifier, subtotalAmount) {
+    if (!voucherCode || !String(voucherCode).trim()) {
+        return { valid: false, discountAmount: 0, voucher: null };
+    }
 
+    const cleanCode = String(voucherCode).trim().toUpperCase();
+    const voucher = await VoucherV2.findOne({ code: cleanCode });
 
+    if (!voucher) {
+        return { valid: false, message: 'Kode voucher tidak ditemukan!', discountAmount: 0, voucher: null };
+    }
+    if (voucher.usageLimit <= 0) {
+        return { valid: false, message: 'Kuota penggunaan voucher ini sudah habis!', discountAmount: 0, voucher: null };
+    }
+    if (new Date() > new Date(voucher.expiredAt)) {
+        return { valid: false, message: 'Voucher telah kedaluwarsa!', discountAmount: 0, voucher: null };
+    }
+    if (userIdentifier && voucher.usedBy && voucher.usedBy.includes(userIdentifier)) {
+        return { valid: false, message: 'Anda sudah pernah menggunakan voucher ini sebelumnya!', discountAmount: 0, voucher: null };
+    }
+
+    let discountAmount = 0;
+    if (voucher.type === 'percentage') {
+        discountAmount = Math.floor((subtotalAmount * Number(voucher.discount || 0)) / 100);
+    } else {
+        discountAmount = Number(voucher.discount || 0);
+    }
+    discountAmount = Math.min(subtotalAmount, Math.max(0, discountAmount));
+
+    voucher.usedCount = (voucher.usedCount || 0) + 1;
+    voucher.usageLimit = Math.max(0, voucher.usageLimit - 1);
+    if (userIdentifier) {
+        if (!voucher.usedBy) voucher.usedBy = [];
+        voucher.usedBy.push(userIdentifier);
+    }
+    await voucher.save();
+
+    return { valid: true, discountAmount, voucher };
+}
 
 app.post('/api/vouchers/claim', async (req, res) => {
     try {
         const code = req.body.code;
-        if (!code) {
+        if (!code || !String(code).trim()) {
             return res.status(400).json({ status: false, message: 'Kode voucher wajib diisi!' });
         }
 
-        const cleanCode = code.trim().toUpperCase();
+        const cleanCode = String(code).trim().toUpperCase();
         const userIdentifier = getUserIdentifier(req);
 
         const voucher = await VoucherV2.findOne({ code: cleanCode });
@@ -1964,10 +2001,10 @@ app.post('/api/vouchers/claim', async (req, res) => {
         }
 
         if (voucher.usageLimit <= 0) {
-            return res.status(400).json({ 
-                status: false, 
+            return res.status(400).json({
+                status: false,
                 reason: 'limit_reached',
-                message: 'Kuota penggunaan voucher ini sudah habis!' 
+                message: 'Kuota penggunaan voucher ini sudah habis!'
             });
         }
 
@@ -1980,34 +2017,24 @@ app.post('/api/vouchers/claim', async (req, res) => {
         }
 
         if (new Date() > new Date(voucher.expiredAt)) {
-            return res.status(400).json({ 
-                status: false, 
+            return res.status(400).json({
+                status: false,
                 reason: 'expired',
-                message: 'Voucher telah kedaluwarsa!' 
+                message: 'Voucher telah kedaluwarsa!'
             });
         }
 
-        voucher.usedCount += 1;
-        voucher.usageLimit = Math.max(0, voucher.usageLimit - 1); 
-
-        if (!voucher.usedBy) voucher.usedBy = [];
-        voucher.usedBy.push(userIdentifier);
-
-        await voucher.save();
+        const voucherPayload = {
+            code: voucher.code,
+            discount: Number(voucher.discount) || 0,
+            type: voucher.type || 'percentage'
+        };
 
         return res.json({
             status: true,
-            message: 'Voucher berhasil diklaim!',
-            voucher: {
-                code: voucher.code,
-                discount: voucher.discount,
-                type: voucher.type
-            },
-            data: {
-                code: voucher.code,
-                discount: voucher.discount,
-                type: voucher.type
-            }
+            message: 'Voucher valid & berhasil diterapkan!',
+            voucher: voucherPayload,
+            data: voucherPayload
         });
     } catch (err) {
         console.error("Error Claim Voucher:", err);
@@ -2029,10 +2056,10 @@ app.get('/api/vouchers/:code', async (req, res) => {
         }
 
         if (voucher.usageLimit <= 0) {
-            return res.status(400).json({ 
-                status: false, 
+            return res.status(400).json({
+                status: false,
                 reason: 'limit_reached',
-                message: 'Kuota penggunaan voucher ini sudah habis!' 
+                message: 'Kuota penggunaan voucher ini sudah habis!'
             });
         }
 
@@ -2045,21 +2072,24 @@ app.get('/api/vouchers/:code', async (req, res) => {
         }
 
         if (new Date() > new Date(voucher.expiredAt)) {
-            return res.status(400).json({ 
-                status: false, 
+            return res.status(400).json({
+                status: false,
                 reason: 'expired',
-                message: 'Voucher telah kedaluwarsa!' 
+                message: 'Voucher telah kedaluwarsa!'
             });
         }
+
+        const voucherPayload = {
+            code: voucher.code,
+            discount: Number(voucher.discount) || 0,
+            type: voucher.type || 'percentage'
+        };
 
         return res.json({
             status: true,
             message: 'Voucher berhasil ditemukan!',
-            data: {
-                code: voucher.code,
-                discount: voucher.discount,
-                type: voucher.type
-            }
+            voucher: voucherPayload,
+            data: voucherPayload
         });
     } catch (err) {
         return res.status(500).json({ status: false, message: 'Terjadi kesalahan pada server.' });
@@ -2218,18 +2248,22 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
         }
 
         const unitPrice = dbProduct.harga_diskon || dbProduct.harga;
-        let totalPrice = unitPrice * buyQty;
+        const totalPrice = unitPrice * buyQty;
+        const userIdentifier = getUserIdentifier(req);
 
+        // Hitung diskon lebih dulu sebelum cek saldo
         let discountAmount = 0;
-        if (voucherCode && voucherCode.trim()) {
-            const v = await VoucherV2.findOne({ code: voucherCode.trim().toUpperCase() });
-            if (v && v.usageLimit > 0 && new Date() <= new Date(v.expiredAt)) {
-                if (v.type === 'percentage') {
-                    discountAmount = Math.floor((totalPrice * v.discount) / 100);
-                } else if (v.type === 'fixed') {
-                    discountAmount = v.discount;
-                }
+        let validVoucherDoc = null;
+        if (voucherCode && String(voucherCode).trim()) {
+            const v = await VoucherV2.findOne({ code: String(voucherCode).trim().toUpperCase() });
+            if (!v || v.usageLimit <= 0 || new Date() > new Date(v.expiredAt) || (v.usedBy && v.usedBy.includes(userIdentifier))) {
+                return res.status(400).json({ status: false, message: "Kode voucher sudah tidak valid atau sudah digunakan!" });
             }
+            validVoucherDoc = v;
+            discountAmount = v.type === 'percentage'
+                ? Math.floor((totalPrice * Number(v.discount || 0)) / 100)
+                : Number(v.discount || 0);
+            discountAmount = Math.min(totalPrice, Math.max(0, discountAmount));
         }
 
         const finalPrice = Math.max(0, totalPrice - discountAmount);
@@ -2275,15 +2309,24 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
 
         if (currentBalance < finalPrice) {
             await saveCancelledBalanceTrx();
-            return res.status(400).json({ 
-                status: false, 
+            return res.status(400).json({
+                status: false,
                 insufficientBalance: true,
-                message: "Saldo tidak tersedia, silahkan deposit!" 
+                message: "Saldo tidak tersedia, silahkan deposit!"
             });
         }
 
+        // Potong saldo & kuota voucher hanya ketika pembayaran benar-benar berhasil
         user.saldo = currentBalance - finalPrice;
         await user.save();
+
+        if (validVoucherDoc) {
+            validVoucherDoc.usedCount = (validVoucherDoc.usedCount || 0) + 1;
+            validVoucherDoc.usageLimit = Math.max(0, validVoucherDoc.usageLimit - 1);
+            if (!validVoucherDoc.usedBy) validVoucherDoc.usedBy = [];
+            validVoucherDoc.usedBy.push(userIdentifier);
+            await validVoucherDoc.save();
+        }
 
         await updateProductStockAndSold(dbProduct.nama, buyQty, false);
         await recordProductBuyer(dbProduct.nama, user.email);
@@ -2343,7 +2386,7 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
 
 app.post('/api/store/create-order', checkAuthSession, async (req, res) => {
     try {
-        const { orderId, productId, qty, amount, paymentMethod, username, note } = req.body;
+        const { orderId, productId, qty, amount, paymentMethod, username, note, voucherCode } = req.body;
         if (!orderId || !productId) {
             return res.status(400).json({ status: false, message: "Data pesanan tidak lengkap." });
         }
@@ -2363,7 +2406,16 @@ app.post('/api/store/create-order', checkAuthSession, async (req, res) => {
 
         const buyQty = Math.max(1, Number(qty) || 1);
         const unitPrice = dbProduct.harga_diskon || dbProduct.harga;
-        const finalAmount = Number(amount) >= 0 ? Number(amount) : unitPrice * buyQty;
+        const subtotal = unitPrice * buyQty;
+        const userIdentifier = getUserIdentifier(req);
+
+        let finalAmount = Number(amount) >= 0 ? Number(amount) : subtotal;
+        if (voucherCode && String(voucherCode).trim()) {
+            const consumed = await consumeVoucherCode(voucherCode, userIdentifier, subtotal);
+            if (consumed.valid) {
+                finalAmount = Math.max(0, subtotal - consumed.discountAmount);
+            }
+        }
 
         const cleanMethod = ['SALDO', 'TELEGRAM', 'WHATSAPP'].includes(String(paymentMethod || '').toUpperCase())
             ? String(paymentMethod).toUpperCase()
@@ -2388,7 +2440,8 @@ app.post('/api/store/create-order', checkAuthSession, async (req, res) => {
                 buyer: buyerLabel,
                 qty: buyQty,
                 note: note || ''
-            }
+            },
+            expiredAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
         });
 
         return res.json({ status: true, data: newTrx });
