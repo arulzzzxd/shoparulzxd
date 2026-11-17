@@ -125,84 +125,99 @@
             font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
 
-        /* FLUID CURVED NOTCH BOTTOM NAVIGATION BAR */
-        .bottom-nav-fixed {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            max-width: 440px;
-            height: 64px;
-            z-index: 35;
-        }
-
-        .bottom-nav-bg {
-            position: absolute;
-            inset: 0;
-            background: #FFFFFF;
-            border: 3.5px solid #000000;
-            border-radius: 32px;
-            box-shadow: 5px 5px 0px #000000;
-        }
-
-        .nav-items-wrapper {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            height: 100%;
-            width: 100%;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        .nav-item-btn {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 100%;
-            color: #000000;
-            text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .nav-icon-box {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            background: transparent;
-        }
-
-        .nav-item-btn i { font-size: 18px; transition: all 0.3s ease; }
-        .nav-item-btn span {
-            font-size: 10px;
-            font-weight: 800;
-            font-family: 'Space Grotesk', sans-serif;
-            position: absolute;
-            bottom: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item-btn.active .nav-icon-box {
-            transform: translateY(-22px);
-            background-color: #FFDE59;
-            border: 3.5px solid #000000;
-            box-shadow: 3px 3px 0px #000000;
-        }
-
-        .nav-item-btn.active i { font-size: 20px; }
-        .nav-item-btn.active span {
-            color: #000000;
-            font-weight: 900;
-            transform: translateY(-2px);
-        }
+/* =========================================================
+   LIQUID NOTCH CURVE BOTTOM NAVIGATION (MENTOK FULL-WIDTH)
+   ========================================================= */
+.liquid-nav-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    z-index: 40;
+    height: 66px;
+    user-select: none;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: transparent;
+}
+.liquid-nav-bg {
+    position: absolute;
+    inset: 0;
+    filter: drop-shadow(0px -3px 0px rgba(0, 0, 0, 0.08));
+    pointer-events: none;
+}
+.liquid-nav-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+}
+.liquid-floating-orb {
+    position: absolute;
+    top: -26px;
+    width: 46px;
+    height: 46px;
+    margin-left: -23px;
+    border-radius: 9999px;
+    background-color: #FFDF4F;
+    border: 3px solid #000000;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    pointer-events: none;
+    will-change: left, transform;
+    transition: left 0.48s cubic-bezier(0.34, 1.38, 0.64, 1);
+}
+.liquid-floating-orb.orb-bounce {
+    animation: orbJump 0.48s cubic-bezier(0.34, 1.5, 0.64, 1);
+}
+@keyframes orbJump {
+    0% { transform: translate3d(0, 14px, 0) scale(0.82); }
+    55% { transform: translate3d(0, -5px, 0) scale(1.06); }
+    100% { transform: translate3d(0, 0px, 0) scale(1); }
+}
+.liquid-nav-items {
+    position: relative;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    height: 66px;
+    align-items: center;
+}
+.liquid-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: rgba(0, 0, 0, 0.72);
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+.liquid-nav-item i {
+    font-size: 16px;
+    transition: opacity 0.2s ease, transform 0.32s ease;
+}
+.liquid-nav-item span {
+    font-size: 10px;
+    font-weight: 800;
+    margin-top: 3px;
+    transition: opacity 0.2s ease, transform 0.32s ease, color 0.25s ease;
+}
+.liquid-nav-item.active i {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.4);
+}
+.liquid-nav-item.active span {
+    opacity: 1;
+    color: #000000;
+    font-weight: 900;
+    transform: translateY(3px);
+}
 
         /* CUSTOM VIDEO OVERLAY PLAY/PAUSE */
         .video-container {
@@ -781,45 +796,179 @@
         </div>
     </div>
 
-    <!-- CURVED ANIMATED BOTTOM NAV BAR -->
-    <div class="bottom-nav-fixed">
-        <div class="bottom-nav-bg"></div>
-        <div class="nav-items-wrapper">
-            <a href="/dashboard" class="nav-item-btn">
-                <div class="nav-icon-box">
-                    <i class="fa-solid fa-house"></i>
-                </div>
-                <span>Home</span>
-            </a>
-            <a href="/store" class="nav-item-btn active">
-                <div class="nav-icon-box">
-                    <i class="fa-solid fa-bag-shopping"></i>
-                </div>
-                <span>Toko</span>
-            </a>
-            <a href="/deposit" class="nav-item-btn">
-                <div class="nav-icon-box">
-                    <i class="fa-solid fa-wallet"></i>
-                </div>
-                <span>Deposit</span>
-            </a>
-            <a href="/riwayat" class="nav-item-btn">
-                <div class="nav-icon-box">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                </div>
-                <span>Riwayat</span>
-            </a>
-            <a href="/profile" class="nav-item-btn">
-                <div class="nav-icon-box">
-                    <i class="fa-regular fa-user"></i>
-                </div>
-                <span id="nav-auth-label">Profil</span>
-            </a>
-        </div>
+    <!-- BOTTOM NAVIGATION DENGAN LEKUKAN BERSIH -->
+<nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
+    <div class="liquid-nav-bg">
+        <svg class="liquid-nav-svg" id="liquidNavSvg" xmlns="http://www.w3.org/2000/svg">
+            <path id="liquidNavPath" d="" fill="#FFFFFF" stroke="#000000" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
+        </svg>
     </div>
+
+    <!-- Bulatan Ikon Aktif (Toko) -->
+    <div class="liquid-floating-orb" id="liquidFloatingOrb" style="left: 30%;">
+        <i id="liquidOrbIcon" class="fa-solid fa-bag-shopping text-lg"></i>
+    </div>
+
+    <!-- 5 Item Menu -->
+    <div class="liquid-nav-items">
+        <a href="/dashboard" data-index="0" data-icon="fa-solid fa-house" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="/store" data-index="1" data-icon="fa-solid fa-bag-shopping" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item active">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span>Toko</span>
+        </a>
+        <a href="/deposit" data-index="2" data-icon="fa-solid fa-wallet" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Deposit</span>
+        </a>
+        <a href="/riwayat" data-index="3" data-icon="fa-solid fa-clock-rotate-left" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Riwayat</span>
+        </a>
+        <a href="/profile" data-index="4" data-icon="fa-regular fa-user" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+            <i class="fa-regular fa-user"></i>
+            <span id="nav-auth-label">Profil</span>
+        </a>
+    </div>
+</nav>
 
     <!-- JAVASCRIPT LOGIC FULL INTEGRATED -->
     <script>
+/* =========================================================
+   LIQUID NOTCH CURVE NAVIGATION (MENTOK FULL-WIDTH & SIMETRIS)
+   ========================================================= */
+let liquidNavAnimationFrame = null;
+let currentNotchPixelX = 0;
+let activeNavIndex = 1;
+
+function buildPixelNotchPath(cx, totalW, totalH) {
+    const notchHalfW = 46;
+    const notchDepth = 28;
+    const c1 = 21;
+    const c2 = 19;
+
+    const leftEdge = Math.max(2, cx - notchHalfW);
+    const rightEdge = Math.min(totalW - 2, cx + notchHalfW);
+
+    return [
+        `M 0,1.5`,
+        `L ${leftEdge},1.5`,
+        `C ${leftEdge + c1},1.5 ${cx - c2},${notchDepth} ${cx},${notchDepth}`,
+        `C ${cx + c2},${notchDepth} ${rightEdge - c1},1.5 ${rightEdge},1.5`,
+        `L ${totalW},1.5`,
+        `L ${totalW},${totalH}`,
+        `L 0,${totalH}`,
+        `Z`
+    ].join(' ');
+}
+
+function syncSvgViewBox() {
+    const nav = document.getElementById('liquidBottomNav');
+    const svg = document.getElementById('liquidNavSvg');
+    if (!nav || !svg) return { w: 360, h: 66 };
+    const rect = nav.getBoundingClientRect();
+    const w = Math.max(300, Math.round(rect.width));
+    const h = Math.max(66, Math.round(rect.height));
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    svg.setAttribute('preserveAspectRatio', 'none');
+    return { w, h };
+}
+
+function animateLiquidNotchTo(targetPxX) {
+    if (liquidNavAnimationFrame) cancelAnimationFrame(liquidNavAnimationFrame);
+    const pathEl = document.getElementById('liquidNavPath');
+    if (!pathEl) return;
+    const { w, h } = syncSvgViewBox();
+    const startPxX = currentNotchPixelX || targetPxX;
+    const distance = targetPxX - startPxX;
+    const duration = 450;
+    const startTime = performance.now();
+
+    function easeOutBack(t) {
+        const c1 = 1.4;
+        const c3 = c1 + 1;
+        return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+    }
+
+    function step(now) {
+        const elapsed = Math.min((now - startTime) / duration, 1);
+        const eased = easeOutBack(elapsed);
+        currentNotchPixelX = startPxX + distance * eased;
+        pathEl.setAttribute('d', buildPixelNotchPath(currentNotchPixelX, w, h));
+
+        if (elapsed < 1) {
+            liquidNavAnimationFrame = requestAnimationFrame(step);
+        } else {
+            currentNotchPixelX = targetPxX;
+            pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
+        }
+    }
+    liquidNavAnimationFrame = requestAnimationFrame(step);
+}
+
+function setLiquidNavActive(index, animate = true) {
+    activeNavIndex = index;
+    const items = document.querySelectorAll('.liquid-nav-item');
+    const orb = document.getElementById('liquidFloatingOrb');
+    const orbIcon = document.getElementById('liquidOrbIcon');
+    const pathEl = document.getElementById('liquidNavPath');
+
+    if (!items.length || !orb || !orbIcon || !pathEl) return;
+
+    items.forEach((item, idx) => {
+        item.classList.toggle('active', idx === index);
+    });
+
+    const activeItem = items[index];
+    if (!activeItem) return;
+
+    const { w, h } = syncSvgViewBox();
+    const percentLeft = ((index + 0.5) / 5) * 100;
+    const targetPxX = ((index + 0.5) / 5) * w;
+
+    orb.style.left = `${percentLeft}%`;
+    orbIcon.className = `${activeItem.dataset.icon} text-lg`;
+
+    if (animate) {
+        orb.classList.remove('orb-bounce');
+        void orb.offsetWidth;
+        orb.classList.add('orb-bounce');
+        animateLiquidNotchTo(targetPxX);
+    } else {
+        currentNotchPixelX = targetPxX;
+        pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
+    }
+}
+
+function handleLiquidNavClick(e, el) {
+    const targetHref = el.getAttribute('href');
+    const index = Number(el.dataset.index);
+    const currentPath = window.location.pathname;
+
+    setLiquidNavActive(index, true);
+
+    if (targetHref && targetHref !== currentPath) {
+        e.preventDefault();
+        setTimeout(() => {
+            window.location.href = targetHref;
+        }, 320);
+    } else {
+        e.preventDefault();
+    }
+}
+
+window.addEventListener('resize', () => {
+    setLiquidNavActive(activeNavIndex, false);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const activeEl = document.querySelector('.liquid-nav-item.active');
+    const initialIdx = activeEl ? Number(activeEl.dataset.index) : 1;
+    setLiquidNavActive(initialIdx, false);
+});
+
         document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
         document.addEventListener('dblclick', function (e) { e.preventDefault(); }, { passive: false });
 

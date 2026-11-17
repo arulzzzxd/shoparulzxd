@@ -156,95 +156,100 @@
             animation: slideInLeftSmooth 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
-                /* =========================================================
-           LIQUID NOTCH CURVE BOTTOM NAVIGATION (PERSIS SEPERTI VIDEO)
-           ========================================================= */
-        .liquid-nav-wrapper {
-            position: fixed;
-            bottom: 14px;
-            left: 14px;
-            right: 14px;
-            z-index: 40;
-            max-width: 48rem;
-            margin: 0 auto;
-            height: 62px;
-            user-select: none;
-        }
-        .liquid-nav-bg {
-            position: absolute;
-            inset: 0;
-            filter: drop-shadow(0px 5px 0px #000000);
-            pointer-events: none;
-        }
-        .liquid-nav-svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-            overflow: visible;
-        }
-        .liquid-floating-orb {
-            position: absolute;
-            top: -28px;
-            width: 46px;
-            height: 46px;
-            margin-left: -23px;
-            border-radius: 9999px;
-            background-color: #FFDF4F;
-            border: 3px solid #000000;
-            box-shadow: 0 4px 0 #000000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #000000;
-            pointer-events: none;
-            will-change: left, transform;
-            transition: left 0.48s cubic-bezier(0.34, 1.38, 0.64, 1);
-        }
-        .liquid-floating-orb.orb-bounce {
-            animation: orbJump 0.48s cubic-bezier(0.34, 1.5, 0.64, 1);
-        }
-        @keyframes orbJump {
-            0% { transform: translate3d(0, 14px, 0) scale(0.82); }
-            55% { transform: translate3d(0, -5px, 0) scale(1.06); }
-            100% { transform: translate3d(0, 0px, 0) scale(1); }
-        }
-        .liquid-nav-items {
-            position: relative;
-            z-index: 10;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            height: 100%;
-            align-items: center;
-        }
-        .liquid-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: rgba(0, 0, 0, 0.72);
-            text-decoration: none;
-            transition: color 0.25s ease;
-        }
-        .liquid-nav-item i {
-            font-size: 16px;
-            transition: opacity 0.2s ease, transform 0.32s ease;
-        }
-        .liquid-nav-item span {
-            font-size: 10px;
-            font-weight: 800;
-            margin-top: 3px;
-            transition: opacity 0.2s ease, transform 0.32s ease;
-        }
-        .liquid-nav-item.active i {
-            opacity: 0;
-            transform: translateY(-16px) scale(0.4);
-        }
-        .liquid-nav-item.active span {
-            opacity: 0;
-            transform: translateY(8px);
-        }
-    </style>
+/* =========================================================
+   LIQUID NOTCH CURVE BOTTOM NAVIGATION (MENTOK FULL-WIDTH)
+   ========================================================= */
+.liquid-nav-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    z-index: 40;
+    height: 66px;
+    user-select: none;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: transparent;
+}
+.liquid-nav-bg {
+    position: absolute;
+    inset: 0;
+    filter: drop-shadow(0px -3px 0px rgba(0, 0, 0, 0.08));
+    pointer-events: none;
+}
+.liquid-nav-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+}
+.liquid-floating-orb {
+    position: absolute;
+    top: -26px;
+    width: 46px;
+    height: 46px;
+    margin-left: -23px;
+    border-radius: 9999px;
+    background-color: #FFDF4F;
+    border: 3px solid #000000;
+    box-shadow: none; /* Shadow dihilangkan saat aktif */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    pointer-events: none;
+    will-change: left, transform;
+    transition: left 0.48s cubic-bezier(0.34, 1.38, 0.64, 1);
+}
+.liquid-floating-orb.orb-bounce {
+    animation: orbJump 0.48s cubic-bezier(0.34, 1.5, 0.64, 1);
+}
+@keyframes orbJump {
+    0% { transform: translate3d(0, 14px, 0) scale(0.82); }
+    55% { transform: translate3d(0, -5px, 0) scale(1.06); }
+    100% { transform: translate3d(0, 0px, 0) scale(1); }
+}
+.liquid-nav-items {
+    position: relative;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    height: 66px;
+    align-items: center;
+}
+.liquid-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: rgba(0, 0, 0, 0.72);
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+.liquid-nav-item i {
+    font-size: 16px;
+    transition: opacity 0.2s ease, transform 0.32s ease;
+}
+.liquid-nav-item span {
+    font-size: 10px;
+    font-weight: 800;
+    margin-top: 3px;
+    transition: opacity 0.2s ease, transform 0.32s ease, color 0.25s ease;
+}
+.liquid-nav-item.active i {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.4);
+}
+.liquid-nav-item.active span {
+    opacity: 1;
+    color: #000000;
+    font-weight: 900;
+    transform: translateY(3px);
+}
+</style>
 </head>
 <body class="pb-32 antialiased selection:bg-neoYellow selection:text-black">
 
@@ -964,126 +969,123 @@
             });
         }
 
-        /* =========================================================
-           LIQUID NOTCH CURVE NAVIGATION (KOORDINAT PIKSEL AKTUAL, ANTI GARIS POTONG)
-           ========================================================= */
-        let liquidNavAnimationFrame = null;
-        let currentNotchPixelX = 0;
-        let activeNavIndex = 2;
+/* =========================================================
+   LIQUID NOTCH CURVE NAVIGATION (MENTOK FULL-WIDTH & SIMETRIS)
+   ========================================================= */
+let liquidNavAnimationFrame = null;
+let currentNotchPixelX = 0;
+let activeNavIndex = 2;
 
-                function buildPixelNotchPath(cx, totalW, totalH) {
-            const r = Math.min(31, totalH / 2); // Kapsul bulat penuh seperti di video
-            const notchHalfW = 54; // Bukaan lekukan lebih lebar agar lega
-            const notchDepth = 27; // Kedalaman cekungan lembut sehingga ada celah dengan lingkaran kuning
-            const c1 = 24;
-            const c2 = 22;
+function buildPixelNotchPath(cx, totalW, totalH) {
+    const notchHalfW = 46;
+    const notchDepth = 28;
+    const c1 = 21;
+    const c2 = 19;
 
-            const leftEdge = Math.max(r + 2, cx - notchHalfW);
-            const rightEdge = Math.min(totalW - r - 2, cx + notchHalfW);
+    const leftEdge = Math.max(2, cx - notchHalfW);
+    const rightEdge = Math.min(totalW - 2, cx + notchHalfW);
 
-            return [
-                `M ${r},1.5`,
-                `L ${leftEdge},1.5`,
-                `C ${leftEdge + c1},1.5 ${cx - c2},${notchDepth} ${cx},${notchDepth}`,
-                `C ${cx + c2},${notchDepth} ${rightEdge - c1},1.5 ${rightEdge},1.5`,
-                `L ${totalW - r},1.5`,
-                `A ${r - 1.5} ${r - 1.5} 0 0 1 ${totalW - 1.5} ${totalH / 2}`,
-                `A ${r - 1.5} ${r - 1.5} 0 0 1 ${totalW - r} ${totalH - 1.5}`,
-                `L ${r} ${totalH - 1.5}`,
-                `A ${r - 1.5} ${r - 1.5} 0 0 1 1.5 ${totalH / 2}`,
-                `A ${r - 1.5} ${r - 1.5} 0 0 1 ${r} 1.5`,
-                `Z`
-            ].join(' ');
-        }
+    return [
+        `M 0,1.5`,
+        `L ${leftEdge},1.5`,
+        `C ${leftEdge + c1},1.5 ${cx - c2},${notchDepth} ${cx},${notchDepth}`,
+        `C ${cx + c2},${notchDepth} ${rightEdge - c1},1.5 ${rightEdge},1.5`,
+        `L ${totalW},1.5`,
+        `L ${totalW},${totalH}`,
+        `L 0,${totalH}`,
+        `Z`
+    ].join(' ');
+}
 
-        function syncSvgViewBox() {
-            const nav = document.getElementById('liquidBottomNav');
-            const svg = document.getElementById('liquidNavSvg');
-            const rect = nav.getBoundingClientRect();
-            const w = Math.max(300, Math.round(rect.width));
-            const h = 62;
-            svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-            return { w, h };
-        }
+function syncSvgViewBox() {
+    const nav = document.getElementById('liquidBottomNav');
+    const svg = document.getElementById('liquidNavSvg');
+    const rect = nav.getBoundingClientRect();
+    const w = Math.max(300, Math.round(rect.width));
+    const h = Math.max(66, Math.round(rect.height));
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    svg.setAttribute('preserveAspectRatio', 'none');
+    return { w, h };
+}
 
-        function animateLiquidNotchTo(targetPxX) {
-            if (liquidNavAnimationFrame) cancelAnimationFrame(liquidNavAnimationFrame);
-            const pathEl = document.getElementById('liquidNavPath');
-            const { w, h } = syncSvgViewBox();
-            const startPxX = currentNotchPixelX || targetPxX;
-            const distance = targetPxX - startPxX;
-            const duration = 450;
-            const startTime = performance.now();
+function animateLiquidNotchTo(targetPxX) {
+    if (liquidNavAnimationFrame) cancelAnimationFrame(liquidNavAnimationFrame);
+    const pathEl = document.getElementById('liquidNavPath');
+    const { w, h } = syncSvgViewBox();
+    const startPxX = currentNotchPixelX || targetPxX;
+    const distance = targetPxX - startPxX;
+    const duration = 450;
+    const startTime = performance.now();
 
-            function easeOutBack(t) {
-                const c1 = 1.4;
-                const c3 = c1 + 1;
-                return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
-            }
+    function easeOutBack(t) {
+        const c1 = 1.4;
+        const c3 = c1 + 1;
+        return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+    }
 
-            function step(now) {
-                const elapsed = Math.min((now - startTime) / duration, 1);
-                const eased = easeOutBack(elapsed);
-                currentNotchPixelX = startPxX + distance * eased;
-                pathEl.setAttribute('d', buildPixelNotchPath(currentNotchPixelX, w, h));
+    function step(now) {
+        const elapsed = Math.min((now - startTime) / duration, 1);
+        const eased = easeOutBack(elapsed);
+        currentNotchPixelX = startPxX + distance * eased;
+        pathEl.setAttribute('d', buildPixelNotchPath(currentNotchPixelX, w, h));
 
-                if (elapsed < 1) {
-                    liquidNavAnimationFrame = requestAnimationFrame(step);
-                } else {
-                    currentNotchPixelX = targetPxX;
-                    pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
-                }
-            }
+        if (elapsed < 1) {
             liquidNavAnimationFrame = requestAnimationFrame(step);
+        } else {
+            currentNotchPixelX = targetPxX;
+            pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
         }
+    }
+    liquidNavAnimationFrame = requestAnimationFrame(step);
+}
 
-        function setLiquidNavActive(index, animate = true) {
-            activeNavIndex = index;
-            const items = document.querySelectorAll('.liquid-nav-item');
-            const orb = document.getElementById('liquidFloatingOrb');
-            const orbIcon = document.getElementById('liquidOrbIcon');
+function setLiquidNavActive(index, animate = true) {
+    activeNavIndex = index;
+    const items = document.querySelectorAll('.liquid-nav-item');
+    const orb = document.getElementById('liquidFloatingOrb');
+    const orbIcon = document.getElementById('liquidOrbIcon');
 
-            items.forEach((item, idx) => {
-                item.classList.toggle('active', idx === index);
-            });
+    items.forEach((item, idx) => {
+        item.classList.toggle('active', idx === index);
+    });
 
-            const activeItem = items[index];
-            if (!activeItem) return;
+    const activeItem = items[index];
+    if (!activeItem) return;
 
-            const { w, h } = syncSvgViewBox();
-            const percentLeft = ((index + 0.5) / 5) * 100;
-            const targetPxX = ((index + 0.5) / 5) * w;
+    const { w, h } = syncSvgViewBox();
+    const percentLeft = ((index + 0.5) / 5) * 100;
+    const targetPxX = ((index + 0.5) / 5) * w;
 
-            orb.style.left = `${percentLeft}%`;
-            orbIcon.className = `${activeItem.dataset.icon} text-lg`;
+    orb.style.left = `${percentLeft}%`;
+    orbIcon.className = `${activeItem.dataset.icon} text-lg`;
 
-            if (animate) {
-                orb.classList.remove('orb-bounce');
-                void orb.offsetWidth;
-                orb.classList.add('orb-bounce');
-                animateLiquidNotchTo(targetPxX);
-            } else {
-                currentNotchPixelX = targetPxX;
-                document.getElementById('liquidNavPath').setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
-            }
-        }
+    if (animate) {
+        orb.classList.remove('orb-bounce');
+        void orb.offsetWidth;
+        orb.classList.add('orb-bounce');
+        animateLiquidNotchTo(targetPxX);
+    } else {
+        currentNotchPixelX = targetPxX;
+        document.getElementById('liquidNavPath').setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
+    }
+}
 
-        function handleLiquidNavClick(e, el) {
-            const targetHref = el.getAttribute('href');
-            const index = Number(el.dataset.index);
-            setLiquidNavActive(index, true);
+function handleLiquidNavClick(e, el) {
+    const targetHref = el.getAttribute('href');
+    const index = Number(el.dataset.index);
+    setLiquidNavActive(index, true);
 
-            if (targetHref && targetHref !== '/deposit') {
-                e.preventDefault();
-                setTimeout(() => {
-                    window.location.href = targetHref;
-                }, 320);
-            }
-        }
+    if (targetHref && targetHref !== '/deposit') {
+        e.preventDefault();
+        setTimeout(() => {
+            window.location.href = targetHref;
+        }, 320);
+    }
+}
 
-        window.addEventListener('resize', () => {
-            setLiquidNavActive(activeNavIndex, false);
-        });
+window.addEventListener('resize', () => {
+    setLiquidNavActive(activeNavIndex, false);
+});
 
         /* =========================================================
            LOGIKA FORM DEPOSIT & MODAL
