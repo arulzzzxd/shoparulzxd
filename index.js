@@ -3117,13 +3117,17 @@ app.post('/api/deposit-qrisv2', checkAuthSession, async (req, res) => {
         const activeUser = await UserV2.findById(req.user.id || req.user._id).lean();
         const customerEmail = (activeUser?.email || req.user.email).toLowerCase().trim();
 
+        // Hitung Fee QRIS v2 sebesar 0.2%
+        const feeAmount = Math.ceil(amount * 0.002);
+        const totalPayAmount = amount + feeAmount;
+
         const orderId = `QRV2-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
-        const dynamicQrisString = generateDynamicQris(STATIC_QRIS_V2_BASE, amount);
+        const dynamicQrisString = generateDynamicQris(STATIC_QRIS_V2_BASE, totalPayAmount);
         const expiredAt = new Date(Date.now() + 30 * 60 * 1000); // Berlaku 30 menit
 
         const newTrx = new TransactionV2({
             orderId,
-            amount: amount,
+            amount: totalPayAmount,
             paymentNumber: dynamicQrisString,
             paymentMethod: "QRIS V2",
             qrisVersion: "v2",
@@ -3133,6 +3137,7 @@ app.post('/api/deposit-qrisv2', checkAuthSession, async (req, res) => {
             itemDetails: {
                 nama: `Deposit QRISv2 Rp ${amount.toLocaleString('id-ID')}`,
                 harga: amount,
+                fee: feeAmount,
                 buyer: customerEmail,
                 phone: customerPhone
             },
@@ -3145,6 +3150,8 @@ app.post('/api/deposit-qrisv2', checkAuthSession, async (req, res) => {
             status: true,
             data: {
                 ...newTrx.toObject(),
+                depositAmount: amount,
+                feeAmount: feeAmount,
                 payment: {
                     qrString: dynamicQrisString
                 }
@@ -3154,7 +3161,7 @@ app.post('/api/deposit-qrisv2', checkAuthSession, async (req, res) => {
         console.error("Error Create Deposit QRISv2:", error);
         return res.status(500).json({
             status: false,
-            message: error.message || "Gagal membuat QRISv2 dinamis."
+            message: error.message || "Gagal membuat pembayaran QRISv2."
         });
     }
 });
@@ -4682,9 +4689,9 @@ app.get('/api/dashboard-stats', async (req, res) => {
         // Urutkan terlama -> terbaru dari seluruh riwayat transaksi untuk membentuk candle OHLC per 1 jam
         const allTrxAsc = [...allTrxDesc].reverse();
 
-        function generateHourlyCandles(startMs, bucketCount, trxItems, labelFormatter) {
+                function generateHourlyCandles(startMs, bucketCount, trxItems, labelFormatter) {
             const hourMs = 60 * 60 * 1000;
-            const BASE_INDEX = trxItems.length > 0 ? 25000 : 0;
+            const BASE_INDEX = 0;
             let runningVal = BASE_INDEX;
             let idx = 0;
 
@@ -4695,7 +4702,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
                     runningVal += val;
                 } else if (cancelStatuses.includes(st)) {
                     const dropStep = Math.max(1000, val);
-                    runningVal = Math.max(1000, runningVal - dropStep);
+                    runningVal = Math.max(0, runningVal - dropStep);
                 }
                 idx++;
             }
@@ -4729,7 +4736,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
                         if (runningVal > high) high = runningVal;
                     } else if (cancelStatuses.includes(st)) {
                         const dropStep = Math.max(1000, val);
-                        runningVal = Math.max(1000, runningVal - dropStep);
+                        runningVal = Math.max(0, runningVal - dropStep);
                         cancelCount++;
                         if (runningVal < low) low = runningVal;
                     } else {
@@ -4741,7 +4748,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
 
                 let close = runningVal;
                 if (cancelCount > 0 && lunasCount === 0 && close >= open) {
-                    close = Math.max(500, open - 1000);
+                    close = Math.max(0, open - 1000);
                     runningVal = close;
                 }
 
