@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Deposit Saldo - ArulzXD Store</title>
     <meta name="description" content="Isi ulang saldo akun ArulzXD Store menggunakan QRIS Otomatis & QRIS v2.">
+    <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -156,106 +157,106 @@
             animation: slideInLeftSmooth 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
-/* =========================================================
-   LIQUID NOTCH CURVE BOTTOM NAVIGATION (MENTOK FULL-WIDTH)
-   ========================================================= */
-.liquid-nav-wrapper {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    z-index: 40;
-    height: 66px;
-    user-select: none;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: transparent;
-}
-.liquid-nav-bg {
-    position: absolute;
-    inset: 0;
-    filter: drop-shadow(0px -3px 0px rgba(0, 0, 0, 0.08));
-    pointer-events: none;
-}
-.liquid-nav-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-    overflow: visible;
-}
-.liquid-floating-orb {
-    position: absolute;
-    top: -26px;
-    width: 46px;
-    height: 46px;
-    margin-left: -23px;
-    border-radius: 9999px;
-    background-color: #FFDF4F;
-    border: 3px solid #000000;
-    box-shadow: none; /* Shadow dihilangkan saat aktif */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #000000;
-    pointer-events: none;
-    will-change: left, transform;
-    transition: left 0.48s cubic-bezier(0.34, 1.38, 0.64, 1);
-}
-.liquid-floating-orb.orb-bounce {
-    animation: orbJump 0.48s cubic-bezier(0.34, 1.5, 0.64, 1);
-}
-@keyframes orbJump {
-    0% { transform: translate3d(0, 14px, 0) scale(0.82); }
-    55% { transform: translate3d(0, -5px, 0) scale(1.06); }
-    100% { transform: translate3d(0, 0px, 0) scale(1); }
-}
-.liquid-nav-items {
-    position: relative;
-    z-index: 10;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    height: 66px;
-    align-items: center;
-}
-.liquid-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: rgba(0, 0, 0, 0.72);
-    text-decoration: none;
-    transition: color 0.25s ease;
-}
-.liquid-nav-item i {
-    font-size: 16px;
-    transition: opacity 0.2s ease, transform 0.32s ease;
-}
-.liquid-nav-item span {
-    font-size: 10px;
-    font-weight: 800;
-    margin-top: 3px;
-    transition: opacity 0.2s ease, transform 0.32s ease, color 0.25s ease;
-}
-.liquid-nav-item.active i {
-    opacity: 0;
-    transform: translateY(-16px) scale(0.4);
-}
-.liquid-nav-item.active span {
-    opacity: 1;
-    color: #000000;
-    font-weight: 900;
-    transform: translateY(3px);
-}
-</style>
+        /* =========================================================
+           LIQUID NOTCH CURVE BOTTOM NAVIGATION (MENTOK FULL-WIDTH)
+           ========================================================= */
+        .liquid-nav-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            z-index: 40;
+            height: 66px;
+            user-select: none;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            background: transparent;
+        }
+        .liquid-nav-bg {
+            position: absolute;
+            inset: 0;
+            filter: drop-shadow(0px -3px 0px rgba(0, 0, 0, 0.08));
+            pointer-events: none;
+        }
+        .liquid-nav-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: visible;
+        }
+        .liquid-floating-orb {
+            position: absolute;
+            top: -26px;
+            width: 46px;
+            height: 46px;
+            margin-left: -23px;
+            border-radius: 9999px;
+            background-color: #FFDF4F;
+            border: 3px solid #000000;
+            box-shadow: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000000;
+            pointer-events: none;
+            will-change: left, transform;
+            transition: left 0.48s cubic-bezier(0.34, 1.38, 0.64, 1);
+        }
+        .liquid-floating-orb.orb-bounce {
+            animation: orbJump 0.48s cubic-bezier(0.34, 1.5, 0.64, 1);
+        }
+        @keyframes orbJump {
+            0% { transform: translate3d(0, 14px, 0) scale(0.82); }
+            55% { transform: translate3d(0, -5px, 0) scale(1.06); }
+            100% { transform: translate3d(0, 0px, 0) scale(1); }
+        }
+        .liquid-nav-items {
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            height: 66px;
+            align-items: center;
+        }
+        .liquid-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: rgba(0, 0, 0, 0.72);
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+        .liquid-nav-item i {
+            font-size: 16px;
+            transition: opacity 0.2s ease, transform 0.32s ease;
+        }
+        .liquid-nav-item span {
+            font-size: 10px;
+            font-weight: 800;
+            margin-top: 3px;
+            transition: opacity 0.2s ease, transform 0.32s ease, color 0.25s ease;
+        }
+        .liquid-nav-item.active i {
+            opacity: 0;
+            transform: translateY(-16px) scale(0.4);
+        }
+        .liquid-nav-item.active span {
+            opacity: 1;
+            color: #000000;
+            font-weight: 900;
+            transform: translateY(3px);
+        }
+    </style>
 </head>
-<body class="pb-32 antialiased selection:bg-neoYellow selection:text-black">
+<body class="pb-36 antialiased selection:bg-neoYellow selection:text-black min-h-screen">
 
-    <!-- TOP HEADER (TETAP SAMA) -->
-    <header class="sticky top-0 z-40 bg-neoYellow border-b-[3px] border-black px-4 py-3">
-        <div class="max-w-3xl mx-auto flex items-center justify-between">
+    <!-- TOP HEADER (FULLSCREEN SEPERTI RIWAYAT.HTML) -->
+    <header class="sticky top-0 z-40 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2">
                 <i class="fa-solid fa-bolt text-black text-xl"></i>
                 <span class="font-cyber font-extrabold text-xl tracking-tight text-black">
@@ -270,262 +271,264 @@
         </div>
     </header>
 
-    <main class="max-w-3xl mx-auto px-4 pt-5 space-y-5">
+    <!-- MAIN CONTAINER FULLSCREEN DESKTOP (MAX-W-6XL SEPERTI RIWAYAT.HTML) -->
+    <main class="max-w-6xl mx-auto px-4 py-6 w-full space-y-6">
 
-        <!-- 1. BANNER SALDO (PERSEGI PANJANG) -->
-        <section class="neo-rect bg-neoCyan p-4 sm:p-5 relative overflow-hidden">
-            <div class="absolute right-0 top-0 bottom-0 w-20 bg-white/15 border-l-2 border-black/15 pointer-events-none"></div>
-            <div class="relative z-10">
-                <div class="flex items-center justify-between gap-2 mb-1">
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 bg-black text-neoYellow border-2 border-black flex items-center justify-center text-xs shadow-[2px_2px_0px_#fff]">
-                            <i class="fa-solid fa-wallet"></i>
-                        </span>
-                        <h1 class="font-cyber font-extrabold text-lg sm:text-xl text-black tracking-tight uppercase">Deposit Saldo Instan</h1>
-                    </div>
-                    <span class="bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase tracking-wider">24 JAM</span>
-                </div>
-
-                <div class="mt-3 bg-white border-[3px] border-black p-3.5 shadow-[4px_4px_0px_#000] flex items-center justify-between">
-                    <div>
-                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-600">SALDO AKUN SAAT INI</p>
-                        <p id="currentBalanceDisplay" class="font-cyber font-extrabold text-2xl sm:text-3xl text-black mt-0.5">Memuat...</p>
-                    </div>
-                    <div class="w-11 h-11 bg-neoYellow border-[2.5px] border-black flex items-center justify-center shadow-[3px_3px_0px_#000]">
-                        <i class="fa-solid fa-coins text-black text-lg"></i>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2. PANDUAN QRIS (LEBIH BESAR SEDIKIT, ANIMASI VEKTOR HALUS & TOUCH SWIPE) -->
-        <section class="neo-rect bg-neoYellow p-4 sm:p-5 select-none">
-            <!-- Header Panduan & Progress Bar -->
-            <div class="flex items-center justify-between gap-2 mb-3">
-                <div class="flex items-center gap-2">
-                    <span id="tutorialModeBadge" class="bg-black text-neoYellow font-cyber font-extrabold text-[11px] px-2.5 py-1 uppercase tracking-wider">
-                        PANDUAN QRIS V2
-                    </span>
-                    <span class="text-[11px] font-extrabold text-black/80 flex items-center gap-1">
-                        <i class="fa-solid fa-hand-pointer"></i> Geser
-                    </span>
-                </div>
-                <!-- 4 Progress Bars Otomatis -->
-                <div class="flex items-center gap-1.5 w-32 sm:w-40" id="tutorialProgressBars">
-                    <div class="h-2 flex-1 bg-black/20 border border-black overflow-hidden">
-                        <div class="tut-bar-fill h-full bg-neoCyan w-0"></div>
-                    </div>
-                    <div class="h-2 flex-1 bg-black/20 border border-black overflow-hidden">
-                        <div class="tut-bar-fill h-full bg-neoCyan w-0"></div>
-                    </div>
-                    <div class="h-2 flex-1 bg-black/20 border border-black overflow-hidden">
-                        <div class="tut-bar-fill h-full bg-neoCyan w-0"></div>
-                    </div>
-                    <div class="h-2 flex-1 bg-black/20 border border-black overflow-hidden">
-                        <div class="tut-bar-fill h-full bg-neoCyan w-0"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Area Touch Swipe Carousel (Proporsi Lebih Besar & Lega) -->
-            <div id="tutorialSwipeArea" class="bg-white border-[3px] border-black p-4 sm:p-5 shadow-[4px_4px_0px_#000] cursor-grab active:cursor-grabbing overflow-hidden touch-pan-y">
-                <div id="tutorialSlideContent" class="gpu-layer flex items-center gap-4 sm:gap-5">
-                    <!-- Kotak Animasi Vektor SVG Ultra Tajam -->
-                    <div id="tutorialAnimationBox" class="w-24 h-24 sm:w-28 sm:h-28 shrink-0 bg-neoBg border-[2.5px] border-black shadow-[3px_3px_0px_#000] flex items-center justify-center relative overflow-hidden">
-                        <!-- Render via JS -->
-                    </div>
-                    <!-- Teks Panduan Lebih Besar & Jelas -->
-                    <div class="min-w-0 flex-1 space-y-1.5">
+        <!-- BARIS ATAS DESKTOP: SALDO & PANDUAN SEJAJAR 2 KOLOM -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+            <!-- 1. BANNER SALDO -->
+            <section class="lg:col-span-5 neo-rect bg-neoCyan p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute right-0 top-0 bottom-0 w-20 bg-white/15 border-l-2 border-black/15 pointer-events-none"></div>
+                <div class="relative z-10 h-full flex flex-col justify-between">
+                    <div class="flex items-center justify-between gap-2 mb-1">
                         <div class="flex items-center gap-2">
-                            <span id="tutorialStepTag" class="bg-neoCyan border-2 border-black text-black font-cyber font-black text-[10px] px-2 py-0.5 uppercase">LANGKAH 1/4</span>
+                            <span class="w-7 h-7 bg-black text-neoYellow border-2 border-black flex items-center justify-center text-xs shadow-[2px_2px_0px_#fff]">
+                                <i class="fa-solid fa-wallet"></i>
+                            </span>
+                            <h1 class="font-cyber font-extrabold text-lg sm:text-xl text-black tracking-tight uppercase">Deposit Saldo Instan</h1>
                         </div>
-                        <h2 id="tutorialStepTitle" class="font-cyber font-extrabold text-base sm:text-lg text-black leading-snug">
-                            Pilih Nominal & Buat QRIS V2
-                        </h2>
-                        <p id="tutorialStepDesc" class="text-xs sm:text-sm font-bold text-slate-700 leading-relaxed">
-                            Tentukan nominal saldo, isi nomor WhatsApp aktif, lalu tekan tombol Lanjutkan Pembayaran.
-                        </p>
+                        <span class="bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase tracking-wider">24 JAM</span>
                     </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- 3. KARTU UTAMA FORM DEPOSIT (PERSEGI PANJANG) -->
-        <section class="neo-rect bg-white p-5 space-y-6">
-
-            <!-- STEP 1: PILIH GATEWAY QRIS -->
-            <div>
-                <div class="flex items-center justify-between mb-3">
-                    <label class="text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                        <span class="w-6 h-6 bg-neoYellow border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">1</span>
-                        PILIH GATEWAY QRIS
-                    </label>
-                    <span class="text-[10px] font-extrabold bg-black text-neoYellow px-2.5 py-0.5 uppercase">2 PILIHAN</span>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <!-- QRIS V2 -->
-                    <button type="button" id="btnMethodQrisV2" onclick="selectQrisMethod('v2')" class="method-btn active neo-btn-rect bg-white text-black p-4 text-left flex items-center justify-between">
+                    <div class="mt-3 bg-white border-[3px] border-black p-3.5 shadow-[4px_4px_0px_#000] flex items-center justify-between">
                         <div>
-                            <div class="text-xs font-black font-cyber uppercase flex flex-wrap items-center gap-1.5">
-                                <span>QRIS V2</span>
-                                <span class="bg-neoGreen border-2 border-black text-black text-[10px] font-black px-2 py-0.5 shadow-[1px_1px_0px_#000]">+0.7%</span>
-                                <span class="bg-neoYellow border-2 border-black text-black text-[10px] font-black px-2 py-0.5 shadow-[1px_1px_0px_#000]">UPLOAD BUKTI</span>
-                            </div>
-                            <p class="text-[11px] font-bold text-slate-800 mt-1.5">QR otomatis terisi nominal + verifikasi bukti</p>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-600">SALDO AKUN SAAT INI</p>
+                            <p id="currentBalanceDisplay" class="font-cyber font-extrabold text-2xl sm:text-3xl text-black mt-0.5">Memuat...</p>
                         </div>
-                        <div class="w-11 h-11 bg-white border-2 border-black flex items-center justify-center shrink-0 ml-2 shadow-[2px_2px_0px_#000]">
-                            <i class="fa-solid fa-qrcode text-xl"></i>
-                        </div>
-                    </button>
-
-                    <!-- QRIS V1 -->
-                    <button type="button" id="btnMethodQrisV1" onclick="selectQrisMethod('v1')" class="method-btn neo-btn-rect bg-white text-black p-4 text-left flex items-center justify-between">
-                        <div>
-                            <div class="text-xs font-black font-cyber uppercase flex flex-wrap items-center gap-1.5">
-                                <span>QRIS V1</span>
-                                <span class="bg-neoYellow border-2 border-black text-black text-[10px] font-black px-2 py-0.5 shadow-[1px_1px_0px_#000]">⚡ INSTAN</span>
-                                <span class="bg-neoPurple border-2 border-black text-black text-[10px] font-black px-2 py-0.5 shadow-[1px_1px_0px_#000]">AUTO CEK</span>
-                            </div>
-                            <p class="text-[11px] font-bold text-slate-800 mt-1.5">Cek otomatis oleh sistem gateway</p>
-                        </div>
-                        <div class="w-11 h-11 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 ml-2 shadow-[2px_2px_0px_#000]">
-                            <i class="fa-solid fa-bolt text-xl"></i>
-                        </div>
-                    </button>
-                </div>
-            </div>
-
-            <!-- STEP 2: PILIH NOMINAL DEPOSIT (PERSEGI PANJANG POLOS, HANYA POPULER) -->
-            <div class="pt-4 border-t-[2.5px] border-dashed border-black/25">
-                <div class="flex items-center justify-between mb-3">
-                    <label class="text-xs font-black uppercase tracking-wider flex items-center gap-2">
-                        <span class="w-6 h-6 bg-neoCyan border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">2</span>
-                        PILIH NOMINAL DEPOSIT
-                    </label>
-                    <span class="text-[10px] font-extrabold bg-neoGreen border-2 border-black px-2.5 py-0.5 shadow-[2px_2px_0px_#000]">Min. Rp 1.000</span>
-                </div>
-
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="nominalPresetGrid">
-                    <button type="button" data-amount="5000" onclick="selectNominal(5000, this)" class="nominal-btn active neo-btn-rect bg-white py-4 px-3 text-center relative flex flex-col items-center justify-center">
-                        <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-neoPurple border-2 border-black text-[9px] font-black px-2.5 py-0.5 whitespace-nowrap shadow-[2px_2px_0px_#000]">🔥 POPULER</span>
-                        <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 5.000</span>
-                    </button>
-                    <button type="button" data-amount="10000" onclick="selectNominal(10000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
-                        <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 10.000</span>
-                    </button>
-                    <button type="button" data-amount="20000" onclick="selectNominal(20000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
-                        <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 20.000</span>
-                    </button>
-                    <button type="button" data-amount="30000" onclick="selectNominal(30000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
-                        <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 30.000</span>
-                    </button>
-                    <button type="button" data-amount="50000" onclick="selectNominal(50000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
-                        <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 50.000</span>
-                    </button>
-                    <button type="button" data-amount="75000" onclick="selectNominal(75000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
-                        <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 75.000</span>
-                    </button>
-                    <button type="button" data-amount="90000" onclick="selectNominal(90000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
-                        <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 90.000</span>
-                    </button>
-                    <button type="button" data-amount="100000" onclick="selectNominal(100000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
-                        <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 100.000</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- STEP 3: NOMINAL CUSTOM -->
-            <div class="pt-4 border-t-[2.5px] border-dashed border-black/25">
-                <label for="depositAmountInput" class="block text-xs font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                    <span class="w-6 h-6 bg-neoGreen border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">3</span>
-                    ATAU KETIK NOMINAL CUSTOM (RP)
-                </label>
-                <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 font-cyber font-extrabold text-lg text-black">Rp</span>
-                    <input type="number" id="depositAmountInput" value="5000" min="1000" step="500" placeholder="Masukkan nominal deposit..."
-                        oninput="onManualAmountInput(this.value)"
-                        class="w-full pl-12 pr-4 py-3.5 bg-neoBg border-[3px] border-black rounded-none font-cyber font-extrabold text-xl text-black focus:outline-none focus:bg-white shadow-[4px_4px_0px_#000]">
-                </div>
-            </div>
-
-            <!-- STEP 4: NOMOR WHATSAPP -->
-            <div class="pt-4 border-t-[2.5px] border-dashed border-black/25">
-                <label for="depositPhoneInput" class="block text-xs font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                    <span class="w-6 h-6 bg-neoPurple border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">4</span>
-                    NOMOR WHATSAPP AKTIF <span class="text-neoPink">*</span>
-                </label>
-                <div class="relative">
-                    <i class="fa-brands fa-whatsapp absolute left-4 top-1/2 -translate-y-1/2 text-lg text-black"></i>
-                    <input type="tel" id="depositPhoneInput" placeholder="Contoh: 081234567890"
-                        class="w-full pl-11 pr-4 py-3.5 bg-neoBg border-[3px] border-black rounded-none font-bold text-sm text-black focus:outline-none focus:bg-white shadow-[4px_4px_0px_#000]">
-                </div>
-                <p class="text-[11px] font-bold text-slate-600 mt-1.5">Digunakan untuk identifikasi transaksi dan bukti riwayat deposit Anda.</p>
-            </div>
-
-            <!-- KOTAK SUBTOTAL LENGKAP DI ATAS TOMBOL LANJUTKAN PEMBAYARAN -->
-            <div class="bg-neoBg border-[3px] border-black shadow-[5px_5px_0px_#000] overflow-hidden">
-                <div class="bg-black text-white px-4 py-2.5 flex items-center justify-between">
-                    <span class="font-cyber font-extrabold text-xs uppercase tracking-wider text-neoYellow flex items-center gap-1.5">
-                        <i class="fa-solid fa-receipt"></i> RINCIAN SUBTOTAL DEPOSIT
-                    </span>
-                    <span id="subtotalGatewayTag" class="bg-neoCyan text-black font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase">QRIS V2</span>
-                </div>
-
-                <div class="p-4 space-y-2.5 text-xs sm:text-sm">
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-slate-700">Metode Pembayaran</span>
-                        <span id="subtotalMethodName" class="font-cyber font-extrabold text-black">QRIS V2</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-slate-700">Nominal Saldo Diterima</span>
-                        <span id="subtotalBaseAmount" class="font-cyber font-extrabold text-black">Rp 5.000</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-slate-700">Tambahan Layanan</span>
-                        <div class="flex items-center gap-1.5">
-                            <span id="subtotalRateHighlight" class="bg-neoGreen border-2 border-black text-black font-cyber font-black text-[10px] px-2 py-0.5 shadow-[1px_1px_0px_#000]">+0.7%</span>
-                            <span id="subtotalExtraAmount" class="font-cyber font-extrabold text-black">Rp 35</span>
+                        <div class="w-11 h-11 bg-neoYellow border-[2.5px] border-black flex items-center justify-center shadow-[3px_3px_0px_#000]">
+                            <i class="fa-solid fa-coins text-black text-lg"></i>
                         </div>
                     </div>
+                </div>
+            </section>
 
-                    <div class="pt-3 mt-1 border-t-[2.5px] border-dashed border-black flex items-center justify-between">
-                        <div>
-                            <span class="font-cyber font-black text-xs sm:text-sm uppercase text-black block">TOTAL PEMBAYARAN</span>
-                            <span class="text-[10px] font-bold text-slate-600">Nominal akhir yang ditransfer</span>
-                        </div>
-                        <span id="subtotalGrandTotal" class="bg-neoYellow border-[2.5px] border-black px-3.5 py-1.5 font-cyber font-black text-lg sm:text-xl text-black shadow-[3px_3px_0px_#000]">
-                            Rp 5.035
+            <!-- 2. PANDUAN QRIS -->
+            <section class="lg:col-span-7 neo-rect bg-neoYellow p-4 sm:p-5 select-none flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-2 mb-3">
+                    <div class="flex items-center gap-2">
+                        <span id="tutorialModeBadge" class="bg-black text-neoYellow font-cyber font-extrabold text-[11px] px-2.5 py-1 uppercase tracking-wider">
+                            PANDUAN QRIS V2
+                        </span>
+                        <span class="text-[11px] font-extrabold text-black/80 flex items-center gap-1">
+                            <i class="fa-solid fa-hand-pointer"></i> Geser
                         </span>
                     </div>
+                    <div class="flex items-center gap-1.5 w-32 sm:w-40" id="tutorialProgressBars">
+                        <div class="h-2 flex-1 bg-black/20 border border-black overflow-hidden">
+                            <div class="tut-bar-fill h-full bg-neoCyan w-0"></div>
+                        </div>
+                        <div class="h-2 flex-1 bg-black/20 border border-black overflow-hidden">
+                            <div class="tut-bar-fill h-full bg-neoCyan w-0"></div>
+                        </div>
+                        <div class="h-2 flex-1 bg-black/20 border border-black overflow-hidden">
+                            <div class="tut-bar-fill h-full bg-neoCyan w-0"></div>
+                        </div>
+                        <div class="h-2 flex-1 bg-black/20 border border-black overflow-hidden">
+                            <div class="tut-bar-fill h-full bg-neoCyan w-0"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- TOMBOL LANJUTKAN PEMBAYARAN -->
-            <button type="button" id="btnSubmitDeposit" onclick="processDeposit()"
-                class="w-full neo-btn-rect bg-neoGreen text-black font-cyber font-extrabold text-base py-4 flex items-center justify-center gap-2.5 uppercase tracking-wide">
-                <i class="fa-solid fa-qrcode text-lg"></i>
-                <span id="btnSubmitLabel">LANJUTKAN PEMBAYARAN QRIS V2</span>
-            </button>
-        </section>
+                <div id="tutorialSwipeArea" class="bg-white border-[3px] border-black p-4 sm:p-5 shadow-[4px_4px_0px_#000] cursor-grab active:cursor-grabbing overflow-hidden touch-pan-y">
+                    <div id="tutorialSlideContent" class="gpu-layer flex items-center gap-4 sm:gap-5">
+                        <div id="tutorialAnimationBox" class="w-24 h-24 sm:w-28 sm:h-28 shrink-0 bg-neoBg border-[2.5px] border-black shadow-[3px_3px_0px_#000] flex items-center justify-center relative overflow-hidden">
+                        </div>
+                        <div class="min-w-0 flex-1 space-y-1.5">
+                            <div class="flex items-center gap-2">
+                                <span id="tutorialStepTag" class="bg-neoCyan border-2 border-black text-black font-cyber font-black text-[10px] px-2 py-0.5 uppercase">LANGKAH 1/4</span>
+                            </div>
+                            <h2 id="tutorialStepTitle" class="font-cyber font-extrabold text-base sm:text-lg text-black leading-snug">
+                                Pilih Nominal & Buat QRIS V2
+                            </h2>
+                            <p id="tutorialStepDesc" class="text-xs sm:text-sm font-bold text-slate-700 leading-relaxed">
+                                Tentukan nominal saldo, isi nomor WhatsApp aktif, lalu tekan tombol Lanjutkan Pembayaran.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
 
-        <!-- 4. RIWAYAT DEPOSIT TERAKHIR (PERSEGI PANJANG) -->
-        <section class="neo-rect bg-white p-5">
-            <div class="flex items-center justify-between mb-4 border-b-[2.5px] border-black pb-3">
-                <h2 class="font-cyber font-extrabold text-base flex items-center gap-2 uppercase">
-                    <i class="fa-solid fa-clock-rotate-left"></i> RIWAYAT DEPOSIT TERAKHIR
-                </h2>
-                <button type="button" onclick="loadDepositHistory()" class="neo-btn-rect text-xs font-extrabold bg-neoYellow px-3 py-1.5">
-                    <i class="fa-solid fa-rotate"></i> Refresh
+        <!-- BARIS BAWAH DESKTOP: FORM DEPOSIT & RIWAYAT DEPOSIT SEJAJAR 2 KOLOM -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- 3. KARTU UTAMA FORM DEPOSIT -->
+            <section class="lg:col-span-7 neo-rect bg-white p-5 space-y-6">
+
+                <!-- STEP 1: PILIH GATEWAY QRIS -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-6 h-6 bg-neoYellow border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">1</span>
+                            PILIH GATEWAY QRIS
+                        </label>
+                        <span class="text-[10px] font-extrabold bg-black text-neoYellow px-2.5 py-0.5 uppercase">2 PILIHAN</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <!-- QRIS V2 -->
+                        <button type="button" id="btnMethodQrisV2" onclick="selectQrisMethod('v2')" class="method-btn active neo-btn-rect bg-white text-black p-4 text-left flex items-center justify-between">
+                            <div>
+                                <div class="text-xs font-black font-cyber uppercase flex flex-wrap items-center gap-1.5">
+                                    <span>QRIS V2</span>
+                                    <span class="bg-neoGreen border-2 border-black text-black text-[10px] font-black px-2 py-0.5 shadow-[1px_1px_0px_#000]">0.7%+250 / 0.95%</span>
+                                    <span class="bg-neoYellow border-2 border-black text-black text-[10px] font-black px-2 py-0.5 shadow-[1px_1px_0px_#000]">UPLOAD BUKTI</span>
+                                </div>
+                                <p class="text-[11px] font-bold text-slate-800 mt-1.5">QR otomatis terisi nominal + verifikasi bukti</p>
+                            </div>
+                            <div class="w-11 h-11 bg-white border-2 border-black flex items-center justify-center shrink-0 ml-2 shadow-[2px_2px_0px_#000]">
+                                <i class="fa-solid fa-qrcode text-xl"></i>
+                            </div>
+                        </button>
+
+                        <!-- QRIS V1 -->
+                        <button type="button" id="btnMethodQrisV1" onclick="selectQrisMethod('v1')" class="method-btn neo-btn-rect bg-white text-black p-4 text-left flex items-center justify-between">
+                            <div>
+                                <div class="text-xs font-black font-cyber uppercase flex flex-wrap items-center gap-1.5">
+                                    <span>QRIS V1</span>
+                                    <span class="bg-neoYellow border-2 border-black text-black text-[10px] font-black px-2 py-0.5 shadow-[1px_1px_0px_#000]">⚡ INSTAN</span>
+                                    <span class="bg-neoPurple border-2 border-black text-black text-[10px] font-black px-2 py-0.5 shadow-[1px_1px_0px_#000]">AUTO CEK</span>
+                                </div>
+                                <p class="text-[11px] font-bold text-slate-800 mt-1.5">0.7%+290 (&lt;150rb) • 0.95% (≥150rb)</p>
+                            </div>
+                            <div class="w-11 h-11 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 ml-2 shadow-[2px_2px_0px_#000]">
+                                <i class="fa-solid fa-bolt text-xl"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: PILIH NOMINAL DEPOSIT -->
+                <div class="pt-4 border-t-[2.5px] border-dashed border-black/25">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-6 h-6 bg-neoCyan border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">2</span>
+                            PILIH NOMINAL DEPOSIT
+                        </label>
+                        <span class="text-[10px] font-extrabold bg-neoGreen border-2 border-black px-2.5 py-0.5 shadow-[2px_2px_0px_#000]">Min. Rp 1.000</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="nominalPresetGrid">
+                        <button type="button" data-amount="5000" onclick="selectNominal(5000, this)" class="nominal-btn active neo-btn-rect bg-white py-4 px-3 text-center relative flex flex-col items-center justify-center">
+                            <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-neoPurple border-2 border-black text-[9px] font-black px-2.5 py-0.5 whitespace-nowrap shadow-[2px_2px_0px_#000]">🔥 POPULER</span>
+                            <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 5.000</span>
+                        </button>
+                        <button type="button" data-amount="10000" onclick="selectNominal(10000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
+                            <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 10.000</span>
+                        </button>
+                        <button type="button" data-amount="20000" onclick="selectNominal(20000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
+                            <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 20.000</span>
+                        </button>
+                        <button type="button" data-amount="30000" onclick="selectNominal(30000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
+                            <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 30.000</span>
+                        </button>
+                        <button type="button" data-amount="50000" onclick="selectNominal(50000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
+                            <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 50.000</span>
+                        </button>
+                        <button type="button" data-amount="75000" onclick="selectNominal(75000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
+                            <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 75.000</span>
+                        </button>
+                        <button type="button" data-amount="150000" onclick="selectNominal(150000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
+                            <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 150.000</span>
+                        </button>
+                        <button type="button" data-amount="200000" onclick="selectNominal(200000, this)" class="nominal-btn neo-btn-rect bg-white py-4 px-3 text-center flex flex-col items-center justify-center">
+                            <span class="font-cyber font-extrabold text-base sm:text-lg text-black">Rp 200.000</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: NOMINAL CUSTOM -->
+                <div class="pt-4 border-t-[2.5px] border-dashed border-black/25">
+                    <label for="depositAmountInput" class="block text-xs font-black uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-neoGreen border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">3</span>
+                        ATAU KETIK NOMINAL CUSTOM (RP)
+                    </label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 font-cyber font-extrabold text-lg text-black">Rp</span>
+                        <input type="number" id="depositAmountInput" value="5000" min="1000" step="500" placeholder="Masukkan nominal deposit..."
+                            oninput="onManualAmountInput(this.value)"
+                            class="w-full pl-12 pr-4 py-3.5 bg-neoBg border-[3px] border-black rounded-none font-cyber font-extrabold text-xl text-black focus:outline-none focus:bg-white shadow-[4px_4px_0px_#000]">
+                    </div>
+                </div>
+
+                <!-- STEP 4: NOMOR WHATSAPP -->
+                <div class="pt-4 border-t-[2.5px] border-dashed border-black/25">
+                    <label for="depositPhoneInput" class="block text-xs font-black uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-neoPurple border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">4</span>
+                        NOMOR WHATSAPP AKTIF <span class="text-neoPink">*</span>
+                    </label>
+                    <div class="relative">
+                        <i class="fa-brands fa-whatsapp absolute left-4 top-1/2 -translate-y-1/2 text-lg text-black"></i>
+                        <input type="tel" id="depositPhoneInput" placeholder="Contoh: 081234567890"
+                            class="w-full pl-11 pr-4 py-3.5 bg-neoBg border-[3px] border-black rounded-none font-bold text-sm text-black focus:outline-none focus:bg-white shadow-[4px_4px_0px_#000]">
+                    </div>
+                    <p class="text-[11px] font-bold text-slate-600 mt-1.5">Digunakan untuk identifikasi transaksi dan bukti riwayat deposit Anda.</p>
+                </div>
+
+                <!-- KOTAK SUBTOTAL LENGKAP -->
+                <div class="bg-neoBg border-[3px] border-black shadow-[5px_5px_0px_#000] overflow-hidden">
+                    <div class="bg-black text-white px-4 py-2.5 flex items-center justify-between">
+                        <span class="font-cyber font-extrabold text-xs uppercase tracking-wider text-neoYellow flex items-center gap-1.5">
+                            <i class="fa-solid fa-receipt"></i> RINCIAN SUBTOTAL DEPOSIT
+                        </span>
+                        <span id="subtotalGatewayTag" class="bg-neoCyan text-black font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase">QRIS V2</span>
+                    </div>
+
+                    <div class="p-4 space-y-2.5 text-xs sm:text-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-700">Metode Pembayaran</span>
+                            <span id="subtotalMethodName" class="font-cyber font-extrabold text-black">QRIS V2</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-700">Nominal Saldo Diterima</span>
+                            <span id="subtotalBaseAmount" class="font-cyber font-extrabold text-black">Rp 5.000</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-700">Tambahan Layanan</span>
+                            <div class="flex items-center gap-1.5">
+                                <span id="subtotalRateHighlight" class="bg-neoGreen border-2 border-black text-black font-cyber font-black text-[10px] px-2 py-0.5 shadow-[1px_1px_0px_#000]">+0.7% + Rp 250</span>
+                                <span id="subtotalExtraAmount" class="font-cyber font-extrabold text-black">Rp 285</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 mt-1 border-t-[2.5px] border-dashed border-black flex items-center justify-between">
+                            <div>
+                                <span class="font-cyber font-black text-xs sm:text-sm uppercase text-black block">TOTAL PEMBAYARAN</span>
+                                <span class="text-[10px] font-bold text-slate-600">Nominal akhir yang ditransfer</span>
+                            </div>
+                            <span id="subtotalGrandTotal" class="bg-neoYellow border-[2.5px] border-black px-3.5 py-1.5 font-cyber font-black text-lg sm:text-xl text-black shadow-[3px_3px_0px_#000]">
+                                Rp 5.285
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOMBOL LANJUTKAN PEMBAYARAN -->
+                <button type="button" id="btnSubmitDeposit" onclick="processDeposit()"
+                    class="w-full neo-btn-rect bg-neoGreen text-black font-cyber font-extrabold text-base py-4 flex items-center justify-center gap-2.5 uppercase tracking-wide">
+                    <i class="fa-solid fa-qrcode text-lg"></i>
+                    <span id="btnSubmitLabel">LANJUTKAN PEMBAYARAN QRIS V2</span>
                 </button>
-            </div>
-            <div id="depositHistoryList" class="space-y-3">
-                <p class="text-xs font-bold text-slate-500 text-center py-4">Memuat riwayat deposit...</p>
-            </div>
-        </section>
+            </section>
 
+            <!-- 4. RIWAYAT DEPOSIT TERAKHIR -->
+            <section class="lg:col-span-5 neo-rect bg-white p-5">
+                <div class="flex items-center justify-between mb-4 border-b-[2.5px] border-black pb-3">
+                    <h2 class="font-cyber font-extrabold text-base flex items-center gap-2 uppercase">
+                        <i class="fa-solid fa-clock-rotate-left"></i> RIWAYAT DEPOSIT TERAKHIR
+                    </h2>
+                    <button type="button" onclick="loadDepositHistory()" class="neo-btn-rect text-xs font-extrabold bg-neoYellow px-3 py-1.5">
+                        <i class="fa-solid fa-rotate"></i> Refresh
+                    </button>
+                </div>
+                <div id="depositHistoryList" class="space-y-3 max-h-[680px] overflow-y-auto pr-0.5">
+                    <p class="text-xs font-bold text-slate-500 text-center py-4">Memuat riwayat deposit...</p>
+                </div>
+            </section>
+
+        </div>
     </main>
 
-    <!-- MODAL PEMBAYARAN QRIS (PERSEGI PANJANG) -->
+    <!-- MODAL PEMBAYARAN QRIS -->
     <div id="qrisDepositModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-neoBg border-[3px] border-black rounded-none w-full max-w-md shadow-[8px_8px_0px_#000] overflow-hidden my-auto">
             <div class="bg-neoYellow border-b-[3px] border-black px-4 py-3 flex items-center justify-between">
@@ -559,7 +562,7 @@
                             <span class="bg-neoYellow text-black font-cyber font-black text-[11px] px-2 py-0.5 border border-black tracking-wider">QRIS</span>
                             <span id="modalMerchantName" class="text-[11px] font-cyber font-black tracking-wide uppercase text-white">IDZHARUL STORE</span>
                         </div>
-                        <span id="modalCardBadge" class="text-[10px] font-mono font-extrabold bg-neoCyan text-black px-2 py-0.5 border border-black">+0.7%</span>
+                        <span id="modalCardBadge" class="text-[10px] font-mono font-extrabold bg-neoCyan text-black px-2 py-0.5 border border-black">QRIS V2</span>
                     </div>
 
                     <div class="p-4 flex flex-col items-center justify-center bg-white">
@@ -625,13 +628,13 @@
         </div>
     </div>
 
-    <!-- TOMBOL FLOATING CHAT (TETAP SAMA) -->
-    <a href="/chat" title="Live Chat Admin" class="fixed bottom-24 right-4 z-40 w-12 h-12 rounded-full bg-neoYellow border-[3px] border-black shadow-[4px_4px_0px_#000] flex items-center justify-center text-black hover:scale-105 transition-transform">
+    <!-- TOMBOL FLOATING CHAT -->
+    <a href="/riwayat" title="Live Chat Admin" class="fixed bottom-24 right-4 z-40 w-12 h-12 rounded-full bg-neoYellow border-[3px] border-black shadow-[4px_4px_0px_#000] flex items-center justify-center text-black hover:scale-105 transition-transform">
         <i class="fa-solid fa-comment-dots text-xl"></i>
         <span class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-neoGreen border-2 border-black"></span>
     </a>
 
-    <!-- BOTTOM NAVIGATION DENGAN LEKUKAN BERSIH TANPA GARIS HITAM MELINTANG -->
+    <!-- BOTTOM NAVIGATION DENGAN LEKUKAN BERSIH -->
     <nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
         <div class="liquid-nav-bg">
             <svg class="liquid-nav-svg" id="liquidNavSvg" xmlns="http://www.w3.org/2000/svg">
@@ -645,12 +648,10 @@
             </svg>
         </div>
 
-        <!-- Bulatan Ikon Aktif yang Melompat -->
         <div class="liquid-floating-orb" id="liquidFloatingOrb" style="left: 50%;">
             <i id="liquidOrbIcon" class="fa-solid fa-wallet text-lg"></i>
         </div>
 
-        <!-- 5 Item Menu -->
         <div class="liquid-nav-items">
             <a href="/" data-index="0" data-icon="fa-solid fa-house" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
                 <i class="fa-solid fa-house"></i>
@@ -668,7 +669,7 @@
                 <i class="fa-solid fa-clock-rotate-left"></i>
                 <span>Riwayat</span>
             </a>
-            <a href="/profil" data-index="4" data-icon="fa-regular fa-user" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+            <a href="/profile" data-index="4" data-icon="fa-regular fa-user" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
                 <i class="fa-regular fa-user"></i>
                 <span>Profil</span>
             </a>
@@ -680,15 +681,12 @@
         let activeDepositOrder = null;
         let depositCountdownInterval = null;
         let depositPollingInterval = null;
+        let allUserDeposits = [];
 
-        // State Tutorial Auto & Touch Swipe
         let currentTutorialStep = 0;
         let tutorialTimer = null;
         const TUTORIAL_DURATION = 4200;
 
-        /* =========================================================
-           ILUSTRASI VEKTOR SVG ULTRA-TAJAM (ANTI-PECAH)
-           ========================================================= */
         const TUTORIAL_DATA = {
             v2: [
                 {
@@ -833,6 +831,27 @@
             return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
         }
 
+        // Kalkulasi Fee sesuai aturan:
+        // >= Rp 150.000 -> 0.95% flat tanpa biaya tetap tambahan
+        // < Rp 150.000 -> 0.7% + Rp 290 (QRIS V1) atau 0.7% + Rp 250 (QRIS V2)
+        function calculateDepositFeeClient(amount, version) {
+            const nominal = Number(amount) || 0;
+            if (nominal <= 0) {
+                return { fee: 0, label: version === 'v2' ? '+0.7% + Rp 250' : '+0.7% + Rp 290' };
+            }
+            if (nominal >= 150000) {
+                return {
+                    fee: Math.ceil((nominal * 95) / 10000),
+                    label: '+0.95% FLAT'
+                };
+            }
+            const flat = version === 'v2' ? 250 : 290;
+            return {
+                fee: Math.ceil((nominal * 70) / 10000) + flat,
+                label: `+0.7% + Rp ${flat}`
+            };
+        }
+
         function updateSubtotalSummary() {
             const rawVal = Number(document.getElementById('depositAmountInput').value) || 0;
             const gatewayTagEl = document.getElementById('subtotalGatewayTag');
@@ -842,27 +861,24 @@
             const extraAmountEl = document.getElementById('subtotalExtraAmount');
             const grandTotalEl = document.getElementById('subtotalGrandTotal');
 
+            const calc = calculateDepositFeeClient(rawVal, selectedQrisMethod);
+            const totalPay = rawVal + calc.fee;
+
             baseAmountEl.innerText = formatRupiah(rawVal);
+            rateHighlightEl.innerText = calc.label;
+            extraAmountEl.innerText = formatRupiah(calc.fee);
+            grandTotalEl.innerText = formatRupiah(totalPay);
 
             if (selectedQrisMethod === 'v2') {
-                const extraCost = Math.ceil(rawVal * 0.007);
-                const totalPay = rawVal + extraCost;
-
                 gatewayTagEl.innerText = 'QRIS V2';
                 gatewayTagEl.className = 'bg-neoCyan text-black font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase';
                 methodNameEl.innerText = 'QRIS V2';
-                rateHighlightEl.innerText = '+0.7%';
                 rateHighlightEl.className = 'bg-neoGreen border-2 border-black text-black font-cyber font-black text-[10px] px-2 py-0.5 shadow-[1px_1px_0px_#000]';
-                extraAmountEl.innerText = formatRupiah(extraCost);
-                grandTotalEl.innerText = formatRupiah(totalPay);
             } else {
                 gatewayTagEl.innerText = 'QRIS V1';
                 gatewayTagEl.className = 'bg-neoPurple text-black font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase';
                 methodNameEl.innerText = 'QRIS V1';
-                rateHighlightEl.innerText = 'AUTO';
                 rateHighlightEl.className = 'bg-neoPurple border-2 border-black text-black font-cyber font-black text-[10px] px-2 py-0.5 shadow-[1px_1px_0px_#000]';
-                extraAmountEl.innerText = 'Rp 0';
-                grandTotalEl.innerText = formatRupiah(rawVal);
             }
         }
 
@@ -969,126 +985,126 @@
             });
         }
 
-/* =========================================================
-   LIQUID NOTCH CURVE NAVIGATION (MENTOK FULL-WIDTH & SIMETRIS)
-   ========================================================= */
-let liquidNavAnimationFrame = null;
-let currentNotchPixelX = 0;
-let activeNavIndex = 2;
+        /* =========================================================
+           LIQUID NOTCH CURVE NAVIGATION
+           ========================================================= */
+        let liquidNavAnimationFrame = null;
+        let currentNotchPixelX = 0;
+        let activeNavIndex = 2;
 
-function buildPixelNotchPath(cx, totalW, totalH) {
-    const notchHalfW = 46;
-    const notchDepth = 28;
-    const c1 = 21;
-    const c2 = 19;
+        function buildPixelNotchPath(cx, totalW, totalH) {
+            const notchHalfW = 46;
+            const notchDepth = 28;
+            const c1 = 21;
+            const c2 = 19;
 
-    const leftEdge = Math.max(2, cx - notchHalfW);
-    const rightEdge = Math.min(totalW - 2, cx + notchHalfW);
+            const leftEdge = Math.max(2, cx - notchHalfW);
+            const rightEdge = Math.min(totalW - 2, cx + notchHalfW);
 
-    return [
-        `M 0,1.5`,
-        `L ${leftEdge},1.5`,
-        `C ${leftEdge + c1},1.5 ${cx - c2},${notchDepth} ${cx},${notchDepth}`,
-        `C ${cx + c2},${notchDepth} ${rightEdge - c1},1.5 ${rightEdge},1.5`,
-        `L ${totalW},1.5`,
-        `L ${totalW},${totalH}`,
-        `L 0,${totalH}`,
-        `Z`
-    ].join(' ');
-}
-
-function syncSvgViewBox() {
-    const nav = document.getElementById('liquidBottomNav');
-    const svg = document.getElementById('liquidNavSvg');
-    const rect = nav.getBoundingClientRect();
-    const w = Math.max(300, Math.round(rect.width));
-    const h = Math.max(66, Math.round(rect.height));
-    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    svg.setAttribute('preserveAspectRatio', 'none');
-    return { w, h };
-}
-
-function animateLiquidNotchTo(targetPxX) {
-    if (liquidNavAnimationFrame) cancelAnimationFrame(liquidNavAnimationFrame);
-    const pathEl = document.getElementById('liquidNavPath');
-    const { w, h } = syncSvgViewBox();
-    const startPxX = currentNotchPixelX || targetPxX;
-    const distance = targetPxX - startPxX;
-    const duration = 450;
-    const startTime = performance.now();
-
-    function easeOutBack(t) {
-        const c1 = 1.4;
-        const c3 = c1 + 1;
-        return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
-    }
-
-    function step(now) {
-        const elapsed = Math.min((now - startTime) / duration, 1);
-        const eased = easeOutBack(elapsed);
-        currentNotchPixelX = startPxX + distance * eased;
-        pathEl.setAttribute('d', buildPixelNotchPath(currentNotchPixelX, w, h));
-
-        if (elapsed < 1) {
-            liquidNavAnimationFrame = requestAnimationFrame(step);
-        } else {
-            currentNotchPixelX = targetPxX;
-            pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
+            return [
+                `M 0,1.5`,
+                `L ${leftEdge},1.5`,
+                `C ${leftEdge + c1},1.5 ${cx - c2},${notchDepth} ${cx},${notchDepth}`,
+                `C ${cx + c2},${notchDepth} ${rightEdge - c1},1.5 ${rightEdge},1.5`,
+                `L ${totalW},1.5`,
+                `L ${totalW},${totalH}`,
+                `L 0,${totalH}`,
+                `Z`
+            ].join(' ');
         }
-    }
-    liquidNavAnimationFrame = requestAnimationFrame(step);
-}
 
-function setLiquidNavActive(index, animate = true) {
-    activeNavIndex = index;
-    const items = document.querySelectorAll('.liquid-nav-item');
-    const orb = document.getElementById('liquidFloatingOrb');
-    const orbIcon = document.getElementById('liquidOrbIcon');
+        function syncSvgViewBox() {
+            const nav = document.getElementById('liquidBottomNav');
+            const svg = document.getElementById('liquidNavSvg');
+            const rect = nav.getBoundingClientRect();
+            const w = Math.max(300, Math.round(rect.width));
+            const h = Math.max(66, Math.round(rect.height));
+            svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+            svg.setAttribute('preserveAspectRatio', 'none');
+            return { w, h };
+        }
 
-    items.forEach((item, idx) => {
-        item.classList.toggle('active', idx === index);
-    });
+        function animateLiquidNotchTo(targetPxX) {
+            if (liquidNavAnimationFrame) cancelAnimationFrame(liquidNavAnimationFrame);
+            const pathEl = document.getElementById('liquidNavPath');
+            const { w, h } = syncSvgViewBox();
+            const startPxX = currentNotchPixelX || targetPxX;
+            const distance = targetPxX - startPxX;
+            const duration = 450;
+            const startTime = performance.now();
 
-    const activeItem = items[index];
-    if (!activeItem) return;
+            function easeOutBack(t) {
+                const c1 = 1.4;
+                const c3 = c1 + 1;
+                return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+            }
 
-    const { w, h } = syncSvgViewBox();
-    const percentLeft = ((index + 0.5) / 5) * 100;
-    const targetPxX = ((index + 0.5) / 5) * w;
+            function step(now) {
+                const elapsed = Math.min((now - startTime) / duration, 1);
+                const eased = easeOutBack(elapsed);
+                currentNotchPixelX = startPxX + distance * eased;
+                pathEl.setAttribute('d', buildPixelNotchPath(currentNotchPixelX, w, h));
 
-    orb.style.left = `${percentLeft}%`;
-    orbIcon.className = `${activeItem.dataset.icon} text-lg`;
+                if (elapsed < 1) {
+                    liquidNavAnimationFrame = requestAnimationFrame(step);
+                } else {
+                    currentNotchPixelX = targetPxX;
+                    pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
+                }
+            }
+            liquidNavAnimationFrame = requestAnimationFrame(step);
+        }
 
-    if (animate) {
-        orb.classList.remove('orb-bounce');
-        void orb.offsetWidth;
-        orb.classList.add('orb-bounce');
-        animateLiquidNotchTo(targetPxX);
-    } else {
-        currentNotchPixelX = targetPxX;
-        document.getElementById('liquidNavPath').setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
-    }
-}
+        function setLiquidNavActive(index, animate = true) {
+            activeNavIndex = index;
+            const items = document.querySelectorAll('.liquid-nav-item');
+            const orb = document.getElementById('liquidFloatingOrb');
+            const orbIcon = document.getElementById('liquidOrbIcon');
 
-function handleLiquidNavClick(e, el) {
-    const targetHref = el.getAttribute('href');
-    const index = Number(el.dataset.index);
-    setLiquidNavActive(index, true);
+            items.forEach((item, idx) => {
+                item.classList.toggle('active', idx === index);
+            });
 
-    if (targetHref && targetHref !== '/deposit') {
-        e.preventDefault();
-        setTimeout(() => {
-            window.location.href = targetHref;
-        }, 320);
-    }
-}
+            const activeItem = items[index];
+            if (!activeItem) return;
 
-window.addEventListener('resize', () => {
-    setLiquidNavActive(activeNavIndex, false);
-});
+            const { w, h } = syncSvgViewBox();
+            const percentLeft = ((index + 0.5) / 5) * 100;
+            const targetPxX = ((index + 0.5) / 5) * w;
+
+            orb.style.left = `${percentLeft}%`;
+            orbIcon.className = `${activeItem.dataset.icon} text-lg`;
+
+            if (animate) {
+                orb.classList.remove('orb-bounce');
+                void orb.offsetWidth;
+                orb.classList.add('orb-bounce');
+                animateLiquidNotchTo(targetPxX);
+            } else {
+                currentNotchPixelX = targetPxX;
+                document.getElementById('liquidNavPath').setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
+            }
+        }
+
+        function handleLiquidNavClick(e, el) {
+            const targetHref = el.getAttribute('href');
+            const index = Number(el.dataset.index);
+            setLiquidNavActive(index, true);
+
+            if (targetHref && targetHref !== '/deposit') {
+                e.preventDefault();
+                setTimeout(() => {
+                    window.location.href = targetHref;
+                }, 320);
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            setLiquidNavActive(activeNavIndex, false);
+        });
 
         /* =========================================================
-           LOGIKA FORM DEPOSIT & MODAL
+           LOGIKA FORM DEPOSIT & MODAL (TERHUBUNG KE ENDPOINT INDEX.JS)
            ========================================================= */
         function selectQrisMethod(method) {
             selectedQrisMethod = method;
@@ -1132,47 +1148,55 @@ window.addEventListener('resize', () => {
         }
 
         async function loadUserProfileAndBalance() {
+            const balanceEl = document.getElementById('currentBalanceDisplay');
             try {
-                const res = await fetch('/api/auth/me');
+                const res = await fetch('/api/user-status');
                 const data = await res.json();
                 if (!data.loggedIn || !data.user) {
-                    window.location.href = '/login?redirect=/deposit';
+                    window.location.href = '/login';
                     return;
                 }
-                document.getElementById('currentBalanceDisplay').innerText = formatRupiah(data.user.saldo || 0);
-                if (data.user.phone && !document.getElementById('depositPhoneInput').value) {
-                    document.getElementById('depositPhoneInput').value = data.user.phone;
-                }
+                balanceEl.innerText = formatRupiah(data.user.saldo || 0);
             } catch (err) {
                 console.error('Gagal memuat profil:', err);
+                balanceEl.innerText = 'Rp 0';
             }
         }
 
         async function loadDepositHistory() {
             const container = document.getElementById('depositHistoryList');
             try {
-                const res = await fetch('/api/my-deposits');
+                const res = await fetch('/api/my-transactions');
                 const json = await res.json();
-                if (!json.status || !json.data || json.data.length === 0) {
+                const deposits = (json.status && Array.isArray(json.transactions))
+                    ? json.transactions.filter(t => (t.type || '').toUpperCase() === 'DEPOSIT')
+                    : [];
+
+                allUserDeposits = deposits;
+
+                if (deposits.length === 0) {
                     container.innerHTML = '<p class="text-xs font-bold text-slate-500 text-center py-4">Belum ada riwayat deposit.</p>';
                     return;
                 }
 
-                container.innerHTML = json.data.map(trx => {
+                container.innerHTML = deposits.map(trx => {
                     const st = (trx.status || 'pending').toLowerCase();
                     let badgeClass = 'bg-neoYellow text-black';
                     let badgeText = 'MENUNGGU';
-                    if (st === 'lunas' || st === 'paid' || st === 'success') {
+                    if (['lunas', 'paid', 'success', 'settlement', 'settled'].includes(st)) {
                         badgeClass = 'bg-neoGreen text-black';
                         badgeText = 'LUNAS';
-                    } else if (st === 'expired' || st === 'cancelled' || st === 'failed') {
+                    } else if (st === 'waiting_verification') {
+                        badgeClass = 'bg-neoCyan text-black';
+                        badgeText = 'VERIFIKASI ADMIN';
+                    } else if (['expired', 'cancelled', 'failed'].includes(st)) {
                         badgeClass = 'bg-neoPink text-white';
                         badgeText = st === 'cancelled' ? 'DIBATALKAN' : 'KEDALUWARSA';
                     }
 
-                    const isV2 = (trx.qrisVersion === 'v2' || (trx.orderId && trx.orderId.startsWith('QRV2-')));
+                    const isV2 = (trx.paymentMethod === 'QRIS V2' || (trx.orderId && trx.orderId.startsWith('QRV2-')));
                     const verTag = isV2 ? 'QRIS V2' : 'QRIS V1';
-                    const canResume = st === 'pending';
+                    const canResume = (st === 'pending' || st === 'waiting_verification');
 
                     return `
                         <div class="bg-neoBg border-[2.5px] border-black p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-[4px_4px_0px_#000]">
@@ -1182,11 +1206,11 @@ window.addEventListener('resize', () => {
                                     <span class="text-[9px] font-black px-1.5 py-0.5 border border-black bg-white">${verTag}</span>
                                     <span class="text-[9px] font-black px-2 py-0.5 border border-black ${badgeClass}">${badgeText}</span>
                                 </div>
-                                <p class="font-cyber font-extrabold text-sm mt-1">${formatRupiah(trx.amount)} <span class="text-[10px] font-sans font-bold text-slate-600">(Saldo: ${formatRupiah(trx.itemDetails?.harga || trx.amount)})</span></p>
+                                <p class="font-cyber font-extrabold text-sm mt-1">${formatRupiah(trx.amount)} <span class="text-[10px] font-sans font-bold text-slate-600">(${trx.productName || 'Deposit Saldo'})</span></p>
                                 <p class="text-[10px] font-bold text-slate-600">${new Date(trx.createdAt).toLocaleString('id-ID')}</p>
                             </div>
                             ${canResume ? `
-                                <button type="button" onclick='resumePendingDeposit(${JSON.stringify(trx).replace(/'/g, "&#39;")})'
+                                <button type="button" onclick="resumePendingDeposit('${trx.orderId}')"
                                     class="neo-btn-rect bg-neoCyan text-black font-cyber font-extrabold text-xs px-3.5 py-2 self-start sm:self-center">
                                     Lanjutkan Bayar
                                 </button>
@@ -1199,10 +1223,39 @@ window.addEventListener('resize', () => {
             }
         }
 
-        function resumePendingDeposit(trx) {
-            activeDepositOrder = trx;
-            configureModalForTransaction(trx);
-            document.getElementById('qrisDepositModal').classList.remove('hidden');
+        async function resumePendingDeposit(orderId) {
+            try {
+                Swal.fire({
+                    title: 'MEMUAT INVOICE...',
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading(); },
+                    customClass: { popup: 'cyber-swal' }
+                });
+                const res = await fetch(`/transactions/${encodeURIComponent(orderId)}?refresh=1`);
+                const json = await res.json();
+                Swal.close();
+
+                if (!json.data) {
+                    return Swal.fire({
+                        icon: 'error',
+                        title: 'Transaksi Tidak Ditemukan',
+                        text: json.message || 'Gagal memuat detail invoice.',
+                        customClass: { popup: 'cyber-swal' }
+                    });
+                }
+
+                activeDepositOrder = json.data;
+                configureModalForTransaction(json.data);
+                document.getElementById('qrisDepositModal').classList.remove('hidden');
+            } catch (err) {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Memuat',
+                    text: 'Tidak dapat mengambil data transaksi.',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
         }
 
         async function processDeposit() {
@@ -1272,32 +1325,28 @@ window.addEventListener('resize', () => {
         }
 
         function configureModalForTransaction(trx) {
-            const isV2 = (trx.qrisVersion === 'v2' || (trx.orderId && trx.orderId.startsWith('QRV2-')));
+            const isV2 = (trx.qrisVersion === 'v2' || trx.paymentMethod === 'QRIS V2' || (trx.orderId && trx.orderId.startsWith('QRV2-')));
             const qrString = trx.payment?.qrString || trx.paymentNumber || '';
 
             document.getElementById('modalTitleVersion').innerText = isV2 ? 'INVOICE // QRIS V2' : 'INVOICE // QRIS V1';
             document.getElementById('modalOrderId').innerText = trx.orderId;
             document.getElementById('modalAmountDisplay').innerText = formatRupiah(trx.amount);
 
-            const baseSaldo = trx.itemDetails?.harga || trx.amount;
+            const baseSaldo = trx.itemDetails?.harga || trx.depositAmount || trx.amount;
             document.getElementById('modalSubAmountInfo').innerText = `Saldo masuk: ${formatRupiah(baseSaldo)}`;
 
+            const feeInfo = calculateDepositFeeClient(baseSaldo, isV2 ? 'v2' : 'v1');
             const cardBadge = document.getElementById('modalCardBadge');
-            if (isV2) {
-                cardBadge.innerText = '+0.7%';
-                cardBadge.className = 'text-[10px] font-mono font-extrabold bg-neoCyan text-black px-2 py-0.5 border border-black';
-            } else {
-                cardBadge.innerText = 'AUTO';
-                cardBadge.className = 'text-[10px] font-mono font-extrabold bg-neoYellow text-black px-2 py-0.5 border border-black';
-            }
+            cardBadge.innerText = feeInfo.label;
+            cardBadge.className = isV2
+                ? 'text-[10px] font-mono font-extrabold bg-neoCyan text-black px-2 py-0.5 border border-black'
+                : 'text-[10px] font-mono font-extrabold bg-neoYellow text-black px-2 py-0.5 border border-black';
 
             document.getElementById('paymentProofInput').value = '';
             document.getElementById('proofPreviewWrapper').classList.add('hidden');
             document.getElementById('proofPreviewImg').src = '';
 
-            if (trx.paymentProofUrl) {
-                document.getElementById('proofPreviewImg').src = trx.paymentProofUrl;
-                document.getElementById('proofPreviewWrapper').classList.remove('hidden');
+            if (trx.proofUploaded || trx.status === 'waiting_verification') {
                 document.getElementById('proofUploadStatusBadge').innerText = 'TERKIRIM';
                 document.getElementById('proofUploadStatusBadge').className = 'text-[10px] font-extrabold bg-neoGreen border border-black px-2 py-0.5';
             } else {
@@ -1356,12 +1405,12 @@ window.addEventListener('resize', () => {
         async function checkSingleDepositStatus(showAlertIfPending = false) {
             if (!activeDepositOrder || !activeDepositOrder.orderId) return;
             try {
-                const res = await fetch(`/api/check-status/${encodeURIComponent(activeDepositOrder.orderId)}`);
+                const res = await fetch(`/transactions/${encodeURIComponent(activeDepositOrder.orderId)}?refresh=1`);
                 const json = await res.json();
-                if (!json.status || !json.data) return;
+                if (!json.data) return;
 
                 const st = (json.data.status || '').toLowerCase();
-                if (st === 'lunas' || st === 'paid' || st === 'success') {
+                if (['lunas', 'paid', 'success', 'settlement', 'settled'].includes(st)) {
                     closeQrisModal();
                     loadUserProfileAndBalance();
                     loadDepositHistory();
@@ -1371,7 +1420,7 @@ window.addEventListener('resize', () => {
                         text: 'Saldo telah berhasil ditambahkan ke akun Anda.',
                         customClass: { popup: 'cyber-swal' }
                     });
-                } else if (st === 'cancelled' || st === 'expired') {
+                } else if (['cancelled', 'expired', 'failed'].includes(st)) {
                     closeQrisModal();
                     loadDepositHistory();
                     Swal.fire({
@@ -1423,14 +1472,12 @@ window.addEventListener('resize', () => {
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENGIRIM BUKTI...';
 
             try {
-                const base64Img = await compressImageToBase64(file, 1000, 0.78);
-                const res = await fetch('/api/deposit-qrisv2/upload-proof', {
+                const formData = new FormData();
+                formData.append('proofImage', file);
+
+                const res = await fetch(`/api/deposit-qrisv2/${encodeURIComponent(activeDepositOrder.orderId)}/upload-proof`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        orderId: activeDepositOrder.orderId,
-                        proofImage: base64Img
-                    })
+                    body: formData
                 });
                 const json = await res.json();
 
@@ -1461,33 +1508,6 @@ window.addEventListener('resize', () => {
             }
         }
 
-        function compressImageToBase64(file, maxWidth = 1000, quality = 0.78) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const img = new Image();
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-                        if (width > maxWidth) {
-                            height = Math.round((height * maxWidth) / width);
-                            width = maxWidth;
-                        }
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', quality));
-                    };
-                    img.onerror = reject;
-                    img.src = event.target.result;
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-        }
-
         async function cancelActiveDeposit() {
             if (!activeDepositOrder || !activeDepositOrder.orderId) return;
 
@@ -1504,11 +1524,15 @@ window.addEventListener('resize', () => {
 
             if (!confirmRes.isConfirmed) return;
 
+            const isV2 = (activeDepositOrder.qrisVersion === 'v2' || activeDepositOrder.paymentMethod === 'QRIS V2' || String(activeDepositOrder.orderId).startsWith('QRV2-'));
+            const cancelEndpoint = isV2
+                ? `/api/deposit-qrisv2/${encodeURIComponent(activeDepositOrder.orderId)}/cancel`
+                : `/transactions/${encodeURIComponent(activeDepositOrder.orderId)}/cancel`;
+
             try {
-                const res = await fetch('/api/deposit/cancel', {
+                const res = await fetch(cancelEndpoint, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ orderId: activeDepositOrder.orderId })
+                    headers: { 'Content-Type': 'application/json' }
                 });
                 const json = await res.json();
 
