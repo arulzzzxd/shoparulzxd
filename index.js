@@ -154,6 +154,7 @@ const userSchemaV2 = new mongoose.Schema({
     saldo: { type: Number, default: 0 },
     referralCode: { type: String, unique: true },
     referredBy: { type: String, default: null },
+    hasCompletedOnboarding: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -3767,6 +3768,11 @@ app.post('/auth/login', (req, res, next) => {
                     sameSite: 'lax'
                 });
 
+                // Arahkan langsung ke tutorial interaktif jika pertama kali login
+                if (!user.hasCompletedOnboarding) {
+                    return res.redirect('/store?onboarding=1');
+                }
+
                 return res.redirect('/dashboard');
 
             } catch (error) {
@@ -3826,6 +3832,7 @@ app.post('/auth/register', async (req, res) => {
             saldo: initialSaldo,
             referralCode: myReferralCode,
             referredBy: inviterUser ? inviterUser.referralCode : null,
+            hasCompletedOnboarding: false,
             createdAt: new Date()
         });
         await newUser.save();
@@ -3851,9 +3858,9 @@ app.post('/auth/register', async (req, res) => {
         req.logIn(newUser, (err) => {
             if (err) return res.redirect('/login');
             const alertMsg = inviterUser 
-                ? 'Pendaftaran berhasil! Anda mendapatkan bonus saldo Rp 500 dari kode undangan.' 
-                : 'Pendaftaran berhasil! Selamat datang.';
-            return sendSweetAlert(res, 'success', 'Berhasil!', alertMsg, '/dashboard');
+                ? 'Pendaftaran berhasil! Anda mendapatkan bonus saldo Rp 500. Mari mulai tur singkat!' 
+                : 'Pendaftaran berhasil! Mari mulai tur singkat cara belanja.';
+            return sendSweetAlert(res, 'success', 'Berhasil!', alertMsg, '/store?onboarding=1');
         });
 
     } catch (error) {
@@ -3974,8 +3981,10 @@ app.get('/auth/github/callback', async (req, res) => {
         const currentUsername = (userData.login || finalEmail.split('@')[0]).toLowerCase().trim();
 
         let dbUser = await UserV2.findOne({ email: finalEmail });
+        let isFirstTimeLogin = false;
 
         if (!dbUser) {
+            isFirstTimeLogin = true;
             let initialSaldo = 0;
             let inviterUser = null;
 
@@ -3997,11 +4006,15 @@ app.get('/auth/github/callback', async (req, res) => {
                 saldo: initialSaldo,
                 referralCode: generateReferralCode(),
                 referredBy: inviterUser ? inviterUser.referralCode : null,
+                hasCompletedOnboarding: false,
                 createdAt: new Date()
             });
 
             await dbUser.save();
         } else {
+            if (!dbUser.hasCompletedOnboarding) {
+                isFirstTimeLogin = true;
+            }
             if (userData.avatar_url && dbUser.avatar !== userData.avatar_url) {
                 dbUser.avatar = userData.avatar_url;
                 await dbUser.save();
@@ -4028,7 +4041,7 @@ app.get('/auth/github/callback', async (req, res) => {
             sameSite: 'lax'
         });
 
-        res.redirect('/dashboard');
+        return res.redirect(isFirstTimeLogin ? '/store?onboarding=1' : '/dashboard');
     } catch (error) {
         console.error(error);
         res.send('Login Error: ' + error.message);
@@ -4084,8 +4097,10 @@ app.get('/auth/google/callback', async (req, res) => {
         const currentUsername = (userData.login || email.split('@')[0]).toLowerCase().trim();
 
         let dbUser = await UserV2.findOne({ email: email });
+        let isFirstTimeLogin = false;
 
         if (!dbUser) {
+            isFirstTimeLogin = true;
             let initialSaldo = 0;
             let inviterUser = null;
 
@@ -4107,11 +4122,15 @@ app.get('/auth/google/callback', async (req, res) => {
                 saldo: initialSaldo,
                 referralCode: generateReferralCode(),
                 referredBy: inviterUser ? inviterUser.referralCode : null,
+                hasCompletedOnboarding: false,
                 createdAt: new Date()
             });
 
             await dbUser.save();
         } else {
+            if (!dbUser.hasCompletedOnboarding) {
+                isFirstTimeLogin = true;
+            }
             if (userData.picture && dbUser.avatar !== userData.picture) {
                 dbUser.avatar = userData.picture;
                 await dbUser.save();
@@ -4138,13 +4157,31 @@ app.get('/auth/google/callback', async (req, res) => {
             sameSite: 'lax'
         });
 
-        res.redirect('/dashboard');
+        return res.redirect(isFirstTimeLogin ? '/store?onboarding=1' : '/dashboard');
     } catch (error) {
         console.error('Google Auth Callback Error:', error.response?.data || error.message);
         res.send('Login Error: ' + (error.response?.data?.error_description || error.message));
     }
 });
 
+// TANDAI TUTORIAL ONBOARDING SELESAI
+app.post('/api/user/complete-onboarding', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
+        }
+
+        const userId = req.user.id || req.user._id;
+        await UserV2.findByIdAndUpdate(userId, {
+            $set: { hasCompletedOnboarding: true }
+        });
+
+        return res.json({ status: true, message: 'Tutorial selesai!' });
+    } catch (err) {
+        console.error('Gagal menyimpan status onboarding:', err.message);
+        return res.status(500).json({ status: false, message: 'Gagal memperbarui status tutorial.' });
+    }
+});
 
 // ============================================================
 // 10. PAGES, OPEN GRAPH, PRODUK & DASHBOARD API
@@ -4621,6 +4658,7 @@ app.get('/api/user-status', async (req, res) => {
                     totalDeposit: totalDeposit,
                     totalBelanja: totalBelanja,
                     invitedUsers: invitedUsers,
+                    hasCompletedOnboarding: Boolean(activeUser.hasCompletedOnboarding),
                     createdAt: activeUser.createdAt
                 }
             });
