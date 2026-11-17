@@ -4700,13 +4700,12 @@ app.get('/api/dashboard-stats', async (req, res) => {
         ] = await Promise.all([
             UserV2.countDocuments(),
             ProductV2.countDocuments(),
-            // Ambil semua riwayat transaksi yang masuk tanpa limit
             TransactionV2.find({})
                 .sort({ createdAt: -1 })
                 .select('orderId userEmail amount status itemDetails createdAt updatedAt type paymentMethod')
                 .lean(),
             SystemMetricsV2.aggregate([
-                { $match: { timestamp: { $gte: moment().subtract(24, 'hours').toDate() } } },
+                { $match: { timestamp: {$gte: moment().subtract(24, 'hours').toDate() } } },
                 {
                     $group: {
                         _id: null,
@@ -4761,7 +4760,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
             }
         });
 
-        // Urutkan terbaru -> terlama untuk Status Transaksi (seluruh data dikirim untuk slide per 10 item)
+        // Urutkan terbaru -> terlama untuk tabel Status Transaksi
         const allTrxDesc = [...allTrxRaw].sort((a, b) => getTrxTimeMs(b) - getTrxTimeMs(a));
 
         const recentTrx = allTrxDesc.map(trx => {
@@ -4787,13 +4786,12 @@ app.get('/api/dashboard-stats', async (req, res) => {
             };
         });
 
-        // Urutkan terlama -> terbaru dari seluruh riwayat transaksi untuk membentuk candle OHLC per 1 jam
+        // Urutkan terlama -> terbaru untuk membentuk candle OHLC per 10 menit (bisa bernilai minus)
         const allTrxAsc = [...allTrxDesc].reverse();
 
-                function generateHourlyCandles(startMs, bucketCount, trxItems, labelFormatter) {
-            const hourMs = 60 * 60 * 1000;
-            const BASE_INDEX = 0;
-            let runningVal = BASE_INDEX;
+        function generate10MinCandles(startMs, bucketCount, trxItems, labelFormatter) {
+            const intervalMs = 10 * 60 * 1000; // 10 menit per candle
+            let runningVal = 0;
             let idx = 0;
 
             while (idx < trxItems.length && getTrxTimeMs(trxItems[idx]) < startMs) {
@@ -4803,15 +4801,15 @@ app.get('/api/dashboard-stats', async (req, res) => {
                     runningVal += val;
                 } else if (cancelStatuses.includes(st)) {
                     const dropStep = Math.max(1000, val);
-                    runningVal = Math.max(0, runningVal - dropStep);
+                    runningVal -= dropStep; // Diizinkan turun menembus minus (< 0)
                 }
                 idx++;
             }
 
             const candles = [];
             for (let b = 0; b < bucketCount; b++) {
-                const bucketStart = startMs + b * hourMs;
-                const bucketEnd = bucketStart + hourMs;
+                const bucketStart = startMs + b * intervalMs;
+                const bucketEnd = bucketStart + intervalMs;
                 const isLastBucket = b === bucketCount - 1;
 
                 const open = runningVal;
@@ -4835,21 +4833,25 @@ app.get('/api/dashboard-stats', async (req, res) => {
                         periodOmzet += val;
                         lunasCount++;
                         if (runningVal > high) high = runningVal;
+                        if (runningVal < low) low = runningVal;
                     } else if (cancelStatuses.includes(st)) {
                         const dropStep = Math.max(1000, val);
-                        runningVal = Math.max(0, runningVal - dropStep);
+                        runningVal -= dropStep; // Bisa minus
                         cancelCount++;
                         if (runningVal < low) low = runningVal;
+                        if (runningVal > high) high = runningVal;
                     } else {
-                        const spike = runningVal + Math.max(500, Math.round(val * 0.25));
-                        if (spike > high) high = spike;
+                        const wickUp = runningVal + Math.max(400, Math.round(val * 0.2));
+                        const wickDown = runningVal - Math.max(400, Math.round(val * 0.15));
+                        if (wickUp > high) high = wickUp;
+                        if (wickDown < low) low = wickDown;
                     }
                     idx++;
                 }
 
                 let close = runningVal;
                 if (cancelCount > 0 && lunasCount === 0 && close >= open) {
-                    close = Math.max(0, open - 1000);
+                    close = open - 1000;
                     runningVal = close;
                 }
 
@@ -4872,44 +4874,52 @@ app.get('/api/dashboard-stats', async (req, res) => {
             return candles;
         }
 
-        const currentHourStart = now.clone().startOf('hour');
+        // Bulatkan waktu saat ini ke kelipatan 10 menit WIB (misal 18:24 -> 18:20)
+        const alignedMin = Math.floor(now.minute() / 10) * 10;
+        const current10MinStart = now.clone().minute(alignedMin).second(0).millisecond(0);
 
-        // 1 Hari: 24 candle per 1 jam (setiap jam membuat candle baru)
-        const start1d = currentHourStart.clone().subtract(23, 'hours').valueOf();
-        const candles1d = generateHourlyCandles(
+        // 1 Hari: 144 candle per 10 menit (24 jam x 6 bucket)
+        const start1d = current10MinStart.clone().subtract(143 * 10, 'minutes').valueOf();
+        const candles1d = generate10MinCandles(
             start1d,
-            24,
+            144,
             allTrxAsc,
             (ms) => moment(ms).tz(TIMEZONE).locale('id').format('HH:mm')
         );
 
-        // 7 Hari: 168 candle per 1 jam (7 x 24 jam)
-        const start7d = currentHourStart.clone().subtract(167, 'hours').valueOf();
-        const candles7d = generateHourlyCandles(
+        // 7 Hari: 1008 candle per 10 menit (7 hari x 144 bucket)
+        const start7d = current10MinStart.clone().subtract(1007 * 10, 'minutes').valueOf();
+        const candles7d = generate10MinCandles(
             start7d,
-            168,
+            1008,
             allTrxAsc,
             (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD/MM HH:mm')
         );
 
-        // 1 Bulan: 720 candle per 1 jam (30 x 24 jam)
-        const start1m = currentHourStart.clone().subtract(719, 'hours').valueOf();
-        const candles1m = generateHourlyCandles(
+        // 1 Bulan: 4320 candle per 10 menit (30 hari x 144 bucket)
+        const start1m = current10MinStart.clone().subtract(4319 * 10, 'minutes').valueOf();
+        const candles1m = generate10MinCandles(
             start1m,
-            720,
+            4320,
             allTrxAsc,
             (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM HH:mm')
         );
 
-        // Semua Riwayat: per 1 jam sejak transaksi pertama hingga jam saat ini
+        // Semua Riwayat: per 10 menit sejak transaksi pertama hingga saat ini (maks 4320 bucket)
         const firstTrxMs = allTrxAsc.length > 0 ? getTrxTimeMs(allTrxAsc[0]) : start1d;
-        const firstHourWib = moment(firstTrxMs).tz(TIMEZONE).startOf('hour');
-        const totalHoursAll = Math.min(2160, Math.max(24, currentHourStart.diff(firstHourWib, 'hours') + 1));
-        const startAllMs = currentHourStart.clone().subtract(totalHoursAll - 1, 'hours').valueOf();
+        const firstMoment = moment(firstTrxMs).tz(TIMEZONE);
+        const firstAlignedMin = Math.floor(firstMoment.minute() / 10) * 10;
+        const first10MinWib = firstMoment.clone().minute(firstAlignedMin).second(0).millisecond(0);
 
-        const candlesAll = generateHourlyCandles(
+        const totalBucketsAll = Math.min(
+            4320,
+            Math.max(36, Math.floor(current10MinStart.diff(first10MinWib, 'minutes') / 10) + 1)
+        );
+        const startAllMs = current10MinStart.clone().subtract((totalBucketsAll - 1) * 10, 'minutes').valueOf();
+
+        const candlesAll = generate10MinCandles(
             startAllMs,
-            totalHoursAll,
+            totalBucketsAll,
             allTrxAsc,
             (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM HH:mm')
         );
