@@ -1755,17 +1755,17 @@
             const baseSaldo = Number(activeDepositOrder?.itemDetails?.harga || activeDepositOrder?.depositAmount || totalAmount);
             const feeAmount = Math.max(0, totalAmount - baseSaldo);
             const isV2 = (activeDepositOrder?.qrisVersion === 'v2' || activeDepositOrder?.paymentMethod === 'QRIS V2' || String(orderId).startsWith('QRV2-'));
-            const versionLabel = isV2 ? 'QRIS V2 // VERIFIED' : 'QRIS V1 // INSTAN';
+            const versionLabel = isV2 ? 'QRIS V2 • VERIFIED' : 'QRIS V1 • INSTAN';
 
-            const W = 900;
-            const H = 1240;
+            // Resolusi Super Ultra HD (1440 x 1920) yang tetap ringan via toBlob()
+            const W = 1440;
+            const H = 1920;
             const canvas = document.createElement('canvas');
             canvas.width = W;
             canvas.height = H;
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d', { alpha: false });
 
-            // Helper persegi panjang Neo-Brutalisme tegas
-            function drawNeoRect(x, y, w, h, fill, shadow = 10, border = 5) {
+            function drawNeoRect(x, y, w, h, fill, shadow = 14, border = 7) {
                 if (shadow > 0) {
                     ctx.fillStyle = '#000000';
                     ctx.fillRect(x + shadow, y + shadow, w, h);
@@ -1779,187 +1779,244 @@
                 }
             }
 
-            // 1. Background Krem Hangat + Pola Titik Halus
+            // 1. Latar Belakang Krem + Pola Grid Halus
             ctx.fillStyle = '#FAF9F2';
             ctx.fillRect(0, 0, W, H);
 
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
-            for (let gx = 20; gx < W; gx += 24) {
-                for (let gy = 20; gy < H; gy += 24) {
-                    ctx.fillRect(gx, gy, 3, 3);
-                }
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.06)';
+            ctx.lineWidth = 2;
+            for (let gx = 0; gx <= W; gx += 48) {
+                ctx.beginPath();
+                ctx.moveTo(gx, 0);
+                ctx.lineTo(gx, H);
+                ctx.stroke();
+            }
+            for (let gy = 0; gy <= H; gy += 48) {
+                ctx.beginPath();
+                ctx.moveTo(0, gy);
+                ctx.lineTo(W, gy);
+                ctx.stroke();
             }
 
-            // Dekorasi Sudut Geometris Megah
+            // Aksen Geometris Sudut Luar
             ctx.fillStyle = '#1AE5FF';
             ctx.beginPath();
             ctx.moveTo(0, 0);
-            ctx.lineTo(220, 0);
-            ctx.lineTo(0, 220);
+            ctx.lineTo(320, 0);
+            ctx.lineTo(0, 320);
             ctx.closePath();
             ctx.fill();
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 7;
             ctx.strokeStyle = '#000000';
             ctx.stroke();
 
             ctx.fillStyle = '#FF4D6D';
             ctx.beginPath();
             ctx.moveTo(W, H);
-            ctx.lineTo(W - 220, H);
-            ctx.lineTo(W, H - 220);
+            ctx.lineTo(W - 320, H);
+            ctx.lineTo(W, H - 320);
             ctx.closePath();
             ctx.fill();
             ctx.stroke();
 
-            // 2. Bingkai Kartu Utama
-            const cardX = 48;
-            const cardY = 46;
-            const cardW = W - 96;
-            const cardH = H - 92;
-            drawNeoRect(cardX, cardY, cardW, cardH, '#FFFFFF', 14, 6);
+            // 2. Bingkai Kartu Utama (Presisi penuh dari atas ke bawah)
+            const cardX = 68;
+            const cardY = 64;
+            const cardW = W - 136;
+            const cardH = H - 128;
+            drawNeoRect(cardX, cardY, cardW, cardH, '#FFFFFF', 20, 8);
 
-            // 3. Header Kuning Megah
-            const headerH = 128;
-            drawNeoRect(cardX, cardY, cardW, headerH, '#FFDF4F', 0, 6);
+            // 3. Header Megah Kuning Emas
+            const headerH = 205;
+            drawNeoRect(cardX, cardY, cardW, headerH, '#FFDF4F', 0, 8);
 
-            // Tiga kotak aksen kiri atas
-            drawNeoRect(cardX + 26, cardY + 24, 18, 18, '#FF4D6D', 0, 3);
-            drawNeoRect(cardX + 52, cardY + 24, 18, 18, '#1AE5FF', 0, 3);
-            drawNeoRect(cardX + 78, cardY + 24, 18, 18, '#2CE875', 0, 3);
+            // 3 Indikator Kotak Kiri Atas
+            drawNeoRect(cardX + 38, cardY + 32, 26, 26, '#FF4D6D', 0, 4);
+            drawNeoRect(cardX + 76, cardY + 32, 26, 26, '#1AE5FF', 0, 4);
+            drawNeoRect(cardX + 114, cardY + 32, 26, 26, '#2CE875', 0, 4);
 
             // Badge Versi Kanan Atas
-            drawNeoRect(cardX + cardW - 235, cardY + 18, 210, 34, isV2 ? '#1AE5FF' : '#D896FF', 4, 3);
+            drawNeoRect(cardX + cardW - 340, cardY + 24, 302, 48, isV2 ? '#1AE5FF' : '#D896FF', 6, 4);
             ctx.fillStyle = '#000000';
-            ctx.font = '900 15px "Space Grotesk", sans-serif';
+            ctx.font = '900 22px "Space Grotesk", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText(versionLabel, cardX + cardW - 130, cardY + 40);
+            ctx.fillText(versionLabel, cardX + cardW - 189, cardY + 56);
 
-            // Nama Merchant Utama sesuai permintaan
+            // Judul Utama Merchant
             ctx.fillStyle = '#000000';
-            ctx.font = '900 31px "Space Grotesk", sans-serif';
+            ctx.font = '900 48px "Space Grotesk", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('QRIS PEMBAYARAN - ARULZXD STORE', W / 2, cardY + 96);
+            ctx.fillText('QRIS PEMBAYARAN - ARULZXD STORE', W / 2, cardY + 136);
 
-            // 4. Bar Order ID & Merchant Sub-Info
-            const metaY = cardY + headerH + 26;
-            drawNeoRect(cardX + 34, metaY, cardW - 68, 76, '#FAF9F2', 6, 4);
+            // Sub-label Resmi di Bawah Judul
+            ctx.font = '800 20px "Plus Jakarta Sans", sans-serif';
+            ctx.fillStyle = '#1E293B';
+            ctx.fillText('GERBANG PEMBAYARAN DIGITAL OTOMATIS • TERVERIFIKASI', W / 2, cardY + 178);
+
+            // 4. Bar Order ID & Pill QRIS Nasional
+            const metaY = cardY + headerH + 38;
+            drawNeoRect(cardX + 46, metaY, cardW - 92, 114, '#FAF9F2', 10, 5);
 
             ctx.textAlign = 'left';
             ctx.fillStyle = '#475569';
-            ctx.font = '800 14px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('NOMOR INVOICE / ORDER ID', cardX + 54, metaY + 28);
+            ctx.font = '800 20px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('NOMOR INVOICE / ORDER ID', cardX + 76, metaY + 42);
 
             ctx.fillStyle = '#000000';
-            ctx.font = '900 22px monospace';
-            ctx.fillText(orderId, cardX + 54, metaY + 58);
+            ctx.font = '900 32px monospace';
+            ctx.fillText(orderId, cardX + 76, metaY + 88);
 
-            // Pill Official QRIS National Standard
-            drawNeoRect(cardX + cardW - 210, metaY + 18, 156, 40, '#000000', 0, 0);
+            drawNeoRect(cardX + cardW - 306, metaY + 26, 232, 62, '#000000', 0, 0);
             ctx.fillStyle = '#FFDF4F';
-            ctx.font = '900 16px "Space Grotesk", sans-serif';
+            ctx.font = '900 24px "Space Grotesk", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('QRIS NASIONAL', cardX + cardW - 132, metaY + 44);
+            ctx.fillText('QRIS NASIONAL', cardX + cardW - 190, metaY + 65);
 
-            // 5. Bingkai QR Code Besar di Tengah
-            const qrFrameW = 500;
-            const qrFrameH = 500;
+            // 5. Bingkai QR Code Super Tajam di Tengah
+            const qrFrameW = 740;
+            const qrFrameH = 740;
             const qrFrameX = (W - qrFrameW) / 2;
-            const qrFrameY = metaY + 104;
-            drawNeoRect(qrFrameX, qrFrameY, qrFrameW, qrFrameH, '#FFFFFF', 12, 6);
+            const qrFrameY = metaY + 152;
+            drawNeoRect(qrFrameX, qrFrameY, qrFrameW, qrFrameH, '#FFFFFF', 16, 8);
 
-            // Siku-siku Target Scan Neo-Brutalisme
-            const bLen = 36;
+            // Siku-Siku Target Scan 4 Sudut
+            const bLen = 54;
             ctx.strokeStyle = '#FF4D6D';
-            ctx.lineWidth = 7;
-            // Kiri atas
+            ctx.lineWidth = 10;
+            // Kiri Atas
             ctx.beginPath();
-            ctx.moveTo(qrFrameX + 18, qrFrameY + 18 + bLen);
-            ctx.lineTo(qrFrameX + 18, qrFrameY + 18);
-            ctx.lineTo(qrFrameX + 18 + bLen, qrFrameY + 18);
+            ctx.moveTo(qrFrameX + 26, qrFrameY + 26 + bLen);
+            ctx.lineTo(qrFrameX + 26, qrFrameY + 26);
+            ctx.lineTo(qrFrameX + 26 + bLen, qrFrameY + 26);
             ctx.stroke();
-            // Kanan atas
+            // Kanan Atas
             ctx.beginPath();
-            ctx.moveTo(qrFrameX + qrFrameW - 18 - bLen, qrFrameY + 18);
-            ctx.lineTo(qrFrameX + qrFrameW - 18, qrFrameY + 18);
-            ctx.lineTo(qrFrameX + qrFrameW - 18, qrFrameY + 18 + bLen);
+            ctx.moveTo(qrFrameX + qrFrameW - 26 - bLen, qrFrameY + 26);
+            ctx.lineTo(qrFrameX + qrFrameW - 26, qrFrameY + 26);
+            ctx.lineTo(qrFrameX + qrFrameW - 26, qrFrameY + 26 + bLen);
             ctx.stroke();
-            // Kiri bawah
+            // Kiri Bawah
             ctx.beginPath();
-            ctx.moveTo(qrFrameX + 18, qrFrameY + qrFrameH - 18 - bLen);
-            ctx.lineTo(qrFrameX + 18, qrFrameY + qrFrameH - 18);
-            ctx.lineTo(qrFrameX + 18 + bLen, qrFrameY + qrFrameH - 18);
+            ctx.moveTo(qrFrameX + 26, qrFrameY + qrFrameH - 26 - bLen);
+            ctx.lineTo(qrFrameX + 26, qrFrameY + qrFrameH - 26);
+            ctx.lineTo(qrFrameX + 26 + bLen, qrFrameY + qrFrameH - 26);
             ctx.stroke();
-            // Kanan bawah
+            // Kanan Bawah
             ctx.beginPath();
-            ctx.moveTo(qrFrameX + qrFrameW - 18 - bLen, qrFrameY + qrFrameH - 18);
-            ctx.lineTo(qrFrameX + qrFrameW - 18, qrFrameY + qrFrameH - 18);
-            ctx.lineTo(qrFrameX + qrFrameW - 18, qrFrameY + qrFrameH - 18 - bLen);
+            ctx.moveTo(qrFrameX + qrFrameW - 26 - bLen, qrFrameY + qrFrameH - 26);
+            ctx.lineTo(qrFrameX + qrFrameW - 26, qrFrameY + qrFrameH - 26);
+            ctx.lineTo(qrFrameX + qrFrameW - 26, qrFrameY + qrFrameH - 26 - bLen);
             ctx.stroke();
 
-            // Gambar QR Code Tajam (Disable smoothing agar pixel QR tajam sempurna)
+            // Render QR tanpa blur (pixel-crisp)
             ctx.imageSmoothingEnabled = false;
-            const qrDrawSize = 420;
+            const qrDrawSize = 624;
             const qrDrawX = (W - qrDrawSize) / 2;
             const qrDrawY = qrFrameY + (qrFrameH - qrDrawSize) / 2;
-            const qrSource = qrCanvas || qrImg;
-            ctx.drawImage(qrSource, qrDrawX, qrDrawY, qrDrawSize, qrDrawSize);
+            ctx.drawImage(qrCanvas || qrImg, qrDrawX, qrDrawY, qrDrawSize, qrDrawSize);
             ctx.imageSmoothingEnabled = true;
 
-            // 6. Kotak Total Pembayaran & Rincian Saldo
-            const payBoxY = qrFrameY + qrFrameH + 34;
-            drawNeoRect(cardX + 34, payBoxY, cardW - 68, 165, '#2CE875', 8, 5);
+            // 6. Kotak Rincian Nominal Pembayaran
+            const payBoxY = qrFrameY + qrFrameH + 46;
+            const payBoxH = 246;
+            drawNeoRect(cardX + 46, payBoxY, cardW - 92, payBoxH, '#2CE875', 12, 6);
 
-            // Header hitam kecil di dalam box pembayaran
             ctx.fillStyle = '#000000';
-            ctx.fillRect(cardX + 34, payBoxY, cardW - 68, 38);
+            ctx.fillRect(cardX + 46, payBoxY, cardW - 92, 54);
             ctx.fillStyle = '#FFFFFF';
-            ctx.font = '800 15px "Space Grotesk", sans-serif';
+            ctx.font = '900 22px "Space Grotesk", sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('RINCIAN NOMINAL PEMBAYARAN', W / 2, payBoxY + 25);
+            ctx.fillText('RINCIAN NOMINAL PEMBAYARAN', W / 2, payBoxY + 35);
 
             ctx.textAlign = 'left';
             ctx.fillStyle = '#000000';
-            ctx.font = '800 18px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText(`Saldo Masuk: ${formatRupiah(baseSaldo)}`, cardX + 58, payBoxY + 74);
+            ctx.font = '800 26px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText(`Saldo Masuk: ${formatRupiah(baseSaldo)}`, cardX + 80, payBoxY + 106);
 
             ctx.textAlign = 'right';
-            ctx.fillText(`Biaya Layanan: ${formatRupiah(feeAmount)}`, cardX + cardW - 58, payBoxY + 74);
+            ctx.fillText(`Biaya Layanan: ${formatRupiah(feeAmount)}`, cardX + cardW - 80, payBoxY + 106);
 
-            // Garis putus-putus pemisah
+            // Garis pemisah putus-putus
             ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 3;
-            ctx.setLineDash([10, 8]);
+            ctx.lineWidth = 4;
+            ctx.setLineDash([14, 10]);
             ctx.beginPath();
-            ctx.moveTo(cardX + 54, payBoxY + 92);
-            ctx.lineTo(cardX + cardW - 54, payBoxY + 92);
+            ctx.moveTo(cardX + 74, payBoxY + 134);
+            ctx.lineTo(cardX + cardW - 74, payBoxY + 134);
             ctx.stroke();
             ctx.setLineDash([]);
 
             ctx.textAlign = 'left';
-            ctx.font = '900 22px "Space Grotesk", sans-serif';
-            ctx.fillText('TOTAL BAYAR:', cardX + 58, payBoxY + 138);
+            ctx.font = '900 32px "Space Grotesk", sans-serif';
+            ctx.fillText('TOTAL BAYAR:', cardX + 80, payBoxY + 202);
 
             ctx.textAlign = 'right';
-            ctx.font = '900 38px "Space Grotesk", sans-serif';
-            ctx.fillText(formatRupiah(totalAmount), cardX + cardW - 58, payBoxY + 142);
+            ctx.font = '900 54px "Space Grotesk", sans-serif';
+            ctx.fillText(formatRupiah(totalAmount), cardX + cardW - 80, payBoxY + 208);
 
-            // 7. Footer Instruksi & Metode Pendukung
-            const footerY = payBoxY + 192;
+            // 7. Kotak Metode Pembayaran yang Didukung (Jarak lega dari kotak rincian & mengisi bawah kartu dengan proporsional)
+            const supportBoxY = payBoxY + payBoxH + 40;
+            const supportBoxH = 186;
+            drawNeoRect(cardX + 46, supportBoxY, cardW - 92, supportBoxH, '#FAF9F2', 10, 5);
+
             ctx.textAlign = 'center';
             ctx.fillStyle = '#000000';
-            ctx.font = '800 17px "Plus Jakarta Sans", sans-serif';
-            ctx.fillText('Mendukung: DANA • OVO • GoPay • ShopeePay • LinkAja • SeaBank • BCA • BRI • Mandiri', W / 2, footerY);
+            ctx.font = '900 21px "Space Grotesk", sans-serif';
+            ctx.fillText('MENDUKUNG SEMUA E-WALLET & MOBILE BANKING', W / 2, supportBoxY + 42);
 
-            ctx.fillStyle = '#475569';
-            ctx.font = '700 15px monospace';
-            ctx.fillText('https://shoparulzxd.biz.id  •  Simpan bukti transfer untuk verifikasi', W / 2, footerY + 28);
+            // Baris Pill Metode Pembayaran (2 Baris Rapi)
+            const row1 = ['DANA', 'OVO', 'GOPAY', 'SHOPEEPAY', 'LINKAJA'];
+            const row2 = ['SEABANK', 'BCA', 'BRI', 'MANDIRI', 'BNI'];
 
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = `QRIS-ARULZXD-STORE-${orderId}.png`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            function drawPillRow(items, yPos, bgColor) {
+                const pillW = 206;
+                const pillH = 44;
+                const gap = 18;
+                const totalRowW = items.length * pillW + (items.length - 1) * gap;
+                let startX = (W - totalRowW) / 2;
+
+                items.forEach((label) => {
+                    drawNeoRect(startX, yPos, pillW, pillH, bgColor, 4, 3);
+                    ctx.fillStyle = '#000000';
+                    ctx.font = '900 19px "Space Grotesk", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(label, startX + pillW / 2, yPos + 29);
+                    startX += pillW + gap;
+                });
+            }
+
+            drawPillRow(row1, supportBoxY + 64, '#FFDF4F');
+            drawPillRow(row2, supportBoxY + 122, '#1AE5FF');
+
+            // 8. Footer Bar Hitam Tegas di Bawah Kartu
+            const footerBarH = 74;
+            const footerBarY = cardY + cardH - footerBarH;
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(cardX, footerBarY, cardW, footerBarH);
+
+            ctx.fillStyle = '#FFDF4F';
+            ctx.font = '800 22px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('https://www.shoparulzxd.biz.id   •   Simpan bukti transfer untuk verifikasi', W / 2, footerBarY + 45);
+
+            // Ekspor via toBlob() agar sangat hemat RAM (aman untuk HP RAM <= 2GB)
+            canvas.toBlob((blob) => {
+                if (!blob) return;
+                const blobUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = `QRIS-ARULZXD-STORE-${orderId}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Bebaskan memori kanvas segera
+                setTimeout(() => {
+                    URL.revokeObjectURL(blobUrl);
+                    canvas.width = 0;
+                    canvas.height = 0;
+                }, 1500);
+            }, 'image/png');
         }
 
         function closeQrisModal() {
