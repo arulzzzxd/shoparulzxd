@@ -30,7 +30,8 @@ import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas';
 // ============================================================
 
 const PORT = process.env.PORT || 3000;
-const BASE_URL = (process.env.BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+const CANONICAL_ORIGIN = 'https://www.shoparulzxd.biz.id';
+const BASE_URL = (process.env.BASE_URL || CANONICAL_ORIGIN).replace(/\/$/, '');
 
 // Database & keamanan
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -90,7 +91,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(compression());
 app.set('etag', false);
-app.use(express.static(path.join(__dirname)));
 app.use(express.json({
     verify: (req, res, buf) => {
         req.rawBody = buf.toString('utf8');
@@ -98,6 +98,50 @@ app.use(express.json({
 }));
 app.use(cookieParser());
 app.set('trust proxy', 1);
+
+// DOMAIN KANONIS: seluruh domain lama diarahkan permanen ke domain utama.
+const LEGACY_HOSTS = new Set([
+    'arulzxd.biz.id',
+    'www.arulzxd.biz.id',
+    'shoparulzxd.biz.id'
+]);
+app.use((req, res, next) => {
+    const hostname = String(req.hostname || '').toLowerCase();
+    if (LEGACY_HOSTS.has(hostname)) {
+        return res.redirect(301, `${CANONICAL_ORIGIN}${req.originalUrl}`);
+    }
+    next();
+});
+
+// Robots.txt: jangan blokir halaman noindex; Google perlu membacanya.
+app.get('/robots.txt', (req, res) => {
+    res.type('text/plain').send([
+        'User-agent: *',
+        'Allow: /',
+        'Disallow: /api/',
+        'Disallow: /admin/',
+        `Sitemap: ${CANONICAL_ORIGIN}/sitemap.xml`,
+        ''
+    ].join('\n'));
+});
+
+// Sitemap hanya memuat halaman publik yang memang layak muncul di hasil pencarian.
+app.get('/sitemap.xml', (req, res) => {
+    const urls = [
+        `${CANONICAL_ORIGIN}/`,
+        `${CANONICAL_ORIGIN}/store`,
+        `${CANONICAL_ORIGIN}/privacy`
+    ];
+    const xmlEscape = (value) => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&apos;');
+    const xml = `<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n` +
+        `<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">` +
+        urls.map((url) => `<url><loc>${xmlEscape(url)}</loc></url>`).join('') +
+        `</urlset>`;
+    res.type('application/xml; charset=utf-8').send(xml);
+});
+
+// Sajikan aset statis setelah redirect domain kanonis.
+app.use(express.static(path.join(__dirname)));
 
 // ============================================================
 // 3. DATABASE CONNECTION
@@ -4188,6 +4232,7 @@ app.post('/api/user/complete-onboarding', checkAuthSession, async (req, res) => 
 // ============================================================
 
 app.get('/login', (req, res) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
     if (req.user) {
         return res.redirect('/profile'); 
     }
@@ -4196,13 +4241,17 @@ app.get('/login', (req, res) => {
 
 // NAVIGASI UTAMA
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
-app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
-app.get('/riwayat', (req, res) => res.sendFile(path.join(__dirname, 'public', 'riwayat.html')));
+app.get('/dashboard', (req, res) => res.redirect(301, '/'));
+app.get('/riwayat', (req, res) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    res.sendFile(path.join(__dirname, 'public', 'riwayat.html'));
+});
 app.get('/store', (req, res) => res.sendFile(path.join(__dirname, 'public', 'store.html')));
 app.get('/deposit', checkAuthSession, (req, res) => {
     if (!req.user) {
         return res.redirect('/login');
     }
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
     res.sendFile(path.join(__dirname, 'public', 'deposit.html'));
 });
 app.get('/privacy', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacy.html')));
@@ -4210,6 +4259,7 @@ app.get('/profile', checkAuthSession, (req, res) => {
     if (!req.user) {
         return res.redirect('/login');
     }
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
     res.sendFile(path.join(__dirname, 'public', 'profile.html'));
 });
 
@@ -4509,10 +4559,9 @@ app.get('/store/:productId', async (req, res) => {
             return res.sendFile(path.join(__dirname, 'public', 'store.html'));
         }
 
-        // PAKSA HTTPS AGAR WHATSAPP MAU MERENDER PREVIEW
-        const host = req.get('host');
-        const protocol = host.includes('localhost') ? 'http' : 'https';
-        const baseUrl = `${protocol}://${host}`;
+        // Gunakan domain kanonis agar URL produk konsisten di Google dan social preview.
+        const baseUrl = CANONICAL_ORIGIN;
+        res.setHeader('X-Robots-Tag', 'noindex, follow');
         const ogCanvasUrl = `${baseUrl}/api/og/product/${productId}`;
         const fullUrl = `${baseUrl}/store/${productId}`;
 
@@ -4543,6 +4592,7 @@ app.get('/store/:productId', async (req, res) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${shareTitle}</title>
     <meta name="description" content="${shareDesc}">
+    <meta name="robots" content="noindex, follow">
 
     <!-- Open Graph / WhatsApp / Facebook / Telegram -->
     <meta property="og:site_name" content="ArulzXD Store">
