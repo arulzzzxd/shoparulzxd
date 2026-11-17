@@ -528,8 +528,33 @@ ${escapeHtml(messageText)}
     }
 }
 
+let telegramWebhookRegistered = false;
+
+async function ensureTelegramWebhook() {
+    if (telegramWebhookRegistered || !TELEGRAM_BOT_TOKEN || !BASE_URL || BASE_URL.includes('localhost')) {
+        return;
+    }
+    try {
+        const webhookUrl = `${BASE_URL}/api/telegram/webhook`;
+        const infoRes = await axios.get(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getWebhookInfo`, {
+            timeout: 5000
+        });
+        if (infoRes.data?.result?.url !== webhookUrl) {
+            await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook`, {
+                url: webhookUrl,
+                allowed_updates: ['message', 'callback_query']
+            }, { timeout: 5000 });
+            console.log('✅ Telegram Webhook otomatis terdaftar:', webhookUrl);
+        }
+        telegramWebhookRegistered = true;
+    } catch (err) {
+        console.error('⚠️ Gagal auto-set Telegram webhook:', err.message);
+    }
+}
+
 async function sendTelegramDepositProof(trx, username, imageBuffer, mimeType) {
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_ADMIN_CHAT_ID) return;
+    await ensureTelegramWebhook
 
     const escapeHtml = (str) => String(str || '')
         .replace(/&/g, '&amp;')
@@ -726,7 +751,7 @@ async function setCache(key, data) {
         await CacheV2.findOneAndUpdate(
             { key },
             { data, createdAt: new Date() },
-            { upsert: true, new: true }
+            { upsert: true, returnDocument: 'after' }
         );
     } catch (e) {
         console.error("Gagal simpan cache Database:", e.message);
@@ -1540,7 +1565,7 @@ app.post('/api/user/update-username', checkAuthSession, async (req, res) => {
         const updatedUser = await UserV2.findByIdAndUpdate(
             userId,
             { $set: { username: cleanUsername } },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!updatedUser) {
@@ -1598,7 +1623,7 @@ app.post('/api/user/update-avatar', checkAuthSession, (req, res) => {
             const updatedUser = await UserV2.findByIdAndUpdate(
                 userIdToUpdate,
                 { $set: { avatar: avatarDataUrl } },
-                { new: true, runValidators: true }
+                { returnDocument: 'after', runValidators: true }
             );
 
             if (!updatedUser) {
@@ -1681,7 +1706,7 @@ app.post('/api/user/update-banner', checkAuthSession, (req, res) => {
             const updatedUser = await UserV2.findByIdAndUpdate(
                 userIdToUpdate,
                 { $set: { banner: finalBanner } },
-                { new: true, runValidators: true }
+                { returnDocument: 'after', runValidators: true }
             );
 
             if (!updatedUser) {
@@ -2227,7 +2252,7 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
                         updatedAt: new Date()
                     }
                 },
-                { upsert: true, new: true }
+                { upsert: true, returnDocument: 'after' }
             );
         };
 
@@ -2280,7 +2305,7 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
                     updatedAt: new Date()
                 }
             },
-            { upsert: true, new: true }
+            { upsert: true, returnDocument: 'after' }
         );
 
         const linkInfo = classifyProductLink(dbProduct.link);
@@ -2396,7 +2421,7 @@ app.post(['/api/store/cancel-balance-order', '/api/store/cancel-order'], checkAu
                 const updated = await TransactionV2.findOneAndUpdate(
                     { orderId: String(orderId).trim() },
                     { $set: { status: 'cancelled', paymentMethod: resolvedMethod, updatedAt: new Date() } },
-                    { new: true }
+                    { returnDocument: 'after' }
                 ).lean();
                 return res.json({ status: true, message: "Status transaksi diperbarui menjadi dibatalkan.", data: updated });
             }
@@ -2505,7 +2530,7 @@ app.get('/api/store/download/:orderId', checkAuthSession, async (req, res) => {
                 ]
             },
             { $set: { downloadLockedAt: new Date() } },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!lockedTrx) {
@@ -3115,71 +3140,6 @@ app.post('/api/deposit-qrisv2', checkAuthSession, async (req, res) => {
     }
 });
 
-app.post('/api/deposit-qrisv2', checkAuthSession, async (req, res) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu untuk deposit.' });
-        }
-
-        const amount = Number(req.body.amount);
-        const customerPhone = (req.body.customerPhone || '').toString().replace(/[\s\-()]/g, '').trim();
-
-        if (isNaN(amount) || amount < 1000) {
-            return res.status(400).json({ status: false, message: 'Deposit minimal adalah Rp 1.000!' });
-        }
-
-        if (!isValidIndonesianPhone(customerPhone)) {
-            return res.status(400).json({
-                status: false,
-                message: 'Nomor HP Indonesia aktif wajib diisi dengan format 08xx, 62xx, atau +62!'
-            });
-        }
-
-        const activeUser = await UserV2.findById(req.user.id || req.user._id).lean();
-        const customerEmail = (activeUser?.email || req.user.email).toLowerCase().trim();
-
-        const orderId = `QRV2-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
-        const dynamicQrisString = generateDynamicQris(STATIC_QRIS_V2_BASE, amount);
-        const expiredAt = new Date(Date.now() + 30 * 60 * 1000); // Berlaku 30 menit
-
-        const newTrx = new TransactionV2({
-            orderId,
-            amount: amount,
-            paymentNumber: dynamicQrisString,
-            paymentMethod: "QRIS V2",
-            qrisVersion: "v2",
-            type: "DEPOSIT",
-            userEmail: customerEmail,
-            status: "pending",
-            itemDetails: {
-                nama: `Deposit QRISv2 Rp ${amount.toLocaleString('id-ID')}`,
-                harga: amount,
-                buyer: customerEmail,
-                phone: customerPhone
-            },
-            expiredAt
-        });
-
-        await newTrx.save();
-
-        return res.json({
-            status: true,
-            data: {
-                ...newTrx.toObject(),
-                payment: {
-                    qrString: dynamicQrisString
-                }
-            }
-        });
-    } catch (error) {
-        console.error("Error Create Deposit QRISv2:", error);
-        return res.status(500).json({
-            status: false,
-            message: error.message || "Gagal membuat QRISv2 dinamis."
-        });
-    }
-});
-
 app.post('/api/deposit-qrisv2/:orderId/upload-proof', checkAuthSession, (req, res) => {
     uploadPaymentProofMulter.single('proofImage')(req, res, async (err) => {
         if (err) {
@@ -3359,6 +3319,20 @@ app.post('/api/admin/deposits-qrisv2/:orderId/cancel', checkAuthSession, checkAd
     }
 });
 
+app.get('/api/telegram/setup-webhook', async (req, res) => {
+    try {
+        const webhookUrl = `${BASE_URL}/api/telegram/webhook`;
+        const r = await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook`, {
+            url: webhookUrl,
+            allowed_updates: ['message', 'callback_query']
+        });
+        telegramWebhookRegistered = true;
+        return res.json({ status: true, webhookUrl, telegram: r.data });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: err.message });
+    }
+});
+
 app.post('/api/telegram/webhook', async (req, res) => {
     try {
         const update = req.body;
@@ -3368,7 +3342,7 @@ app.post('/api/telegram/webhook', async (req, res) => {
             const chatId = cq.message?.chat?.id;
             const messageId = cq.message?.message_id;
 
-            // Validasi hanya chat admin yang berhak klik
+            // Validasi hanya chat/grup admin yang berhak klik
             if (String(chatId) !== String(TELEGRAM_ADMIN_CHAT_ID)) {
                 await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
                     callback_query_id: cq.id,
@@ -3379,44 +3353,50 @@ app.post('/api/telegram/webhook', async (req, res) => {
             }
 
             if (data.startsWith('dep_approve_')) {
-                const orderId = data.replace('dep_approve_', '');
+                const orderId = data.replace('dep_approve_', '').trim();
                 const result = await approveDepositQrisV2(orderId, 'Telegram Admin');
 
                 await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
                     callback_query_id: cq.id,
-                    text: result.message,
+                    text: result.message.slice(0, 190),
                     show_alert: true
                 }).catch(() => {});
 
                 if (result.ok && messageId) {
-                    const newCaption = `${cq.message.caption || ''}\n\n✅ <b>DIKONFIRMASI OLEH ADMIN</b> (${moment().tz('Asia/Jakarta').format('HH:mm:ss')} WIB)`;
+                    const waktuWib = moment().tz('Asia/Jakarta').format('HH:mm:ss');
+                    const baseCaption = (cq.message.caption || '').replace(/\n\n(✅|❌).*$/s, '');
+                    const newCaption = `${baseCaption}\n\n✅ <b>DIKONFIRMASI OLEH ADMIN</b> (${waktuWib} WIB)`;
+
                     await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageCaption`, {
                         chat_id: chatId,
                         message_id: messageId,
                         caption: newCaption,
                         parse_mode: 'HTML',
                         reply_markup: { inline_keyboard: [] }
-                    }).catch(() => {});
+                    }).catch((e) => console.error('Edit caption gagal:', e.response?.data || e.message));
                 }
             } else if (data.startsWith('dep_cancel_')) {
-                const orderId = data.replace('dep_cancel_', '');
+                const orderId = data.replace('dep_cancel_', '').trim();
                 const result = await cancelDepositQrisV2(orderId, 'Telegram Admin');
 
                 await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
                     callback_query_id: cq.id,
-                    text: result.message,
+                    text: result.message.slice(0, 190),
                     show_alert: true
                 }).catch(() => {});
 
                 if (result.ok && messageId) {
-                    const newCaption = `${cq.message.caption || ''}\n\n❌ <b>DIBATALKAN OLEH ADMIN</b> (${moment().tz('Asia/Jakarta').format('HH:mm:ss')} WIB)`;
+                    const waktuWib = moment().tz('Asia/Jakarta').format('HH:mm:ss');
+                    const baseCaption = (cq.message.caption || '').replace(/\n\n(✅|❌).*$/s, '');
+                    const newCaption = `${baseCaption}\n\n❌ <b>DIBATALKAN OLEH ADMIN</b> (${waktuWib} WIB)`;
+
                     await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/editMessageCaption`, {
                         chat_id: chatId,
                         message_id: messageId,
                         caption: newCaption,
                         parse_mode: 'HTML',
                         reply_markup: { inline_keyboard: [] }
-                    }).catch(() => {});
+                    }).catch((e) => console.error('Edit caption gagal:', e.response?.data || e.message));
                 }
             }
         }
@@ -4796,8 +4776,11 @@ app.get('/api/dashboard-stats', async (req, res) => {
 // 11. START SERVER
 // ============================================================
 
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+        ensureTelegramWebhook();
+    });
+}
 
 export default app;
