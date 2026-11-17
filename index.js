@@ -2066,6 +2066,16 @@ app.get('/api/vouchers/:code', async (req, res) => {
     }
 });
 
+function calculateDepositFee(amount, version = 'v1') {
+    const nominal = Number(amount) || 0;
+    if (nominal >= 150000) {
+        // >= Rp 150.000: flat 0,95% tanpa biaya tetap tambahan
+        return Math.ceil((nominal * 95) / 10000);
+    }
+    // < Rp 150.000: 0,7% + Rp 290 (v1) atau 0,7% + Rp 250 (v2)
+    const flatFee = version === 'v2' ? 250 : 290;
+    return Math.ceil((nominal * 70) / 10000) + flatFee;
+}
 
 // DEPOSIT & SALDO
 app.post('/api/deposit', checkAuthSession, async (req, res) => {
@@ -2126,18 +2136,14 @@ app.post('/api/deposit', checkAuthSession, async (req, res) => {
             return (!isNaN(num) && num > 0) ? num : null;
         };
 
-        const feeFlatIdr = Number(transactionData.feeFlatIdr) || 290;
-        const feePercentBps = Number(transactionData.feePercentBps) || 70;
-        const calculatedFee = feeFlatIdr + Math.ceil((amount * feePercentBps) / 10000);
+        // Aturan Fee QRIS V1: >= 150.000 -> 0.95% flat | < 150.000 -> 0.7% + Rp 290
+        const calculatedFee = calculateDepositFee(amount, 'v1');
+        const gatewayTotal = safeNum(transactionData.grossAmount) || 
+                             safeNum(transactionData.totalAmount) || 
+                             safeNum(transactionData.total);
 
-        let finalAmount = safeNum(transactionData.grossAmount) || 
-                          safeNum(transactionData.totalAmount) || 
-                          safeNum(transactionData.total);
-
-        if (!finalAmount) {
-            const feeVal = safeNum(transactionData.fee) || safeNum(transactionData.feeAdmin) || calculatedFee;
-            finalAmount = amount + feeVal;
-        }
+        const finalAmount = gatewayTotal || (amount + calculatedFee);
+        const appliedFee = Math.max(0, finalAmount - amount);
 
         const expiredAt = transactionData.expiredAt 
             ? new Date(transactionData.expiredAt) 
@@ -2148,13 +2154,16 @@ app.post('/api/deposit', checkAuthSession, async (req, res) => {
             amount: finalAmount,
             paymentNumber: qrisString,
             paymentMethod: "QRIS",
+            qrisVersion: "v1",
             type: "DEPOSIT",
             userEmail: customerEmail,
             status: (transactionData.status || "pending").toLowerCase(),
             itemDetails: {
                 nama: `Deposit Saldo Rp ${amount.toLocaleString('id-ID')}`,
                 harga: amount,
-                buyer: customerEmail
+                fee: appliedFee,
+                buyer: customerEmail,
+                phone: customerPhone
             },
             expiredAt: expiredAt
         });
@@ -2165,6 +2174,8 @@ app.post('/api/deposit', checkAuthSession, async (req, res) => {
             status: true,
             data: {
                 ...newTrx.toObject(),
+                depositAmount: amount,
+                feeAmount: appliedFee,
                 payment: {
                     qrString: qrisString
                 }
@@ -2172,14 +2183,13 @@ app.post('/api/deposit', checkAuthSession, async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error Create Deposit TRX v2:", error.response?.data || error.message);
+        console.error("Error Create Deposit TRX v1:", error.response?.data || error.message);
         return res.status(500).json({
             status: false,
-            message: error.response?.data?.message || error.message || "Gagal membuat invoice deposit QRIS v2"
+            message: error.response?.data?.message || error.message || "Gagal membuat invoice deposit QRIS v1"
         });
     }
 });
-
 
 app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
     try {
@@ -3117,8 +3127,8 @@ app.post('/api/deposit-qrisv2', checkAuthSession, async (req, res) => {
         const activeUser = await UserV2.findById(req.user.id || req.user._id).lean();
         const customerEmail = (activeUser?.email || req.user.email).toLowerCase().trim();
 
-        // Hitung Fee QRIS v2 sebesar 0.2%
-        const feeAmount = Math.ceil(amount * 0.002);
+        // Aturan Fee QRIS V2: >= 150.000 -> 0.95% flat | < 150.000 -> 0.7% + Rp 250
+        const feeAmount = calculateDepositFee(amount, 'v2');
         const totalPayAmount = amount + feeAmount;
 
         const orderId = `QRV2-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
