@@ -478,7 +478,7 @@
 
     </main>
 
-        <!-- BOTTOM NAVIGATION 6-MENU DENGAN LEKUKAN BERSIH -->
+    <!-- BOTTOM NAVIGATION 6-MENU DENGAN LEKUKAN BERSIH -->
     <nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
         <div class="liquid-nav-bg">
             <svg class="liquid-nav-svg" id="liquidNavSvg" xmlns="http://www.w3.org/2000/svg">
@@ -687,7 +687,6 @@
                     }
                 }
 
-                // Fallback jika endpoint utama mengembalikan daftar notifikasi
                 const listRes = await fetch('/api/notifications', { cache: 'no-store' });
                 if (listRes.ok) {
                     const listData = await listRes.json();
@@ -701,13 +700,11 @@
             } catch (e) {}
         }
 
-        // Tampilkan angka tersimpan seketika saat halaman dibuka agar tidak berkedip
         try {
             const cachedUnread = Number(localStorage.getItem('arulz_unread_notif_count') || 0);
             if (cachedUnread > 0) renderUnreadNotifBadge(cachedUnread);
         } catch (e) {}
 
-        // Sinkronisasi real-time antar tab jika user membaca notifikasi di /notifikasi
         window.addEventListener('storage', (e) => {
             if (e.key === 'arulz_unread_notif_count') {
                 renderUnreadNotifBadge(Number(e.newValue || 0));
@@ -737,7 +734,7 @@
             try {
                 const res = await fetch('/api/notifications', { cache: 'no-store' });
                 const data = await res.json();
-                const badge = document.getElementById('navNotifBadge');
+                const badge = document.getElementById('nav-notif-badge');
                 if (!badge || !data.status || !Array.isArray(data.notifications)) return;
 
                 const userKey = (userEmail || 'guest').toLowerCase();
@@ -801,6 +798,52 @@
             }
         }
 
+        // ============================================================
+        // HANDLER TAUTKAN TELEGRAM WIDGET (DATA-ONAUTH - ANTI DEPRECATED)
+        // ============================================================
+        window.onTelegramLinkAuth = async function(tgUser) {
+            Swal.fire({
+                title: 'MENAUTKAN TELEGRAM...',
+                text: 'Menghubungkan akun Telegram ke profil Anda',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); },
+                customClass: { popup: 'cyber-swal' }
+            });
+
+            try {
+                const res = await fetch('/api/user/link-telegram', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(tgUser)
+                });
+                const data = await res.json();
+
+                if (data.status) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'BERHASIL TERTAUT!',
+                        text: data.message,
+                        customClass: { popup: 'cyber-swal' }
+                    });
+                    loadUserProfile();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'GAGAL MENAUTKAN',
+                        text: data.message || 'Gagal menautkan akun Telegram.',
+                        customClass: { popup: 'cyber-swal' }
+                    });
+                }
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'KESALAHAN JARINGAN',
+                    text: 'Gagal terhubung ke server saat menautkan Telegram.',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
+        };
+
         async function renderTelegramLinkSection(user) {
             const badge = document.getElementById('tgLinkStatusBadge');
             const unlinkedBox = document.getElementById('tgUnlinkedContainer');
@@ -823,8 +866,8 @@
             linkedBox.classList.add('hidden');
             unlinkedBox.classList.remove('hidden');
 
-                        try {
-                const cfgRes = await fetch('/api/auth/telegram-config');
+            try {
+                const cfgRes = await fetch('/api/auth/telegram');
                 const cfg = await cfgRes.json();
                 const wrapper = document.getElementById('telegramLinkWidgetWrapper');
                 if (cfg.status && cfg.botUsername && wrapper) {
@@ -836,8 +879,7 @@
                     script.setAttribute('data-telegram-login', cfg.botUsername);
                     script.setAttribute('data-size', 'large');
                     script.setAttribute('data-radius', '12');
-                    // Gunakan data-auth-url agar tidak stuck di popup browser HP
-                    script.setAttribute('data-auth-url', `${window.location.origin}/api/user/link-telegram/callback`);
+                    script.setAttribute('data-onauth', 'onTelegramLinkAuth(user)');
                     script.setAttribute('data-request-access', 'write');
                     wrapper.appendChild(script);
                 }

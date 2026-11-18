@@ -441,7 +441,7 @@
         let currentRefCode = '';
 
         // ============================================================
-        // TELEGRAM LOGIN WIDGET HANDLER (DIRECT BOT AUTH)
+        // TELEGRAM LOGIN WIDGET HANDLER (DIRECT BOT AUTH - ANTI DEPRECATED)
         // ============================================================
         window.onTelegramAuth = async function(user) {
             Swal.fire({
@@ -471,7 +471,11 @@
                         ...swalConfig,
                         icon: 'error',
                         title: 'Gagal Login Telegram',
-                        text: result.message || 'Autentikasi Telegram tidak valid.'
+                        text: result.message || 'Autentikasi Telegram tidak valid.',
+                        customClass: {
+                            popup: 'cyber-swal',
+                            confirmButton: 'neo-btn bg-neoYellow text-black font-black px-5 py-2.5 rounded-xl text-xs uppercase font-cyber'
+                        }
                     });
                 }
             } catch (err) {
@@ -479,19 +483,20 @@
                     ...swalConfig,
                     icon: 'error',
                     title: 'Kesalahan Jaringan',
-                    text: 'Gagal terhubung ke server saat memverifikasi Telegram.'
+                    text: 'Gagal terhubung ke server saat memverifikasi Telegram.',
+                    customClass: {
+                        popup: 'cyber-swal',
+                        confirmButton: 'neo-btn bg-neoYellow text-black font-black px-5 py-2.5 rounded-xl text-xs uppercase font-cyber'
+                    }
                 });
             }
         };
 
-                async function initTelegramLoginWidgets() {
+        async function initTelegramLoginWidgets() {
             try {
-                const res = await fetch('/api/auth/telegram-config');
+                const res = await fetch('/api/auth/telegram');
                 const data = await res.json();
                 if (!data.status || !data.botUsername) return;
-
-                const refParam = currentRefCode ? `?ref=${encodeURIComponent(currentRefCode)}` : '';
-                const authCallbackUrl = `${window.location.origin}/auth/telegram/callback${refParam}`;
 
                 const containers = ['tg-widget-login', 'tg-widget-register'];
                 containers.forEach((containerId) => {
@@ -504,7 +509,7 @@
                     script.src = 'https://telegram.org/js/telegram-widget.js?22';
                     script.setAttribute('data-telegram-login', data.botUsername);
                     script.setAttribute('data-size', 'large');
-                    script.setAttribute('data-auth-url', authCallbackUrl);
+                    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
                     script.setAttribute('data-request-access', 'write');
                     el.appendChild(script);
                 });
@@ -512,7 +517,6 @@
                 console.warn('Telegram widget gagal dimuat:', e);
             }
         }
-
 
         function maskInputVal(val) {
             if (!val) return '';
