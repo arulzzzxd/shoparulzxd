@@ -823,46 +823,12 @@
             linkedBox.classList.add('hidden');
             unlinkedBox.classList.remove('hidden');
 
-            try {
+                        try {
                 const cfgRes = await fetch('/api/auth/telegram-config');
                 const cfg = await cfgRes.json();
                 const wrapper = document.getElementById('telegramLinkWidgetWrapper');
                 if (cfg.status && cfg.botUsername && wrapper) {
                     wrapper.innerHTML = '';
-                    window.onTelegramLinkAuth = async function(tgUser) {
-                        Swal.fire({
-                            title: 'MENAUTKAN TELEGRAM...',
-                            allowOutsideClick: false,
-                            didOpen: () => Swal.showLoading(),
-                            customClass: { popup: 'cyber-swal' }
-                        });
-                        try {
-                            const linkRes = await fetch('/api/user/link-telegram', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(tgUser)
-                            });
-                            const linkData = await linkRes.json();
-                            if (linkData.status) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'BERHASIL TERTAUT!',
-                                    text: linkData.message,
-                                    customClass: { popup: 'cyber-swal' }
-                                });
-                                loadUserProfile();
-                            } else {
-                                throw new Error(linkData.message || 'Gagal menautkan Telegram.');
-                            }
-                        } catch (err) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'GAGAL MENAUTKAN',
-                                text: err.message,
-                                customClass: { popup: 'cyber-swal' }
-                            });
-                        }
-                    };
 
                     const script = document.createElement('script');
                     script.async = true;
@@ -870,7 +836,8 @@
                     script.setAttribute('data-telegram-login', cfg.botUsername);
                     script.setAttribute('data-size', 'large');
                     script.setAttribute('data-radius', '12');
-                    script.setAttribute('data-onauth', 'onTelegramLinkAuth(user)');
+                    // Gunakan data-auth-url agar tidak stuck di popup browser HP
+                    script.setAttribute('data-auth-url', `${window.location.origin}/api/user/link-telegram/callback`);
                     script.setAttribute('data-request-access', 'write');
                     wrapper.appendChild(script);
                 }
