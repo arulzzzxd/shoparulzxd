@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Profil Saya - ArulzXD Store</title>
-        <!-- Open Graph / Facebook / WhatsApp / Telegram -->
+    <!-- Open Graph / Facebook / WhatsApp / Telegram -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.shoparulzxd.biz.id/profile">
     <meta property="og:title" content="Profil Saya - ArulzXD Store">
@@ -85,144 +85,173 @@
             font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
 
-/* =========================================================
-   LIQUID NOTCH CURVE BOTTOM NAVIGATION (MENTOK FULL-WIDTH)
-   ========================================================= */
-.liquid-nav-wrapper {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    z-index: 40;
-    height: 66px;
-    user-select: none;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: transparent;
-}
-.liquid-nav-bg {
-    position: absolute;
-    inset: 0;
-    filter: drop-shadow(0px -3px 0px rgba(0, 0, 0, 0.08));
-    pointer-events: none;
-}
-.liquid-nav-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-    overflow: visible;
-}
-.liquid-floating-orb {
-    position: absolute;
-    top: -26px;
-    width: 46px;
-    height: 46px;
-    margin-left: -23px;
-    border-radius: 9999px;
-    background-color: #FFDF4F;
-    border: 3px solid #000000;
-    box-shadow: none; /* Shadow dihilangkan saat aktif */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #000000;
-    pointer-events: none;
-    will-change: left, transform;
-    transition: left 0.48s cubic-bezier(0.34, 1.38, 0.64, 1);
-}
-.liquid-floating-orb.orb-bounce {
-    animation: orbJump 0.48s cubic-bezier(0.34, 1.5, 0.64, 1);
-}
-@keyframes orbJump {
-    0% { transform: translate3d(0, 14px, 0) scale(0.82); }
-    55% { transform: translate3d(0, -5px, 0) scale(1.06); }
-    100% { transform: translate3d(0, 0px, 0) scale(1); }
-}
-.liquid-nav-items {
-    position: relative;
-    z-index: 10;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    height: 66px;
-    align-items: center;
-}
-.liquid-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: rgba(0, 0, 0, 0.72);
-    text-decoration: none;
-    transition: color 0.25s ease;
-}
-.liquid-nav-item i {
-    font-size: 16px;
-    transition: opacity 0.2s ease, transform 0.32s ease;
-}
-.liquid-nav-item span {
-    font-size: 10px;
-    font-weight: 800;
-    margin-top: 3px;
-    transition: opacity 0.2s ease, transform 0.32s ease, color 0.25s ease;
-}
-.liquid-nav-item.active i {
-    opacity: 0;
-    transform: translateY(-16px) scale(0.4);
-}
-.liquid-nav-item.active span {
-    opacity: 1;
-    color: #000000;
-    font-weight: 900;
-    transform: translateY(3px);
-}
-</style>
+        /* =========================================================
+           LIQUID NOTCH CURVE BOTTOM NAVIGATION (6 MENU + NOTIF BADGE)
+           ========================================================= */
+        .liquid-nav-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            z-index: 40;
+            height: 66px;
+            user-select: none;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            background: transparent;
+        }
+        .liquid-nav-bg {
+            position: absolute;
+            inset: 0;
+            filter: drop-shadow(0px -3px 0px rgba(0, 0, 0, 0.08));
+            pointer-events: none;
+        }
+        .liquid-nav-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: visible;
+        }
+        .liquid-floating-orb {
+            position: absolute;
+            top: -24px;
+            width: 44px;
+            height: 44px;
+            margin-left: -22px;
+            border-radius: 9999px;
+            background-color: #FFDF4F;
+            border: 3px solid #000000;
+            box-shadow: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000000;
+            pointer-events: none;
+            will-change: left, transform;
+            transition: left 0.48s cubic-bezier(0.34, 1.38, 0.64, 1);
+        }
+        .liquid-floating-orb.orb-bounce {
+            animation: orbJump 0.48s cubic-bezier(0.34, 1.5, 0.64, 1);
+        }
+        @keyframes orbJump {
+            0% { transform: translate3d(0, 14px, 0) scale(0.82); }
+            55% { transform: translate3d(0, -5px, 0) scale(1.06); }
+            100% { transform: translate3d(0, 0px, 0) scale(1); }
+        }
+        .liquid-nav-items {
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            height: 66px;
+            align-items: center;
+        }
+        .liquid-nav-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: rgba(0, 0, 0, 0.72);
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+        .liquid-nav-item i {
+            font-size: 15px;
+            transition: opacity 0.2s ease, transform 0.32s ease;
+        }
+        .liquid-nav-item span.nav-label {
+            font-size: 9.5px;
+            font-weight: 800;
+            margin-top: 3px;
+            letter-spacing: -0.01em;
+            transition: opacity 0.2s ease, transform 0.32s ease, color 0.25s ease;
+        }
+        .liquid-nav-item.active i {
+            opacity: 0;
+            transform: translateY(-16px) scale(0.4);
+        }
+        .liquid-nav-item.active span.nav-label {
+            opacity: 1;
+            color: #000000;
+            font-weight: 900;
+            transform: translateY(3px);
+        }
+        /* Penanda Merah + Angka Jumlah Notifikasi Belum Dibaca */
+        .nav-notif-badge {
+            position: absolute;
+            top: 8px;
+            right: calc(50% - 17px);
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            border-radius: 9999px;
+            background-color: #EF233C;
+            color: #FFFFFF;
+            border: 2px solid #000000;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 9px;
+            font-weight: 900;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 1.5px 1.5px 0px #000000;
+            z-index: 20;
+            pointer-events: none;
+            transition: transform 0.2s ease;
+        }
+        .nav-notif-badge.hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 <body class="font-sans antialiased text-black min-h-screen pb-44">
 
-<!-- FLOATING LIVE CHAT WIDGET POP-UP -->
-<div id="liveChatWidgetContainer">
-    <div id="floatingChatWindow" class="fixed bottom-36 right-4 sm:right-6 z-[99999] hidden w-[calc(100vw-2rem)] max-w-[360px] h-[420px] max-h-[calc(100vh-170px)] bg-white border-[3px] border-black rounded-2xl shadow-[6px_6px_0px_#000] overflow-hidden flex flex-col transition-all duration-300">
-        
-        <!-- HEADER WINDOW -->
-        <div class="bg-neoYellow p-3 border-b-3 border-black flex items-center justify-between shrink-0">
-            <div class="flex items-center gap-2.5">
-                <div class="relative">
-                    <div class="w-8 h-8 rounded-full bg-white text-black border-2 border-black flex items-center justify-center font-bold text-xs shadow-[2px_2px_0px_#000]">
-                        <i class="fa-solid fa-headset"></i>
+    <!-- FLOATING LIVE CHAT WIDGET POP-UP -->
+    <div id="liveChatWidgetContainer">
+        <div id="floatingChatWindow" class="fixed bottom-36 right-4 sm:right-6 z-[99999] hidden w-[calc(100vw-2rem)] max-w-[360px] h-[420px] max-h-[calc(100vh-170px)] bg-white border-[3px] border-black rounded-2xl shadow-[6px_6px_0px_#000] overflow-hidden flex flex-col transition-all duration-300">
+            
+            <!-- HEADER WINDOW -->
+            <div class="bg-neoYellow p-3 border-b-3 border-black flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="relative">
+                        <div class="w-8 h-8 rounded-full bg-white text-black border-2 border-black flex items-center justify-center font-bold text-xs shadow-[2px_2px_0px_#000]">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-neoGreen border border-black rounded-full"></span>
                     </div>
-                    <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-neoGreen border border-black rounded-full"></span>
+                    <div>
+                        <h3 class="text-xs font-black font-cyber text-black">Customer Support</h3>
+                        <p class="text-[9px] text-black font-mono font-bold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-neoGreen animate-pulse"></span> Online 24/7
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <h3 class="text-xs font-black font-cyber text-black">Customer Support</h3>
-                    <p class="text-[9px] text-black font-mono font-bold flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-neoGreen animate-pulse"></span> Online 24/7
-                    </p>
-                </div>
+                <button onclick="toggleChatWidget()" class="text-black font-black text-base transition p-1 hover:scale-110">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-            <button onclick="toggleChatWidget()" class="text-black font-black text-base transition p-1 hover:scale-110">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+
+            <!-- AREA CHAT MESSAGES -->
+            <div id="widgetChatMessages" class="flex-1 p-3 overflow-y-auto space-y-3 bg-neoBg scroll-smooth">
+                <div class="text-center text-[11px] text-slate-600 font-mono my-2 animate-pulse font-bold">Memuat pesan...</div>
+            </div>
+
+            <!-- FORM KIRIM PESAN -->
+            <form id="widgetChatForm" onsubmit="sendWidgetMessage(event)" class="p-2.5 bg-white border-t-3 border-black flex items-center gap-2 shrink-0">
+                <input type="text" id="widgetChatInput" required placeholder="Tuliskan pesan Anda..." 
+                       class="flex-1 bg-neoBg border-2 border-black rounded-xl px-3 py-2 text-xs text-black font-bold placeholder-slate-500 focus:outline-none">
+                <button type="submit" class="neo-btn w-9 h-9 rounded-xl bg-neoYellow text-black flex items-center justify-center shrink-0 font-black">
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </form>
+
         </div>
-
-        <!-- AREA CHAT MESSAGES -->
-        <div id="widgetChatMessages" class="flex-1 p-3 overflow-y-auto space-y-3 bg-neoBg scroll-smooth">
-            <div class="text-center text-[11px] text-slate-600 font-mono my-2 animate-pulse font-bold">Memuat pesan...</div>
-        </div>
-
-        <!-- FORM KIRIM PESAN -->
-        <form id="widgetChatForm" onsubmit="sendWidgetMessage(event)" class="p-2.5 bg-white border-t-3 border-black flex items-center gap-2 shrink-0">
-            <input type="text" id="widgetChatInput" required placeholder="Tuliskan pesan Anda..." 
-                   class="flex-1 bg-neoBg border-2 border-black rounded-xl px-3 py-2 text-xs text-black font-bold placeholder-slate-500 focus:outline-none">
-            <button type="submit" class="neo-btn w-9 h-9 rounded-xl bg-neoYellow text-black flex items-center justify-center shrink-0 font-black">
-                <i class="fa-solid fa-paper-plane text-xs"></i>
-            </button>
-        </form>
-
     </div>
-</div>
 
     <!-- TOP NAVBAR -->
     <nav class="sticky top-0 z-40 bg-neoYellow border-b-3 border-black shadow-[0_4px_0_#000]">
@@ -230,7 +259,7 @@
             <a href="/store" class="text-2xl font-black font-cyber tracking-tight text-black">
                 Arulz<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">Store</span>
             </a>
-            <a href="/auth/logout" class="neo-btn text-xs bg-neoPink text-black font-cyber font-black px-4 py-2 rounded-xl flex items-center gap-2 uppercase tracking-wider">
+            <a href="/auth/logout" onclick="handleUserLogout()" class="neo-btn text-xs bg-neoPink text-black font-cyber font-black px-4 py-2 rounded-xl flex items-center gap-2 uppercase tracking-wider">
                 <i class="fa-solid fa-right-from-bracket text-sm"></i> Keluar
             </a>
         </div>
@@ -362,6 +391,43 @@
             </div>
         </div>
 
+        <!-- WIDGET TAUTKAN TELEGRAM UNTUK NOTIFIKASI BOT -->
+        <div class="neo-box rounded-2xl p-5 bg-white space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b-3 border-black">
+                <div class="flex items-center gap-2">
+                    <i class="fa-brands fa-telegram text-black text-lg"></i>
+                    <h3 class="text-xs font-black font-cyber text-black uppercase tracking-wider">Notifikasi Telegram Bot</h3>
+                </div>
+                <span id="tgLinkStatusBadge" class="text-[10px] font-black font-cyber bg-neoYellow text-black border-2 border-black px-2.5 py-0.5 rounded-md uppercase">
+                    BELUM TERTAUT
+                </span>
+            </div>
+
+            <p class="text-xs font-bold text-slate-700 leading-relaxed">
+                Tautkan akun Telegram Anda untuk menerima notifikasi langsung lewat <strong>Private Chat Bot Telegram</strong>. Jika belum ditautkan, notifikasi akan dikirimkan secara otomatis ke <strong>Email</strong> Anda.
+            </p>
+
+            <!-- TAMPILAN JIKA BELUM TERTAUT -->
+            <div id="tgUnlinkedContainer" class="space-y-3">
+                <div id="telegramLinkWidgetWrapper" class="flex justify-center py-2"></div>
+                <div class="bg-neoBg border-2 border-black rounded-xl p-3 text-[11px] font-bold text-slate-700 space-y-1">
+                    <p><i class="fa-solid fa-circle-info text-black mr-1"></i> Pastikan Anda sudah pernah menekan <strong>/start</strong> pada Bot Telegram kami agar bot dapat mengirimkan notifikasi melalui private chat.</p>
+                </div>
+            </div>
+
+            <!-- TAMPILAN JIKA SUDAH TERTAUT -->
+            <div id="tgLinkedContainer" class="hidden bg-neoCyan/30 border-2 border-black rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="space-y-0.5">
+                    <span class="text-[10px] font-black font-cyber uppercase text-slate-700 block">Terhubung Dengan Akun Telegram</span>
+                    <p id="tgLinkedUsernameDisplay" class="text-sm font-black font-cyber text-black">@username</p>
+                    <p id="tgLinkedChatIdDisplay" class="text-[11px] font-mono font-bold text-slate-700">Chat ID: -</p>
+                </div>
+                <button type="button" onclick="unlinkTelegramAccount()" class="neo-btn bg-neoPink text-black font-cyber font-black px-4 py-2 rounded-xl text-xs uppercase flex items-center gap-1.5 self-start sm:self-center">
+                    <i class="fa-solid fa-link-slash"></i> Putuskan Tautan
+                </button>
+            </div>
+        </div>
+
         <!-- WIDGET REFERAL UNDANGAN -->
         <div class="neo-box rounded-2xl p-6 bg-white space-y-4">
             <div class="flex items-center justify-between">
@@ -412,186 +478,283 @@
 
     </main>
 
-    <!-- BOTTOM NAVIGATION DENGAN LEKUKAN BERSIH -->
-<nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
-    <div class="liquid-nav-bg">
-        <svg class="liquid-nav-svg" id="liquidNavSvg" xmlns="http://www.w3.org/2000/svg">
-            <path id="liquidNavPath" d="" fill="#FFFFFF" stroke="#000000" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
-        </svg>
-    </div>
+        <!-- BOTTOM NAVIGATION 6-MENU DENGAN LEKUKAN BERSIH -->
+    <nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
+        <div class="liquid-nav-bg">
+            <svg class="liquid-nav-svg" id="liquidNavSvg" xmlns="http://www.w3.org/2000/svg">
+                <path id="liquidNavPath" d="" fill="#FFFFFF" stroke="#000000" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
+            </svg>
+        </div>
 
-    <!-- Bulatan Ikon Aktif (Profil) -->
-    <div class="liquid-floating-orb" id="liquidFloatingOrb" style="left: 90%;">
-        <i id="liquidOrbIcon" class="fa-regular fa-user text-lg"></i>
-    </div>
+        <!-- Bulatan Ikon Aktif (Profil - Index 5: 91.667%) -->
+        <div class="liquid-floating-orb" id="liquidFloatingOrb" style="left: 91.667%;">
+            <i id="liquidOrbIcon" class="fa-regular fa-user text-base"></i>
+        </div>
 
-    <!-- 5 Item Menu -->
-    <div class="liquid-nav-items">
-        <a href="/dashboard" data-index="0" data-icon="fa-solid fa-house" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
-            <i class="fa-solid fa-house"></i>
-            <span>Home</span>
-        </a>
-        <a href="/store" data-index="1" data-icon="fa-solid fa-bag-shopping" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
-            <i class="fa-solid fa-bag-shopping"></i>
-            <span>Toko</span>
-        </a>
-        <a href="/deposit" data-index="2" data-icon="fa-solid fa-wallet" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
-            <i class="fa-solid fa-wallet"></i>
-            <span>Deposit</span>
-        </a>
-        <a href="/riwayat" data-index="3" data-icon="fa-solid fa-clock-rotate-left" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-            <span>Riwayat</span>
-        </a>
-        <a href="/profile" data-index="4" data-icon="fa-regular fa-user" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item active">
-            <i class="fa-regular fa-user"></i>
-            <span id="nav-auth-label">Profil</span>
-        </a>
-    </div>
-</nav>
+        <!-- 6 Item Menu -->
+        <div class="liquid-nav-items">
+            <a href="/" data-index="0" data-icon="fa-solid fa-house" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+                <i class="fa-solid fa-house"></i>
+                <span class="nav-label">Home</span>
+            </a>
+            <a href="/store" data-index="1" data-icon="fa-solid fa-bag-shopping" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span class="nav-label">Toko</span>
+            </a>
+            <a href="/deposit" data-index="2" data-icon="fa-solid fa-wallet" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+                <i class="fa-solid fa-wallet"></i>
+                <span class="nav-label">Deposit</span>
+            </a>
+            <a href="/riwayat" data-index="3" data-icon="fa-solid fa-clock-rotate-left" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span class="nav-label">Riwayat</span>
+            </a>
+            <a href="/notifikasi" data-index="4" data-icon="fa-solid fa-bell" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+                <i class="fa-solid fa-bell"></i>
+                <span id="nav-notif-badge" class="nav-notif-badge hidden">0</span>
+                <span class="nav-label">Notif</span>
+            </a>
+            <a href="/profile" id="nav-auth-link" data-index="5" data-icon="fa-regular fa-user" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item active">
+                <i class="fa-regular fa-user"></i>
+                <span id="nav-auth-label" class="nav-label">Profil</span>
+            </a>
+        </div>
+    </nav>
 
     <!-- FLOATING LIVE CHAT BUTTON -->
-<button id="floatingChatToggleBtn" onclick="toggleChatWidget()" title="Bantuan & Live Chat" class="fixed bottom-32 right-4 sm:right-6 z-[99990] flex items-center justify-center w-12 h-12 rounded-full bg-neoYellow border-[3px] border-black text-black shadow-[4px_4px_0px_#000] hover:scale-110 transition-transform duration-200 font-black">
-    <i class="fa-solid fa-comment-dots text-xl"></i>
-    <span class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-neoGreen border-2 border-black rounded-full"></span>
-</button>
+    <button id="floatingChatToggleBtn" onclick="toggleChatWidget()" title="Bantuan & Live Chat" class="fixed bottom-32 right-4 sm:right-6 z-[99990] flex items-center justify-center w-12 h-12 rounded-full bg-neoYellow border-[3px] border-black text-black shadow-[4px_4px_0px_#000] hover:scale-110 transition-transform duration-200 font-black">
+        <i class="fa-solid fa-comment-dots text-xl"></i>
+        <span class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-neoGreen border-2 border-black rounded-full"></span>
+    </button>
 
     <script>
         let fullEmail = '';
         let isEmailShown = false;
         
-/* =========================================================
-   LIQUID NOTCH CURVE NAVIGATION (MENTOK FULL-WIDTH & SIMETRIS)
-   ========================================================= */
-let liquidNavAnimationFrame = null;
-let currentNotchPixelX = 0;
-let activeNavIndex = 4;
+        /* =========================================================
+           LIQUID NOTCH CURVE NAVIGATION (6 MENU + SINKRON NOTIFIKASI)
+           ========================================================= */
+        const TOTAL_NAV_ITEMS = 6;
+        let liquidNavAnimationFrame = null;
+        let currentNotchPixelX = 0;
+        let activeNavIndex = (() => {
+            const activeEl = document.querySelector('.liquid-nav-item.active');
+            return activeEl ? Number(activeEl.dataset.index) : 0;
+        })();
 
-function buildPixelNotchPath(cx, totalW, totalH) {
-    const notchHalfW = 46;
-    const notchDepth = 28;
-    const c1 = 21;
-    const c2 = 19;
+        function buildPixelNotchPath(cx, totalW, totalH) {
+            const notchHalfW = 40;
+            const notchDepth = 26;
+            const c1 = 18;
+            const c2 = 16;
 
-    const leftEdge = Math.max(2, cx - notchHalfW);
-    const rightEdge = Math.min(totalW - 2, cx + notchHalfW);
+            const leftEdge = Math.max(2, cx - notchHalfW);
+            const rightEdge = Math.min(totalW - 2, cx + notchHalfW);
 
-    return [
-        `M 0,1.5`,
-        `L ${leftEdge},1.5`,
-        `C ${leftEdge + c1},1.5 ${cx - c2},${notchDepth} ${cx},${notchDepth}`,
-        `C ${cx + c2},${notchDepth} ${rightEdge - c1},1.5 ${rightEdge},1.5`,
-        `L ${totalW},1.5`,
-        `L ${totalW},${totalH}`,
-        `L 0,${totalH}`,
-        `Z`
-    ].join(' ');
-}
-
-function syncSvgViewBox() {
-    const nav = document.getElementById('liquidBottomNav');
-    const svg = document.getElementById('liquidNavSvg');
-    if (!nav || !svg) return { w: 360, h: 66 };
-    const rect = nav.getBoundingClientRect();
-    const w = Math.max(300, Math.round(rect.width));
-    const h = Math.max(66, Math.round(rect.height));
-    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    svg.setAttribute('preserveAspectRatio', 'none');
-    return { w, h };
-}
-
-function animateLiquidNotchTo(targetPxX) {
-    if (liquidNavAnimationFrame) cancelAnimationFrame(liquidNavAnimationFrame);
-    const pathEl = document.getElementById('liquidNavPath');
-    if (!pathEl) return;
-    const { w, h } = syncSvgViewBox();
-    const startPxX = currentNotchPixelX || targetPxX;
-    const distance = targetPxX - startPxX;
-    const duration = 450;
-    const startTime = performance.now();
-
-    function easeOutBack(t) {
-        const c1 = 1.4;
-        const c3 = c1 + 1;
-        return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
-    }
-
-    function step(now) {
-        const elapsed = Math.min((now - startTime) / duration, 1);
-        const eased = easeOutBack(elapsed);
-        currentNotchPixelX = startPxX + distance * eased;
-        pathEl.setAttribute('d', buildPixelNotchPath(currentNotchPixelX, w, h));
-
-        if (elapsed < 1) {
-            liquidNavAnimationFrame = requestAnimationFrame(step);
-        } else {
-            currentNotchPixelX = targetPxX;
-            pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
+            return [
+                `M 0,1.5`,
+                `L ${leftEdge},1.5`,
+                `C ${leftEdge + c1},1.5 ${cx - c2},${notchDepth} ${cx},${notchDepth}`,
+                `C ${cx + c2},${notchDepth} ${rightEdge - c1},1.5 ${rightEdge},1.5`,
+                `L ${totalW},1.5`,
+                `L ${totalW},${totalH}`,
+                `L 0,${totalH}`,
+                `Z`
+            ].join(' ');
         }
-    }
-    liquidNavAnimationFrame = requestAnimationFrame(step);
-}
 
-function setLiquidNavActive(index, animate = true) {
-    activeNavIndex = index;
-    const items = document.querySelectorAll('.liquid-nav-item');
-    const orb = document.getElementById('liquidFloatingOrb');
-    const orbIcon = document.getElementById('liquidOrbIcon');
-    const pathEl = document.getElementById('liquidNavPath');
+        function syncSvgViewBox() {
+            const nav = document.getElementById('liquidBottomNav');
+            const svg = document.getElementById('liquidNavSvg');
+            if (!nav || !svg) return { w: 360, h: 66 };
+            const rect = nav.getBoundingClientRect();
+            const w = Math.max(300, Math.round(rect.width));
+            const h = Math.max(66, Math.round(rect.height));
+            svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+            svg.setAttribute('preserveAspectRatio', 'none');
+            return { w, h };
+        }
 
-    if (!items.length || !orb || !orbIcon || !pathEl) return;
+        function animateLiquidNotchTo(targetPxX) {
+            if (liquidNavAnimationFrame) cancelAnimationFrame(liquidNavAnimationFrame);
+            const pathEl = document.getElementById('liquidNavPath');
+            if (!pathEl) return;
+            const { w, h } = syncSvgViewBox();
+            const startPxX = currentNotchPixelX || targetPxX;
+            const distance = targetPxX - startPxX;
+            const duration = 450;
+            const startTime = performance.now();
 
-    items.forEach((item, idx) => {
-        item.classList.toggle('active', idx === index);
-    });
+            function easeOutBack(t) {
+                const c1 = 1.4;
+                const c3 = c1 + 1;
+                return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+            }
 
-    const activeItem = items[index];
-    if (!activeItem) return;
+            function step(now) {
+                const elapsed = Math.min((now - startTime) / duration, 1);
+                const eased = easeOutBack(elapsed);
+                currentNotchPixelX = startPxX + distance * eased;
+                pathEl.setAttribute('d', buildPixelNotchPath(currentNotchPixelX, w, h));
 
-    const { w, h } = syncSvgViewBox();
-    const percentLeft = ((index + 0.5) / 5) * 100;
-    const targetPxX = ((index + 0.5) / 5) * w;
+                if (elapsed < 1) {
+                    liquidNavAnimationFrame = requestAnimationFrame(step);
+                } else {
+                    currentNotchPixelX = targetPxX;
+                    pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
+                }
+            }
+            liquidNavAnimationFrame = requestAnimationFrame(step);
+        }
 
-    orb.style.left = `${percentLeft}%`;
-    orbIcon.className = `${activeItem.dataset.icon} text-lg`;
+        function setLiquidNavActive(index, animate = true) {
+            activeNavIndex = index;
+            const items = document.querySelectorAll('.liquid-nav-item');
+            const orb = document.getElementById('liquidFloatingOrb');
+            const orbIcon = document.getElementById('liquidOrbIcon');
+            const pathEl = document.getElementById('liquidNavPath');
 
-    if (animate) {
-        orb.classList.remove('orb-bounce');
-        void orb.offsetWidth;
-        orb.classList.add('orb-bounce');
-        animateLiquidNotchTo(targetPxX);
-    } else {
-        currentNotchPixelX = targetPxX;
-        pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
-    }
-}
+            if (!items.length || !orb || !orbIcon || !pathEl) return;
 
-function handleLiquidNavClick(e, el) {
-    const targetHref = el.getAttribute('href');
-    const index = Number(el.dataset.index);
-    const currentPath = window.location.pathname;
+            items.forEach((item, idx) => {
+                item.classList.toggle('active', idx === index);
+            });
 
-    setLiquidNavActive(index, true);
+            const activeItem = items[index];
+            if (!activeItem) return;
 
-    if (targetHref && targetHref !== currentPath) {
-        e.preventDefault();
-        setTimeout(() => {
-            window.location.href = targetHref;
-        }, 320);
-    } else {
-        e.preventDefault();
-    }
-}
+            const { w, h } = syncSvgViewBox();
+            const percentLeft = ((index + 0.5) / TOTAL_NAV_ITEMS) * 100;
+            const targetPxX = ((index + 0.5) / TOTAL_NAV_ITEMS) * w;
 
-window.addEventListener('resize', () => {
-    setLiquidNavActive(activeNavIndex, false);
-});
+            orb.style.left = `${percentLeft}%`;
+            orbIcon.className = `${activeItem.dataset.icon} text-base`;
 
-document.addEventListener('DOMContentLoaded', () => {
-    const activeEl = document.querySelector('.liquid-nav-item.active');
-    const initialIdx = activeEl ? Number(activeEl.dataset.index) : 4;
-    setLiquidNavActive(initialIdx, false);
-});
+            if (animate) {
+                orb.classList.remove('orb-bounce');
+                void orb.offsetWidth;
+                orb.classList.add('orb-bounce');
+                animateLiquidNotchTo(targetPxX);
+            } else {
+                currentNotchPixelX = targetPxX;
+                pathEl.setAttribute('d', buildPixelNotchPath(targetPxX, w, h));
+            }
+        }
+
+        function handleLiquidNavClick(e, el) {
+            const targetHref = el.getAttribute('href');
+            const index = Number(el.dataset.index);
+            const currentPath = window.location.pathname;
+
+            setLiquidNavActive(index, true);
+
+            if (targetHref && targetHref !== currentPath) {
+                e.preventDefault();
+                setTimeout(() => {
+                    window.location.href = targetHref;
+                }, 320);
+            } else {
+                e.preventDefault();
+            }
+        }
+
+        /* =========================================================
+           SINKRONISASI BADGE MERAH NOTIFIKASI BELUM DIBACA
+           ========================================================= */
+        function renderUnreadNotifBadge(count) {
+            const badge = document.getElementById('nav-notif-badge');
+            if (!badge) return;
+            const unread = Math.max(0, Number(count) || 0);
+            if (unread > 0) {
+                badge.innerText = unread > 99 ? '99+' : String(unread);
+                badge.classList.remove('hidden');
+            } else {
+                badge.innerText = '0';
+                badge.classList.add('hidden');
+            }
+        }
+
+        async function syncUnreadNotificationCount() {
+            try {
+                const res = await fetch('/api/notifications/unread-count', { cache: 'no-store' });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (typeof data.unreadCount === 'number' || typeof data.count === 'number') {
+                        const total = Number(data.unreadCount ?? data.count ?? 0);
+                        renderUnreadNotifBadge(total);
+                        try { localStorage.setItem('arulz_unread_notif_count', String(total)); } catch (e) {}
+                        return;
+                    }
+                }
+
+                // Fallback jika endpoint utama mengembalikan daftar notifikasi
+                const listRes = await fetch('/api/notifications', { cache: 'no-store' });
+                if (listRes.ok) {
+                    const listData = await listRes.json();
+                    const items = Array.isArray(listData.notifications)
+                        ? listData.notifications
+                        : (Array.isArray(listData.data) ? listData.data : []);
+                    const unread = items.filter(n => !n.isRead && !n.read).length;
+                    renderUnreadNotifBadge(unread);
+                    try { localStorage.setItem('arulz_unread_notif_count', String(unread)); } catch (e) {}
+                }
+            } catch (e) {}
+        }
+
+        // Tampilkan angka tersimpan seketika saat halaman dibuka agar tidak berkedip
+        try {
+            const cachedUnread = Number(localStorage.getItem('arulz_unread_notif_count') || 0);
+            if (cachedUnread > 0) renderUnreadNotifBadge(cachedUnread);
+        } catch (e) {}
+
+        // Sinkronisasi real-time antar tab jika user membaca notifikasi di /notifikasi
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'arulz_unread_notif_count') {
+                renderUnreadNotifBadge(Number(e.newValue || 0));
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            setLiquidNavActive(activeNavIndex, false);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeEl = document.querySelector('.liquid-nav-item.active');
+            const initialIdx = activeEl ? Number(activeEl.dataset.index) : activeNavIndex;
+            setLiquidNavActive(initialIdx, false);
+            syncUnreadNotificationCount();
+        });
+
+        function handleUserLogout() {
+            Object.keys(localStorage).forEach((k) => {
+                if (k.startsWith('arulz_notif_read_session_')) {
+                    localStorage.removeItem(k);
+                }
+            });
+        }
+
+        async function syncNotifBadge(userEmail) {
+            try {
+                const res = await fetch('/api/notifications', { cache: 'no-store' });
+                const data = await res.json();
+                const badge = document.getElementById('navNotifBadge');
+                if (!badge || !data.status || !Array.isArray(data.notifications)) return;
+
+                const userKey = (userEmail || 'guest').toLowerCase();
+                let readIds = [];
+                try {
+                    readIds = JSON.parse(localStorage.getItem(`arulz_notif_read_session_${userKey}`) || '[]');
+                } catch (e) {}
+
+                const unread = data.notifications.filter((n) => !readIds.includes(String(n.id))).length;
+                if (unread > 0) {
+                    badge.innerText = unread > 99 ? '99+' : String(unread);
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            } catch (e) {}
+        }
 
         function formatRupiah(angka) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
@@ -636,6 +799,111 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="${url}" class="w-full h-full object-cover opacity-90">
                 `;
             }
+        }
+
+        async function renderTelegramLinkSection(user) {
+            const badge = document.getElementById('tgLinkStatusBadge');
+            const unlinkedBox = document.getElementById('tgUnlinkedContainer');
+            const linkedBox = document.getElementById('tgLinkedContainer');
+
+            if (!badge || !unlinkedBox || !linkedBox) return;
+
+            if (user.telegramLinked && user.telegramChatId) {
+                badge.innerText = 'TERTAUT AKTIF';
+                badge.className = 'text-[10px] font-black font-cyber bg-neoGreen text-black border-2 border-black px-2.5 py-0.5 rounded-md uppercase';
+                unlinkedBox.classList.add('hidden');
+                linkedBox.classList.remove('hidden');
+                document.getElementById('tgLinkedUsernameDisplay').innerText = user.telegramUsername || 'Akun Telegram';
+                document.getElementById('tgLinkedChatIdDisplay').innerText = `Chat ID: ${user.telegramChatId}`;
+                return;
+            }
+
+            badge.innerText = 'BELUM TERTAUT';
+            badge.className = 'text-[10px] font-black font-cyber bg-neoYellow text-black border-2 border-black px-2.5 py-0.5 rounded-md uppercase';
+            linkedBox.classList.add('hidden');
+            unlinkedBox.classList.remove('hidden');
+
+            try {
+                const cfgRes = await fetch('/api/auth/telegram-config');
+                const cfg = await cfgRes.json();
+                const wrapper = document.getElementById('telegramLinkWidgetWrapper');
+                if (cfg.status && cfg.botUsername && wrapper) {
+                    wrapper.innerHTML = '';
+                    window.onTelegramLinkAuth = async function(tgUser) {
+                        Swal.fire({
+                            title: 'MENAUTKAN TELEGRAM...',
+                            allowOutsideClick: false,
+                            didOpen: () => Swal.showLoading(),
+                            customClass: { popup: 'cyber-swal' }
+                        });
+                        try {
+                            const linkRes = await fetch('/api/user/link-telegram', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(tgUser)
+                            });
+                            const linkData = await linkRes.json();
+                            if (linkData.status) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'BERHASIL TERTAUT!',
+                                    text: linkData.message,
+                                    customClass: { popup: 'cyber-swal' }
+                                });
+                                loadUserProfile();
+                            } else {
+                                throw new Error(linkData.message || 'Gagal menautkan Telegram.');
+                            }
+                        } catch (err) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'GAGAL MENAUTKAN',
+                                text: err.message,
+                                customClass: { popup: 'cyber-swal' }
+                            });
+                        }
+                    };
+
+                    const script = document.createElement('script');
+                    script.async = true;
+                    script.src = 'https://telegram.org/js/telegram-widget.js?22';
+                    script.setAttribute('data-telegram-login', cfg.botUsername);
+                    script.setAttribute('data-size', 'large');
+                    script.setAttribute('data-radius', '12');
+                    script.setAttribute('data-onauth', 'onTelegramLinkAuth(user)');
+                    script.setAttribute('data-request-access', 'write');
+                    wrapper.appendChild(script);
+                }
+            } catch (e) {}
+        }
+
+        async function unlinkTelegramAccount() {
+            const confirm = await Swal.fire({
+                icon: 'warning',
+                title: 'PUTUSKAN TAUTAN TELEGRAM?',
+                text: 'Notifikasi selanjutnya akan dikirimkan melalui Email Anda.',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Putuskan',
+                cancelButtonText: 'Batal',
+                customClass: { popup: 'cyber-swal' }
+            });
+            if (!confirm.isConfirmed) return;
+
+            try {
+                const res = await fetch('/api/user/unlink-telegram', { method: 'POST' });
+                const data = await res.json();
+                if (data.status) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'TAUTAN DIPUTUSKAN',
+                        text: data.message,
+                        timer: 1600,
+                        showConfirmButton: false,
+                        customClass: { popup: 'cyber-swal' }
+                    });
+                    loadUserProfile();
+                }
+            } catch (e) {}
         }
 
         async function loadUserProfile() {
@@ -683,6 +951,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     if (authLabel) authLabel.innerText = 'Profil';
 
+                    renderTelegramLinkSection(data.user);
+                    syncNotifBadge(fullEmail);
                     renderInvitedUsers(data.user.invitedUsers || []);
                 } else {
                     window.location.href = '/login';
@@ -943,6 +1213,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadWidgetMessages();
             } catch(e) {}
         }
+        setInterval(() => {
+            if (!document.hidden) {
+                syncUnreadNotificationCount();
+            }
+        }, 12000);
     </script>
 </body>
 </html>

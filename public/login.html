@@ -126,6 +126,28 @@
 
         .hidden-form { display: none; }
 
+        /* Wrapper khusus tombol Telegram Widget agar menyatu dengan desain Neo-Brutalism */
+        .telegram-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .telegram-widget-overlay {
+            position: absolute;
+            inset: 0;
+            opacity: 0.01;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .telegram-widget-overlay iframe {
+            transform: scale(3.5);
+            transform-origin: center center;
+            cursor: pointer !important;
+        }
+
         .swal2-popup.cyber-swal {
             background: #FFFFFF !important;
             border: 3.5px solid #000000 !important;
@@ -278,6 +300,13 @@
             </div>
 
             <div class="space-y-2">
+                <!-- TOMBOL TELEGRAM LOGIN WIDGET (DIRECT BOT) -->
+                <div id="btnTelegramAuth" class="neo-btn btn-disabled telegram-btn-wrapper flex items-center justify-center gap-2.5 bg-[#24A1DE] text-white py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
+                    <i class="fa-brands fa-telegram text-lg leading-none"></i>
+                    <span>LANJUTKAN DENGAN TELEGRAM</span>
+                    <div id="tg-widget-login" class="telegram-widget-overlay"></div>
+                </div>
+
                 <a id="btnGithubAuth" href="/auth/github" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-neoCyan text-black py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
                     <i class="fa-brands fa-github text-lg leading-none"></i> LANJUTKAN DENGAN GITHUB
                 </a>
@@ -337,6 +366,13 @@
             </div>
 
             <div class="space-y-2">
+                <!-- TOMBOL TELEGRAM LOGIN WIDGET REGISTER (DIRECT BOT) -->
+                <div id="btnTelegramAuthRegister" class="neo-btn btn-disabled telegram-btn-wrapper flex items-center justify-center gap-2.5 bg-[#24A1DE] text-white py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
+                    <i class="fa-brands fa-telegram text-lg leading-none"></i>
+                    <span>DAFTAR DENGAN TELEGRAM</span>
+                    <div id="tg-widget-register" class="telegram-widget-overlay"></div>
+                </div>
+
                 <a id="btnGithubAuthRegister" href="/auth/github" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-neoCyan text-black py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
                     <i class="fa-brands fa-github text-lg leading-none"></i> DAFTAR DENGAN GITHUB
                 </a>
@@ -402,6 +438,77 @@
 
         let rawUsernameInput = '';
         let isUsernameVisible = false;
+        let currentRefCode = '';
+
+        // ============================================================
+        // TELEGRAM LOGIN WIDGET HANDLER (DIRECT BOT AUTH)
+        // ============================================================
+        window.onTelegramAuth = async function(user) {
+            Swal.fire({
+                ...swalConfig,
+                title: 'Menghubungkan Telegram...',
+                text: 'Memverifikasi identitas akun Telegram Anda dengan Bot',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                const refInputVal = document.getElementById('referralCodeInput')?.value?.trim() || currentRefCode;
+                const response = await fetch('/auth/telegram/callback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...user,
+                        ref: refInputVal || undefined
+                    })
+                });
+
+                const result = await response.json();
+                if (result.status) {
+                    window.location.href = result.redirectUrl || '/dashboard';
+                } else {
+                    Swal.fire({
+                        ...swalConfig,
+                        icon: 'error',
+                        title: 'Gagal Login Telegram',
+                        text: result.message || 'Autentikasi Telegram tidak valid.'
+                    });
+                }
+            } catch (err) {
+                Swal.fire({
+                    ...swalConfig,
+                    icon: 'error',
+                    title: 'Kesalahan Jaringan',
+                    text: 'Gagal terhubung ke server saat memverifikasi Telegram.'
+                });
+            }
+        };
+
+        async function initTelegramLoginWidgets() {
+            try {
+                const res = await fetch('/api/auth/telegram-config');
+                const data = await res.json();
+                if (!data.status || !data.botUsername) return;
+
+                const containers = ['tg-widget-login', 'tg-widget-register'];
+                containers.forEach((containerId) => {
+                    const el = document.getElementById(containerId);
+                    if (!el) return;
+                    el.innerHTML = '';
+
+                    const script = document.createElement('script');
+                    script.async = true;
+                    script.src = 'https://telegram.org/js/telegram-widget.js?22';
+                    script.setAttribute('data-telegram-login', data.botUsername);
+                    script.setAttribute('data-size', 'large');
+                    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+                    script.setAttribute('data-request-access', 'write');
+                    el.appendChild(script);
+                });
+            } catch (e) {
+                console.warn('Telegram widget gagal dimuat:', e);
+            }
+        }
 
         function maskInputVal(val) {
             if (!val) return '';
@@ -453,34 +560,40 @@
             if (mode === 'login') {
                 const isChecked = document.getElementById('terms-login').checked;
                 const btnSubmit = document.getElementById('btnSubmitLogin');
+                const btnTelegram = document.getElementById('btnTelegramAuth');
                 const btnGithub = document.getElementById('btnGithubAuth');
                 const btnGoogle = document.getElementById('btnGoogleAuth');
 
                 if (isChecked) {
                     btnSubmit.removeAttribute('disabled');
                     btnSubmit.classList.remove('btn-disabled');
+                    btnTelegram.classList.remove('btn-disabled');
                     btnGithub.classList.remove('btn-disabled');
                     btnGoogle.classList.remove('btn-disabled');
                 } else {
                     btnSubmit.setAttribute('disabled', 'true');
                     btnSubmit.classList.add('btn-disabled');
+                    btnTelegram.classList.add('btn-disabled');
                     btnGithub.classList.add('btn-disabled');
                     btnGoogle.classList.add('btn-disabled');
                 }
             } else if (mode === 'register') {
                 const isChecked = document.getElementById('terms-register').checked;
                 const btnSubmit = document.getElementById('btnSubmitRegister');
+                const btnTelegram = document.getElementById('btnTelegramAuthRegister');
                 const btnGithub = document.getElementById('btnGithubAuthRegister');
                 const btnGoogle = document.getElementById('btnGoogleAuthRegister');
 
                 if (isChecked) {
                     btnSubmit.removeAttribute('disabled');
                     btnSubmit.classList.remove('btn-disabled');
+                    btnTelegram.classList.remove('btn-disabled');
                     btnGithub.classList.remove('btn-disabled');
                     btnGoogle.classList.remove('btn-disabled');
                 } else {
                     btnSubmit.setAttribute('disabled', 'true');
                     btnSubmit.classList.add('btn-disabled');
+                    btnTelegram.classList.add('btn-disabled');
                     btnGithub.classList.add('btn-disabled');
                     btnGoogle.classList.add('btn-disabled');
                 }
@@ -573,11 +686,14 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            initTelegramLoginWidgets();
+
             const urlParams = new URLSearchParams(window.location.search);
             const refCode = urlParams.get('ref');
 
             if (refCode) {
                 const cleanRef = refCode.trim().toUpperCase();
+                currentRefCode = cleanRef;
                 document.cookie = `pending_ref=${cleanRef}; path=/; max-age=86400`;
 
                 switchTab('signup');

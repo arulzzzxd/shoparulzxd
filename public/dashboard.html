@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#FFDE59">
     <title>ArulzXD Store - Katalog Source Code &amp; Produk Digital</title>
-    <meta name="description" content="ArulzXD Store menyediakan source code, script, dan produk digital. Jelajahi katalog produk digital dan layanan dengan proses pemesanan online.">
-    <meta name="robots" content="index, follow, max-image-preview:large">
-    <link rel="canonical" href="https://www.shoparulzxd.biz.id/">
+    <meta name="description" content="ArulzXD Store: Tempat belanja Source Code, Script, dan Layanan Digital otomatis 24 jam.">
 
     <!-- Favicon & Icons -->
     <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
@@ -35,16 +33,6 @@
     <meta name="twitter:description" content="Belanja Source Code, Script, dan Layanan Digital langsung diproses otomatis setelah pembayaran.">
     <meta name="twitter:image" content="https://cdn.larasxd.my.id/files/7TZ5vL.jpg">
     <meta name="twitter:image:alt" content="ArulzXD Store">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "ArulzXD Store",
-      "url": "https://www.shoparulzxd.biz.id/",
-      "logo": "https://cdn.larasxd.my.id/files/1wh5do.png"
-    }
-    </script>
 
     <!-- Styles & Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -209,8 +197,8 @@
             border-radius: 99px;
         }
 
-        /* =========================================================
-           LIQUID NOTCH CURVE BOTTOM NAVIGATION (MENTOK FULL-WIDTH)
+/* =========================================================
+           LIQUID NOTCH CURVE BOTTOM NAVIGATION (6 MENU + NOTIF BADGE)
            ========================================================= */
         .liquid-nav-wrapper {
             position: fixed;
@@ -240,10 +228,10 @@
         }
         .liquid-floating-orb {
             position: absolute;
-            top: -26px;
-            width: 46px;
-            height: 46px;
-            margin-left: -23px;
+            top: -24px;
+            width: 44px;
+            height: 44px;
+            margin-left: -22px;
             border-radius: 9999px;
             background-color: #FFDF4F;
             border: 3px solid #000000;
@@ -268,11 +256,12 @@
             position: relative;
             z-index: 10;
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(6, 1fr);
             height: 66px;
             align-items: center;
         }
         .liquid-nav-item {
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -283,24 +272,52 @@
             transition: color 0.25s ease;
         }
         .liquid-nav-item i {
-            font-size: 16px;
+            font-size: 15px;
             transition: opacity 0.2s ease, transform 0.32s ease;
         }
-        .liquid-nav-item span {
-            font-size: 10px;
+        .liquid-nav-item span.nav-label {
+            font-size: 9.5px;
             font-weight: 800;
             margin-top: 3px;
+            letter-spacing: -0.01em;
             transition: opacity 0.2s ease, transform 0.32s ease, color 0.25s ease;
         }
         .liquid-nav-item.active i {
             opacity: 0;
             transform: translateY(-16px) scale(0.4);
         }
-        .liquid-nav-item.active span {
+        .liquid-nav-item.active span.nav-label {
             opacity: 1;
             color: #000000;
             font-weight: 900;
             transform: translateY(3px);
+        }
+        /* Penanda Merah + Angka Jumlah Notifikasi Belum Dibaca */
+        .nav-notif-badge {
+            position: absolute;
+            top: 8px;
+            right: calc(50% - 17px);
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            border-radius: 9999px;
+            background-color: #EF233C;
+            color: #FFFFFF;
+            border: 2px solid #000000;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 9px;
+            font-weight: 900;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 1.5px 1.5px 0px #000000;
+            z-index: 20;
+            pointer-events: none;
+            transition: transform 0.2s ease;
+        }
+        .nav-notif-badge.hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -564,7 +581,7 @@
         </div>
     </footer>
 
-    <!-- BOTTOM NAVIGATION DENGAN LEKUKAN BERSIH -->
+    <!-- BOTTOM NAVIGATION 6-MENU DENGAN LEKUKAN BERSIH -->
     <nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
         <div class="liquid-nav-bg">
             <svg class="liquid-nav-svg" id="liquidNavSvg" xmlns="http://www.w3.org/2000/svg">
@@ -572,32 +589,37 @@
             </svg>
         </div>
 
-        <!-- Bulatan Ikon Aktif (Home) -->
-        <div class="liquid-floating-orb" id="liquidFloatingOrb" style="left: 10%;">
-            <i id="liquidOrbIcon" class="fa-solid fa-house text-lg"></i>
+        <!-- Bulatan Ikon Aktif (Home - Index 0: 8.333%) -->
+        <div class="liquid-floating-orb" id="liquidFloatingOrb" style="left: 8.333%;">
+            <i id="liquidOrbIcon" class="fa-solid fa-house text-base"></i>
         </div>
 
-        <!-- 5 Item Menu -->
+        <!-- 6 Item Menu -->
         <div class="liquid-nav-items">
             <a href="/" data-index="0" data-icon="fa-solid fa-house" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item active">
                 <i class="fa-solid fa-house"></i>
-                <span>Home</span>
+                <span class="nav-label">Home</span>
             </a>
             <a href="/store" data-index="1" data-icon="fa-solid fa-bag-shopping" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
                 <i class="fa-solid fa-bag-shopping"></i>
-                <span>Toko</span>
+                <span class="nav-label">Toko</span>
             </a>
             <a href="/deposit" data-index="2" data-icon="fa-solid fa-wallet" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
                 <i class="fa-solid fa-wallet"></i>
-                <span>Deposit</span>
+                <span class="nav-label">Deposit</span>
             </a>
             <a href="/riwayat" data-index="3" data-icon="fa-solid fa-clock-rotate-left" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
                 <i class="fa-solid fa-clock-rotate-left"></i>
-                <span>Riwayat</span>
+                <span class="nav-label">Riwayat</span>
             </a>
-            <a href="/login" id="nav-auth-link" data-index="4" data-icon="fa-regular fa-user" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+            <a href="/notifikasi" data-index="4" data-icon="fa-solid fa-bell" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+                <i class="fa-solid fa-bell"></i>
+                <span id="nav-notif-badge" class="nav-notif-badge hidden">0</span>
+                <span class="nav-label">Notif</span>
+            </a>
+            <a href="/login" id="nav-auth-link" data-index="5" data-icon="fa-regular fa-user" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
                 <i class="fa-regular fa-user"></i>
-                <span id="nav-auth-label">Akun</span>
+                <span id="nav-auth-label" class="nav-label">Akun</span>
             </a>
         </div>
     </nav>
@@ -610,17 +632,21 @@
 
     <script>
         /* =========================================================
-           LIQUID NOTCH CURVE NAVIGATION (MENTOK FULL-WIDTH & SIMETRIS)
+           LIQUID NOTCH CURVE NAVIGATION (6 MENU + SINKRON NOTIFIKASI)
            ========================================================= */
+        const TOTAL_NAV_ITEMS = 6;
         let liquidNavAnimationFrame = null;
         let currentNotchPixelX = 0;
-        let activeNavIndex = 0;
+        let activeNavIndex = (() => {
+            const activeEl = document.querySelector('.liquid-nav-item.active');
+            return activeEl ? Number(activeEl.dataset.index) : 0;
+        })();
 
         function buildPixelNotchPath(cx, totalW, totalH) {
-            const notchHalfW = 46;
-            const notchDepth = 28;
-            const c1 = 21;
-            const c2 = 19;
+            const notchHalfW = 40;
+            const notchDepth = 26;
+            const c1 = 18;
+            const c2 = 16;
 
             const leftEdge = Math.max(2, cx - notchHalfW);
             const rightEdge = Math.min(totalW - 2, cx + notchHalfW);
@@ -698,11 +724,11 @@
             if (!activeItem) return;
 
             const { w, h } = syncSvgViewBox();
-            const percentLeft = ((index + 0.5) / 5) * 100;
-            const targetPxX = ((index + 0.5) / 5) * w;
+            const percentLeft = ((index + 0.5) / TOTAL_NAV_ITEMS) * 100;
+            const targetPxX = ((index + 0.5) / TOTAL_NAV_ITEMS) * w;
 
             orb.style.left = `${percentLeft}%`;
-            orbIcon.className = `${activeItem.dataset.icon} text-lg`;
+            orbIcon.className = `${activeItem.dataset.icon} text-base`;
 
             if (animate) {
                 orb.classList.remove('orb-bounce');
@@ -732,15 +758,78 @@
             }
         }
 
+        /* =========================================================
+           SINKRONISASI BADGE MERAH NOTIFIKASI BELUM DIBACA
+           ========================================================= */
+        function renderUnreadNotifBadge(count) {
+            const badge = document.getElementById('nav-notif-badge');
+            if (!badge) return;
+            const unread = Math.max(0, Number(count) || 0);
+            if (unread > 0) {
+                badge.innerText = unread > 99 ? '99+' : String(unread);
+                badge.classList.remove('hidden');
+            } else {
+                badge.innerText = '0';
+                badge.classList.add('hidden');
+            }
+        }
+
+        async function syncUnreadNotificationCount() {
+            try {
+                const res = await fetch('/api/notifications/unread-count', { cache: 'no-store' });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (typeof data.unreadCount === 'number' || typeof data.count === 'number') {
+                        const total = Number(data.unreadCount ?? data.count ?? 0);
+                        renderUnreadNotifBadge(total);
+                        try { localStorage.setItem('arulz_unread_notif_count', String(total)); } catch (e) {}
+                        return;
+                    }
+                }
+
+                // Fallback jika endpoint utama mengembalikan daftar notifikasi
+                const listRes = await fetch('/api/notifications', { cache: 'no-store' });
+                if (listRes.ok) {
+                    const listData = await listRes.json();
+                    const items = Array.isArray(listData.notifications)
+                        ? listData.notifications
+                        : (Array.isArray(listData.data) ? listData.data : []);
+                    const unread = items.filter(n => !n.isRead && !n.read).length;
+                    renderUnreadNotifBadge(unread);
+                    try { localStorage.setItem('arulz_unread_notif_count', String(unread)); } catch (e) {}
+                }
+            } catch (e) {}
+        }
+
+        // Tampilkan angka tersimpan seketika saat halaman dibuka agar tidak berkedip
+        try {
+            const cachedUnread = Number(localStorage.getItem('arulz_unread_notif_count') || 0);
+            if (cachedUnread > 0) renderUnreadNotifBadge(cachedUnread);
+        } catch (e) {}
+
+        // Sinkronisasi real-time antar tab jika user membaca notifikasi di /notifikasi
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'arulz_unread_notif_count') {
+                renderUnreadNotifBadge(Number(e.newValue || 0));
+            }
+        });
+
         window.addEventListener('resize', () => {
             setLiquidNavActive(activeNavIndex, false);
         });
 
         document.addEventListener('DOMContentLoaded', () => {
             const activeEl = document.querySelector('.liquid-nav-item.active');
-            const initialIdx = activeEl ? Number(activeEl.dataset.index) : 0;
+            const initialIdx = activeEl ? Number(activeEl.dataset.index) : activeNavIndex;
             setLiquidNavActive(initialIdx, false);
+            syncUnreadNotificationCount();
         });
+
+        setInterval(() => {
+            if (!document.hidden) {
+                syncUnreadNotificationCount();
+            }
+        }, 12000);
 
         const STORE_TIMEZONE = 'Asia/Jakarta';
         if (window.moment) {
@@ -1532,8 +1621,9 @@
         setInterval(() => {
             if (!document.hidden) {
                 refreshRealtimeStats();
+                syncUnreadNotificationCount();
             }
-        }, 10000);
+        }, 12000);
     </script>
 </body>
 </html>

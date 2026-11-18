@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Katalog Source Code & Produk Digital | ArulzXD Store</title>
-    <meta name="description" content="Jelajahi katalog ArulzXD Store: source code, script, dan produk digital. Lihat detail produk dan lakukan pemesanan secara online.">
-    <meta name="robots" content="index, follow, max-image-preview:large">
-    <link rel="canonical" href="https://www.shoparulzxd.biz.id/store">
+    <title>ArulzXD Store - Marketplace</title>
 
     <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
     <link rel="shortcut icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
@@ -14,7 +11,7 @@
 
     <!-- Open Graph / Facebook / WhatsApp / Telegram -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.shoparulzxd.biz.id/store">
+    <meta property="og:url" content="https://www.arulzxd.biz.id/store">
     <meta property="og:title" content="ArulzXD Store - Marketplace Source Code & Layanan Digital">
     <meta property="og:description" content="Penyedia Source Code, Script, & Layanan Digital Premium Terpercaya dengan Akses Super Cepat & Otomatis.">
     <meta property="og:image" content="https://cdn.larasxd.my.id/files/t19j.jpg">
@@ -25,26 +22,10 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://www.shoparulzxd.biz.id/store">
+    <meta name="twitter:url" content="https://www.arulzxd.biz.id/store">
     <meta name="twitter:title" content="ArulzXD Store - Marketplace Source Code & Layanan Digital">
     <meta name="twitter:description" content="Penyedia Source Code, Script, & Layanan Digital Premium Terpercaya dengan Akses Super Cepat & Otomatis.">
     <meta name="twitter:image" content="https://cdn.larasxd.my.id/files/t19j.jpg">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      "name": "Katalog Source Code & Produk Digital | ArulzXD Store",
-      "description": "Katalog source code, script, dan produk digital dari ArulzXD Store.",
-      "url": "https://www.shoparulzxd.biz.id/store",
-      "inLanguage": "id-ID",
-      "isPartOf": {
-        "@type": "WebSite",
-        "name": "ArulzXD Store",
-        "url": "https://www.shoparulzxd.biz.id/"
-      }
-    }
-    </script>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -144,99 +125,128 @@
             font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
 
-/* =========================================================
-   LIQUID NOTCH CURVE BOTTOM NAVIGATION (MENTOK FULL-WIDTH)
-   ========================================================= */
-.liquid-nav-wrapper {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    z-index: 40;
-    height: 66px;
-    user-select: none;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: transparent;
-}
-.liquid-nav-bg {
-    position: absolute;
-    inset: 0;
-    filter: drop-shadow(0px -3px 0px rgba(0, 0, 0, 0.08));
-    pointer-events: none;
-}
-.liquid-nav-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-    overflow: visible;
-}
-.liquid-floating-orb {
-    position: absolute;
-    top: -26px;
-    width: 46px;
-    height: 46px;
-    margin-left: -23px;
-    border-radius: 9999px;
-    background-color: #FFDF4F;
-    border: 3px solid #000000;
-    box-shadow: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #000000;
-    pointer-events: none;
-    will-change: left, transform;
-    transition: left 0.48s cubic-bezier(0.34, 1.38, 0.64, 1);
-}
-.liquid-floating-orb.orb-bounce {
-    animation: orbJump 0.48s cubic-bezier(0.34, 1.5, 0.64, 1);
-}
-@keyframes orbJump {
-    0% { transform: translate3d(0, 14px, 0) scale(0.82); }
-    55% { transform: translate3d(0, -5px, 0) scale(1.06); }
-    100% { transform: translate3d(0, 0px, 0) scale(1); }
-}
-.liquid-nav-items {
-    position: relative;
-    z-index: 10;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    height: 66px;
-    align-items: center;
-}
-.liquid-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: rgba(0, 0, 0, 0.72);
-    text-decoration: none;
-    transition: color 0.25s ease;
-}
-.liquid-nav-item i {
-    font-size: 16px;
-    transition: opacity 0.2s ease, transform 0.32s ease;
-}
-.liquid-nav-item span {
-    font-size: 10px;
-    font-weight: 800;
-    margin-top: 3px;
-    transition: opacity 0.2s ease, transform 0.32s ease, color 0.25s ease;
-}
-.liquid-nav-item.active i {
-    opacity: 0;
-    transform: translateY(-16px) scale(0.4);
-}
-.liquid-nav-item.active span {
-    opacity: 1;
-    color: #000000;
-    font-weight: 900;
-    transform: translateY(3px);
-}
+        /* =========================================================
+           LIQUID NOTCH CURVE BOTTOM NAVIGATION (6 MENU + NOTIF BADGE)
+           ========================================================= */
+        .liquid-nav-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            z-index: 40;
+            height: 66px;
+            user-select: none;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            background: transparent;
+        }
+        .liquid-nav-bg {
+            position: absolute;
+            inset: 0;
+            filter: drop-shadow(0px -3px 0px rgba(0, 0, 0, 0.08));
+            pointer-events: none;
+        }
+        .liquid-nav-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: visible;
+        }
+        .liquid-floating-orb {
+            position: absolute;
+            top: -24px;
+            width: 44px;
+            height: 44px;
+            margin-left: -22px;
+            border-radius: 9999px;
+            background-color: #FFDF4F;
+            border: 3px solid #000000;
+            box-shadow: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000000;
+            pointer-events: none;
+            will-change: left, transform;
+            transition: left 0.48s cubic-bezier(0.34, 1.38, 0.64, 1);
+        }
+        .liquid-floating-orb.orb-bounce {
+            animation: orbJump 0.48s cubic-bezier(0.34, 1.5, 0.64, 1);
+        }
+        @keyframes orbJump {
+            0% { transform: translate3d(0, 14px, 0) scale(0.82); }
+            55% { transform: translate3d(0, -5px, 0) scale(1.06); }
+            100% { transform: translate3d(0, 0px, 0) scale(1); }
+        }
+        .liquid-nav-items {
+            position: relative;
+            z-index: 10;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            height: 66px;
+            align-items: center;
+        }
+        .liquid-nav-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: rgba(0, 0, 0, 0.72);
+            text-decoration: none;
+            transition: color 0.25s ease;
+        }
+        .liquid-nav-item i {
+            font-size: 15px;
+            transition: opacity 0.2s ease, transform 0.32s ease;
+        }
+        .liquid-nav-item span.nav-label {
+            font-size: 9.5px;
+            font-weight: 800;
+            margin-top: 3px;
+            letter-spacing: -0.01em;
+            transition: opacity 0.2s ease, transform 0.32s ease, color 0.25s ease;
+        }
+        .liquid-nav-item.active i {
+            opacity: 0;
+            transform: translateY(-16px) scale(0.4);
+        }
+        .liquid-nav-item.active span.nav-label {
+            opacity: 1;
+            color: #000000;
+            font-weight: 900;
+            transform: translateY(3px);
+        }
+        /* Penanda Merah + Angka Jumlah Notifikasi Belum Dibaca */
+        .nav-notif-badge {
+            position: absolute;
+            top: 8px;
+            right: calc(50% - 17px);
+            min-width: 17px;
+            height: 17px;
+            padding: 0 4px;
+            border-radius: 9999px;
+            background-color: #EF233C;
+            color: #FFFFFF;
+            border: 2px solid #000000;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 9px;
+            font-weight: 900;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 1.5px 1.5px 0px #000000;
+            z-index: 20;
+            pointer-events: none;
+            transition: transform 0.2s ease;
+        }
+        .nav-notif-badge.hidden {
+            display: none !important;
+        }
 
         /* CUSTOM VIDEO OVERLAY PLAY/PAUSE */
         .video-container {
@@ -424,7 +434,7 @@
                     <i class="fa-solid fa-store"></i> Digital Marketplace
                 </span>
                 <h1 class="text-2xl sm:text-4xl font-black text-black font-cyber tracking-tight leading-tight">
-                    Arulz<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">XD</span> Store - Katalog Source Code & Produk Digital
+                    Arulz<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">XD</span> Store
                 </h1>
                 <p class="text-xs sm:text-sm font-bold text-black mt-2 leading-relaxed">
                     Penyedia Source Code, Script, & Layanan Digital Premium Terpercaya dengan Akses Super Cepat & Otomatis.
@@ -851,43 +861,48 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION DENGAN LEKUKAN BERSIH -->
-<nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
-    <div class="liquid-nav-bg">
-        <svg class="liquid-nav-svg" id="liquidNavSvg" xmlns="http://www.w3.org/2000/svg">
-            <path id="liquidNavPath" d="" fill="#FFFFFF" stroke="#000000" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
-        </svg>
-    </div>
+    <!-- BOTTOM NAVIGATION 6-MENU DENGAN LEKUKAN BERSIH -->
+    <nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
+        <div class="liquid-nav-bg">
+            <svg class="liquid-nav-svg" id="liquidNavSvg" xmlns="http://www.w3.org/2000/svg">
+                <path id="liquidNavPath" d="" fill="#FFFFFF" stroke="#000000" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" />
+            </svg>
+        </div>
 
-    <!-- Bulatan Ikon Aktif (Toko) -->
-    <div class="liquid-floating-orb" id="liquidFloatingOrb" style="left: 30%;">
-        <i id="liquidOrbIcon" class="fa-solid fa-bag-shopping text-lg"></i>
-    </div>
+        <!-- Bulatan Ikon Aktif (Toko - Index 1: 25%) -->
+        <div class="liquid-floating-orb" id="liquidFloatingOrb" style="left: 25%;">
+            <i id="liquidOrbIcon" class="fa-solid fa-bag-shopping text-base"></i>
+        </div>
 
-    <!-- 5 Item Menu -->
-    <div class="liquid-nav-items">
-        <a href="/dashboard" data-index="0" data-icon="fa-solid fa-house" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
-            <i class="fa-solid fa-house"></i>
-            <span>Home</span>
-        </a>
-        <a href="/store" data-index="1" data-icon="fa-solid fa-bag-shopping" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item active">
-            <i class="fa-solid fa-bag-shopping"></i>
-            <span>Toko</span>
-        </a>
-        <a id="tour-nav-deposit" href="/deposit" data-index="2" data-icon="fa-solid fa-wallet" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
-            <i class="fa-solid fa-wallet"></i>
-            <span>Deposit</span>
-        </a>
-        <a id="tour-nav-riwayat" href="/riwayat" data-index="3" data-icon="fa-solid fa-clock-rotate-left" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
-            <i class="fa-solid fa-clock-rotate-left"></i>
-            <span>Riwayat</span>
-        </a>
-        <a id="tour-nav-profile" href="/profile" data-index="4" data-icon="fa-regular fa-user" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
-            <i class="fa-regular fa-user"></i>
-            <span id="nav-auth-label">Profil</span>
-        </a>
-    </div>
-</nav>
+        <!-- 6 Item Menu -->
+        <div class="liquid-nav-items">
+            <a href="/dashboard" data-index="0" data-icon="fa-solid fa-house" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+                <i class="fa-solid fa-house"></i>
+                <span class="nav-label">Home</span>
+            </a>
+            <a href="/store" data-index="1" data-icon="fa-solid fa-bag-shopping" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item active">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span class="nav-label">Toko</span>
+            </a>
+            <a id="tour-nav-deposit" href="/deposit" data-index="2" data-icon="fa-solid fa-wallet" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+                <i class="fa-solid fa-wallet"></i>
+                <span class="nav-label">Deposit</span>
+            </a>
+            <a id="tour-nav-riwayat" href="/riwayat" data-index="3" data-icon="fa-solid fa-clock-rotate-left" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span class="nav-label">Riwayat</span>
+            </a>
+            <a href="/notifikasi" data-index="4" data-icon="fa-solid fa-bell" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+                <i class="fa-solid fa-bell"></i>
+                <span id="nav-notif-badge" class="nav-notif-badge hidden">0</span>
+                <span class="nav-label">Notif</span>
+            </a>
+            <a id="tour-nav-profile" href="/profile" data-index="5" data-icon="fa-regular fa-user" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+                <i class="fa-regular fa-user"></i>
+                <span id="nav-auth-label" class="nav-label">Profil</span>
+            </a>
+        </div>
+    </nav>
 
     <!-- =========================================================
          ONBOARDING TUTORIAL INTERAKTIF (SPOTLIGHT + TOOLTIP CARD)
@@ -930,17 +945,21 @@
         <!-- JAVASCRIPT LOGIC FULL INTEGRATED -->
     <script>
         /* =========================================================
-           LIQUID NOTCH CURVE NAVIGATION (MENTOK FULL-WIDTH & SIMETRIS)
+           LIQUID NOTCH CURVE NAVIGATION (6 MENU + SINKRON NOTIFIKASI)
            ========================================================= */
+        const TOTAL_NAV_ITEMS = 6;
         let liquidNavAnimationFrame = null;
         let currentNotchPixelX = 0;
-        let activeNavIndex = 1;
+        let activeNavIndex = (() => {
+            const activeEl = document.querySelector('.liquid-nav-item.active');
+            return activeEl ? Number(activeEl.dataset.index) : 0;
+        })();
 
         function buildPixelNotchPath(cx, totalW, totalH) {
-            const notchHalfW = 46;
-            const notchDepth = 28;
-            const c1 = 21;
-            const c2 = 19;
+            const notchHalfW = 40;
+            const notchDepth = 26;
+            const c1 = 18;
+            const c2 = 16;
 
             const leftEdge = Math.max(2, cx - notchHalfW);
             const rightEdge = Math.min(totalW - 2, cx + notchHalfW);
@@ -1018,11 +1037,11 @@
             if (!activeItem) return;
 
             const { w, h } = syncSvgViewBox();
-            const percentLeft = ((index + 0.5) / 5) * 100;
-            const targetPxX = ((index + 0.5) / 5) * w;
+            const percentLeft = ((index + 0.5) / TOTAL_NAV_ITEMS) * 100;
+            const targetPxX = ((index + 0.5) / TOTAL_NAV_ITEMS) * w;
 
             orb.style.left = `${percentLeft}%`;
-            orbIcon.className = `${activeItem.dataset.icon} text-lg`;
+            orbIcon.className = `${activeItem.dataset.icon} text-base`;
 
             if (animate) {
                 orb.classList.remove('orb-bounce');
@@ -1052,14 +1071,71 @@
             }
         }
 
+        /* =========================================================
+           SINKRONISASI BADGE MERAH NOTIFIKASI BELUM DIBACA
+           ========================================================= */
+        function renderUnreadNotifBadge(count) {
+            const badge = document.getElementById('nav-notif-badge');
+            if (!badge) return;
+            const unread = Math.max(0, Number(count) || 0);
+            if (unread > 0) {
+                badge.innerText = unread > 99 ? '99+' : String(unread);
+                badge.classList.remove('hidden');
+            } else {
+                badge.innerText = '0';
+                badge.classList.add('hidden');
+            }
+        }
+
+        async function syncUnreadNotificationCount() {
+            try {
+                const res = await fetch('/api/notifications/unread-count', { cache: 'no-store' });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (typeof data.unreadCount === 'number' || typeof data.count === 'number') {
+                        const total = Number(data.unreadCount ?? data.count ?? 0);
+                        renderUnreadNotifBadge(total);
+                        try { localStorage.setItem('arulz_unread_notif_count', String(total)); } catch (e) {}
+                        return;
+                    }
+                }
+
+                // Fallback jika endpoint utama mengembalikan daftar notifikasi
+                const listRes = await fetch('/api/notifications', { cache: 'no-store' });
+                if (listRes.ok) {
+                    const listData = await listRes.json();
+                    const items = Array.isArray(listData.notifications)
+                        ? listData.notifications
+                        : (Array.isArray(listData.data) ? listData.data : []);
+                    const unread = items.filter(n => !n.isRead && !n.read).length;
+                    renderUnreadNotifBadge(unread);
+                    try { localStorage.setItem('arulz_unread_notif_count', String(unread)); } catch (e) {}
+                }
+            } catch (e) {}
+        }
+
+        // Tampilkan angka tersimpan seketika saat halaman dibuka agar tidak berkedip
+        try {
+            const cachedUnread = Number(localStorage.getItem('arulz_unread_notif_count') || 0);
+            if (cachedUnread > 0) renderUnreadNotifBadge(cachedUnread);
+        } catch (e) {}
+
+        // Sinkronisasi real-time antar tab jika user membaca notifikasi di /notifikasi
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'arulz_unread_notif_count') {
+                renderUnreadNotifBadge(Number(e.newValue || 0));
+            }
+        });
+
         window.addEventListener('resize', () => {
             setLiquidNavActive(activeNavIndex, false);
         });
 
         document.addEventListener('DOMContentLoaded', () => {
             const activeEl = document.querySelector('.liquid-nav-item.active');
-            const initialIdx = activeEl ? Number(activeEl.dataset.index) : 1;
+            const initialIdx = activeEl ? Number(activeEl.dataset.index) : activeNavIndex;
             setLiquidNavActive(initialIdx, false);
+            syncUnreadNotificationCount();
         });
 
         document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
@@ -3327,6 +3403,11 @@
         }
 
         initStorePage();
+        setInterval(() => {
+            if (!document.hidden) {
+                syncUnreadNotificationCount();
+            }
+        }, 12000);
     </script>
 </body>
 </html>
