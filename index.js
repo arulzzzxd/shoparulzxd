@@ -49,6 +49,7 @@ const MAIL_FROM = process.env.MAIL_FROM || SMTP_USER;
 // Telegram
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_ADMIN_CHAT_ID = process.env.TELEGRAM_ADMIN_CHAT_ID;
+const TELEGRAM_BOT_USERNAME = (process.env.TELEGRAM_BOT_USERNAME || '').replace(/^@/, '').trim();
 
 // Paywuz
 const PAYWUZ_API_KEY = process.env.PAYWUZ_API_KEY;
@@ -71,7 +72,7 @@ const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || `${BASE_URL}/auth
 // Peringatan jika ada variabel wajib yang belum diisi
 const REQUIRED_ENV = [
     'MONGODB_URI', 'JWT_SECRET', 'SESSION_SECRET', 'OWNER_EMAIL',
-    'SMTP_USER', 'SMTP_PASS', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_ADMIN_CHAT_ID',
+    'SMTP_USER', 'SMTP_PASS', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_ADMIN_CHAT_ID', 'TELEGRAM_BOT_USERNAME',
     'PAYWUZ_API_KEY', 'GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET',
     'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'
 ];
@@ -199,10 +200,27 @@ const userSchemaV2 = new mongoose.Schema({
     referralCode: { type: String, unique: true },
     referredBy: { type: String, default: null },
     hasCompletedOnboarding: { type: Boolean, default: false },
+    telegramChatId: { type: String, default: null, index: true },
+    telegramUsername: { type: String, default: null },
+    telegramLinkedAt: { type: Date, default: null },
     createdAt: { type: Date, default: Date.now }
 });
 
 const UserV2 = mongoose.models.UserV2 || mongoose.model('UserV2', userSchemaV2);
+
+// NOTIFIKASI SCHEMA V2
+const notifikasiSchemaV2 = new mongoose.Schema({
+    title: { type: String, required: true, trim: true },
+    message: { type: String, required: true, trim: true },
+    type: { type: String, enum: ['info', 'promo', 'transaksi', 'sistem'], default: 'info' },
+    link: { type: String, default: null },
+    targetEmail: { type: String, default: null, lowercase: true, trim: true, index: true }, // null = broadcast semua user
+    readBy: [{ type: String, lowercase: true, trim: true }], // daftar email user yang sudah membaca
+    createdBy: { type: String, default: 'Admin' },
+    createdAt: { type: Date, default: Date.now }
+});
+
+const NotifikasiV2 = mongoose.models.NotifikasiV2 || mongoose.model('NotifikasiV2', notifikasiSchemaV2);
 
 // SCHEMA VERIFIKASI OTP 6 DIGIT
 const verificationCodeSchema = new mongoose.Schema({
@@ -478,6 +496,132 @@ async function sendEmailOTP(email, code, typeTitle) {
 };
 
     await transporter.sendMail(mailOptions);
+}
+
+// HELPER KIRIM EMAIL NOTIFIKASI NEO-BRUTALISME
+async function sendNotificationEmail(toEmail, title, message, linkUrl = null) {
+    if (!SMTP_USER || !SMTP_PASS || !toEmail || toEmail.endsWith('@telegram.user')) return;
+
+    const transporter = nodemailer.createTransport({
+        host: SMTP_HOST,
+        port: SMTP_PORT,
+        secure: true,
+        auth: { user: SMTP_USER, pass: SMTP_PASS },
+        tls: { rejectUnauthorized: false }
+    });
+
+    const escapeHtml = (str) => String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+    const ctaHtml = linkUrl ? `
+        <div style="margin-top:20px;text-align:center;">
+            <a href="${escapeHtml(linkUrl)}" style="display:inline-block;background-color:#FFDE59;color:#000000;border:3px solid #000000;border-radius:10px;padding:12px 24px;font-weight:900;font-size:13px;text-decoration:none;box-shadow:4px 4px 0px #000000;">
+                LIHAT DETAIL DI ARULZXD STORE →
+            </a>
+        </div>
+    ` : '';
+
+    await transporter.sendMail({
+        from: MAIL_FROM,
+        to: toEmail,
+        subject: `🔔 ${title} - ArulzXD Store`,
+        html: `
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F5F2EB;">
+<tr>
+<td align="center" style="padding:36px 16px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+           style="max-width:520px;background-color:#FFFFFF;border:4px solid #000000;border-radius:16px;box-shadow:8px 8px 0px #000000;font-family:'Plus Jakarta Sans','Segoe UI',Arial,sans-serif;">
+        <tr>
+            <td style="background-color:#FFDE59;border-bottom:4px solid #000000;border-radius:12px 12px 0 0;padding:20px 24px;">
+                <span style="font-size:20px;font-weight:900;color:#000000;">🔔 ArulzXD Store</span>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:26px 24px;">
+                <h2 style="margin:0 0 12px 0;color:#000000;font-size:18px;font-weight:900;">${escapeHtml(title)}</h2>
+                <div style="background-color:#F4F0EA;border:3px solid #000000;border-radius:12px;padding:16px;color:#111111;font-size:14px;line-height:1.6;">
+                    ${escapeHtml(message).replace(/\n/g, '<br>')}
+                </div>
+                ${ctaHtml}
+            </td>
+        </tr>
+        <tr>
+            <td style="border-top:3px solid #000000;background-color:#00E5FF;border-radius:0 0 12px 12px;padding:14px 24px;">
+                <p style="margin:0;color:#000000;font-size:11px;font-weight:700;">
+                    Notifikasi resmi dari ArulzXD Store. Tautkan Telegram di halaman Profil untuk menerima notifikasi instan via Bot Telegram.
+                </p>
+            </td>
+        </tr>
+    </table>
+</td>
+</tr>
+</table>`
+    });
+}
+
+// HELPER KIRIM PRIVATE CHAT BOT TELEGRAM KE USER
+async function sendTelegramUserPrivateMessage(chatId, title, message, linkUrl = null) {
+    if (!TELEGRAM_BOT_TOKEN || !chatId) return false;
+
+    const escapeHtml = (str) => String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+    const text = `
+🔔 <b>${escapeHtml(title)}</b>
+━━━━━━━━━━━━━━━━━━━━
+${escapeHtml(message)}
+━━━━━━━━━━━━━━━━━━━━
+🌐 <a href="${escapeHtml(linkUrl || `${BASE_URL}/notifikasi`)}">Buka Pusat Notifikasi</a>
+    `.trim();
+
+    try {
+        await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            chat_id: String(chatId),
+            text,
+            parse_mode: 'HTML',
+            disable_web_page_preview: true
+        }, { timeout: 8000 });
+        return true;
+    } catch (err) {
+        console.error(`❌ Gagal kirim private chat Telegram ke ${chatId}:`, err.response?.data || err.message);
+        return false;
+    }
+}
+
+// HELPER DISPATCH NOTIFIKASI KE SEMUA USER (TELEGRAM PRIVATE CHAT / EMAIL)
+async function dispatchNotificationToUsers(notifDoc) {
+    try {
+        const query = notifDoc.targetEmail
+            ? { email: notifDoc.targetEmail.toLowerCase().trim() }
+            : {};
+
+        const users = await UserV2.find(query).select('email username telegramChatId').lean();
+        const targetLink = notifDoc.link
+            ? (notifDoc.link.startsWith('http') ? notifDoc.link : `${BASE_URL}${notifDoc.link.startsWith('/') ? '' : '/'}${notifDoc.link}`)
+            : `${BASE_URL}/notifikasi`;
+
+        for (const u of users) {
+            // 1. Jika user sudah menautkan Telegram -> kirim langsung lewat Private Chat Bot Telegram
+            if (u.telegramChatId) {
+                await sendTelegramUserPrivateMessage(u.telegramChatId, notifDoc.title, notifDoc.message, targetLink);
+            }
+
+            // 2. Kirim ke email user (terutama jika user tidak menautkan Telegram, dan juga sebagai fallback resmi)
+            if (u.email && !u.email.endsWith('@telegram.user')) {
+                if (!u.telegramChatId || notifDoc.sendEmailAlways !== false) {
+                    sendNotificationEmail(u.email, notifDoc.title, notifDoc.message, targetLink).catch((e) =>
+                        console.error(`Gagal kirim email notif ke ${u.email}:`, e.message)
+                    );
+                }
+            }
+        }
+    } catch (err) {
+        console.error('❌ Error dispatchNotificationToUsers:', err.message);
+    }
 }
 
 function getUserIdentifier(req) {
@@ -3514,6 +3658,32 @@ app.post('/api/telegram/webhook', async (req, res) => {
     try {
         await connectDB();
         const update = req.body;
+
+        // 1. HANDLER PRIVATE CHAT BOT UNTUK USER (PERINTAH /START & INFO STATUS TAUTAN)
+        if (update && update.message && update.message.chat && update.message.chat.type === 'private') {
+            const userChatId = String(update.message.chat.id);
+            const firstName = update.message.from?.first_name || 'Kak';
+            const textMsg = (update.message.text || '').trim();
+
+            if (TELEGRAM_BOT_TOKEN && textMsg.startsWith('/start')) {
+                const linkedUser = await UserV2.findOne({ telegramChatId: userChatId }).select('username email').lean();
+
+                const replyText = linkedUser
+                    ? `👋 <b>Halo, ${firstName}!</b>\n\n✅ Akun Telegram Anda sudah terhubung dengan akun ArulzXD Store:\n• <b>Username:</b> ${linkedUser.username}\n• <b>Email:</b> ${linkedUser.email}\n\nSemua notifikasi promo, informasi sistem, dan update terbaru akan dikirim langsung ke chat ini.`
+                    : `👋 <b>Selamat datang di Bot Notifikasi ArulzXD Store, ${firstName}!</b>\n\nBot ini siap mengirimkan notifikasi instan langsung ke private chat Anda.\n\n🔗 <b>Cara Menautkan Akun:</b>\n1. Buka <a href="${BASE_URL}/profile">${BASE_URL}/profile</a>\n2. Gulir ke bagian <b>Notifikasi Telegram Bot</b>\n3. Klik tombol login Telegram untuk menghubungkan akun Anda.`;
+
+                await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                    chat_id: userChatId,
+                    text: replyText,
+                    parse_mode: 'HTML',
+                    disable_web_page_preview: true
+                }).catch((e) => console.error('Gagal balas /start user:', e.response?.data || e.message));
+            }
+
+            return res.sendStatus(200);
+        }
+
+        // 2. HANDLER CALLBACK QUERY ADMIN (KONFIRMASI / BATALKAN DEPOSIT QRIS V2)
         if (update && update.callback_query) {
             const cq = update.callback_query;
             const data = cq.data || '';
@@ -3578,12 +3748,14 @@ app.post('/api/telegram/webhook', async (req, res) => {
                 }
             }
         }
+
         return res.sendStatus(200);
     } catch (error) {
         console.error('Telegram Webhook Error:', error.message);
         return res.sendStatus(200);
     }
 });
+
 
 // ============================================================
 // 9. AUTHENTICATION (PASSPORT, OTP, LOGIN, REGISTER, OAUTH)
@@ -4208,6 +4380,191 @@ app.get('/auth/google/callback', async (req, res) => {
     }
 });
 
+app.get('/api/auth/telegram-config', async (req, res) => {
+    try {
+        if (TELEGRAM_BOT_USERNAME) {
+            return res.json({ status: true, botUsername: TELEGRAM_BOT_USERNAME });
+        }
+        if (!TELEGRAM_BOT_TOKEN) {
+            return res.status(500).json({ status: false, message: 'Token Bot Telegram belum dikonfigurasi.' });
+        }
+        // Fallback otomatis ambil username bot langsung dari API getMe Telegram
+        const meRes = await axios.get(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe`, { timeout: 5000 });
+        const botUsername = meRes.data?.result?.username;
+        if (!botUsername) {
+            return res.status(500).json({ status: false, message: 'Username Bot Telegram tidak ditemukan.' });
+        }
+        return res.json({ status: true, botUsername });
+    } catch (err) {
+        console.error('Gagal mengambil config Bot Telegram:', err.message);
+        return res.status(500).json({ status: false, message: 'Gagal memuat konfigurasi bot Telegram.' });
+    }
+});
+
+// 2. Helper Verifikasi Signature Hash Resmi Telegram Login Widget
+function verifyTelegramWidgetAuth(authData, botToken) {
+    if (!authData || !authData.hash || !botToken) return false;
+
+    const { hash, ...rest } = authData;
+    const dataCheckString = Object.keys(rest)
+        .filter((k) => rest[k] !== undefined && rest[k] !== null && rest[k] !== '')
+        .sort()
+        .map((k) => `${k}=${rest[k]}`)
+        .join('\n');
+
+    const secretKey = crypto.createHash('sha256').update(botToken).digest();
+    const computedHash = crypto
+        .createHmac('sha256', secretKey)
+        .update(dataCheckString)
+        .digest('hex');
+
+    try {
+        return crypto.timingSafeEqual(
+            Buffer.from(computedHash, 'hex'),
+            Buffer.from(String(hash), 'hex')
+        );
+    } catch (e) {
+        return false;
+    }
+}
+
+// 3. Handler Proses Login / Daftar Telegram (Tetap Menggunakan Schema UserV2)
+async function processTelegramUserLogin(req, res, tgData, refCodeFromClient = null) {
+    if (!TELEGRAM_BOT_TOKEN) {
+        throw new Error('TELEGRAM_BOT_TOKEN belum diatur di server.');
+    }
+
+    // Validasi autentikasi kriptografi dari Telegram
+    const isValidHash = verifyTelegramWidgetAuth(tgData, TELEGRAM_BOT_TOKEN);
+    if (!isValidHash) {
+        throw new Error('Signature autentikasi Telegram tidak valid!');
+    }
+
+    // Validasi masa berlaku auth_date (maksimal 24 jam agar tidak terkena replay attack)
+    const authTimestamp = Number(tgData.auth_date || 0);
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    if (!authTimestamp || Math.abs(nowSeconds - authTimestamp) > 86400) {
+        throw new Error('Sesi autentikasi Telegram telah kedaluwarsa. Silakan ulangi login.');
+    }
+
+    const telegramId = String(tgData.id).trim();
+    const cleanUsername = (
+        tgData.username ||
+        [tgData.first_name, tgData.last_name].filter(Boolean).join(' ') ||
+        `tg_${telegramId}`
+    ).trim();
+
+    // Schema UserV2 mewajibkan email unique & required, gunakan email deterministik berbasis ID Telegram
+    const fallbackEmail = `tg_${telegramId}@telegram.user`;
+    const avatarUrl = tgData.photo_url || 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png';
+
+    // Cari user berdasarkan provider 'telegram' & providerId, atau email fallback
+    let dbUser = await UserV2.findOne({
+        $or: [
+            { provider: 'telegram', providerId: telegramId },
+            { email: fallbackEmail }
+        ]
+    });
+
+    let isFirstTimeLogin = false;
+
+    if (!dbUser) {
+        isFirstTimeLogin = true;
+        let initialSaldo = 0;
+        let inviterUser = null;
+
+        const refToUse = refCodeFromClient || req.cookies?.pending_ref || null;
+        if (refToUse && String(refToUse).trim()) {
+            inviterUser = await UserV2.findOne({ referralCode: String(refToUse).trim().toUpperCase() });
+            if (inviterUser) {
+                initialSaldo = 500;
+                inviterUser.saldo = (inviterUser.saldo || 0) + 1000;
+                await inviterUser.save();
+            }
+        }
+
+        dbUser = new UserV2({
+            username: cleanUsername,
+            email: fallbackEmail,
+            provider: 'telegram',
+            providerId: telegramId,
+            avatar: avatarUrl,
+            saldo: initialSaldo,
+            referralCode: generateReferralCode(),
+            referredBy: inviterUser ? inviterUser.referralCode : null,
+            hasCompletedOnboarding: false,
+            createdAt: new Date()
+        });
+
+        await dbUser.save();
+    } else {
+        if (!dbUser.hasCompletedOnboarding) {
+            isFirstTimeLogin = true;
+        }
+        // Sinkronkan foto profil terbaru dari Telegram jika berubah
+        if (tgData.photo_url && dbUser.avatar !== tgData.photo_url) {
+            dbUser.avatar = tgData.photo_url;
+            await dbUser.save();
+        }
+    }
+
+    res.clearCookie('pending_ref');
+
+    const userPayload = {
+        id: dbUser._id,
+        username: dbUser.username,
+        email: dbUser.email,
+        name: [tgData.first_name, tgData.last_name].filter(Boolean).join(' ') || dbUser.username,
+        avatar: dbUser.avatar,
+        createdAt: dbUser.createdAt
+    };
+
+    const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '7d' });
+
+    res.cookie('auth_session', token, {
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax'
+    });
+
+    return {
+        redirectUrl: isFirstTimeLogin ? '/store?onboarding=1' : '/dashboard',
+        isFirstTimeLogin
+    };
+}
+
+// 4. Endpoint Callback GET (Jika menggunakan data-auth-url redirect dari Widget Telegram)
+app.get('/auth/telegram/callback', async (req, res) => {
+    try {
+        const { ref, ...tgQueryData } = req.query;
+        const result = await processTelegramUserLogin(req, res, tgQueryData, ref);
+        return res.redirect(result.redirectUrl);
+    } catch (error) {
+        console.error('Telegram GET Callback Error:', error.message);
+        return sendSweetAlert(res, 'error', 'Gagal Login Telegram', error.message, '/login');
+    }
+});
+
+// 5. Endpoint Callback POST (Jika menggunakan data-onauth AJAX dari Widget Telegram di login.html)
+app.post('/auth/telegram/callback', async (req, res) => {
+    try {
+        const { ref, ...tgBodyData } = req.body;
+        const result = await processTelegramUserLogin(req, res, tgBodyData, ref);
+        return res.json({
+            status: true,
+            message: 'Berhasil masuk dengan akun Telegram!',
+            redirectUrl: result.redirectUrl
+        });
+    } catch (error) {
+        console.error('Telegram POST Callback Error:', error.message);
+        return res.status(400).json({
+            status: false,
+            message: error.message || 'Autentikasi Telegram gagal.'
+        });
+    }
+});
+
 // TANDAI TUTORIAL ONBOARDING SELESAI
 app.post('/api/user/complete-onboarding', checkAuthSession, async (req, res) => {
     try {
@@ -4255,6 +4612,9 @@ app.get('/deposit', checkAuthSession, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'deposit.html'));
 });
 app.get('/privacy', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacy.html')));
+app.get('/notifikasi', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'notifikasi.html'));
+});
 app.get('/profile', checkAuthSession, (req, res) => {
     if (!req.user) {
         return res.redirect('/login');
@@ -4638,6 +4998,190 @@ app.get('/database/produk', async (req, res) => {
     }
 });
 
+app.get('/api/notifications', checkAuthSession, async (req, res) => {
+    try {
+        const userEmail = req.user?.email ? req.user.email.toLowerCase().trim() : null;
+
+        const filter = userEmail
+            ? { $or: [{ targetEmail: null }, { targetEmail: '' }, { targetEmail: userEmail }] }
+            : { $or: [{ targetEmail: null }, { targetEmail: '' }] };
+
+        const list = await NotifikasiV2.find(filter).sort({ createdAt: -1 }).limit(100).lean();
+
+        const formatted = list.map((item) => {
+            const readByList = Array.isArray(item.readBy) ? item.readBy : [];
+            const isReadServer = userEmail ? readByList.includes(userEmail) : false;
+            return {
+                id: String(item._id),
+                title: item.title,
+                message: item.message,
+                type: item.type || 'info',
+                link: item.link || null,
+                createdAt: item.createdAt,
+                isReadServer
+            };
+        });
+
+        const unreadServerCount = userEmail
+            ? formatted.filter((n) => !n.isReadServer).length
+            : formatted.length;
+
+        return res.json({
+            status: true,
+            loggedIn: Boolean(userEmail),
+            userEmail: userEmail,
+            unreadCount: unreadServerCount,
+            notifications: formatted
+        });
+    } catch (err) {
+        console.error('Error fetch notifications:', err);
+        return res.status(500).json({ status: false, message: 'Gagal memuat notifikasi.' });
+    }
+});
+
+app.post('/api/notifications/mark-read', checkAuthSession, async (req, res) => {
+    try {
+        const { notificationId, markAll } = req.body;
+        const userEmail = req.user?.email ? req.user.email.toLowerCase().trim() : null;
+
+        if (!userEmail) {
+            return res.json({ status: true, guest: true, message: 'Status baca disimpan di sesi perangkat.' });
+        }
+
+        if (markAll) {
+            await NotifikasiV2.updateMany(
+                {
+                    $or: [{ targetEmail: null }, { targetEmail: '' }, { targetEmail: userEmail }],
+                    readBy: { $ne: userEmail }
+                },
+                { $addToSet: { readBy: userEmail } }
+            );
+            return res.json({ status: true, message: 'Semua notifikasi ditandai telah dibaca.' });
+        }
+
+        if (notificationId && mongoose.Types.ObjectId.isValid(notificationId)) {
+            await NotifikasiV2.findByIdAndUpdate(notificationId, {
+                $addToSet: { readBy: userEmail }
+            });
+        }
+
+        return res.json({ status: true, message: 'Notifikasi ditandai telah dibaca.' });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal memperbarui status baca.' });
+    }
+});
+
+app.post('/api/admin/notifications', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const { title, message, type, link, targetEmail } = req.body;
+        if (!title || !title.trim() || !message || !message.trim()) {
+            return res.status(400).json({ status: false, message: 'Judul dan isi notifikasi wajib diisi!' });
+        }
+
+        const newNotif = await NotifikasiV2.create({
+            title: title.trim(),
+            message: message.trim(),
+            type: ['info', 'promo', 'transaksi', 'sistem'].includes(type) ? type : 'info',
+            link: link && link.trim() ? link.trim() : null,
+            targetEmail: targetEmail && targetEmail.trim() ? targetEmail.toLowerCase().trim() : null,
+            readBy: [],
+            createdBy: req.user.username || 'Admin'
+        });
+
+        // Kirim ke Telegram Private Chat (jika tertaut) dan Email semua user secara background
+        dispatchNotificationToUsers(newNotif);
+
+        return res.json({
+            status: true,
+            message: 'Notifikasi berhasil dibuat dan dikirim ke user!',
+            data: newNotif
+        });
+    } catch (err) {
+        console.error('Error create notification:', err);
+        return res.status(500).json({ status: false, message: 'Gagal membuat notifikasi.' });
+    }
+});
+
+app.post('/api/user/link-telegram', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu!' });
+        }
+        if (!TELEGRAM_BOT_TOKEN) {
+            return res.status(500).json({ status: false, message: 'Token Bot Telegram belum dikonfigurasi di server.' });
+        }
+
+        const tgData = req.body;
+        const isValidHash = verifyTelegramWidgetAuth(tgData, TELEGRAM_BOT_TOKEN);
+        if (!isValidHash) {
+            return res.status(400).json({ status: false, message: 'Autentikasi Telegram tidak valid!' });
+        }
+
+        const chatId = String(tgData.id).trim();
+        const tgUsername = tgData.username
+            ? `@${tgData.username.replace(/^@/, '')}`
+            : [tgData.first_name, tgData.last_name].filter(Boolean).join(' ') || `ID:${chatId}`;
+
+        const userId = req.user.id || req.user._id;
+        const updatedUser = await UserV2.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    telegramChatId: chatId,
+                    telegramUsername: tgUsername,
+                    telegramLinkedAt: new Date()
+                }
+            },
+            { returnDocument: 'after' }
+        );
+
+        // Kirim pesan konfirmasi langsung lewat Private Chat Bot Telegram
+        await sendTelegramUserPrivateMessage(
+            chatId,
+            'Akun Telegram Berhasil Ditautkan!',
+            `Halo ${updatedUser.username}, akun ArulzXD Store Anda (${updatedUser.email}) kini terhubung dengan Bot ini. Semua notifikasi terbaru akan dikirim langsung ke private chat ini.`,
+            `${BASE_URL}/notifikasi`
+        );
+
+        return res.json({
+            status: true,
+            message: 'Berhasil menautkan akun ke Telegram! Silakan cek pesan dari Bot Telegram.',
+            telegram: {
+                linked: true,
+                chatId,
+                username: tgUsername
+            }
+        });
+    } catch (err) {
+        console.error('Error link telegram:', err);
+        return res.status(500).json({ status: false, message: 'Gagal menautkan akun Telegram.' });
+    }
+});
+
+app.post('/api/user/unlink-telegram', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu!' });
+        }
+
+        const userId = req.user.id || req.user._id;
+        await UserV2.findByIdAndUpdate(userId, {
+            $set: {
+                telegramChatId: null,
+                telegramUsername: null,
+                telegramLinkedAt: null
+            }
+        });
+
+        return res.json({
+            status: true,
+            message: 'Tautan Telegram berhasil diputuskan. Notifikasi akan dikirimkan melalui Email.'
+        });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal memutuskan tautan Telegram.' });
+    }
+});
+
 app.get('/api/user-status', async (req, res) => {
     if (req.user) {
         try {
@@ -4709,6 +5253,9 @@ app.get('/api/user-status', async (req, res) => {
                     totalBelanja: totalBelanja,
                     invitedUsers: invitedUsers,
                     hasCompletedOnboarding: Boolean(activeUser.hasCompletedOnboarding),
+                    telegramLinked: Boolean(activeUser.telegramChatId),
+                    telegramUsername: activeUser.telegramUsername || null,
+                    telegramChatId: activeUser.telegramChatId || null,
                     createdAt: activeUser.createdAt
                 }
             });
