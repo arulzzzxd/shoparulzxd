@@ -1522,15 +1522,20 @@ app.use((req, res, next) => {
     next();
 });
 
+// Pastikan webhook terdaftar otomatis saat pertama kali ada request di Vercel
 app.use(async (req, res, next) => {
     try {
         await connectDB();
+        if (!telegramWebhookRegistered && TELEGRAM_BOT_TOKEN) {
+            ensureTelegramWebhook().catch(() => {});
+        }
         next();
     } catch (err) {
         console.error('Database connection middleware error:', err.message);
         res.status(503).json({ status: false, message: 'Database sedang bersiap, silakan muat ulang halaman.' });
     }
 });
+
 
 app.use(session({
     secret: SESSION_SECRET,
@@ -5089,7 +5094,7 @@ app.post('/api/admin/notifications', checkAuthSession, checkAdminRole, async (re
         });
 
         // Kirim ke Telegram Private Chat (jika tertaut) dan Email semua user secara background
-        dispatchNotificationToUsers(newNotif);
+        await dispatchNotificationToUsers(newNotif);
 
         return res.json({
             status: true,
@@ -5102,61 +5107,100 @@ app.post('/api/admin/notifications', checkAuthSession, checkAdminRole, async (re
     }
 });
 
+// Helper bersama untuk proses menautkan Telegram ke akun user yang sedang login
+async function handleLinkTelegramAccount(userSession, tgData) {
+    if (!TELEGRAM_BOT_TOKEN) {
+        throw new Error('Token Bot Telegram belum dikonfigurasi di server.');
+    }
+
+    const isValidHash = verifyTelegramWidgetAuth(tgData, TELEGRAM_BOT_TOKEN);
+    if (!isValidHash) {
+        throw new Error('Signature autentikasi Telegram tidak valid!');
+    }
+
+    const authTimestamp = Number(tgData.auth_date || 0);
+    const nowSeconds = Math.floor(Date.now() / 1000);
+    if (!authTimestamp || Math.abs(nowSeconds - authTimestamp) > 86400) {
+        throw new Error('Sesi autentikasi Telegram kedaluwarsa. Silakan ulangi.');
+    }
+
+    const chatId = String(tgData.id).trim();
+    const tgUsername = tgData.username
+        ? `@${tgData.username.replace(/^@/, '')}`
+        : [tgData.first_name, tgData.last_name].filter(Boolean).join(' ') || `ID:${chatId}`;
+
+    const userId = userSession.id || userSession._id;
+    const updatedUser = await UserV2.findByIdAndUpdate(
+        userId,
+        {
+            $set: {
+                telegramChatId: chatId,
+                telegramUsername: tgUsername,
+                telegramLinkedAt: new Date()
+            }
+        },
+        { returnDocument: 'after' }
+    );
+
+    if (!updatedUser) {
+        throw new Error('Data pengguna tidak ditemukan.');
+    }
+
+    // Coba kirim pesan konfirmasi ke private chat user (tidak akan error jika user belum /start)
+    const sent = await sendTelegramUserPrivateMessage(
+        chatId,
+        'Akun Telegram Berhasil Ditautkan!',
+        `Halo ${updatedUser.username}, akun ArulzXD Store Anda (${updatedUser.email}) kini terhubung dengan Bot ini.`,
+        `${BASE_URL}/notifikasi`
+    );
+
+    return { updatedUser, chatId, tgUsername, messageSent: sent };
+}
+
+// Callback GET untuk data-auth-url (Anti-stuck di mobile browser)
+app.get('/api/user/link-telegram/callback', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return sendSweetAlert(res, 'error', 'Sesi Habis', 'Silakan login terlebih dahulu!', '/login');
+        }
+
+        const result = await handleLinkTelegramAccount(req.user, req.query);
+        const infoText = result.messageSent
+            ? 'Akun Telegram berhasil ditautkan! Cek pesan konfirmasi di Bot Telegram.'
+            : `Akun Telegram berhasil ditautkan! Pastikan Anda membuka @${TELEGRAM_BOT_USERNAME} lalu tekan START agar bot bisa mengirim notifikasi.`;
+
+        return sendSweetAlert(res, 'success', 'Berhasil Tertaut!', infoText, '/profile');
+    } catch (err) {
+        console.error('Error GET link telegram:', err.message);
+        return sendSweetAlert(res, 'error', 'Gagal Menautkan', err.message, '/profile');
+    }
+});
+
+// Callback POST (jika tetap dipanggil via fetch)
 app.post('/api/user/link-telegram', checkAuthSession, async (req, res) => {
     try {
         if (!req.user) {
             return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu!' });
         }
-        if (!TELEGRAM_BOT_TOKEN) {
-            return res.status(500).json({ status: false, message: 'Token Bot Telegram belum dikonfigurasi di server.' });
-        }
 
-        const tgData = req.body;
-        const isValidHash = verifyTelegramWidgetAuth(tgData, TELEGRAM_BOT_TOKEN);
-        if (!isValidHash) {
-            return res.status(400).json({ status: false, message: 'Autentikasi Telegram tidak valid!' });
-        }
-
-        const chatId = String(tgData.id).trim();
-        const tgUsername = tgData.username
-            ? `@${tgData.username.replace(/^@/, '')}`
-            : [tgData.first_name, tgData.last_name].filter(Boolean).join(' ') || `ID:${chatId}`;
-
-        const userId = req.user.id || req.user._id;
-        const updatedUser = await UserV2.findByIdAndUpdate(
-            userId,
-            {
-                $set: {
-                    telegramChatId: chatId,
-                    telegramUsername: tgUsername,
-                    telegramLinkedAt: new Date()
-                }
-            },
-            { returnDocument: 'after' }
-        );
-
-        // Kirim pesan konfirmasi langsung lewat Private Chat Bot Telegram
-        await sendTelegramUserPrivateMessage(
-            chatId,
-            'Akun Telegram Berhasil Ditautkan!',
-            `Halo ${updatedUser.username}, akun ArulzXD Store Anda (${updatedUser.email}) kini terhubung dengan Bot ini. Semua notifikasi terbaru akan dikirim langsung ke private chat ini.`,
-            `${BASE_URL}/notifikasi`
-        );
-
+        const result = await handleLinkTelegramAccount(req.user, req.body);
         return res.json({
             status: true,
-            message: 'Berhasil menautkan akun ke Telegram! Silakan cek pesan dari Bot Telegram.',
+            message: result.messageSent
+                ? 'Berhasil menautkan akun ke Telegram! Silakan cek pesan dari Bot Telegram.'
+                : `Berhasil ditautkan! Segera buka @${TELEGRAM_BOT_USERNAME} dan klik START agar bot dapat mengirim pesan.`,
             telegram: {
                 linked: true,
-                chatId,
-                username: tgUsername
+                chatId: result.chatId,
+                username: result.tgUsername
             }
         });
     } catch (err) {
-        console.error('Error link telegram:', err);
-        return res.status(500).json({ status: false, message: 'Gagal menautkan akun Telegram.' });
+        console.error('Error POST link telegram:', err);
+        return res.status(400).json({ status: false, message: err.message || 'Gagal menautkan akun Telegram.' });
     }
 });
+
 
 app.post('/api/user/unlink-telegram', checkAuthSession, async (req, res) => {
     try {
