@@ -41,9 +41,9 @@
 
     <script>
         tailwind.config = {
-            theme: { 
+            theme: {
                 extend: {
-                    fontFamily: { 
+                    fontFamily: {
                         sans: ['Plus Jakarta Sans', 'sans-serif'],
                         cyber: ['Space Grotesk', 'sans-serif'],
                     },
@@ -52,16 +52,17 @@
                         neoCyan: '#00E5FF',
                         neoPink: '#FF79C6',
                         neoGreen: '#00E676',
+                        neoTelegram: '#229ED9',
                         neoBg: '#F5F2EB',
                         neoCard: '#FFFFFF'
                     }
-                } 
+                }
             }
         }
     </script>
     <style>
-        body { 
-            background-color: #F5F2EB; 
+        body {
+            background-color: #F5F2EB;
             background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1.2px, transparent 1.2px);
             background-size: 16px 16px;
             color: #000000;
@@ -196,7 +197,7 @@
 
     <!-- MAIN PORTAL AUTHENTICATION CARD -->
     <main class="neo-box p-5 sm:p-7 rounded-2xl w-full max-w-md bg-white relative overflow-hidden flex flex-col justify-start my-auto z-10 space-y-3.5">
-        
+
         <!-- HEADER PORTAL -->
         <header class="text-center relative z-10 pt-1 pb-2 border-b-3 border-black">
             <h1 class="text-2xl sm:text-3xl font-black font-cyber tracking-tight uppercase leading-none">
@@ -284,12 +285,9 @@
                 <a id="btnGoogleAuth" href="/auth/google" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-white text-black py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
                     <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-5 h-5 object-contain" alt="Google"> LANJUTKAN DENGAN GOOGLE
                 </a>
-            </div>
-            <div class="pt-2 border-t-2 border-black">
-                <button type="button" id="btnTelegramLogin" onclick="location.href='/auth/telegram/start'" class="neo-btn flex items-center justify-center gap-2.5 bg-[#229ED9] text-white py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
-                    <i class="fa-brands fa-telegram text-lg"></i> LOGIN DENGAN TELEGRAM
-                </button>
-                <p class="text-[10px] text-center font-bold text-slate-600 mt-2">Login resmi Telegram melalui OpenID Connect.</p>
+                <a id="btnTelegramAuth" href="/auth/telegram" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-neoTelegram text-white py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
+                    <i class="fa-brands fa-telegram text-lg leading-none"></i> LANJUTKAN DENGAN TELEGRAM
+                </a>
             </div>
         </div>
 
@@ -348,6 +346,9 @@
                 </a>
                 <a id="btnGoogleAuthRegister" href="/auth/google" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-white text-black py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
                     <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-5 h-5 object-contain" alt="Google"> DAFTAR DENGAN GOOGLE
+                </a>
+                <a id="btnTelegramAuthRegister" href="/auth/telegram" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-neoTelegram text-white py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
+                    <i class="fa-brands fa-telegram text-lg leading-none"></i> DAFTAR DENGAN TELEGRAM
                 </a>
             </div>
         </div>
@@ -455,41 +456,54 @@
             }
         }
 
+        function setOAuthState(el, enabled) {
+            if (!el) return;
+            if (enabled) {
+                el.classList.remove('btn-disabled');
+                el.removeAttribute('aria-disabled');
+            } else {
+                el.classList.add('btn-disabled');
+                el.setAttribute('aria-disabled', 'true');
+            }
+        }
+
         function toggleFormButtons(mode) {
             if (mode === 'login') {
                 const isChecked = document.getElementById('terms-login').checked;
                 const btnSubmit = document.getElementById('btnSubmitLogin');
                 const btnGithub = document.getElementById('btnGithubAuth');
                 const btnGoogle = document.getElementById('btnGoogleAuth');
+                const btnTelegram = document.getElementById('btnTelegramAuth');
 
                 if (isChecked) {
                     btnSubmit.removeAttribute('disabled');
                     btnSubmit.classList.remove('btn-disabled');
-                    btnGithub.classList.remove('btn-disabled');
-                    btnGoogle.classList.remove('btn-disabled');
                 } else {
                     btnSubmit.setAttribute('disabled', 'true');
                     btnSubmit.classList.add('btn-disabled');
-                    btnGithub.classList.add('btn-disabled');
-                    btnGoogle.classList.add('btn-disabled');
                 }
+
+                setOAuthState(btnGithub, isChecked);
+                setOAuthState(btnGoogle, isChecked);
+                setOAuthState(btnTelegram, isChecked);
             } else if (mode === 'register') {
                 const isChecked = document.getElementById('terms-register').checked;
                 const btnSubmit = document.getElementById('btnSubmitRegister');
                 const btnGithub = document.getElementById('btnGithubAuthRegister');
                 const btnGoogle = document.getElementById('btnGoogleAuthRegister');
+                const btnTelegram = document.getElementById('btnTelegramAuthRegister');
 
                 if (isChecked) {
                     btnSubmit.removeAttribute('disabled');
                     btnSubmit.classList.remove('btn-disabled');
-                    btnGithub.classList.remove('btn-disabled');
-                    btnGoogle.classList.remove('btn-disabled');
                 } else {
                     btnSubmit.setAttribute('disabled', 'true');
                     btnSubmit.classList.add('btn-disabled');
-                    btnGithub.classList.add('btn-disabled');
-                    btnGoogle.classList.add('btn-disabled');
                 }
+
+                setOAuthState(btnGithub, isChecked);
+                setOAuthState(btnGoogle, isChecked);
+                setOAuthState(btnTelegram, isChecked);
             }
         }
 
@@ -581,29 +595,43 @@
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const refCode = urlParams.get('ref');
+            const authError = urlParams.get('error');
+
+            if (authError === 'telegram_login_failed') {
+                Swal.fire({
+                    ...swalConfig,
+                    icon: 'error',
+                    title: 'Login Telegram Gagal',
+                    text: 'Autentikasi Telegram dibatalkan atau tidak valid. Silakan coba lagi.'
+                });
+            }
 
             if (refCode) {
-                const cleanRef = refCode.trim().toUpperCase();
+                const cleanRef = encodeURIComponent(refCode.trim().toUpperCase());
                 document.cookie = `pending_ref=${cleanRef}; path=/; max-age=86400`;
 
                 switchTab('signup');
 
                 const refInput = document.getElementById('referralCodeInput');
                 if (refInput) {
-                    refInput.value = cleanRef;
+                    refInput.value = refCode.trim().toUpperCase();
                     refInput.readOnly = true;
                     refInput.classList.add('bg-slate-100', 'cursor-not-allowed');
                 }
 
                 const btnGoogleLogin = document.getElementById('btnGoogleAuth');
                 const btnGithubLogin = document.getElementById('btnGithubAuth');
+                const btnTelegramLogin = document.getElementById('btnTelegramAuth');
                 const btnGoogleReg = document.getElementById('btnGoogleAuthRegister');
                 const btnGithubReg = document.getElementById('btnGithubAuthRegister');
+                const btnTelegramReg = document.getElementById('btnTelegramAuthRegister');
 
                 if (btnGoogleLogin) btnGoogleLogin.href = `/auth/google?ref=${cleanRef}`;
                 if (btnGithubLogin) btnGithubLogin.href = `/auth/github?ref=${cleanRef}`;
+                if (btnTelegramLogin) btnTelegramLogin.href = `/auth/telegram?ref=${cleanRef}`;
                 if (btnGoogleReg) btnGoogleReg.href = `/auth/google?ref=${cleanRef}`;
                 if (btnGithubReg) btnGithubReg.href = `/auth/github?ref=${cleanRef}`;
+                if (btnTelegramReg) btnTelegramReg.href = `/auth/telegram?ref=${cleanRef}`;
             }
         });
 
@@ -666,7 +694,7 @@
                             </p>
                             <div class="space-y-1">
                                 <label class="block text-[11px] font-black font-cyber uppercase text-black">MASUKKAN KODE OTP</label>
-                                <input id="swal-neo-otp" type="text" maxlength="6" placeholder="123456" 
+                                <input id="swal-neo-otp" type="text" maxlength="6" placeholder="123456"
                                        class="neo-input w-full bg-neoBg rounded-xl px-3 py-3 text-center text-xl font-mono font-black tracking-[8px] text-black focus:outline-none uppercase">
                             </div>
                         </div>
@@ -783,7 +811,7 @@
                             </p>
                             <div class="space-y-1">
                                 <label class="block text-[11px] font-black font-cyber uppercase text-black">MASUKKAN KODE OTP</label>
-                                <input id="swal-neo-otp-reg" type="text" maxlength="6" placeholder="123456" 
+                                <input id="swal-neo-otp-reg" type="text" maxlength="6" placeholder="123456"
                                        class="neo-input w-full bg-neoBg rounded-xl px-3 py-3 text-center text-xl font-mono font-black tracking-[8px] text-black focus:outline-none uppercase">
                             </div>
                         </div>
