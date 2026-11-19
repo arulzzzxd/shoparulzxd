@@ -50,6 +50,8 @@ const MAIL_FROM = process.env.MAIL_FROM || SMTP_USER;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_ADMIN_CHAT_ID = process.env.TELEGRAM_ADMIN_CHAT_ID;
 const TELEGRAM_BOT_USERNAME = (process.env.TELEGRAM_BOT_USERNAME || '').replace(/^@/, '').trim();
+const TELEGRAM_OAUTH_CLIENT_ID = process.env.TELEGRAM_OAUTH_CLIENT_ID || '';
+const TELEGRAM_OAUTH_CLIENT_SECRET = process.env.TELEGRAM_OAUTH_CLIENT_SECRET || '';
 
 // Paywuz
 const PAYWUZ_API_KEY = process.env.PAYWUZ_API_KEY;
@@ -73,6 +75,7 @@ const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || `${BASE_URL}/auth
 const REQUIRED_ENV = [
     'MONGODB_URI', 'JWT_SECRET', 'SESSION_SECRET', 'OWNER_EMAIL',
     'SMTP_USER', 'SMTP_PASS', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_ADMIN_CHAT_ID', 'TELEGRAM_BOT_USERNAME',
+    'TELEGRAM_OAUTH_CLIENT_ID', 'TELEGRAM_OAUTH_CLIENT_SECRET',
     'PAYWUZ_API_KEY', 'GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET',
     'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'
 ];
@@ -102,9 +105,8 @@ app.set('trust proxy', 1);
 
 // DOMAIN KANONIS: seluruh domain lama diarahkan permanen ke domain utama.
 const LEGACY_HOSTS = new Set([
-    'arulzxd.biz.id',
-    'www.arulzxd.biz.id',
-    'shoparulzxd.biz.id'
+    'shoparulzxd.biz.id',
+    'www.shoparulzxd.biz.id'
 ]);
 app.use((req, res, next) => {
     const hostname = String(req.hostname || '').toLowerCase();
@@ -207,6 +209,19 @@ const userSchemaV2 = new mongoose.Schema({
 });
 
 const UserV2 = mongoose.models.UserV2 || mongoose.model('UserV2', userSchemaV2);
+
+// Tiket sekali pakai untuk login Telegram dan penautan akun.
+const telegramTicketSchema = new mongoose.Schema({
+    tokenHash: { type: String, required: true, unique: true },
+    type: { type: String, enum: ['login', 'link'], required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'UserV2', default: null },
+    chatId: { type: String, default: null },
+    telegramUsername: { type: String, default: null },
+    completed: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now, expires: 600 }
+});
+const TelegramTicket = mongoose.models.TelegramTicket || mongoose.model('TelegramTicket', telegramTicketSchema);
+
 
 // NOTIFIKASI SCHEMA V2
 const notifikasiSchemaV2 = new mongoose.Schema({
@@ -3645,6 +3660,150 @@ app.post('/api/admin/deposits-qrisv2/:orderId/cancel', checkAuthSession, checkAd
     }
 });
 
+
+// ============================================================
+// TELEGRAM OFFICIAL LOGIN (OIDC) - khusus login di login.html
+// Credentials didapat dari @BotFather > Bot Settings > Login Widget.
+// ============================================================
+app.get('/auth/telegram/start', (req, res) => {
+    if (!TELEGRAM_OAUTH_CLIENT_ID || !TELEGRAM_OAUTH_CLIENT_SECRET) {
+        return res.status(503).send('Telegram Login belum dikonfigurasi. Atur TELEGRAM_OAUTH_CLIENT_ID dan TELEGRAM_OAUTH_CLIENT_SECRET.');
+    }
+    const state = crypto.randomBytes(32).toString('hex');
+    const nonce = crypto.randomBytes(32).toString('hex');
+    const verifier = crypto.randomBytes(48).toString('base64url');
+    const challenge = crypto.createHash('sha256').update(verifier).digest('base64url');
+    const cookieOptions = { httpOnly: true, secure: true, sameSite: 'lax', maxAge: 10 * 60 * 1000, path: '/auth/telegram' };
+    res.cookie('tg_oidc_state', state, cookieOptions);
+    res.cookie('tg_oidc_nonce', nonce, cookieOptions);
+    res.cookie('tg_oidc_verifier', verifier, cookieOptions);
+    const callback = `${BASE_URL}/auth/telegram/callback`;
+    const params = new URLSearchParams({
+        client_id: TELEGRAM_OAUTH_CLIENT_ID,
+        redirect_uri: callback,
+        response_type: 'code',
+        scope: 'openid profile',
+        state,
+        nonce,
+        code_challenge: challenge,
+        code_challenge_method: 'S256'
+    });
+    return res.redirect(`https://oauth.telegram.org/auth?${params.toString()}`);
+});
+
+app.get('/auth/telegram/callback', async (req, res) => {
+    const clearOptions = { httpOnly: true, secure: true, sameSite: 'lax', path: '/auth/telegram' };
+    const state = String(req.query.state || '');
+    const savedState = req.cookies?.tg_oidc_state || '';
+    const nonce = req.cookies?.tg_oidc_nonce || '';
+    const verifier = req.cookies?.tg_oidc_verifier || '';
+    res.clearCookie('tg_oidc_state', clearOptions);
+    res.clearCookie('tg_oidc_nonce', clearOptions);
+    res.clearCookie('tg_oidc_verifier', clearOptions);
+    try {
+        if (!TELEGRAM_OAUTH_CLIENT_ID || !TELEGRAM_OAUTH_CLIENT_SECRET) throw new Error('Telegram Login belum dikonfigurasi.');
+        if (!state || !savedState || !crypto.timingSafeEqual(Buffer.from(state), Buffer.from(savedState)) || !nonce || !verifier) {
+            throw new Error('Verifikasi keamanan Telegram tidak valid. Silakan coba login kembali.');
+        }
+        if (req.query.error) throw new Error(String(req.query.error_description || req.query.error));
+        const code = String(req.query.code || '');
+        if (!code) throw new Error('Kode autentikasi Telegram tidak ditemukan.');
+
+        const tokenBody = new URLSearchParams({
+            grant_type: 'authorization_code',
+            code,
+            redirect_uri: `${BASE_URL}/auth/telegram/callback`,
+            client_id: TELEGRAM_OAUTH_CLIENT_ID,
+            code_verifier: verifier
+        });
+        const tokenResponse = await axios.post('https://oauth.telegram.org/token', tokenBody.toString(), {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            auth: { username: TELEGRAM_OAUTH_CLIENT_ID, password: TELEGRAM_OAUTH_CLIENT_SECRET },
+            timeout: 15000
+        });
+        const idToken = tokenResponse.data?.id_token;
+        if (!idToken) throw new Error('Telegram tidak mengembalikan ID token.');
+
+        const decoded = jwt.decode(idToken, { complete: true });
+        const kid = decoded?.header?.kid;
+        if (!kid || decoded.header.alg !== 'RS256') throw new Error('Format token Telegram tidak didukung. Pastikan algoritma login Telegram menggunakan RS256.');
+        const jwksResponse = await axios.get('https://oauth.telegram.org/.well-known/jwks.json', { timeout: 10000 });
+        const jwk = (jwksResponse.data?.keys || []).find(key => key.kid === kid);
+        if (!jwk) throw new Error('Kunci verifikasi Telegram tidak ditemukan.');
+        const publicKey = crypto.createPublicKey({ key: jwk, format: 'jwk' });
+        const claims = jwt.verify(idToken, publicKey, {
+            algorithms: ['RS256'],
+            issuer: 'https://oauth.telegram.org',
+            audience: String(TELEGRAM_OAUTH_CLIENT_ID)
+        });
+        if (claims.nonce !== nonce) throw new Error('Nonce Telegram tidak cocok. Silakan ulangi login.');
+
+        const telegramId = String(claims.id || claims.sub || '');
+        if (!telegramId) throw new Error('ID akun Telegram tidak tersedia.');
+        let user = await UserV2.findOne({ $or: [
+            { provider: 'telegram', providerId: telegramId },
+            { telegramChatId: telegramId }
+        ] });
+        if (!user) {
+            const displayName = String(claims.name || claims.preferred_username || `telegram_${telegramId}`).trim();
+            const base = String(claims.preferred_username || `telegram_${telegramId}`).toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 24) || `telegram_${telegramId}`;
+            let username = base;
+            let suffix = 1;
+            while (await UserV2.exists({ username })) username = `${base}${suffix++}`;
+            user = await UserV2.create({
+                username: username || displayName,
+                email: `tg_${telegramId}@telegram.user`,
+                provider: 'telegram',
+                providerId: telegramId,
+                avatar: claims.picture || undefined
+            });
+        }
+
+        const payload = {
+            id: user._id, username: user.username, email: user.email,
+            name: user.username, avatar: user.avatar, createdAt: user.createdAt
+        };
+        const authToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+        res.cookie('auth_session', authToken, {
+            maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true,
+            secure: true, sameSite: 'lax'
+        });
+        return res.redirect('/dashboard');
+    } catch (err) {
+        console.error('Telegram OIDC login error:', err.response?.data || err.message);
+        return res.redirect('/login?error=telegram_login_failed');
+    }
+});
+
+// Tiket sekali pakai ini HANYA untuk menautkan bot dari halaman profil.
+app.post('/api/telegram/ticket', async (req, res) => {
+    try {
+        if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_BOT_USERNAME) {
+            return res.status(503).json({ status: false, message: 'Bot Telegram belum dikonfigurasi.' });
+        }
+        if (!req.user?.id && !req.user?._id) return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
+        const userId = req.user.id || req.user._id;
+        const rawToken = crypto.randomBytes(24).toString('hex');
+        const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+        await TelegramTicket.create({ tokenHash, type: 'link', userId });
+        return res.json({ status: true, botUrl: `https://t.me/${TELEGRAM_BOT_USERNAME}?start=link_${rawToken}`, token: rawToken });
+    } catch (err) {
+        console.error('Telegram link ticket error:', err.message);
+        return res.status(500).json({ status: false, message: 'Gagal membuat tautan Telegram.' });
+    }
+});
+
+app.get('/api/telegram/ticket/:token', async (req, res) => {
+    try {
+        const tokenHash = crypto.createHash('sha256').update(String(req.params.token || '')).digest('hex');
+        const ticket = await TelegramTicket.findOne({ tokenHash, type: 'link' }).lean();
+        if (!ticket) return res.status(404).json({ status: false, message: 'Tautan kedaluwarsa. Silakan buat ulang.' });
+        return res.json({ status: true, completed: ticket.completed, type: ticket.type });
+    } catch {
+        return res.status(500).json({ status: false, message: 'Gagal memeriksa status Telegram.' });
+    }
+});
+
 app.get('/api/telegram/setup-webhook', async (req, res) => {
     try {
         const webhookUrl = `${BASE_URL}/api/telegram/webhook`;
@@ -3671,11 +3830,42 @@ app.post('/api/telegram/webhook', async (req, res) => {
             const textMsg = (update.message.text || '').trim();
 
             if (TELEGRAM_BOT_TOKEN && textMsg.startsWith('/start')) {
+                const startPayload = textMsg.split(/\s+/)[1] || '';
+                const ticketMatch = startPayload.match(/^(link)_([a-f0-9]{48})$/i);
+                if (ticketMatch) {
+                    const [, ticketType, rawToken] = ticketMatch;
+                    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+                    const ticket = await TelegramTicket.findOne({ tokenHash, type: ticketType.toLowerCase(), completed: false });
+                    if (ticket) {
+                        const targetUser = await UserV2.findById(ticket.userId);
+                        if (targetUser) {
+                            const conflicting = await UserV2.findOne({ telegramChatId: userChatId, _id: { $ne: targetUser._id } });
+                            if (!conflicting) {
+                                targetUser.telegramChatId = userChatId;
+                                targetUser.telegramUsername = update.message.from?.username || null;
+                                targetUser.telegramLinkedAt = new Date();
+                                await targetUser.save();
+                                ticket.chatId = userChatId;
+                                ticket.telegramUsername = update.message.from?.username || null;
+                                ticket.completed = true;
+                                await ticket.save();
+                                await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                                    chat_id: userChatId, text: '✅ Akun ArulzXD Store berhasil ditautkan. Notifikasi akun akan dikirim ke chat ini.'
+                                }).catch(() => {});
+                            } else {
+                                await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                                    chat_id: userChatId, text: '⚠️ Telegram ini sudah tertaut ke akun lain.'
+                                }).catch(() => {});
+                            }
+                        }
+                        return res.sendStatus(200);
+                    }
+                }
                 const linkedUser = await UserV2.findOne({ telegramChatId: userChatId }).select('username email').lean();
 
                 const replyText = linkedUser
                     ? `👋 <b>Halo, ${firstName}!</b>\n\n✅ Akun Telegram Anda sudah terhubung dengan akun ArulzXD Store:\n• <b>Username:</b> ${linkedUser.username}\n• <b>Email:</b> ${linkedUser.email}\n\nSemua notifikasi promo, informasi sistem, dan update terbaru akan dikirim langsung ke chat ini.`
-                    : `👋 <b>Selamat datang di Bot Notifikasi ArulzXD Store, ${firstName}!</b>\n\nBot ini siap mengirimkan notifikasi instan langsung ke private chat Anda.\n\n🔗 <b>Cara Menautkan Akun:</b>\n1. Buka <a href="${BASE_URL}/profile">${BASE_URL}/profile</a>\n2. Gulir ke bagian <b>Notifikasi Telegram Bot</b>\n3. Klik tombol login Telegram untuk menghubungkan akun Anda.`;
+                    : `👋 <b>Selamat datang di Bot Notifikasi ArulzXD Store, ${firstName}!</b>\n\nBot ini siap mengirimkan notifikasi instan langsung ke private chat Anda.\n\n🔗 <b>Cara Menautkan Akun:</b>\n1. Buka <a href="${BASE_URL}/profile">${BASE_URL}/profile</a>\n2. Gulir ke bagian <b>Notifikasi Telegram Bot</b>\n3. Klik tombol Tautkan Bot Telegram untuk menghubungkan akun Anda.`;
 
                 await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
                     chat_id: userChatId,
@@ -4382,313 +4572,6 @@ app.get('/auth/google/callback', async (req, res) => {
     } catch (error) {
         console.error('Google Auth Callback Error:', error.response?.data || error.message);
         res.send('Login Error: ' + (error.response?.data?.error_description || error.message));
-    }
-});
-
-app.get('/api/auth/telegram', async (req, res) => {
-    try {
-        if (TELEGRAM_BOT_USERNAME) {
-            return res.json({ status: true, botUsername: TELEGRAM_BOT_USERNAME });
-        }
-        if (!TELEGRAM_BOT_TOKEN) {
-            return res.status(500).json({ status: false, message: 'Token Bot Telegram belum dikonfigurasi.' });
-        }
-        const meRes = await axios.get(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe`, { timeout: 5000 });
-        const botUsername = meRes.data?.result?.username;
-        if (!botUsername) {
-            return res.status(500).json({ status: false, message: 'Username Bot Telegram tidak ditemukan.' });
-        }
-        return res.json({ status: true, botUsername });
-    } catch (err) {
-        console.error('Gagal mengambil config Bot Telegram:', err.message);
-        return res.status(500).json({ status: false, message: 'Gagal memuat konfigurasi bot Telegram.' });
-    }
-});
-
-// Helper Verifikasi Signature Hash Resmi Telegram Login Widget
-function verifyTelegramWidgetAuth(authData, botToken) {
-    if (!authData || !authData.hash || !botToken) return false;
-
-    const { hash, ...rest } = authData;
-    const dataCheckString = Object.keys(rest)
-        .filter((k) => rest[k] !== undefined && rest[k] !== null && rest[k] !== '')
-        .sort()
-        .map((k) => `${k}=${rest[k]}`)
-        .join('\n');
-
-    const secretKey = crypto.createHash('sha256').update(botToken).digest();
-    const computedHash = crypto
-        .createHmac('sha256', secretKey)
-        .update(dataCheckString)
-        .digest('hex');
-
-    try {
-        return crypto.timingSafeEqual(
-            Buffer.from(computedHash, 'hex'),
-            Buffer.from(String(hash), 'hex')
-        );
-    } catch (e) {
-        return false;
-    }
-}
-
-// Handler Proses Login / Daftar Telegram (UserV2)
-async function processTelegramUserLogin(req, res, tgData, refCodeFromClient = null) {
-    if (!TELEGRAM_BOT_TOKEN) {
-        throw new Error('TELEGRAM_BOT_TOKEN belum diatur di server.');
-    }
-
-    const isValidHash = verifyTelegramWidgetAuth(tgData, TELEGRAM_BOT_TOKEN);
-    if (!isValidHash) {
-        throw new Error('Signature autentikasi Telegram tidak valid!');
-    }
-
-    const authTimestamp = Number(tgData.auth_date || 0);
-    const nowSeconds = Math.floor(Date.now() / 1000);
-    if (!authTimestamp || Math.abs(nowSeconds - authTimestamp) > 86400) {
-        throw new Error('Sesi autentikasi Telegram telah kedaluwarsa. Silakan ulangi login.');
-    }
-
-    const telegramId = String(tgData.id).trim();
-    const tgHandle = tgData.username ? `@${String(tgData.username).replace(/^@/, '')}` : null;
-    const cleanUsername = (
-        tgData.username ||
-        [tgData.first_name, tgData.last_name].filter(Boolean).join(' ') ||
-        `tg_${telegramId}`
-    ).trim();
-
-    const fallbackEmail = `tg_${telegramId}@telegram.user`;
-    const avatarUrl = tgData.photo_url || 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png';
-
-    let dbUser = await UserV2.findOne({
-        $or: [
-            { provider: 'telegram', providerId: telegramId },
-            { telegramChatId: telegramId },
-            { email: fallbackEmail }
-        ]
-    });
-
-    let isFirstTimeLogin = false;
-
-    if (!dbUser) {
-        isFirstTimeLogin = true;
-        let initialSaldo = 0;
-        let inviterUser = null;
-
-        const refToUse = refCodeFromClient || req.cookies?.pending_ref || null;
-        if (refToUse && String(refToUse).trim()) {
-            inviterUser = await UserV2.findOne({ referralCode: String(refToUse).trim().toUpperCase() });
-            if (inviterUser) {
-                initialSaldo = 500;
-                inviterUser.saldo = (inviterUser.saldo || 0) + 1000;
-                await inviterUser.save();
-            }
-        }
-
-        dbUser = new UserV2({
-            username: cleanUsername,
-            email: fallbackEmail,
-            provider: 'telegram',
-            providerId: telegramId,
-            avatar: avatarUrl,
-            saldo: initialSaldo,
-            referralCode: generateReferralCode(),
-            referredBy: inviterUser ? inviterUser.referralCode : null,
-            hasCompletedOnboarding: false,
-            telegramChatId: telegramId,
-            telegramUsername: tgHandle || cleanUsername,
-            telegramLinkedAt: new Date(),
-            createdAt: new Date()
-        });
-
-        await dbUser.save();
-    } else {
-        if (!dbUser.hasCompletedOnboarding) {
-            isFirstTimeLogin = true;
-        }
-        let needSave = false;
-        if (tgData.photo_url && dbUser.avatar !== tgData.photo_url) {
-            dbUser.avatar = tgData.photo_url;
-            needSave = true;
-        }
-        if (!dbUser.telegramChatId) {
-            dbUser.telegramChatId = telegramId;
-            dbUser.telegramUsername = tgHandle || cleanUsername;
-            dbUser.telegramLinkedAt = new Date();
-            needSave = true;
-        }
-        if (needSave) await dbUser.save();
-    }
-
-    res.clearCookie('pending_ref');
-
-    const userPayload = {
-        id: dbUser._id,
-        username: dbUser.username,
-        email: dbUser.email,
-        name: [tgData.first_name, tgData.last_name].filter(Boolean).join(' ') || dbUser.username,
-        avatar: dbUser.avatar,
-        createdAt: dbUser.createdAt
-    };
-
-    const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '7d' });
-
-    res.cookie('auth_session', token, {
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax'
-    });
-
-    return {
-        redirectUrl: isFirstTimeLogin ? '/store?onboarding=1' : '/dashboard',
-        isFirstTimeLogin
-    };
-}
-
-app.get('/auth/telegram/callback', async (req, res) => {
-    try {
-        const { ref, ...tgQueryData } = req.query;
-        const result = await processTelegramUserLogin(req, res, tgQueryData, ref);
-        return res.redirect(result.redirectUrl);
-    } catch (error) {
-        console.error('Telegram GET Callback Error:', error.message);
-        return sendSweetAlert(res, 'error', 'Gagal Login Telegram', error.message, '/login');
-    }
-});
-
-app.post('/auth/telegram/callback', async (req, res) => {
-    try {
-        const { ref, ...tgBodyData } = req.body;
-        const result = await processTelegramUserLogin(req, res, tgBodyData, ref);
-        return res.json({
-            status: true,
-            message: 'Berhasil masuk dengan akun Telegram!',
-            redirectUrl: result.redirectUrl
-        });
-    } catch (error) {
-        console.error('Telegram POST Callback Error:', error.message);
-        return res.status(400).json({
-            status: false,
-            message: error.message || 'Autentikasi Telegram gagal.'
-        });
-    }
-});
-
-// Helper Menautkan Telegram ke Akun Login di Profile
-async function handleLinkTelegramAccount(userSession, tgData) {
-    if (!TELEGRAM_BOT_TOKEN) {
-        throw new Error('Token Bot Telegram belum dikonfigurasi di server.');
-    }
-
-    const isValidHash = verifyTelegramWidgetAuth(tgData, TELEGRAM_BOT_TOKEN);
-    if (!isValidHash) {
-        throw new Error('Signature autentikasi Telegram tidak valid!');
-    }
-
-    const authTimestamp = Number(tgData.auth_date || 0);
-    const nowSeconds = Math.floor(Date.now() / 1000);
-    if (!authTimestamp || Math.abs(nowSeconds - authTimestamp) > 86400) {
-        throw new Error('Sesi autentikasi Telegram kedaluwarsa. Silakan ulangi.');
-    }
-
-    const chatId = String(tgData.id).trim();
-    const tgUsername = tgData.username
-        ? `@${String(tgData.username).replace(/^@/, '')}`
-        : [tgData.first_name, tgData.last_name].filter(Boolean).join(' ') || `ID:${chatId}`;
-
-    const userId = userSession.id || userSession._id;
-    const updatedUser = await UserV2.findByIdAndUpdate(
-        userId,
-        {
-            $set: {
-                telegramChatId: chatId,
-                telegramUsername: tgUsername,
-                telegramLinkedAt: new Date()
-            }
-        },
-        { returnDocument: 'after' }
-    );
-
-    if (!updatedUser) {
-        throw new Error('Data pengguna tidak ditemukan.');
-    }
-
-    const sent = await sendTelegramUserPrivateMessage(
-        chatId,
-        'Akun Telegram Berhasil Ditautkan!',
-        `Halo ${updatedUser.username}, akun ArulzXD Store Anda (${updatedUser.email}) kini terhubung dengan Bot ini.`,
-        `${BASE_URL}/notifikasi`
-    );
-
-    return { updatedUser, chatId, tgUsername, messageSent: sent };
-}
-
-// Endpoint GET Link Telegram (Fallback Redirect)
-app.get('/api/user/link-telegram/callback', checkAuthSession, async (req, res) => {
-    try {
-        if (!req.user) {
-            return sendSweetAlert(res, 'error', 'Sesi Habis', 'Silakan login terlebih dahulu!', '/login');
-        }
-
-        const result = await handleLinkTelegramAccount(req.user, req.query);
-        const infoText = result.messageSent
-            ? 'Akun Telegram berhasil ditautkan! Cek pesan konfirmasi di Bot Telegram.'
-            : `Akun Telegram berhasil ditautkan! Pastikan Anda membuka @${TELEGRAM_BOT_USERNAME} lalu tekan START agar bot bisa mengirim notifikasi.`;
-
-        return sendSweetAlert(res, 'success', 'Berhasil Tertaut!', infoText, '/profile');
-    } catch (err) {
-        console.error('Error GET link telegram:', err.message);
-        return sendSweetAlert(res, 'error', 'Gagal Menautkan', err.message, '/profile');
-    }
-});
-
-// Endpoint POST Link Telegram (Utama via data-onauth AJAX - Anti Deprecated)
-app.post('/api/user/link-telegram', checkAuthSession, async (req, res) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu!' });
-        }
-
-        const result = await handleLinkTelegramAccount(req.user, req.body);
-        return res.json({
-            status: true,
-            message: result.messageSent
-                ? 'Berhasil menautkan akun ke Telegram! Silakan cek pesan dari Bot Telegram.'
-                : `Berhasil ditautkan! Segera buka @${TELEGRAM_BOT_USERNAME} dan klik START agar bot dapat mengirim pesan.`,
-            telegram: {
-                linked: true,
-                chatId: result.chatId,
-                username: result.tgUsername
-            }
-        });
-    } catch (err) {
-        console.error('Error POST link telegram:', err);
-        return res.status(400).json({ status: false, message: err.message || 'Gagal menautkan akun Telegram.' });
-    }
-});
-
-app.post('/api/user/unlink-telegram', checkAuthSession, async (req, res) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu!' });
-        }
-
-        const userId = req.user.id || req.user._id;
-        await UserV2.findByIdAndUpdate(userId, {
-            $set: {
-                telegramChatId: null,
-                telegramUsername: null,
-                telegramLinkedAt: null
-            }
-        });
-
-        return res.json({
-            status: true,
-            message: 'Tautan Telegram berhasil diputuskan. Notifikasi akan dikirimkan melalui Email.'
-        });
-    } catch (err) {
-        return res.status(500).json({ status: false, message: 'Gagal memutuskan tautan Telegram.' });
     }
 });
 
