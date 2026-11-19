@@ -518,17 +518,32 @@ async function sendEmailOTP(email, code, typeTitle) {
     await transporter.sendMail(mailOptions);
 }
 
+// ============================================================
+// HELPER TRANSPORTER SMTP POOL (REUSABLE UNTUK BANYAK USER)
+// ============================================================
+let sharedMailTransporter = null;
+
+function getMailTransporter() {
+    if (!SMTP_USER || !SMTP_PASS) return null;
+    if (!sharedMailTransporter) {
+        sharedMailTransporter = nodemailer.createTransport({
+            host: SMTP_HOST,
+            port: SMTP_PORT,
+            secure: SMTP_PORT === 465,
+            pool: true,
+            maxConnections: 3,
+            maxMessages: 100,
+            auth: { user: SMTP_USER, pass: SMTP_PASS },
+            tls: { rejectUnauthorized: false }
+        });
+    }
+    return sharedMailTransporter;
+}
+
 // HELPER KIRIM EMAIL NOTIFIKASI NEO-BRUTALISME
 async function sendNotificationEmail(toEmail, title, message, linkUrl = null) {
-    if (!SMTP_USER || !SMTP_PASS || !toEmail || toEmail.endsWith('@telegram.user')) return;
-
-    const transporter = nodemailer.createTransport({
-        host: SMTP_HOST,
-        port: SMTP_PORT,
-        secure: true,
-        auth: { user: SMTP_USER, pass: SMTP_PASS },
-        tls: { rejectUnauthorized: false }
-    });
+    const transporter = getMailTransporter();
+    if (!transporter || !toEmail || toEmail.endsWith('@telegram.user')) return false;
 
     const escapeHtml = (str) => String(str || '')
         .replace(/&/g, '&amp;')
@@ -579,40 +594,59 @@ async function sendNotificationEmail(toEmail, title, message, linkUrl = null) {
 </tr>
 </table>`
     });
+    return true;
 }
 
-// HELPER KIRIM PRIVATE CHAT BOT TELEGRAM KE USER
+// HELPER KIRIM PRIVATE CHAT BOT TELEGRAM KE USER (DENGAN FALLBACK PLAIN TEXT)
 async function sendTelegramUserPrivateMessage(chatId, title, message, linkUrl = null) {
     if (!TELEGRAM_BOT_TOKEN || !chatId) return false;
+
+    const cleanChatId = String(chatId).trim();
+    const finalUrl = linkUrl || `${BASE_URL}/notifikasi`;
 
     const escapeHtml = (str) => String(str || '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 
-    const text = `
-🔔 <b>${escapeHtml(title)}</b>
-━━━━━━━━━━━━━━━━━━━━
-${escapeHtml(message)}
-━━━━━━━━━━━━━━━━━━━━
-🌐 <a href="${escapeHtml(linkUrl || `${BASE_URL}/notifikasi`)}">Buka Pusat Notifikasi</a>
-    `.trim();
+    const htmlText = [
+        `🔔 <b>${escapeHtml(title)}</b>`,
+        `━━━━━━━━━━━━━━━━━━━━`,
+        `${escapeHtml(message)}`,
+        `━━━━━━━━━━━━━━━━━━━━`,
+        `🌐 <a href="${escapeHtml(finalUrl)}">Buka Pusat Notifikasi</a>`
+    ].join('\n');
 
     try {
         await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-            chat_id: String(chatId),
-            text,
+            chat_id: cleanChatId,
+            text: htmlText,
             parse_mode: 'HTML',
             disable_web_page_preview: true
-        }, { timeout: 8000 });
+        }, { timeout: 6000 });
         return true;
     } catch (err) {
-        console.error(`❌ Gagal kirim private chat Telegram ke ${chatId}:`, err.response?.data || err.message);
-        return false;
+        const errDesc = err.response?.data?.description || err.message;
+        console.warn(`⚠️ Retry plain-text Telegram ke ${cleanChatId} (${errDesc})`);
+
+        // Fallback jika HTML entity gagal di-parse oleh Telegram
+        try {
+            const plainText = `🔔 ${title}\n━━━━━━━━━━━━━━━━━━━━\n${message}\n━━━━━━━━━━━━━━━━━━━━\n🌐 ${finalUrl}`;
+            await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                chat_id: cleanChatId,
+                text: plainText,
+                disable_web_page_preview: true
+            }, { timeout: 6000 });
+            return true;
+        } catch (fallbackErr) {
+            console.error(`❌ Gagal kirim private chat Telegram ke ${cleanChatId}:`, fallbackErr.response?.data || fallbackErr.message);
+            return false;
+        }
     }
 }
 
-// HELPER DISPATCH NOTIFIKASI KE SEMUA USER (TELEGRAM PRIVATE CHAT / EMAIL)
+// HELPER DISPATCH NOTIFIKASI PARALEL PER BATCH KE SEMUA USER (TELEGRAM BOT + EMAIL)
 async function dispatchNotificationToUsers(notifDoc) {
     try {
         const query = notifDoc.targetEmail
@@ -620,29 +654,52 @@ async function dispatchNotificationToUsers(notifDoc) {
             : {};
 
         const users = await UserV2.find(query).select('email username telegramChatId').lean();
+        if (!users.length) return { telegramSent: 0, emailSent: 0 };
+
         const targetLink = notifDoc.link
             ? (notifDoc.link.startsWith('http') ? notifDoc.link : `${BASE_URL}${notifDoc.link.startsWith('/') ? '' : '/'}${notifDoc.link}`)
             : `${BASE_URL}/notifikasi`;
 
-        for (const u of users) {
-            // 1. Jika user sudah menautkan Telegram -> kirim langsung lewat Private Chat Bot Telegram
-            if (u.telegramChatId) {
-                await sendTelegramUserPrivateMessage(u.telegramChatId, notifDoc.title, notifDoc.message, targetLink);
-            }
+        let telegramSent = 0;
+        let emailSent = 0;
 
-            // 2. Kirim ke email user (terutama jika user tidak menautkan Telegram, dan juga sebagai fallback resmi)
-            if (u.email && !u.email.endsWith('@telegram.user')) {
-                if (!u.telegramChatId || notifDoc.sendEmailAlways !== false) {
-                    sendNotificationEmail(u.email, notifDoc.title, notifDoc.message, targetLink).catch((e) =>
-                        console.error(`Gagal kirim email notif ke ${u.email}:`, e.message)
+        // Proses dalam batch berisi 10 user secara paralel agar cepat dan tidak terkena timeout Vercel
+        const BATCH_SIZE = 10;
+        for (let i = 0; i < users.length; i += BATCH_SIZE) {
+            const batch = users.slice(i, i + BATCH_SIZE);
+
+            await Promise.allSettled(batch.map(async (u) => {
+                const tasks = [];
+
+                // 1. Kirim ke Bot Telegram jika user sudah menautkan telegramChatId
+                if (u.telegramChatId && String(u.telegramChatId).trim() !== '') {
+                    tasks.push(
+                        sendTelegramUserPrivateMessage(u.telegramChatId, notifDoc.title, notifDoc.message, targetLink)
+                            .then((ok) => { if (ok) telegramSent++; })
                     );
                 }
-            }
+
+                // 2. Kirim ke semua Email user yang valid (wajib di-await agar tidak terputus)
+                if (u.email && u.email.includes('@') && !u.email.endsWith('@telegram.user')) {
+                    tasks.push(
+                        sendNotificationEmail(u.email, notifDoc.title, notifDoc.message, targetLink)
+                            .then((ok) => { if (ok) emailSent++; })
+                            .catch((e) => console.error(`❌ Gagal kirim email notif ke ${u.email}:`, e.message))
+                    );
+                }
+
+                await Promise.allSettled(tasks);
+            }));
         }
+
+        console.log(`✅ Broadcast Notifikasi "${notifDoc.title}" selesai -> Telegram: ${telegramSent}, Email: ${emailSent}`);
+        return { telegramSent, emailSent };
     } catch (err) {
         console.error('❌ Error dispatchNotificationToUsers:', err.message);
+        return { telegramSent: 0, emailSent: 0 };
     }
 }
+
 
 function getUserIdentifier(req) {
     if (req.user) {
@@ -3840,6 +3897,25 @@ app.get('/api/telegram/ticket/:token', async (req, res) => {
     }
 });
 
+app.post('/api/user/unlink-telegram', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
+        }
+        const userId = req.user.id || req.user._id;
+        await UserV2.findByIdAndUpdate(userId, {
+            $set: {
+                telegramChatId: null,
+                telegramUsername: null,
+                telegramLinkedAt: null
+            }
+        });
+        return res.json({ status: true, message: 'Tautan Telegram berhasil diputuskan.' });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal memutuskan tautan Telegram.' });
+    }
+});
+
 app.get('/api/telegram/setup-webhook', async (req, res) => {
     try {
         const webhookUrl = `${BASE_URL}/api/telegram/webhook`;
@@ -5134,14 +5210,14 @@ app.post('/api/admin/notifications', checkAuthSession, checkAdminRole, async (re
             createdBy: req.user.username || 'Admin'
         });
 
-        // Kirim ke Telegram Private Chat (jika tertaut) dan Email semua user secara background
-        await dispatchNotificationToUsers(newNotif);
+        const stats = await dispatchNotificationToUsers(newNotif);
 
-        return res.json({
-            status: true,
-            message: 'Notifikasi berhasil dibuat dan dikirim ke user!',
-            data: newNotif
-        });
+return res.json({
+    status: true,
+    message: `Notifikasi terkirim! (Bot Telegram: ${stats.telegramSent} user, Email: ${stats.emailSent} user)`,
+    data: newNotif,
+    stats
+});
     } catch (err) {
         console.error('Error create notification:', err);
         return res.status(500).json({ status: false, message: 'Gagal membuat notifikasi.' });
