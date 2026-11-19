@@ -34,10 +34,11 @@
     <style>
         body { background-color: #F4F0EA; color: #000000; overflow-x: hidden; }
         .neo-box { background-color: #FFFFFF; border: 3.5px solid #000000; box-shadow: 5px 5px 0px #000000; }
-        .neo-btn { border: 3px solid #000000; box-shadow: 4px 4px 0px #000000; transition: transform 0.15s ease, box-shadow 0.15s ease; }
+        .neo-btn { border: 3px solid #000000; box-shadow: 4px 4px 0px #000000; transition: transform 0.15s ease, box-shadow 0.15s ease; cursor: pointer; }
         .neo-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000000; }
         .neo-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000000; }
         .tab-btn.active { background-color: #FFDE59 !important; box-shadow: 5px 5px 0px #000000 !important; }
+        .subtab-btn.active { background-color: #00E5FF !important; box-shadow: 4px 4px 0px #000000 !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .user-pill { border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; transition: all 0.2s ease; }
@@ -71,7 +72,7 @@
     <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 space-y-5">
 
         <!-- TAB SWITCHER -->
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <button id="tabBtnDeposits" onclick="switchAdminTab('deposits')" class="tab-btn active neo-btn bg-white text-black font-cyber font-black py-3.5 px-4 rounded-2xl text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
                 <i class="fa-solid fa-qrcode"></i>
                 <span>Deposit QRIS v2</span>
@@ -81,6 +82,12 @@
             <button id="tabBtnChat" onclick="switchAdminTab('chat')" class="tab-btn neo-btn bg-white text-black font-cyber font-black py-3.5 px-4 rounded-2xl text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
                 <i class="fa-solid fa-headset"></i>
                 <span>Live Chat CS</span>
+            </button>
+
+            <button id="tabBtnNotifications" onclick="switchAdminTab('notifications')" class="tab-btn neo-btn bg-white text-black font-cyber font-black py-3.5 px-4 rounded-2xl text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
+                <i class="fa-solid fa-bell"></i>
+                <span>Notifikasi</span>
+                <span id="totalNotifBadge" class="bg-neoCyan border border-black text-[10px] px-2 py-0.5 rounded-full">0</span>
             </button>
         </div>
 
@@ -163,6 +170,169 @@
             </div>
         </section>
 
+        <!-- ======================================================= -->
+        <!-- SECTION 3: PUSAT NOTIFIKASI (TAMBAH, EDIT, KELOLA)      -->
+        <!-- ======================================================= -->
+        <section id="sectionNotifications" class="hidden space-y-5">
+            <div class="p-5 neo-box rounded-2xl bg-neoYellow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black font-cyber text-black flex items-center gap-2">
+                        <i class="fa-solid fa-bullhorn"></i> Pusat Notifikasi &amp; Broadcast
+                    </h1>
+                    <p class="text-xs font-bold text-black mt-1">Tambah notifikasi baru (langsung terkirim ke semua Email User &amp; Telegram), edit, atau kelola notifikasi.</p>
+                </div>
+                <button onclick="loadAdminNotifications()" class="neo-btn bg-white text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh Notifikasi
+                </button>
+            </div>
+
+            <!-- SUB-TAB SWITCHER NOTIFIKASI -->
+            <div class="grid grid-cols-3 gap-2.5">
+                <button type="button" id="notifSubBtnAdd" onclick="switchNotifSubTab('add')" class="subtab-btn active neo-btn bg-white text-black font-cyber font-black py-2.5 px-3 rounded-xl text-[11px] sm:text-xs uppercase flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i> <span>Tambah Notifikasi</span>
+                </button>
+                <button type="button" id="notifSubBtnEdit" onclick="switchNotifSubTab('edit')" class="subtab-btn neo-btn bg-white text-black font-cyber font-black py-2.5 px-3 rounded-xl text-[11px] sm:text-xs uppercase flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-pen-to-square"></i> <span>Edit Notifikasi</span>
+                </button>
+                <button type="button" id="notifSubBtnManage" onclick="switchNotifSubTab('manage')" class="subtab-btn neo-btn bg-white text-black font-cyber font-black py-2.5 px-3 rounded-xl text-[11px] sm:text-xs uppercase flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-list-check"></i> <span>Kelola (<span id="notifManageCountTab">0</span>)</span>
+                </button>
+            </div>
+
+            <!-- SUB-PANEL 1: TAMBAH NOTIFIKASI BARU -->
+            <div id="notifPanelAdd" class="neo-box rounded-2xl bg-white overflow-hidden">
+                <div class="bg-neoCyan border-b-3 border-black px-5 py-3 flex items-center justify-between">
+                    <span class="font-cyber font-black text-sm uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Buat &amp; Kirim Notifikasi Baru
+                    </span>
+                    <span class="text-[10px] font-mono font-extrabold bg-white border-2 border-black px-2 py-0.5 rounded">AUTO EMAIL + TELEGRAM</span>
+                </div>
+
+                <form id="createNotifForm" onsubmit="submitCreateNotification(event)" class="p-5 space-y-4">
+                    <div>
+                        <label for="addNotifTitle" class="block font-cyber font-black text-xs uppercase mb-1.5">Judul Notifikasi *</label>
+                        <input type="text" id="addNotifTitle" required placeholder="Contoh: Promo Flash Sale Diskon 50% Hari Ini!" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="addNotifType" class="block font-cyber font-black text-xs uppercase mb-1.5">Kategori / Tipe</label>
+                            <select id="addNotifType" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                                <option value="info">Info (info)</option>
+                                <option value="promo">Promo (promo)</option>
+                                <option value="transaksi">Transaksi (transaksi)</option>
+                                <option value="sistem">Sistem (sistem)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="addNotifTargetEmail" class="block font-cyber font-black text-xs uppercase mb-1.5">Target Email User (Opsional)</label>
+                            <input type="text" id="addNotifTargetEmail" placeholder="Kosongkan = Broadcast ke SEMUA Email & Telegram User" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="addNotifLink" class="block font-cyber font-black text-xs uppercase mb-1.5">Link Tujuan / Tombol CTA (Opsional)</label>
+                        <input type="text" id="addNotifLink" placeholder="Contoh: /store atau https://www.shoparulzxd.biz.id/store" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                    </div>
+
+                    <div>
+                        <label for="addNotifMessage" class="block font-cyber font-black text-xs uppercase mb-1.5">Isi Pesan Notifikasi *</label>
+                        <textarea id="addNotifMessage" required rows="4" placeholder="Tuliskan detail pengumuman atau notifikasi untuk user..." class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white"></textarea>
+                    </div>
+
+                    <button type="submit" id="btnSubmitAddNotif" class="w-full neo-btn bg-neoGreen text-black font-cyber font-black py-3.5 px-5 rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> <span>Kirim Notifikasi ke Semua Email &amp; Telegram</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- SUB-PANEL 2: EDIT NOTIFIKASI -->
+            <div id="notifPanelEdit" class="hidden neo-box rounded-2xl bg-white overflow-hidden">
+                <div class="bg-neoPink border-b-3 border-black px-5 py-3 flex items-center justify-between">
+                    <span class="font-cyber font-black text-sm uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Notifikasi Tersimpan
+                    </span>
+                    <span id="editNotifBadge" class="text-[10px] font-mono font-extrabold bg-white border-2 border-black px-2 py-0.5 rounded">PILIH NOTIFIKASI</span>
+                </div>
+
+                <div class="p-5 space-y-4">
+                    <div class="bg-neoBg border-2 border-black rounded-xl p-3.5 space-y-2">
+                        <label for="editNotifSelector" class="block font-cyber font-black text-xs uppercase">1. Pilih Notifikasi yang Akan Diedit *</label>
+                        <select id="editNotifSelector" onchange="onSelectEditNotification(this.value)" class="w-full bg-white border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none">
+                            <option value="">-- Pilih Notifikasi --</option>
+                        </select>
+                    </div>
+
+                    <form id="editNotifForm" onsubmit="submitEditNotification(event)" class="space-y-4">
+                        <input type="hidden" id="editNotifId">
+
+                        <div>
+                            <label for="editNotifTitle" class="block font-cyber font-black text-xs uppercase mb-1.5">Judul Notifikasi *</label>
+                            <input type="text" id="editNotifTitle" required placeholder="Judul notifikasi..." class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="editNotifType" class="block font-cyber font-black text-xs uppercase mb-1.5">Kategori / Tipe</label>
+                                <select id="editNotifType" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                                    <option value="info">Info (info)</option>
+                                    <option value="promo">Promo (promo)</option>
+                                    <option value="transaksi">Transaksi (transaksi)</option>
+                                    <option value="sistem">Sistem (sistem)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="editNotifTargetEmail" class="block font-cyber font-black text-xs uppercase mb-1.5">Target Email User (Kosongkan = Broadcast)</label>
+                                <input type="text" id="editNotifTargetEmail" placeholder="Broadcast ke semua user" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="editNotifLink" class="block font-cyber font-black text-xs uppercase mb-1.5">Link Tujuan / CTA (Opsional)</label>
+                            <input type="text" id="editNotifLink" placeholder="/store atau https://..." class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                        </div>
+
+                        <div>
+                            <label for="editNotifMessage" class="block font-cyber font-black text-xs uppercase mb-1.5">Isi Pesan Notifikasi *</label>
+                            <textarea id="editNotifMessage" required rows="4" placeholder="Isi lengkap notifikasi..." class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white"></textarea>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2.5 bg-neoBg border-2 border-black rounded-xl p-3 cursor-pointer select-none">
+                                <input type="checkbox" id="editNotifResetRead" class="w-4 h-4 accent-black">
+                                <span class="text-xs font-extrabold">Reset status "Sudah Dibaca" agar muncul kembali sebagai notifikasi baru</span>
+                            </label>
+
+                            <label class="flex items-center gap-2.5 bg-neoYellow/50 border-2 border-black rounded-xl p-3 cursor-pointer select-none">
+                                <input type="checkbox" id="editNotifResendBroadcast" class="w-4 h-4 accent-black">
+                                <span class="text-xs font-extrabold">Kirim ulang notifikasi yang diperbarui ke Email &amp; Telegram User</span>
+                            </label>
+                        </div>
+
+                        <button type="submit" id="btnSubmitEditNotif" class="w-full neo-btn bg-neoCyan text-black font-cyber font-black py-3.5 px-5 rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> <span>Simpan Perubahan Notifikasi</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SUB-PANEL 3: KELOLA & HAPUS NOTIFIKASI -->
+            <div id="notifPanelManage" class="hidden neo-box rounded-2xl bg-white overflow-hidden">
+                <div class="bg-neoGreen border-b-3 border-black px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+                    <span class="font-cyber font-black text-sm uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-list-check"></i> Kelola Daftar Notifikasi (<span id="manageNotifTotalText">0</span>)
+                    </span>
+                    <input type="text" id="searchNotifInput" oninput="renderManageNotifList()" placeholder="Cari judul, isi, atau target..." class="bg-white border-2 border-black rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none w-full sm:w-64">
+                </div>
+
+                <div id="manageNotifListContainer" class="divide-y-2 divide-black max-h-[540px] overflow-y-auto">
+                    <div class="p-6 text-center text-xs font-mono font-bold text-slate-600">Memuat daftar notifikasi...</div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- BOTTOM NAV BAR -->
@@ -179,6 +349,7 @@
 
     <script>
         let allDepositsData = [];
+        let allNotificationsData = [];
         let currentDepositFilter = 'all';
         let selectedUserId = null;
         let selectedUsername = '';
@@ -197,8 +368,25 @@
         function switchAdminTab(tab) {
             document.getElementById('sectionDeposits').classList.toggle('hidden', tab !== 'deposits');
             document.getElementById('sectionChat').classList.toggle('hidden', tab !== 'chat');
+            document.getElementById('sectionNotifications').classList.toggle('hidden', tab !== 'notifications');
+
             document.getElementById('tabBtnDeposits').classList.toggle('active', tab === 'deposits');
             document.getElementById('tabBtnChat').classList.toggle('active', tab === 'chat');
+            document.getElementById('tabBtnNotifications').classList.toggle('active', tab === 'notifications');
+
+            if (tab === 'notifications') {
+                loadAdminNotifications();
+            }
+        }
+
+        function switchNotifSubTab(sub) {
+            document.getElementById('notifPanelAdd').classList.toggle('hidden', sub !== 'add');
+            document.getElementById('notifPanelEdit').classList.toggle('hidden', sub !== 'edit');
+            document.getElementById('notifPanelManage').classList.toggle('hidden', sub !== 'manage');
+
+            document.getElementById('notifSubBtnAdd').classList.toggle('active', sub === 'add');
+            document.getElementById('notifSubBtnEdit').classList.toggle('active', sub === 'edit');
+            document.getElementById('notifSubBtnManage').classList.toggle('active', sub === 'manage');
         }
 
         function setDepositFilter(filter) {
@@ -369,6 +557,254 @@
             }
         }
 
+        // =======================================================
+        // NOTIFIKASI ADMIN FUNCTIONS (TAMBAH, EDIT, KELOLA)
+        // =======================================================
+        async function loadAdminNotifications() {
+            try {
+                const res = await fetch('/api/admin/notifications');
+                const data = await res.json();
+                if (data.status && Array.isArray(data.notifications)) {
+                    allNotificationsData = data.notifications;
+                    const count = allNotificationsData.length;
+                    document.getElementById('totalNotifBadge').innerText = count;
+                    document.getElementById('notifManageCountTab').innerText = count;
+                    document.getElementById('manageNotifTotalText').innerText = count;
+                    populateEditNotifDropdown();
+                    renderManageNotifList();
+                }
+            } catch (e) {}
+        }
+
+        function populateEditNotifDropdown() {
+            const selector = document.getElementById('editNotifSelector');
+            if (!selector) return;
+            const currentVal = selector.value;
+            selector.innerHTML = `<option value="">-- Pilih Notifikasi (${allNotificationsData.length} tersedia) --</option>` +
+                allNotificationsData.map(n => {
+                    const target = n.targetEmail ? n.targetEmail : 'Broadcast Semua User';
+                    return `<option value="${escapeHtml(n._id)}">[${escapeHtml((n.type || 'info').toUpperCase())}] ${escapeHtml(n.title)} (${escapeHtml(target)})</option>`;
+                }).join('');
+            if (currentVal && allNotificationsData.some(n => String(n._id) === currentVal)) {
+                selector.value = currentVal;
+            }
+        }
+
+        function onSelectEditNotification(notifId) {
+            const notif = allNotificationsData.find(n => String(n._id) === String(notifId));
+            const badge = document.getElementById('editNotifBadge');
+            if (!notif) {
+                document.getElementById('editNotifId').value = '';
+                document.getElementById('editNotifForm').reset();
+                badge.innerText = 'PILIH NOTIFIKASI';
+                return;
+            }
+            document.getElementById('editNotifId').value = notif._id;
+            document.getElementById('editNotifTitle').value = notif.title || '';
+            document.getElementById('editNotifType').value = notif.type || 'info';
+            document.getElementById('editNotifTargetEmail').value = notif.targetEmail || '';
+            document.getElementById('editNotifLink').value = notif.link || '';
+            document.getElementById('editNotifMessage').value = notif.message || '';
+            document.getElementById('editNotifResetRead').checked = false;
+            document.getElementById('editNotifResendBroadcast').checked = false;
+            badge.innerText = `ID: ${String(notif._id).slice(-6).toUpperCase()}`;
+        }
+
+        function jumpToEditNotif(notifId) {
+            switchNotifSubTab('edit');
+            const selector = document.getElementById('editNotifSelector');
+            if (selector) {
+                selector.value = notifId;
+                onSelectEditNotification(notifId);
+            }
+        }
+
+        async function submitCreateNotification(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitAddNotif');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Mengirim ke Email &amp; Telegram...</span>`;
+
+            try {
+                const payload = {
+                    title: document.getElementById('addNotifTitle').value.trim(),
+                    type: document.getElementById('addNotifType').value,
+                    targetEmail: document.getElementById('addNotifTargetEmail').value.trim() || null,
+                    link: document.getElementById('addNotifLink').value.trim() || null,
+                    message: document.getElementById('addNotifMessage').value.trim()
+                };
+
+                const res = await fetch('/api/admin/notifications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+
+                if (!res.ok || !result.status) {
+                    throw new Error(result.message || 'Gagal mengirim notifikasi.');
+                }
+
+                document.getElementById('createNotifForm').reset();
+                await loadAdminNotifications();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'NOTIFIKASI TERKIRIM!',
+                    text: result.message,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'GAGAL',
+                    text: err.message,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        }
+
+        async function submitEditNotification(e) {
+            e.preventDefault();
+            const notifId = document.getElementById('editNotifId').value.trim();
+            if (!notifId) {
+                Swal.fire({ icon: 'warning', title: 'PILIH NOTIFIKASI', text: 'Pilih notifikasi yang ingin diedit terlebih dahulu!', customClass: { popup: 'cyber-swal' } });
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmitEditNotif');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Menyimpan...</span>`;
+
+            try {
+                const payload = {
+                    title: document.getElementById('editNotifTitle').value.trim(),
+                    type: document.getElementById('editNotifType').value,
+                    targetEmail: document.getElementById('editNotifTargetEmail').value.trim() || null,
+                    link: document.getElementById('editNotifLink').value.trim() || null,
+                    message: document.getElementById('editNotifMessage').value.trim(),
+                    resetReadBy: document.getElementById('editNotifResetRead').checked,
+                    resendBroadcast: document.getElementById('editNotifResendBroadcast').checked
+                };
+
+                const res = await fetch(`/api/admin/notifications/${encodeURIComponent(notifId)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+
+                if (!res.ok || !result.status) {
+                    throw new Error(result.message || 'Gagal memperbarui notifikasi.');
+                }
+
+                await loadAdminNotifications();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'DIPERBARUI!',
+                    text: result.message,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'GAGAL',
+                    text: err.message,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        }
+
+        function renderManageNotifList() {
+            const container = document.getElementById('manageNotifListContainer');
+            if (!container) return;
+
+            const q = (document.getElementById('searchNotifInput')?.value || '').toLowerCase().trim();
+            const filtered = q
+                ? allNotificationsData.filter(n =>
+                    String(n.title || '').toLowerCase().includes(q) ||
+                    String(n.message || '').toLowerCase().includes(q) ||
+                    String(n.type || '').toLowerCase().includes(q) ||
+                    String(n.targetEmail || '').toLowerCase().includes(q)
+                )
+                : allNotificationsData;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-xs font-mono font-bold text-slate-600">Tidak ada notifikasi ditemukan.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(n => {
+                const nid = escapeHtml(n._id);
+                const title = escapeHtml(n.title);
+                const message = escapeHtml(n.message);
+                const type = escapeHtml((n.type || 'info').toUpperCase());
+                const target = n.targetEmail ? escapeHtml(n.targetEmail) : 'Broadcast Semua User';
+                const readCount = Array.isArray(n.readBy) ? n.readBy.length : 0;
+                const dateStr = new Date(n.createdAt).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                return `
+                    <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neoBg/60">
+                        <div class="space-y-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="bg-neoCyan border border-black px-2 py-0.5 rounded text-[10px] font-black font-cyber">${type}</span>
+                                <span class="bg-neoYellow border border-black px-2 py-0.5 rounded text-[10px] font-black font-mono">${target}</span>
+                                <span class="text-[10px] font-mono font-bold text-slate-600">Dibaca: ${readCount} • ${dateStr}</span>
+                            </div>
+                            <h4 class="font-cyber font-black text-sm text-black truncate">${title}</h4>
+                            <p class="text-xs font-bold text-slate-700 whitespace-pre-line break-words">${message}</p>
+                            ${n.link ? `<div class="text-[11px] font-mono text-blue-700 truncate"><i class="fa-solid fa-link"></i> ${escapeHtml(n.link)}</div>` : ''}
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button type="button" onclick="jumpToEditNotif('${nid}')" class="neo-btn bg-neoCyan text-black font-cyber font-black px-3 py-2 rounded-xl text-xs uppercase flex items-center gap-1">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </button>
+                            <button type="button" onclick="deleteAdminNotification('${nid}', '${title}')" class="neo-btn bg-neoPink text-black font-cyber font-black px-3 py-2 rounded-xl text-xs uppercase flex items-center gap-1">
+                                <i class="fa-solid fa-trash"></i> Hapus
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function deleteAdminNotification(notifId, title) {
+            const conf = await Swal.fire({
+                title: 'HAPUS NOTIFIKASI?',
+                text: `Yakin ingin menghapus permanen notifikasi "${title}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                customClass: { popup: 'cyber-swal' }
+            });
+            if (!conf.isConfirmed) return;
+
+            try {
+                const res = await fetch(`/api/admin/notifications/${encodeURIComponent(notifId)}`, { method: 'DELETE' });
+                const result = await res.json();
+                if (!res.ok || !result.status) {
+                    throw new Error(result.message || 'Gagal menghapus notifikasi.');
+                }
+                if (document.getElementById('editNotifId').value === notifId) {
+                    onSelectEditNotification('');
+                }
+                await loadAdminNotifications();
+                Swal.fire({ icon: 'success', title: 'TERHAPUS', text: result.message, timer: 1500, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+            }
+        }
+
         // LIVE CHAT FUNCTIONS
         function scrollUserCarousel(direction) {
             const container = document.getElementById('adminUserList');
@@ -451,6 +887,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadDepositsQrisV2();
             loadUserList();
+            loadAdminNotifications();
             adminPollInterval = setInterval(() => {
                 loadDepositsQrisV2();
                 if (selectedUserId) loadUserMessages();
