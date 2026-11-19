@@ -50,8 +50,8 @@ const MAIL_FROM = process.env.MAIL_FROM || SMTP_USER;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_ADMIN_CHAT_ID = process.env.TELEGRAM_ADMIN_CHAT_ID;
 const TELEGRAM_BOT_USERNAME = (process.env.TELEGRAM_BOT_USERNAME || '').replace(/^@/, '').trim();
-const TELEGRAM_OAUTH_CLIENT_ID = process.env.TELEGRAM_OAUTH_CLIENT_ID || '';
-const TELEGRAM_OAUTH_CLIENT_SECRET = process.env.TELEGRAM_OAUTH_CLIENT_SECRET || '';
+const TELEGRAM_CLIENT_ID = process.env.TELEGRAM_CLIENT_ID || '';
+const TELEGRAM_CLIENT_SECRET = process.env.TELEGRAM_CLIENT_SECRET || '';
 
 // Paywuz
 const PAYWUZ_API_KEY = process.env.PAYWUZ_API_KEY;
@@ -75,7 +75,7 @@ const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || `${BASE_URL}/auth
 const REQUIRED_ENV = [
     'MONGODB_URI', 'JWT_SECRET', 'SESSION_SECRET', 'OWNER_EMAIL',
     'SMTP_USER', 'SMTP_PASS', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_ADMIN_CHAT_ID', 'TELEGRAM_BOT_USERNAME',
-    'TELEGRAM_OAUTH_CLIENT_ID', 'TELEGRAM_OAUTH_CLIENT_SECRET',
+    'TELEGRAM_CLIENT_ID', 'TELEGRAM_CLIENT_SECRET',
     'PAYWUZ_API_KEY', 'GITHUB_CLIENT_ID', 'GITHUB_CLIENT_SECRET',
     'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'
 ];
@@ -3665,15 +3665,22 @@ app.post('/api/admin/deposits-qrisv2/:orderId/cancel', checkAuthSession, checkAd
     }
 });
 
-
-// ============================================================
-// TELEGRAM OFFICIAL LOGIN (OIDC) - khusus login di login.html
-// Credentials didapat dari @BotFather > Bot Settings > Login Widget.
-// ============================================================
-app.get('/auth/telegram/start', (req, res) => {
-    if (!TELEGRAM_OAUTH_CLIENT_ID || !TELEGRAM_OAUTH_CLIENT_SECRET) {
-        return res.status(503).send('Telegram Login belum dikonfigurasi. Atur TELEGRAM_OAUTH_CLIENT_ID dan TELEGRAM_OAUTH_CLIENT_SECRET.');
+app.get('/auth/telegram', (req, res) => {
+    if (!TELEGRAM_CLIENT_ID || !TELEGRAM_CLIENT_SECRET) {
+        return res.status(503).send('Telegram Login belum dikonfigurasi. Atur TELEGRAM_CLIENT_ID dan TELEGRAM_CLIENT_SECRET.');
     }
+
+    const rawRef = req.query.ref || req.cookies?.pending_ref || '';
+    const cleanRef = String(rawRef).trim().toUpperCase();
+    if (cleanRef) {
+        res.cookie('pending_ref', cleanRef, {
+            maxAge: 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax'
+        });
+    }
+
     const state = crypto.randomBytes(32).toString('hex');
     const nonce = crypto.randomBytes(32).toString('hex');
     const verifier = crypto.randomBytes(48).toString('base64url');
@@ -3684,7 +3691,7 @@ app.get('/auth/telegram/start', (req, res) => {
     res.cookie('tg_oidc_verifier', verifier, cookieOptions);
     const callback = `${BASE_URL}/auth/telegram/callback`;
     const params = new URLSearchParams({
-        client_id: TELEGRAM_OAUTH_CLIENT_ID,
+        client_id: TELEGRAM_CLIENT_ID,
         redirect_uri: callback,
         response_type: 'code',
         scope: 'openid profile',
@@ -3702,11 +3709,12 @@ app.get('/auth/telegram/callback', async (req, res) => {
     const savedState = req.cookies?.tg_oidc_state || '';
     const nonce = req.cookies?.tg_oidc_nonce || '';
     const verifier = req.cookies?.tg_oidc_verifier || '';
+    const refCodeFromCookie = req.cookies?.pending_ref || null;
     res.clearCookie('tg_oidc_state', clearOptions);
     res.clearCookie('tg_oidc_nonce', clearOptions);
     res.clearCookie('tg_oidc_verifier', clearOptions);
     try {
-        if (!TELEGRAM_OAUTH_CLIENT_ID || !TELEGRAM_OAUTH_CLIENT_SECRET) throw new Error('Telegram Login belum dikonfigurasi.');
+        if (!TELEGRAM_CLIENT_ID || !TELEGRAM_CLIENT_SECRET) throw new Error('Telegram Login belum dikonfigurasi.');
         if (!state || !savedState || !crypto.timingSafeEqual(Buffer.from(state), Buffer.from(savedState)) || !nonce || !verifier) {
             throw new Error('Verifikasi keamanan Telegram tidak valid. Silakan coba login kembali.');
         }
@@ -3718,12 +3726,12 @@ app.get('/auth/telegram/callback', async (req, res) => {
             grant_type: 'authorization_code',
             code,
             redirect_uri: `${BASE_URL}/auth/telegram/callback`,
-            client_id: TELEGRAM_OAUTH_CLIENT_ID,
+            client_id: TELEGRAM_CLIENT_ID,
             code_verifier: verifier
         });
         const tokenResponse = await axios.post('https://oauth.telegram.org/token', tokenBody.toString(), {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            auth: { username: TELEGRAM_OAUTH_CLIENT_ID, password: TELEGRAM_OAUTH_CLIENT_SECRET },
+            auth: { username: TELEGRAM_CLIENT_ID, password: TELEGRAM_CLIENT_SECRET },
             timeout: 15000
         });
         const idToken = tokenResponse.data?.id_token;
@@ -3739,7 +3747,7 @@ app.get('/auth/telegram/callback', async (req, res) => {
         const claims = jwt.verify(idToken, publicKey, {
             algorithms: ['RS256'],
             issuer: 'https://oauth.telegram.org',
-            audience: String(TELEGRAM_OAUTH_CLIENT_ID)
+            audience: String(TELEGRAM_CLIENT_ID)
         });
         if (claims.nonce !== nonce) throw new Error('Nonce Telegram tidak cocok. Silakan ulangi login.');
 
@@ -3749,7 +3757,22 @@ app.get('/auth/telegram/callback', async (req, res) => {
             { provider: 'telegram', providerId: telegramId },
             { telegramChatId: telegramId }
         ] });
+        let isFirstTimeLogin = false;
+
         if (!user) {
+            isFirstTimeLogin = true;
+            let initialSaldo = 0;
+            let inviterUser = null;
+
+            if (refCodeFromCookie) {
+                inviterUser = await UserV2.findOne({ referralCode: String(refCodeFromCookie).trim().toUpperCase() });
+                if (inviterUser) {
+                    initialSaldo = 500;
+                    inviterUser.saldo = (inviterUser.saldo || 0) + 1000;
+                    await inviterUser.save();
+                }
+            }
+
             const displayName = String(claims.name || claims.preferred_username || `telegram_${telegramId}`).trim();
             const base = String(claims.preferred_username || `telegram_${telegramId}`).toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 24) || `telegram_${telegramId}`;
             let username = base;
@@ -3760,9 +3783,17 @@ app.get('/auth/telegram/callback', async (req, res) => {
                 email: `tg_${telegramId}@telegram.user`,
                 provider: 'telegram',
                 providerId: telegramId,
-                avatar: claims.picture || undefined
+                avatar: claims.picture || undefined,
+                saldo: initialSaldo,
+                referralCode: generateReferralCode(),
+                referredBy: inviterUser ? inviterUser.referralCode : null,
+                hasCompletedOnboarding: false
             });
+        } else if (!user.hasCompletedOnboarding) {
+            isFirstTimeLogin = true;
         }
+
+        res.clearCookie('pending_ref');
 
         const payload = {
             id: user._id, username: user.username, email: user.email,
@@ -3773,7 +3804,7 @@ app.get('/auth/telegram/callback', async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true,
             secure: true, sameSite: 'lax'
         });
-        return res.redirect('/dashboard');
+        return res.redirect(isFirstTimeLogin ? '/store?onboarding=1' : '/dashboard');
     } catch (err) {
         console.error('Telegram OIDC login error:', err.response?.data || err.message);
         return res.redirect('/login?error=telegram_login_failed');
@@ -5484,6 +5515,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
         res.status(500).json({ status: false, message: "Gagal memuat data statistik" });
     }
 });
+
 
 // ============================================================
 // 11. START SERVER
