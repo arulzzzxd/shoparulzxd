@@ -103,16 +103,21 @@ app.use(express.json({
 app.use(cookieParser());
 app.set('trust proxy', 1);
 
-// DOMAIN KANONIS: seluruh domain lama diarahkan permanen ke domain utama.
+// DOMAIN KANONIS: hanya domain non-kanonis yang diarahkan ke domain utama.
+// Jangan masukkan www.shoparulzxd.biz.id ke LEGACY_HOSTS karena itulah
+// host kanonis; mengarahkannya ke dirinya sendiri menyebabkan redirect loop.
+const CANONICAL_HOST = new URL(CANONICAL_ORIGIN).hostname.toLowerCase();
 const LEGACY_HOSTS = new Set([
-    'shoparulzxd.biz.id',
-    'www.shoparulzxd.biz.id'
+    'shoparulzxd.biz.id'
 ]);
 app.use((req, res, next) => {
     const hostname = String(req.hostname || '').toLowerCase();
-    if (LEGACY_HOSTS.has(hostname)) {
+
+    // Perlindungan tambahan: jangan pernah redirect jika host sudah kanonis.
+    if (hostname !== CANONICAL_HOST && LEGACY_HOSTS.has(hostname)) {
         return res.redirect(301, `${CANONICAL_ORIGIN}${req.originalUrl}`);
     }
+
     next();
 });
 
