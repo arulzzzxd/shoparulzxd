@@ -519,30 +519,23 @@ async function sendEmailOTP(email, code, typeTitle) {
 }
 
 // ============================================================
-// HELPER TRANSPORTER SMTP POOL (REUSABLE UNTUK BANYAK USER)
+// HELPER SMTP & DISPATCH NOTIFIKASI KE EMAIL + TELEGRAM USER
 // ============================================================
-let sharedMailTransporter = null;
 
-function getMailTransporter() {
+function createFreshMailTransporter() {
     if (!SMTP_USER || !SMTP_PASS) return null;
-    if (!sharedMailTransporter) {
-        sharedMailTransporter = nodemailer.createTransport({
-            host: SMTP_HOST,
-            port: SMTP_PORT,
-            secure: SMTP_PORT === 465,
-            pool: true,
-            maxConnections: 3,
-            maxMessages: 100,
-            auth: { user: SMTP_USER, pass: SMTP_PASS },
-            tls: { rejectUnauthorized: false }
-        });
-    }
-    return sharedMailTransporter;
+    return nodemailer.createTransport({
+        host: SMTP_HOST,
+        port: SMTP_PORT,
+        secure: Number(SMTP_PORT) === 465,
+        auth: { user: SMTP_USER, pass: SMTP_PASS },
+        tls: { rejectUnauthorized: false }
+    });
 }
 
 // HELPER KIRIM EMAIL NOTIFIKASI NEO-BRUTALISME
-async function sendNotificationEmail(toEmail, title, message, linkUrl = null) {
-    const transporter = getMailTransporter();
+async function sendNotificationEmail(toEmail, title, message, linkUrl = null, existingTransporter = null) {
+    const transporter = existingTransporter || createFreshMailTransporter();
     if (!transporter || !toEmail || toEmail.endsWith('@telegram.user')) return false;
 
     const escapeHtml = (str) => String(str || '')
@@ -559,7 +552,7 @@ async function sendNotificationEmail(toEmail, title, message, linkUrl = null) {
     ` : '';
 
     await transporter.sendMail({
-        from: MAIL_FROM,
+        from: MAIL_FROM || SMTP_USER,
         to: toEmail,
         subject: `🔔 ${title} - ArulzXD Store`,
         html: `
@@ -627,10 +620,6 @@ async function sendTelegramUserPrivateMessage(chatId, title, message, linkUrl = 
         }, { timeout: 6000 });
         return true;
     } catch (err) {
-        const errDesc = err.response?.data?.description || err.message;
-        console.warn(`⚠️ Retry plain-text Telegram ke ${cleanChatId} (${errDesc})`);
-
-        // Fallback jika HTML entity gagal di-parse oleh Telegram
         try {
             const plainText = `🔔 ${title}\n━━━━━━━━━━━━━━━━━━━━\n${message}\n━━━━━━━━━━━━━━━━━━━━\n🌐 ${finalUrl}`;
             await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -646,15 +635,24 @@ async function sendTelegramUserPrivateMessage(chatId, title, message, linkUrl = 
     }
 }
 
-// HELPER DISPATCH NOTIFIKASI PARALEL PER BATCH KE SEMUA USER (TELEGRAM BOT + EMAIL)
+// HELPER DISPATCH NOTIFIKASI PARALEL KE SEMUA EMAIL USER & TELEGRAM USER
 async function dispatchNotificationToUsers(notifDoc) {
+    const transporter = createFreshMailTransporter();
     try {
-        const query = notifDoc.targetEmail
-            ? { email: notifDoc.targetEmail.toLowerCase().trim() }
-            : {};
+        let query = {};
+        if (notifDoc.targetEmail && String(notifDoc.targetEmail).trim()) {
+            const targets = String(notifDoc.targetEmail)
+                .split(',')
+                .map(e => e.toLowerCase().trim())
+                .filter(Boolean);
+            query = targets.length > 1 ? { email: { $in: targets } } : { email: targets[0] };
+        }
 
-        const users = await UserV2.find(query).select('email username telegramChatId').lean();
-        if (!users.length) return { telegramSent: 0, emailSent: 0 };
+        const users = await UserV2.find(query)
+            .select('email username telegramChatId provider providerId')
+            .lean();
+
+        if (!users.length) return { totalUsers: 0, telegramSent: 0, emailSent: 0 };
 
         const targetLink = notifDoc.link
             ? (notifDoc.link.startsWith('http') ? notifDoc.link : `${BASE_URL}${notifDoc.link.startsWith('/') ? '' : '/'}${notifDoc.link}`)
@@ -662,8 +660,9 @@ async function dispatchNotificationToUsers(notifDoc) {
 
         let telegramSent = 0;
         let emailSent = 0;
+        const sentEmails = new Set();
+        const sentChatIds = new Set();
 
-        // Proses dalam batch berisi 10 user secara paralel agar cepat dan tidak terkena timeout Vercel
         const BATCH_SIZE = 10;
         for (let i = 0; i < users.length; i += BATCH_SIZE) {
             const batch = users.slice(i, i + BATCH_SIZE);
@@ -671,20 +670,26 @@ async function dispatchNotificationToUsers(notifDoc) {
             await Promise.allSettled(batch.map(async (u) => {
                 const tasks = [];
 
-                // 1. Kirim ke Bot Telegram jika user sudah menautkan telegramChatId
-                if (u.telegramChatId && String(u.telegramChatId).trim() !== '') {
+                // 1. Kirim ke Telegram User (baik telegramChatId tertaut maupun providerId login Telegram)
+                const tgChatId = (u.telegramChatId && String(u.telegramChatId).trim())
+                    || (u.provider === 'telegram' && u.providerId ? String(u.providerId).trim() : null);
+
+                if (tgChatId && !sentChatIds.has(tgChatId)) {
+                    sentChatIds.add(tgChatId);
                     tasks.push(
-                        sendTelegramUserPrivateMessage(u.telegramChatId, notifDoc.title, notifDoc.message, targetLink)
+                        sendTelegramUserPrivateMessage(tgChatId, notifDoc.title, notifDoc.message, targetLink)
                             .then((ok) => { if (ok) telegramSent++; })
                     );
                 }
 
-                // 2. Kirim ke semua Email user yang valid (wajib di-await agar tidak terputus)
-                if (u.email && u.email.includes('@') && !u.email.endsWith('@telegram.user')) {
+                // 2. Kirim ke Email User yang valid
+                const cleanEmail = (u.email || '').toLowerCase().trim();
+                if (cleanEmail && cleanEmail.includes('@') && !cleanEmail.endsWith('@telegram.user') && !sentEmails.has(cleanEmail)) {
+                    sentEmails.add(cleanEmail);
                     tasks.push(
-                        sendNotificationEmail(u.email, notifDoc.title, notifDoc.message, targetLink)
+                        sendNotificationEmail(cleanEmail, notifDoc.title, notifDoc.message, targetLink, transporter)
                             .then((ok) => { if (ok) emailSent++; })
-                            .catch((e) => console.error(`❌ Gagal kirim email notif ke ${u.email}:`, e.message))
+                            .catch((e) => console.error(`❌ Gagal kirim email notif ke ${cleanEmail}:`, e.message))
                     );
                 }
 
@@ -692,14 +697,17 @@ async function dispatchNotificationToUsers(notifDoc) {
             }));
         }
 
-        console.log(`✅ Broadcast Notifikasi "${notifDoc.title}" selesai -> Telegram: ${telegramSent}, Email: ${emailSent}`);
-        return { telegramSent, emailSent };
+        console.log(`✅ Broadcast Notifikasi "${notifDoc.title}" -> Total User: ${users.length}, Telegram: ${telegramSent}, Email: ${emailSent}`);
+        return { totalUsers: users.length, telegramSent, emailSent };
     } catch (err) {
         console.error('❌ Error dispatchNotificationToUsers:', err.message);
-        return { telegramSent: 0, emailSent: 0 };
+        return { totalUsers: 0, telegramSent: 0, emailSent: 0 };
+    } finally {
+        if (transporter && typeof transporter.close === 'function') {
+            transporter.close();
+        }
     }
 }
-
 
 function getUserIdentifier(req) {
     if (req.user) {
@@ -5193,6 +5201,15 @@ app.post('/api/notifications/mark-read', checkAuthSession, async (req, res) => {
     }
 });
 
+app.get('/api/admin/notifications', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const notifications = await NotifikasiV2.find({}).sort({ createdAt: -1 }).lean();
+        return res.json({ status: true, notifications });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal memuat daftar notifikasi.' });
+    }
+});
+
 app.post('/api/admin/notifications', checkAuthSession, checkAdminRole, async (req, res) => {
     try {
         const { title, message, type, link, targetEmail } = req.body;
@@ -5212,15 +5229,70 @@ app.post('/api/admin/notifications', checkAuthSession, checkAdminRole, async (re
 
         const stats = await dispatchNotificationToUsers(newNotif);
 
-return res.json({
-    status: true,
-    message: `Notifikasi terkirim! (Bot Telegram: ${stats.telegramSent} user, Email: ${stats.emailSent} user)`,
-    data: newNotif,
-    stats
-});
+        return res.json({
+            status: true,
+            message: `Notifikasi terkirim! (Email: ${stats.emailSent} user, Bot Telegram: ${stats.telegramSent} user)`,
+            data: newNotif,
+            stats
+        });
     } catch (err) {
         console.error('Error create notification:', err);
         return res.status(500).json({ status: false, message: 'Gagal membuat notifikasi.' });
+    }
+});
+
+app.put('/api/admin/notifications/:id', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ status: false, message: 'ID notifikasi tidak valid.' });
+        }
+
+        const existing = await NotifikasiV2.findById(id);
+        if (!existing) {
+            return res.status(404).json({ status: false, message: 'Notifikasi tidak ditemukan.' });
+        }
+
+        const { title, message, type, link, targetEmail, resetReadBy, resendBroadcast } = req.body;
+        if (title !== undefined && title.trim()) existing.title = title.trim();
+        if (message !== undefined && message.trim()) existing.message = message.trim();
+        if (type && ['info', 'promo', 'transaksi', 'sistem'].includes(type)) existing.type = type;
+        if (link !== undefined) existing.link = link && link.trim() ? link.trim() : null;
+        if (targetEmail !== undefined) {
+            existing.targetEmail = targetEmail && targetEmail.trim() ? targetEmail.toLowerCase().trim() : null;
+        }
+        if (resetReadBy === true) existing.readBy = [];
+
+        await existing.save();
+
+        let msgInfo = `Notifikasi "${existing.title}" berhasil diperbarui!`;
+        if (resendBroadcast === true) {
+            const stats = await dispatchNotificationToUsers(existing);
+            msgInfo += ` Broadcast ulang terkirim (Email: ${stats.emailSent}, Telegram: ${stats.telegramSent}).`;
+        }
+
+        return res.json({ status: true, message: msgInfo, data: existing });
+    } catch (err) {
+        console.error('Error update notification:', err);
+        return res.status(500).json({ status: false, message: 'Gagal memperbarui notifikasi.' });
+    }
+});
+
+app.delete('/api/admin/notifications/:id', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ status: false, message: 'ID notifikasi tidak valid.' });
+        }
+
+        const deleted = await NotifikasiV2.findByIdAndDelete(id);
+        if (!deleted) {
+            return res.status(404).json({ status: false, message: 'Notifikasi tidak ditemukan.' });
+        }
+
+        return res.json({ status: true, message: `Notifikasi "${deleted.title}" berhasil dihapus!` });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal menghapus notifikasi.' });
     }
 });
 
