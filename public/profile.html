@@ -409,7 +409,15 @@
 
             <!-- TAMPILAN JIKA BELUM TERTAUT -->
             <div id="tgUnlinkedContainer" class="space-y-3">
-                <div id="telegramLinkWidgetWrapper" class="flex justify-center py-2"></div>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <button type="button" id="btnLinkTelegram" onclick="startTelegramLink()" class="neo-btn flex-1 bg-[#229ED9] text-white px-4 py-3 rounded-xl text-xs font-black font-cyber uppercase flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-telegram text-lg"></i> Tautkan Bot Telegram
+                    </button>
+                    <a id="telegramBotDirectLink" href="#" target="_blank" rel="noopener" class="neo-btn bg-white text-black px-4 py-3 rounded-xl text-xs font-black font-cyber uppercase flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Bot
+                    </a>
+                </div>
+                <p id="telegramLinkHelp" class="text-[11px] font-bold text-slate-600 text-center">Klik tautkan, lalu tekan Start di Telegram. Proses ini tetap berlaku meskipun Anda login menggunakan Google/GitHub.</p>
                 <div class="bg-neoBg border-2 border-black rounded-xl p-3 text-[11px] font-bold text-slate-700 space-y-1">
                     <p><i class="fa-solid fa-circle-info text-black mr-1"></i> Pastikan Anda sudah pernah menekan <strong>/start</strong> pada Bot Telegram kami agar bot dapat mengirimkan notifikasi melalui private chat.</p>
                 </div>
@@ -798,52 +806,6 @@
             }
         }
 
-        // ============================================================
-        // HANDLER TAUTKAN TELEGRAM WIDGET (DATA-ONAUTH - ANTI DEPRECATED)
-        // ============================================================
-        window.onTelegramLinkAuth = async function(tgUser) {
-            Swal.fire({
-                title: 'MENAUTKAN TELEGRAM...',
-                text: 'Menghubungkan akun Telegram ke profil Anda',
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading(); },
-                customClass: { popup: 'cyber-swal' }
-            });
-
-            try {
-                const res = await fetch('/api/user/link-telegram', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(tgUser)
-                });
-                const data = await res.json();
-
-                if (data.status) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'BERHASIL TERTAUT!',
-                        text: data.message,
-                        customClass: { popup: 'cyber-swal' }
-                    });
-                    loadUserProfile();
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'GAGAL MENAUTKAN',
-                        text: data.message || 'Gagal menautkan akun Telegram.',
-                        customClass: { popup: 'cyber-swal' }
-                    });
-                }
-            } catch (err) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'KESALAHAN JARINGAN',
-                    text: 'Gagal terhubung ke server saat menautkan Telegram.',
-                    customClass: { popup: 'cyber-swal' }
-                });
-            }
-        };
-
         async function renderTelegramLinkSection(user) {
     const badge = document.getElementById('tgLinkStatusBadge');
     const unlinkedBox = document.getElementById('tgUnlinkedContainer');
@@ -866,27 +828,6 @@
     linkedBox.classList.add('hidden');
     unlinkedBox.classList.remove('hidden');
 
-    try {
-        const cfgRes = await fetch('/api/auth/telegram');
-        const cfg = await cfgRes.json();
-        const wrapper = document.getElementById('telegramLinkWidgetWrapper');
-        if (cfg.status && cfg.botUsername && wrapper) {
-            wrapper.innerHTML = '';
-
-            const linkCallbackUrl = `${window.location.origin}/api/user/link-telegram/callback`;
-
-            const script = document.createElement('script');
-            script.async = true;
-            script.src = 'https://telegram.org/js/telegram-widget.js?22';
-            script.setAttribute('data-telegram-login', cfg.botUsername);
-            script.setAttribute('data-size', 'large');
-            script.setAttribute('data-radius', '12');
-            // Gunakan data-auth-url sesuai Redirect URI di BotFather
-            script.setAttribute('data-auth-url', linkCallbackUrl);
-            script.setAttribute('data-request-access', 'write');
-            wrapper.appendChild(script);
-        }
-    } catch (e) {}
 }
 
         async function unlinkTelegramAccount() {
@@ -1231,5 +1172,42 @@
             }
         }, 12000);
     </script>
+
+<script>
+async function startTelegramLink() {
+    const btn = document.getElementById('btnLinkTelegram');
+    const old = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENYIAPKAN...';
+    try {
+        const r = await fetch('/api/telegram/ticket', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type:'link'})});
+        const d = await r.json();
+        if (!d.status) throw new Error(d.message || 'Gagal membuat tautan Telegram.');
+        document.getElementById('telegramBotDirectLink').href = d.botUrl;
+        window.open(d.botUrl, '_blank', 'noopener');
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENUNGGU START...';
+        const started = Date.now();
+        while (Date.now() - started < 5 * 60 * 1000) {
+            await new Promise(resolve => setTimeout(resolve, 2500));
+            const check = await fetch('/api/telegram/ticket/' + encodeURIComponent(d.token), {cache:'no-store'});
+            const state = await check.json();
+            if (state.completed) {
+                const statusRes = await fetch('/api/user-status', {cache:'no-store'});
+                const status = await statusRes.json();
+                if (status.loggedIn) location.reload();
+                return;
+            }
+            if (!check.ok) throw new Error(state.message || 'Tautan kedaluwarsa.');
+        }
+        throw new Error('Waktu penautan habis. Silakan coba lagi.');
+    } catch (e) {
+        if (window.Swal) Swal.fire({icon:'error', title:'GAGAL MENAUTKAN', text:e.message, customClass:{popup:'cyber-swal'}});
+        else alert(e.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = old;
+    }
+}
+</script>
 </body>
 </html>
