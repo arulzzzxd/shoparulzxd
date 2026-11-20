@@ -5471,58 +5471,48 @@ app.get('/api/dashboard-stats', async (req, res) => {
             }
         });
 
-        // Urutkan terbaru -> terlama untuk tabel Status Transaksi
-        const allTrxDesc = [...allTrxRaw].sort((a, b) => getTrxTimeMs(b) - getTrxTimeMs(a));
-
-        const recentTrx = allTrxDesc.map(trx => {
-            const emailKey = (trx.userEmail || (trx.itemDetails?.buyer?.includes('@') ? trx.itemDetails.buyer : '') || '')
-                .toLowerCase()
-                .trim();
-            const matchedUser = userMap[emailKey];
-            let cleanName = matchedUser?.username || trx.itemDetails?.buyer || 'Pembeli Tamu';
-            if (cleanName.includes('@')) cleanName = cleanName.split('@')[0];
-
-            const trxMoment = moment(getTrxTimeMs(trx)).tz(TIMEZONE).locale('id');
-
-            return {
-                orderId: trx.orderId,
-                pelanggan: cleanName,
-                avatar: matchedUser?.avatar || null,
-                produk: trx.itemDetails?.nama || (trx.type === 'DEPOSIT' ? 'Isi Saldo Akun' : 'Produk Digital'),
-                metode: trx.paymentMethod || 'QRIS',
-                amount: trx.itemDetails?.harga_setelah_voucher || trx.amount || 0,
-                status: trx.status,
-                createdAt: trxMoment.toISOString(),
-                clockWib: `${trxMoment.format('HH:mm')} WIB`
-            };
-        });
-
-        // Urutkan terlama -> terbaru untuk membentuk candle OHLC berbasis transaksi riil
+                // Urutkan terlama -> terbaru untuk membentuk candle OHLC berbasis transaksi riil
         const allTrxAsc = [...allTrxDesc].reverse();
 
-        function buildCandlesByInterval(startMs, bucketCount, intervalMs, trxItems, labelFormatter) {
-            let cumulativeNet = 0;
+        function buildActiveCandles(startMs, intervalMs, trxItems, labelFormatter, maxCandles = 40) {
+            let cumulativeVal = 0;
             let idx = 0;
 
-            // Akumulasi nilai transaksi sebelum jendela waktu dimulai
+            // Hitung nilai dasar dari transaksi sebelum periode dimulai
             while (idx < trxItems.length && getTrxTimeMs(trxItems[idx]) < startMs) {
                 const st = (trxItems[idx].status || '').toLowerCase();
                 const val = Number(trxItems[idx].itemDetails?.harga_setelah_voucher || trxItems[idx].amount || 0);
                 if (successStatuses.includes(st)) {
-                    cumulativeNet += val;
+                    cumulativeVal += val;
                 } else if (cancelStatuses.includes(st)) {
-                    cumulativeNet -= val;
+                    cumulativeVal = Math.max(0, cumulativeVal - Math.round(val * 0.35));
                 }
                 idx++;
             }
 
-            const candles = [];
-            for (let b = 0; b < bucketCount; b++) {
-                const bucketStart = startMs + b * intervalMs;
-                const bucketEnd = bucketStart + intervalMs;
-                const isLastBucket = b === bucketCount - 1;
+            // Kelompokkan HANYA ke bucket waktu yang memiliki transaksi (tidak membuat garis datar kosong)
+            const bucketMap = new Map();
 
-                const open = cumulativeNet;
+            for (; idx < trxItems.length; idx++) {
+                const trx = trxItems[idx];
+                const tMs = getTrxTimeMs(trx);
+                const bucketKey = Math.floor((tMs - startMs) / intervalMs);
+                const bucketStart = startMs + bucketKey * intervalMs;
+
+                if (!bucketMap.has(bucketKey)) {
+                    bucketMap.set(bucketKey, {
+                        bucketStart,
+                        items: []
+                    });
+                }
+                bucketMap.get(bucketKey).items.push(trx);
+            }
+
+            const sortedBuckets = Array.from(bucketMap.values()).sort((a, b) => a.bucketStart - b.bucketStart);
+            const candles = [];
+
+            for (const bucket of sortedBuckets) {
+                const open = cumulativeVal;
                 let high = open;
                 let low = open;
                 let lunasCount = 0;
@@ -5530,39 +5520,37 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 let totalCount = 0;
                 let periodOmzet = 0;
 
-                while (idx < trxItems.length) {
-                    const tMs = getTrxTimeMs(trxItems[idx]);
-                    if (!isLastBucket && tMs >= bucketEnd) break;
-
-                    const st = (trxItems[idx].status || '').toLowerCase();
-                    const val = Number(trxItems[idx].itemDetails?.harga_setelah_voucher || trxItems[idx].amount || 0);
+                for (const trx of bucket.items) {
+                    const st = (trx.status || '').toLowerCase();
+                    const val = Number(trx.itemDetails?.harga_setelah_voucher || trx.amount || 0);
                     totalCount++;
 
                     if (successStatuses.includes(st)) {
-                        cumulativeNet += val;
+                        cumulativeVal += val;
                         periodOmzet += val;
                         lunasCount++;
-                        if (cumulativeNet > high) high = cumulativeNet;
-                        if (cumulativeNet < low) low = cumulativeNet;
+                        if (cumulativeVal > high) high = cumulativeVal;
+                        if (cumulativeVal < low) low = cumulativeVal;
                     } else if (cancelStatuses.includes(st)) {
-                        cumulativeNet -= val;
+                        const drop = Math.max(1000, Math.round(val * 0.35));
+                        cumulativeVal = Math.max(0, cumulativeVal - drop);
                         cancelCount++;
-                        if (cumulativeNet < low) low = cumulativeNet;
-                        if (cumulativeNet > high) high = cumulativeNet;
+                        if (cumulativeVal < low) low = cumulativeVal;
+                        if (cumulativeVal > high) high = cumulativeVal;
                     } else {
-                        // Transaksi pending membentuk bayangan (wick) tanpa mengubah close lunas/batal
-                        const pendingHigh = cumulativeNet + Math.max(500, Math.round(val * 0.25));
-                        if (pendingHigh > high) high = pendingHigh;
+                        const wickUp = cumulativeVal + Math.max(1000, Math.round(val * 0.25));
+                        const wickDown = Math.max(0, cumulativeVal - Math.max(500, Math.round(val * 0.15)));
+                        if (wickUp > high) high = wickUp;
+                        if (wickDown < low) low = wickDown;
                     }
-                    idx++;
                 }
 
-                const close = cumulativeNet;
+                const close = cumulativeVal;
                 if (close > high) high = close;
                 if (close < low) low = close;
 
                 candles.push({
-                    label: labelFormatter(bucketStart),
+                    label: labelFormatter(bucket.bucketStart),
                     o: open,
                     h: high,
                     l: low,
@@ -5574,60 +5562,66 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 });
             }
 
-            return candles;
+            // Jika belum ada transaksi pada rentang ini, tampilkan 1 candle posisi terakhir
+            if (candles.length === 0) {
+                candles.push({
+                    label: labelFormatter(now.valueOf()),
+                    o: cumulativeVal,
+                    h: cumulativeVal,
+                    l: cumulativeVal,
+                    c: cumulativeVal,
+                    volume: 0,
+                    lunas: 0,
+                    batal: 0,
+                    omzet: 0
+                });
+            }
+
+            return candles.slice(-maxCandles);
         }
 
-        // Bulatkan waktu saat ini ke kelipatan 10 menit WIB (misal 18:24 -> 18:20)
-        const alignedMin = Math.floor(now.minute() / 10) * 10;
-        const current10MinStart = now.clone().minute(alignedMin).second(0).millisecond(0);
-
-        // 1 Hari: interval 10 menit (24 jam = 144 candle)
         const interval10m = 10 * 60 * 1000;
-        const start1d = current10MinStart.clone().subtract(143 * 10, 'minutes').valueOf();
-        const candles1d = buildCandlesByInterval(
+        const interval30m = 30 * 60 * 1000;
+        const interval2h = 2 * 60 * 60 * 1000;
+
+        // 1 Hari: transaksi dalam 24 jam terakhir (per 10 menit WIB)
+        const start1d = now.clone().subtract(24, 'hours').valueOf();
+        const candles1d = buildActiveCandles(
             start1d,
-            144,
             interval10m,
             allTrxAsc,
-            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('HH:mm')
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('HH:mm'),
+            36
         );
 
-        // 7 Hari: interval 1 jam (7 hari = 168 candle) agar rentang 7 hari utuh & terbaca
-        const interval1h = 60 * 60 * 1000;
-        const currentHourStart = now.clone().minute(0).second(0).millisecond(0);
-        const start7d = currentHourStart.clone().subtract(167, 'hours').valueOf();
-        const candles7d = buildCandlesByInterval(
+        // 7 Hari: transaksi dalam 7 hari terakhir (per 30 menit WIB)
+        const start7d = now.clone().subtract(7, 'days').valueOf();
+        const candles7d = buildActiveCandles(
             start7d,
-            168,
-            interval1h,
+            interval30m,
             allTrxAsc,
-            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD/MM HH:mm')
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD/MM HH:mm'),
+            42
         );
 
-        // 1 Bulan: interval 6 jam (30 hari = 120 candle) agar rentang 1 bulan utuh
-        const interval6h = 6 * 60 * 60 * 1000;
-        const aligned6h = Math.floor(now.hour() / 6) * 6;
-        const current6hStart = now.clone().hour(aligned6h).minute(0).second(0).millisecond(0);
-        const start1m = current6hStart.clone().subtract(119 * 6, 'hours').valueOf();
-        const candles1m = buildCandlesByInterval(
+        // 1 Bulan: transaksi dalam 30 hari terakhir (per 2 jam WIB)
+        const start1m = now.clone().subtract(30, 'days').valueOf();
+        const candles1m = buildActiveCandles(
             start1m,
-            120,
-            interval6h,
+            interval2h,
             allTrxAsc,
-            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM')
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM HH:mm'),
+            45
         );
 
-        // Semua: dari transaksi pertama hingga saat ini (maks 150 candle proporsional)
+        // Semua: seluruh transaksi dari awal hingga sekarang (per 30 menit WIB)
         const firstTrxMs = allTrxAsc.length > 0 ? getTrxTimeMs(allTrxAsc[0]) : start1d;
-        const spanMs = Math.max(interval10m * 24, current10MinStart.valueOf() - firstTrxMs + interval10m);
-        const allBuckets = Math.min(150, Math.max(24, Math.ceil(spanMs / interval10m)));
-        const allIntervalMs = Math.max(interval10m, Math.ceil(spanMs / allBuckets));
-        const candlesAll = buildCandlesByInterval(
+        const candlesAll = buildActiveCandles(
             firstTrxMs,
-            allBuckets,
-            allIntervalMs,
+            interval30m,
             allTrxAsc,
-            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD/MM HH:mm')
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD/MM HH:mm'),
+            50
         );
 
         const systemLatency = latencyMetrics.length > 0 ? Math.round(latencyMetrics[0].avgLatency) : 12;
