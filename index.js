@@ -5390,17 +5390,17 @@ app.get('/api/dashboard-stats', async (req, res) => {
 
         const getTrxTimeMs = (trx) => {
             if (trx.createdAt) {
-                const m = moment(trx.createdAt);
+                const m = moment(trx.createdAt).tz(TIMEZONE);
                 if (m.isValid()) return m.valueOf();
             }
             if (trx.updatedAt) {
-                const m = moment(trx.updatedAt);
+                const m = moment(trx.updatedAt).tz(TIMEZONE);
                 if (m.isValid()) return m.valueOf();
             }
             if (trx._id && typeof trx._id.getTimestamp === 'function') {
-                return moment(trx._id.getTimestamp()).valueOf();
+                return moment(trx._id.getTimestamp()).tz(TIMEZONE).valueOf();
             }
-            return moment().valueOf();
+            return moment().tz(TIMEZONE).valueOf();
         };
 
         const [
@@ -5416,7 +5416,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 .select('orderId userEmail amount status itemDetails createdAt updatedAt type paymentMethod')
                 .lean(),
             SystemMetricsV2.aggregate([
-                { $match: { timestamp: {$gte: moment().subtract(24, 'hours').toDate() } } },
+                { $match: { timestamp: { $gte: moment().subtract(24, 'hours').toDate() } } },
                 {
                     $group: {
                         _id: null,
@@ -5497,22 +5497,21 @@ app.get('/api/dashboard-stats', async (req, res) => {
             };
         });
 
-        // Urutkan terlama -> terbaru untuk membentuk candle OHLC per 10 menit (bisa bernilai minus)
+        // Urutkan terlama -> terbaru untuk membentuk candle OHLC berbasis transaksi riil
         const allTrxAsc = [...allTrxDesc].reverse();
 
-        function generate10MinCandles(startMs, bucketCount, trxItems, labelFormatter) {
-            const intervalMs = 10 * 60 * 1000; // 10 menit per candle
-            let runningVal = 0;
+        function buildCandlesByInterval(startMs, bucketCount, intervalMs, trxItems, labelFormatter) {
+            let cumulativeNet = 0;
             let idx = 0;
 
+            // Akumulasi nilai transaksi sebelum jendela waktu dimulai
             while (idx < trxItems.length && getTrxTimeMs(trxItems[idx]) < startMs) {
                 const st = (trxItems[idx].status || '').toLowerCase();
                 const val = Number(trxItems[idx].itemDetails?.harga_setelah_voucher || trxItems[idx].amount || 0);
                 if (successStatuses.includes(st)) {
-                    runningVal += val;
+                    cumulativeNet += val;
                 } else if (cancelStatuses.includes(st)) {
-                    const dropStep = Math.max(1000, val);
-                    runningVal -= dropStep; // Diizinkan turun menembus minus (< 0)
+                    cumulativeNet -= val;
                 }
                 idx++;
             }
@@ -5523,7 +5522,7 @@ app.get('/api/dashboard-stats', async (req, res) => {
                 const bucketEnd = bucketStart + intervalMs;
                 const isLastBucket = b === bucketCount - 1;
 
-                const open = runningVal;
+                const open = cumulativeNet;
                 let high = open;
                 let low = open;
                 let lunasCount = 0;
@@ -5540,32 +5539,25 @@ app.get('/api/dashboard-stats', async (req, res) => {
                     totalCount++;
 
                     if (successStatuses.includes(st)) {
-                        runningVal += val;
+                        cumulativeNet += val;
                         periodOmzet += val;
                         lunasCount++;
-                        if (runningVal > high) high = runningVal;
-                        if (runningVal < low) low = runningVal;
+                        if (cumulativeNet > high) high = cumulativeNet;
+                        if (cumulativeNet < low) low = cumulativeNet;
                     } else if (cancelStatuses.includes(st)) {
-                        const dropStep = Math.max(1000, val);
-                        runningVal -= dropStep; // Bisa minus
+                        cumulativeNet -= val;
                         cancelCount++;
-                        if (runningVal < low) low = runningVal;
-                        if (runningVal > high) high = runningVal;
+                        if (cumulativeNet < low) low = cumulativeNet;
+                        if (cumulativeNet > high) high = cumulativeNet;
                     } else {
-                        const wickUp = runningVal + Math.max(400, Math.round(val * 0.2));
-                        const wickDown = runningVal - Math.max(400, Math.round(val * 0.15));
-                        if (wickUp > high) high = wickUp;
-                        if (wickDown < low) low = wickDown;
+                        // Transaksi pending membentuk bayangan (wick) tanpa mengubah close lunas/batal
+                        const pendingHigh = cumulativeNet + Math.max(500, Math.round(val * 0.25));
+                        if (pendingHigh > high) high = pendingHigh;
                     }
                     idx++;
                 }
 
-                let close = runningVal;
-                if (cancelCount > 0 && lunasCount === 0 && close >= open) {
-                    close = open - 1000;
-                    runningVal = close;
-                }
-
+                const close = cumulativeNet;
                 if (close > high) high = close;
                 if (close < low) low = close;
 
@@ -5589,50 +5581,53 @@ app.get('/api/dashboard-stats', async (req, res) => {
         const alignedMin = Math.floor(now.minute() / 10) * 10;
         const current10MinStart = now.clone().minute(alignedMin).second(0).millisecond(0);
 
-        // 1 Hari: 144 candle per 10 menit (24 jam x 6 bucket)
+        // 1 Hari: interval 10 menit (24 jam = 144 candle)
+        const interval10m = 10 * 60 * 1000;
         const start1d = current10MinStart.clone().subtract(143 * 10, 'minutes').valueOf();
-        const candles1d = generate10MinCandles(
+        const candles1d = buildCandlesByInterval(
             start1d,
             144,
+            interval10m,
             allTrxAsc,
             (ms) => moment(ms).tz(TIMEZONE).locale('id').format('HH:mm')
         );
 
-        // 7 Hari: 1008 candle per 10 menit (7 hari x 144 bucket)
-        const start7d = current10MinStart.clone().subtract(1007 * 10, 'minutes').valueOf();
-        const candles7d = generate10MinCandles(
+        // 7 Hari: interval 1 jam (7 hari = 168 candle) agar rentang 7 hari utuh & terbaca
+        const interval1h = 60 * 60 * 1000;
+        const currentHourStart = now.clone().minute(0).second(0).millisecond(0);
+        const start7d = currentHourStart.clone().subtract(167, 'hours').valueOf();
+        const candles7d = buildCandlesByInterval(
             start7d,
-            1008,
+            168,
+            interval1h,
             allTrxAsc,
             (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD/MM HH:mm')
         );
 
-        // 1 Bulan: 4320 candle per 10 menit (30 hari x 144 bucket)
-        const start1m = current10MinStart.clone().subtract(4319 * 10, 'minutes').valueOf();
-        const candles1m = generate10MinCandles(
+        // 1 Bulan: interval 6 jam (30 hari = 120 candle) agar rentang 1 bulan utuh
+        const interval6h = 6 * 60 * 60 * 1000;
+        const aligned6h = Math.floor(now.hour() / 6) * 6;
+        const current6hStart = now.clone().hour(aligned6h).minute(0).second(0).millisecond(0);
+        const start1m = current6hStart.clone().subtract(119 * 6, 'hours').valueOf();
+        const candles1m = buildCandlesByInterval(
             start1m,
-            4320,
+            120,
+            interval6h,
             allTrxAsc,
-            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM HH:mm')
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM')
         );
 
-        // Semua Riwayat: per 10 menit sejak transaksi pertama hingga saat ini (maks 4320 bucket)
+        // Semua: dari transaksi pertama hingga saat ini (maks 150 candle proporsional)
         const firstTrxMs = allTrxAsc.length > 0 ? getTrxTimeMs(allTrxAsc[0]) : start1d;
-        const firstMoment = moment(firstTrxMs).tz(TIMEZONE);
-        const firstAlignedMin = Math.floor(firstMoment.minute() / 10) * 10;
-        const first10MinWib = firstMoment.clone().minute(firstAlignedMin).second(0).millisecond(0);
-
-        const totalBucketsAll = Math.min(
-            4320,
-            Math.max(36, Math.floor(current10MinStart.diff(first10MinWib, 'minutes') / 10) + 1)
-        );
-        const startAllMs = current10MinStart.clone().subtract((totalBucketsAll - 1) * 10, 'minutes').valueOf();
-
-        const candlesAll = generate10MinCandles(
-            startAllMs,
-            totalBucketsAll,
+        const spanMs = Math.max(interval10m * 24, current10MinStart.valueOf() - firstTrxMs + interval10m);
+        const allBuckets = Math.min(150, Math.max(24, Math.ceil(spanMs / interval10m)));
+        const allIntervalMs = Math.max(interval10m, Math.ceil(spanMs / allBuckets));
+        const candlesAll = buildCandlesByInterval(
+            firstTrxMs,
+            allBuckets,
+            allIntervalMs,
             allTrxAsc,
-            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM HH:mm')
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD/MM HH:mm')
         );
 
         const systemLatency = latencyMetrics.length > 0 ? Math.round(latencyMetrics[0].avgLatency) : 12;
@@ -5663,7 +5658,6 @@ app.get('/api/dashboard-stats', async (req, res) => {
         res.status(500).json({ status: false, message: "Gagal memuat data statistik" });
     }
 });
-
 
 // ============================================================
 // 11. START SERVER
