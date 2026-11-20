@@ -51,6 +51,36 @@
         .nav-icon-box { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .nav-item-btn i { font-size: 18px; }
         .nav-item-btn span { font-size: 10px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; position: absolute; bottom: 6px; }
+
+        /* Custom Neo-Brutalist Select & Radio Card */
+        .neo-select-trigger {
+            border: 3px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+        }
+        .neo-select-trigger:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0px #000000;
+        }
+        .neo-select-menu {
+            border: 3.5px solid #000000;
+            box-shadow: 6px 6px 0px #000000;
+        }
+        .delivery-mode-card {
+            border: 3px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+        }
+        .delivery-mode-card:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0px #000000;
+        }
+        .delivery-mode-card.selected-broadcast {
+            background-color: #00E676 !important;
+        }
+        .delivery-mode-card.selected-webonly {
+            background-color: #FFDE59 !important;
+        }
     </style>
 </head>
 <body class="font-sans antialiased text-black min-h-screen pb-32">
@@ -179,7 +209,7 @@
                     <h1 class="text-xl sm:text-2xl font-black font-cyber text-black flex items-center gap-2">
                         <i class="fa-solid fa-bullhorn"></i> Pusat Notifikasi &amp; Broadcast
                     </h1>
-                    <p class="text-xs font-bold text-black mt-1">Tambah notifikasi baru (langsung terkirim ke semua Email User &amp; Telegram), edit, atau kelola notifikasi.</p>
+                    <p class="text-xs font-bold text-black mt-1">Pilih untuk broadcast ke semua Email &amp; Telegram User atau simpan ke halaman notifikasi web saja.</p>
                 </div>
                 <button onclick="loadAdminNotifications()" class="neo-btn bg-white text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
                     <i class="fa-solid fa-rotate-right"></i> Refresh Notifikasi
@@ -201,14 +231,48 @@
 
             <!-- SUB-PANEL 1: TAMBAH NOTIFIKASI BARU -->
             <div id="notifPanelAdd" class="neo-box rounded-2xl bg-white overflow-hidden">
-                <div class="bg-neoCyan border-b-3 border-black px-5 py-3 flex items-center justify-between">
+                <div class="bg-neoCyan border-b-3 border-black px-5 py-3 flex items-center justify-between gap-2">
                     <span class="font-cyber font-black text-sm uppercase flex items-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i> Buat &amp; Kirim Notifikasi Baru
                     </span>
-                    <span class="text-[10px] font-mono font-extrabold bg-white border-2 border-black px-2 py-0.5 rounded">AUTO EMAIL + TELEGRAM</span>
+                    <span id="addNotifHeaderBadge" class="text-[10px] font-mono font-extrabold bg-neoGreen border-2 border-black px-2.5 py-0.5 rounded uppercase">
+                        BROADCAST EMAIL + TELEGRAM
+                    </span>
                 </div>
 
                 <form id="createNotifForm" onsubmit="submitCreateNotification(event)" class="p-5 space-y-4">
+                    <!-- PILIHAN MODE PENGIRIMAN NOTIFIKASI -->
+                    <div class="space-y-2">
+                        <label class="block font-cyber font-black text-xs uppercase">Mode Pengiriman Notifikasi *</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <label id="modeCardBroadcast" onclick="selectDeliveryMode('broadcast')" class="delivery-mode-card selected-broadcast rounded-xl p-3.5 bg-white cursor-pointer flex items-start gap-3 select-none">
+                                <input type="radio" name="addNotifDeliveryMode" value="broadcast" checked class="mt-1 w-4 h-4 accent-black">
+                                <div class="space-y-0.5">
+                                    <div class="font-cyber font-black text-xs uppercase flex items-center gap-1.5">
+                                        <i class="fa-solid fa-tower-broadcast"></i>
+                                        <span>Kirim ke Semua User</span>
+                                    </div>
+                                    <p class="text-[11px] font-bold text-slate-800 leading-snug">
+                                        Tampil di halaman notifikasi web + dikirim langsung ke Email &amp; Bot Telegram semua user (atau target email tertentu).
+                                    </p>
+                                </div>
+                            </label>
+
+                            <label id="modeCardWebOnly" onclick="selectDeliveryMode('web_only')" class="delivery-mode-card rounded-xl p-3.5 bg-white cursor-pointer flex items-start gap-3 select-none">
+                                <input type="radio" name="addNotifDeliveryMode" value="web_only" class="mt-1 w-4 h-4 accent-black">
+                                <div class="space-y-0.5">
+                                    <div class="font-cyber font-black text-xs uppercase flex items-center gap-1.5">
+                                        <i class="fa-solid fa-bell"></i>
+                                        <span>Kirim Notifikasi Saja</span>
+                                    </div>
+                                    <p class="text-[11px] font-bold text-slate-800 leading-snug">
+                                        Hanya tampil di halaman <strong>/notifikasi</strong> website tanpa mengirim pesan ke Email maupun Telegram.
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
                     <div>
                         <label for="addNotifTitle" class="block font-cyber font-black text-xs uppercase mb-1.5">Judul Notifikasi *</label>
                         <input type="text" id="addNotifTitle" required placeholder="Contoh: Promo Flash Sale Diskon 50% Hari Ini!" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
@@ -227,7 +291,7 @@
 
                         <div>
                             <label for="addNotifTargetEmail" class="block font-cyber font-black text-xs uppercase mb-1.5">Target Email User (Opsional)</label>
-                            <input type="text" id="addNotifTargetEmail" placeholder="Kosongkan = Broadcast ke SEMUA Email & Telegram User" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                            <input type="text" id="addNotifTargetEmail" placeholder="Kosongkan = Semua User (atau isi email spesifik)" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
                         </div>
                     </div>
 
@@ -242,14 +306,14 @@
                     </div>
 
                     <button type="submit" id="btnSubmitAddNotif" class="w-full neo-btn bg-neoGreen text-black font-cyber font-black py-3.5 px-5 rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-paper-plane"></i> <span>Kirim Notifikasi ke Semua Email &amp; Telegram</span>
+                        <i class="fa-solid fa-paper-plane"></i> <span id="btnSubmitAddNotifText">Kirim Notifikasi ke Semua Email &amp; Telegram</span>
                     </button>
                 </form>
             </div>
 
             <!-- SUB-PANEL 2: EDIT NOTIFIKASI -->
-            <div id="notifPanelEdit" class="hidden neo-box rounded-2xl bg-white overflow-hidden">
-                <div class="bg-neoPink border-b-3 border-black px-5 py-3 flex items-center justify-between">
+            <div id="notifPanelEdit" class="hidden neo-box rounded-2xl bg-white overflow-visible">
+                <div class="bg-neoPink border-b-3 border-black px-5 py-3 rounded-t-[13px] flex items-center justify-between">
                     <span class="font-cyber font-black text-sm uppercase flex items-center gap-2">
                         <i class="fa-solid fa-pen-to-square"></i> Edit Notifikasi Tersimpan
                     </span>
@@ -257,11 +321,42 @@
                 </div>
 
                 <div class="p-5 space-y-4">
-                    <div class="bg-neoBg border-2 border-black rounded-xl p-3.5 space-y-2">
-                        <label for="editNotifSelector" class="block font-cyber font-black text-xs uppercase">1. Pilih Notifikasi yang Akan Diedit *</label>
-                        <select id="editNotifSelector" onchange="onSelectEditNotification(this.value)" class="w-full bg-white border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none">
-                            <option value="">-- Pilih Notifikasi --</option>
-                        </select>
+                    <!-- CUSTOM NEO-BRUTALIST SELECT DROPDOWN -->
+                    <div class="bg-neoBg border-3 border-black rounded-2xl p-4 space-y-2.5 relative" id="customNotifSelectWrapper">
+                        <div class="flex items-center justify-between">
+                            <label class="block font-cyber font-black text-xs uppercase">1. Pilih Notifikasi yang Akan Diedit *</label>
+                            <span id="editSelectAvailableBadge" class="text-[10px] font-mono font-extrabold bg-neoYellow border-2 border-black px-2 py-0.5 rounded">0 Tersedia</span>
+                        </div>
+
+                        <!-- Hidden select sinkron -->
+                        <select id="editNotifSelector" class="hidden"></select>
+
+                        <!-- Custom Trigger Button -->
+                        <button type="button" id="customNotifSelectTrigger" onclick="toggleCustomNotifDropdown()" class="neo-select-trigger w-full bg-white rounded-xl px-4 py-3 text-left flex items-center justify-between gap-3">
+                            <div id="customNotifTriggerContent" class="flex items-center gap-2.5 min-w-0 flex-1">
+                                <span class="w-8 h-8 rounded-lg bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
+                                    <i class="fa-solid fa-bell text-xs"></i>
+                                </span>
+                                <div class="min-w-0">
+                                    <div class="text-xs font-black font-cyber text-black truncate">Pilih Notifikasi...</div>
+                                    <div class="text-[10px] font-mono font-bold text-slate-600 truncate">Klik untuk membuka daftar notifikasi</div>
+                                </div>
+                            </div>
+                            <span class="w-7 h-7 rounded-lg bg-neoCyan border-2 border-black flex items-center justify-center shrink-0">
+                                <i id="customNotifChevron" class="fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
+                            </span>
+                        </button>
+
+                        <!-- Custom Dropdown Menu -->
+                        <div id="customNotifDropdownMenu" class="hidden neo-select-menu absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl z-50 overflow-hidden">
+                            <div class="p-2.5 bg-neoYellow border-b-3 border-black">
+                                <div class="relative">
+                                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-black"></i>
+                                    <input type="text" id="customNotifDropdownSearch" oninput="renderCustomNotifDropdownItems()" placeholder="Cari judul, kategori, atau target..." class="w-full bg-white border-2 border-black rounded-xl pl-8 pr-3 py-2 text-xs font-bold focus:outline-none">
+                                </div>
+                            </div>
+                            <div id="customNotifDropdownList" class="max-h-64 overflow-y-auto divide-y-2 divide-black"></div>
+                        </div>
                     </div>
 
                     <form id="editNotifForm" onsubmit="submitEditNotification(event)" class="space-y-4">
@@ -355,6 +450,7 @@
         let selectedUsername = '';
         let selectedUserEmail = '';
         let adminPollInterval = null;
+        let selectedDeliveryMode = 'broadcast';
 
         function formatRupiah(angka) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
@@ -363,6 +459,41 @@
         function escapeHtml(text) {
             if (!text) return '';
             return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        }
+
+        function selectDeliveryMode(mode) {
+            selectedDeliveryMode = mode === 'web_only' ? 'web_only' : 'broadcast';
+            const broadcastCard = document.getElementById('modeCardBroadcast');
+            const webOnlyCard = document.getElementById('modeCardWebOnly');
+            const headerBadge = document.getElementById('addNotifHeaderBadge');
+            const submitBtnText = document.getElementById('btnSubmitAddNotifText');
+
+            const radioBroadcast = document.querySelector('input[name="addNotifDeliveryMode"][value="broadcast"]');
+            const radioWebOnly = document.querySelector('input[name="addNotifDeliveryMode"][value="web_only"]');
+
+            if (selectedDeliveryMode === 'broadcast') {
+                if (radioBroadcast) radioBroadcast.checked = true;
+                broadcastCard.classList.add('selected-broadcast');
+                webOnlyCard.classList.remove('selected-webonly');
+                headerBadge.innerText = 'BROADCAST EMAIL + TELEGRAM';
+                headerBadge.className = 'text-[10px] font-mono font-extrabold bg-neoGreen border-2 border-black px-2.5 py-0.5 rounded uppercase';
+                submitBtnText.innerText = 'Kirim Notifikasi ke Semua Email & Telegram';
+            } else {
+                if (radioWebOnly) radioWebOnly.checked = true;
+                webOnlyCard.classList.add('selected-webonly');
+                broadcastCard.classList.remove('selected-broadcast');
+                headerBadge.innerText = 'NOTIFIKASI WEB SAJA';
+                headerBadge.className = 'text-[10px] font-mono font-extrabold bg-neoYellow border-2 border-black px-2.5 py-0.5 rounded uppercase';
+                submitBtnText.innerText = 'Simpan & Tampilkan Notifikasi Saja';
+            }
+        }
+
+        function getNotifTypeStyle(type) {
+            const t = (type || 'info').toLowerCase();
+            if (t === 'promo') return { bg: 'bg-neoYellow', icon: 'fa-tags', label: 'PROMO' };
+            if (t === 'sistem') return { bg: 'bg-neoPink', icon: 'fa-server', label: 'SISTEM' };
+            if (t === 'transaksi') return { bg: 'bg-neoGreen', icon: 'fa-receipt', label: 'TRANSAKSI' };
+            return { bg: 'bg-neoCyan', icon: 'fa-circle-info', label: 'INFO' };
         }
 
         function switchAdminTab(tab) {
@@ -387,6 +518,7 @@
             document.getElementById('notifSubBtnAdd').classList.toggle('active', sub === 'add');
             document.getElementById('notifSubBtnEdit').classList.toggle('active', sub === 'edit');
             document.getElementById('notifSubBtnManage').classList.toggle('active', sub === 'manage');
+            closeCustomNotifDropdown();
         }
 
         function setDepositFilter(filter) {
@@ -570,24 +702,150 @@
                     document.getElementById('totalNotifBadge').innerText = count;
                     document.getElementById('notifManageCountTab').innerText = count;
                     document.getElementById('manageNotifTotalText').innerText = count;
+                    const availBadge = document.getElementById('editSelectAvailableBadge');
+                    if (availBadge) availBadge.innerText = `${count} Tersedia`;
                     populateEditNotifDropdown();
                     renderManageNotifList();
                 }
             } catch (e) {}
         }
 
+        function toggleCustomNotifDropdown() {
+            const menu = document.getElementById('customNotifDropdownMenu');
+            const chevron = document.getElementById('customNotifChevron');
+            if (!menu) return;
+            const isHidden = menu.classList.contains('hidden');
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+                renderCustomNotifDropdownItems();
+                const searchInput = document.getElementById('customNotifDropdownSearch');
+                if (searchInput) setTimeout(() => searchInput.focus(), 50);
+            } else {
+                closeCustomNotifDropdown();
+            }
+        }
+
+        function closeCustomNotifDropdown() {
+            const menu = document.getElementById('customNotifDropdownMenu');
+            const chevron = document.getElementById('customNotifChevron');
+            if (menu) menu.classList.add('hidden');
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
+        }
+
+        function renderCustomNotifDropdownItems() {
+            const listEl = document.getElementById('customNotifDropdownList');
+            if (!listEl) return;
+
+            const q = (document.getElementById('customNotifDropdownSearch')?.value || '').toLowerCase().trim();
+            const currentSelectedId = document.getElementById('editNotifId')?.value || '';
+
+            const filtered = q
+                ? allNotificationsData.filter(n =>
+                    String(n.title || '').toLowerCase().includes(q) ||
+                    String(n.type || '').toLowerCase().includes(q) ||
+                    String(n.targetEmail || 'broadcast semua user').toLowerCase().includes(q)
+                )
+                : allNotificationsData;
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<div class="p-4 text-center text-xs font-mono font-bold text-slate-600">Tidak ada notifikasi yang cocok.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(n => {
+                const nid = String(n._id);
+                const isSelected = nid === String(currentSelectedId);
+                const style = getNotifTypeStyle(n.type);
+                const target = n.targetEmail ? n.targetEmail : 'Broadcast Semua User';
+                const dateStr = n.createdAt
+                    ? new Date(n.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
+                    : '-';
+
+                return `
+                    <button type="button" onclick="chooseCustomNotifOption('${escapeHtml(nid)}')" class="w-full text-left p-3.5 transition flex items-start justify-between gap-3 ${isSelected ? 'bg-neoCyan/35' : 'bg-white hover:bg-neoBg'}">
+                        <div class="flex items-start gap-2.5 min-w-0 flex-1">
+                            <span class="w-8 h-8 rounded-lg ${style.bg} border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
+                                <i class="fa-solid ${style.icon} text-xs"></i>
+                            </span>
+                            <div class="min-w-0 flex-1 space-y-1">
+                                <div class="flex flex-wrap items-center gap-1.5">
+                                    <span class="${style.bg} border border-black px-1.5 py-0.2 rounded text-[9px] font-black font-cyber">${style.label}</span>
+                                    <span class="bg-neoBg border border-black px-1.5 py-0.2 rounded text-[9px] font-mono font-bold truncate max-w-[170px]">${escapeHtml(target)}</span>
+                                    <span class="text-[9px] font-mono font-bold text-slate-500">${dateStr}</span>
+                                </div>
+                                <div class="text-xs font-black font-cyber text-black truncate">${escapeHtml(n.title)}</div>
+                            </div>
+                        </div>
+                        <span class="shrink-0 mt-1">
+                            ${isSelected
+                                ? `<span class="w-6 h-6 rounded-full bg-neoGreen border-2 border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-check"></i></span>`
+                                : `<span class="w-6 h-6 rounded-full bg-white border-2 border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-arrow-right"></i></span>`
+                            }
+                        </span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function updateCustomNotifTriggerUI(notif) {
+            const triggerContent = document.getElementById('customNotifTriggerContent');
+            if (!triggerContent) return;
+
+            if (!notif) {
+                triggerContent.innerHTML = `
+                    <span class="w-8 h-8 rounded-lg bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-bell text-xs"></i>
+                    </span>
+                    <div class="min-w-0">
+                        <div class="text-xs font-black font-cyber text-black truncate">Pilih Notifikasi (${allNotificationsData.length} tersedia)...</div>
+                        <div class="text-[10px] font-mono font-bold text-slate-600 truncate">Klik untuk membuka daftar notifikasi</div>
+                    </div>
+                `;
+                return;
+            }
+
+            const style = getNotifTypeStyle(notif.type);
+            const target = notif.targetEmail ? notif.targetEmail : 'Broadcast Semua User';
+            triggerContent.innerHTML = `
+                <span class="w-8 h-8 rounded-lg ${style.bg} border-2 border-black flex items-center justify-center shrink-0">
+                    <i class="fa-solid ${style.icon} text-xs"></i>
+                </span>
+                <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5">
+                        <span class="${style.bg} border border-black px-1.5 rounded text-[9px] font-black font-cyber">${style.label}</span>
+                        <span class="text-[10px] font-mono font-bold text-slate-600 truncate">${escapeHtml(target)}</span>
+                    </div>
+                    <div class="text-xs font-black font-cyber text-black truncate mt-0.5">${escapeHtml(notif.title)}</div>
+                </div>
+            `;
+        }
+
+        function chooseCustomNotifOption(notifId) {
+            const selector = document.getElementById('editNotifSelector');
+            if (selector) selector.value = notifId;
+            onSelectEditNotification(notifId);
+            closeCustomNotifDropdown();
+        }
+
         function populateEditNotifDropdown() {
             const selector = document.getElementById('editNotifSelector');
             if (!selector) return;
-            const currentVal = selector.value;
+            const currentVal = selector.value || document.getElementById('editNotifId')?.value || '';
             selector.innerHTML = `<option value="">-- Pilih Notifikasi (${allNotificationsData.length} tersedia) --</option>` +
                 allNotificationsData.map(n => {
                     const target = n.targetEmail ? n.targetEmail : 'Broadcast Semua User';
                     return `<option value="${escapeHtml(n._id)}">[${escapeHtml((n.type || 'info').toUpperCase())}] ${escapeHtml(n.title)} (${escapeHtml(target)})</option>`;
                 }).join('');
-            if (currentVal && allNotificationsData.some(n => String(n._id) === currentVal)) {
-                selector.value = currentVal;
+
+            const matched = allNotificationsData.find(n => String(n._id) === String(currentVal));
+            if (matched) {
+                selector.value = String(matched._id);
+                updateCustomNotifTriggerUI(matched);
+            } else {
+                updateCustomNotifTriggerUI(null);
             }
+            renderCustomNotifDropdownItems();
         }
 
         function onSelectEditNotification(notifId) {
@@ -597,6 +855,7 @@
                 document.getElementById('editNotifId').value = '';
                 document.getElementById('editNotifForm').reset();
                 badge.innerText = 'PILIH NOTIFIKASI';
+                updateCustomNotifTriggerUI(null);
                 return;
             }
             document.getElementById('editNotifId').value = notif._id;
@@ -608,6 +867,7 @@
             document.getElementById('editNotifResetRead').checked = false;
             document.getElementById('editNotifResendBroadcast').checked = false;
             badge.innerText = `ID: ${String(notif._id).slice(-6).toUpperCase()}`;
+            updateCustomNotifTriggerUI(notif);
         }
 
         function jumpToEditNotif(notifId) {
@@ -624,7 +884,11 @@
             const btn = document.getElementById('btnSubmitAddNotif');
             const originalHtml = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Mengirim ke Email &amp; Telegram...</span>`;
+
+            const isWebOnly = selectedDeliveryMode === 'web_only';
+            btn.innerHTML = isWebOnly
+                ? `<i class="fa-solid fa-spinner fa-spin"></i> <span>Menyimpan Notifikasi Web...</span>`
+                : `<i class="fa-solid fa-spinner fa-spin"></i> <span>Mengirim ke Email &amp; Telegram...</span>`;
 
             try {
                 const payload = {
@@ -632,7 +896,8 @@
                     type: document.getElementById('addNotifType').value,
                     targetEmail: document.getElementById('addNotifTargetEmail').value.trim() || null,
                     link: document.getElementById('addNotifLink').value.trim() || null,
-                    message: document.getElementById('addNotifMessage').value.trim()
+                    message: document.getElementById('addNotifMessage').value.trim(),
+                    deliveryMode: selectedDeliveryMode
                 };
 
                 const res = await fetch('/api/admin/notifications', {
@@ -647,11 +912,12 @@
                 }
 
                 document.getElementById('createNotifForm').reset();
+                selectDeliveryMode('broadcast');
                 await loadAdminNotifications();
 
                 Swal.fire({
                     icon: 'success',
-                    title: 'NOTIFIKASI TERKIRIM!',
+                    title: isWebOnly ? 'NOTIFIKASI DISIMPAN!' : 'NOTIFIKASI TERKIRIM!',
                     text: result.message,
                     customClass: { popup: 'cyber-swal' }
                 });
@@ -884,7 +1150,15 @@
             loadUserList();
         }
 
+        document.addEventListener('click', (e) => {
+            const wrapper = document.getElementById('customNotifSelectWrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                closeCustomNotifDropdown();
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
+            selectDeliveryMode('broadcast');
             loadDepositsQrisV2();
             loadUserList();
             loadAdminNotifications();

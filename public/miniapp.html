@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Pusat Notifikasi Bot - ArulzXD Store</title>
+    <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png" />
+    <!-- Telegram Mini App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Tailwind, SweetAlert2, FontAwesome & Fonts (Identik deposit.html) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        cyber: ['"Space Grotesk"', 'sans-serif'],
+                    },
+                    colors: {
+                        neoBg: '#FAF9F2',
+                        neoYellow: '#FFDF4F',
+                        neoCyan: '#1AE5FF',
+                        neoGreen: '#2CE875',
+                        neoPink: '#FF4D6D',
+                        neoPurple: '#D896FF',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAF9F2;
+            color: #000000;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            background-image: radial-gradient(#00000018 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+
+        /* Neo-Brutalisme Persegi Panjang Tegas (Identik deposit.html) */
+        .neo-rect {
+            border: 3px solid #000000;
+            box-shadow: 6px 6px 0px #000000;
+            border-radius: 0px;
+            transition: transform 0.14s ease, box-shadow 0.14s ease;
+        }
+
+        .neo-btn-rect {
+            border: 3px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
+            border-radius: 0px;
+            transition: all 0.12s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
+        }
+
+        .neo-btn-rect:hover:not(:disabled) {
+            transform: translate(-1.5px, -1.5px);
+            box-shadow: 5.5px 5.5px 0px #000000;
+        }
+
+        .neo-btn-rect:active:not(:disabled) {
+            transform: translate(3px, 3px);
+            box-shadow: 1px 1px 0px #000000;
+        }
+
+        .neo-btn-rect:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .cyber-swal {
+            border: 3px solid #000000 !important;
+            border-radius: 0px !important;
+            box-shadow: 6px 6px 0px #000000 !important;
+            background: #FAF9F2 !important;
+            color: #000000 !important;
+        }
+
+        /* Neo-Brutalist Square Toggle Switch */
+        .neo-switch {
+            position: relative;
+            width: 64px;
+            height: 34px;
+            flex-shrink: 0;
+        }
+        .neo-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .neo-slider {
+            position: absolute;
+            inset: 0;
+            background: #E2E8F0;
+            border: 3px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
+            cursor: pointer;
+            transition: background 0.16s ease;
+        }
+        .neo-slider::before {
+            content: "";
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            left: 3px;
+            top: 3px;
+            background: #FFFFFF;
+            border: 2.5px solid #000000;
+            transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .neo-switch input:checked + .neo-slider {
+            background: #2CE875;
+        }
+        .neo-switch input:checked + .neo-slider::before {
+            transform: translateX(30px);
+        }
+        .neo-switch input:disabled + .neo-slider {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        /* =========================================================
+           ANIMASI GPU ULTRA-HALUS (60FPS, IDENTIK DEPOSIT.HTML)
+           ========================================================= */
+        .gpu-layer {
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        @keyframes smoothFloat {
+            0%, 100% { transform: translate3d(0, 0px, 0) rotate(0deg); }
+            50% { transform: translate3d(0, -6px, 0) rotate(-1.5deg); }
+        }
+        .anim-smooth-float {
+            animation: smoothFloat 2.4s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+        }
+
+        @keyframes bellRing {
+            0%, 100% { transform: rotate(0deg) translateZ(0); }
+            15% { transform: rotate(12deg) translateZ(0); }
+            30% { transform: rotate(-10deg) translateZ(0); }
+            45% { transform: rotate(7deg) translateZ(0); }
+            60% { transform: rotate(-5deg) translateZ(0); }
+            75% { transform: rotate(0deg) translateZ(0); }
+        }
+        .anim-bell-ring {
+            animation: bellRing 2.2s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        @keyframes linkPulse {
+            0%, 100% { transform: scale(1) translateZ(0); }
+            50% { transform: scale(1.07) translateZ(0); }
+        }
+        .anim-link-pulse {
+            animation: linkPulse 1.9s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+        }
+
+        @keyframes softHalo {
+            0% { transform: scale(0.88) translateZ(0); opacity: 0.75; }
+            100% { transform: scale(1.36) translateZ(0); opacity: 0; }
+        }
+        .anim-soft-halo {
+            animation: softHalo 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+        }
+
+        @keyframes slideInRightSmooth {
+            0% { opacity: 0; transform: translate3d(26px, 0, 0); }
+            100% { opacity: 1; transform: translate3d(0, 0, 0); }
+        }
+        @keyframes slideInLeftSmooth {
+            0% { opacity: 0; transform: translate3d(-26px, 0, 0); }
+            100% { opacity: 1; transform: translate3d(0, 0, 0); }
+        }
+        .slide-enter-right {
+            animation: slideInRightSmooth 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        .slide-enter-left {
+            animation: slideInLeftSmooth 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* =========================================================
+           TUTORIAL LANGSUNG (INTERACTIVE SPOTLIGHT TOUR)
+           ========================================================= */
+        .tour-highlight-target {
+            position: relative !important;
+            z-index: 65 !important;
+            outline: 4px solid #FFDF4F !important;
+            outline-offset: 4px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.76), 8px 8px 0px #000000 !important;
+            transition: outline 0.2s ease, box-shadow 0.25s ease;
+        }
+    </style>
+</head>
+<body class="pb-14 antialiased selection:bg-neoYellow selection:text-black min-h-screen">
+
+    <!-- TOP STICKY HEADER (IDENTIK DEPOSIT.HTML) -->
+    <header class="sticky top-0 z-40 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+            <a href="/" class="flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-black text-xl"></i>
+                <span class="font-cyber font-extrabold text-lg sm:text-xl tracking-tight text-black">
+                    Arulz <span class="bg-black text-white px-2 py-0.5">Bot</span>
+                </span>
+            </a>
+
+            <div class="flex items-center gap-2">
+                <!-- Tombol Pemicu Tutorial Langsung -->
+                <button type="button" onclick="startLiveTutorial()"
+                    class="neo-btn-rect bg-neoCyan text-black px-2.5 py-1 text-[11px] font-cyber font-extrabold flex items-center gap-1.5 uppercase">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>Tutorial Langsung</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-5xl mx-auto px-4 py-5 w-full space-y-5">
+
+        <!-- BARIS ATAS: IDENTITAS AKUN & PANDUAN ANIMASI SEJAJAR -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+
+            <!-- 1. BANNER PROFIL & STATUS KONEKSI -->
+            <section id="tour-card-profile" class="lg:col-span-5 neo-rect bg-neoCyan p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
+                <div class="absolute right-0 top-0 bottom-0 w-20 bg-white/15 border-l-2 border-black/15 pointer-events-none"></div>
+                <div class="relative z-10 h-full flex flex-col justify-between">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-7 h-7 bg-black text-neoYellow border-2 border-black flex items-center justify-center text-xs shadow-[2px_2px_0px_#fff]">
+                                <i class="fa-brands fa-telegram"></i>
+                            </span>
+                            <h1 class="font-cyber font-extrabold text-base sm:text-lg text-black tracking-tight uppercase">Mini App Notifikasi</h1>
+                        </div>
+                        <span id="headerStatusTag" class="bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase tracking-wider">SYNC</span>
+                    </div>
+
+                    <div class="mt-2 bg-white border-[3px] border-black p-3.5 shadow-[4px_4px_0px_#000] flex items-center gap-3.5">
+                        <img id="userAvatar" src="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png" alt="Avatar"
+                            class="w-14 h-14 bg-neoYellow border-[2.5px] border-black object-cover shrink-0 shadow-[3px_3px_0px_#000]" />
+                        <div class="min-w-0 flex-1">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">AKUN TERHUBUNG</p>
+                            <p id="userName" class="font-cyber font-extrabold text-lg text-black truncate">Memuat Akun...</p>
+                            <p id="userEmail" class="text-[11px] font-mono font-bold text-slate-600 truncate">ID: -</p>
+                            <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                                <span id="statusBadge" class="bg-neoPink text-white border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase">
+                                    BELUM TERTAUT
+                                </span>
+                                <span id="notifBadge" class="bg-neoYellow text-black border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase">
+                                    NOTIF: -
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. PANDUAN ANIMASI INTERAKTIF (IDENTIK DEPOSIT.HTML) -->
+            <section id="tour-card-carousel" class="lg:col-span-7 neo-rect bg-neoYellow p-4 sm:p-5 select-none flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-2 mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-black text-neoYellow font-cyber font-extrabold text-[11px] px-2.5 py-1 uppercase tracking-wider">
+                            PANDUAN MINI APP
+                        </span>
+                        <span class="text-[11px] font-extrabold text-black/80 flex items-center gap-1">
+                            <i class="fa-solid fa-hand-pointer"></i> Geser
+                        </span>
+                    </div>
+                    <!-- 4 Progress Bar Otomatis -->
+                    <div class="flex items-center gap-1.5 w-32 sm:w-40" id="tutorialProgressBars">
+                        <div class="h-2 flex-1 bg-black/20 border border-black overflow-hidden">
+                            <div class="tut-bar-fill h-full bg-neoCyan w-0"></div>
+                        </div>
+                        <div class="h-2 flex-1 bg-black/20 border border-black overflow-hidden">
+                            <div class="tut-bar-fill h-full bg-neoCyan w-0"></div>
+                        </div>
+                        <div class="h-2 flex-1 bg-black/20 border border-black overflow-hidden">
+                            <div class="tut-bar-fill h-full bg-neoCyan w-0"></div>
+                        </div>
+                        <div class="h-2 flex-1 bg-black/20 border border-black overflow-hidden">
+                            <div class="tut-bar-fill h-full bg-neoCyan w-0"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tutorialSwipeArea" class="bg-white border-[3px] border-black p-4 sm:p-5 shadow-[4px_4px_0px_#000] cursor-grab active:cursor-grabbing overflow-hidden touch-pan-y">
+                    <div id="tutorialSlideContent" class="gpu-layer flex items-center gap-4 sm:gap-5">
+                        <!-- Kotak Animasi SVG -->
+                        <div id="tutorialAnimationBox" class="w-24 h-24 sm:w-28 sm:h-28 shrink-0 bg-neoBg border-[2.5px] border-black shadow-[3px_3px_0px_#000] flex items-center justify-center relative overflow-hidden">
+                        </div>
+                        <!-- Teks Penjelasan -->
+                        <div class="min-w-0 flex-1 space-y-1.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <span id="tutorialStepTag" class="bg-neoCyan border-2 border-black text-black font-cyber font-black text-[10px] px-2 py-0.5 uppercase">LANGKAH 1/4</span>
+                                <button type="button" onclick="startLiveTutorial()" class="text-[10px] font-cyber font-black underline uppercase text-black hover:text-neoPink">
+                                    Praktek Langsung →
+                                </button>
+                            </div>
+                            <h2 id="tutorialStepTitle" class="font-cyber font-extrabold text-base sm:text-lg text-black leading-snug">
+                                Tautkan Bot Telegram
+                            </h2>
+                            <p id="tutorialStepDesc" class="text-xs sm:text-sm font-bold text-slate-700 leading-relaxed">
+                                Hubungkan akun ArulzXD Store dengan bot Telegram agar notifikasi transaksi dan promo masuk seketika.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- BARIS BAWAH: KONTROL TAUTAN & CHANNEL INFORMASI -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+            <!-- 3. PANEL KONTROL TAUTAN & NOTIFIKASI -->
+            <section class="lg:col-span-7 neo-rect bg-white p-5 space-y-5">
+
+                <!-- STEP 1: TAUTKAN / PUTUSKAN TAUTAN TELEGRAM -->
+                <div id="tour-card-link">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-6 h-6 bg-neoYellow border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">1</span>
+                            KONEKSI BOT TELEGRAM
+                        </label>
+                        <span id="connPillTag" class="text-[10px] font-extrabold bg-black text-neoYellow px-2.5 py-0.5 uppercase">OTOMATIS</span>
+                    </div>
+
+                    <div class="bg-neoBg border-[2.5px] border-black p-3.5 shadow-[4px_4px_0px_#000] mb-3.5 flex items-center justify-between gap-3">
+                        <div class="min-w-0">
+                            <p id="linkHeadline" class="font-cyber font-extrabold text-sm text-black">Memeriksa status koneksi...</p>
+                            <p id="linkSubtext" class="text-[11px] font-mono font-bold text-slate-600 mt-0.5 truncate">Menyinkronkan data dengan server</p>
+                        </div>
+                        <div id="linkStatusIconBox" class="w-11 h-11 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                            <i class="fa-solid fa-link text-lg text-black"></i>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Tautkan -->
+                    <button type="button" id="btnLinkTg" onclick="handleLinkTelegram()"
+                        class="w-full neo-btn-rect bg-neoCyan text-black font-cyber font-extrabold text-sm sm:text-base py-3.5 flex items-center justify-center gap-2 uppercase tracking-wide">
+                        <i class="fa-solid fa-bolt text-base"></i>
+                        <span>TAUTKAN NOTIFIKASI TELEGRAM</span>
+                    </button>
+
+                    <!-- Tombol Putuskan Tautan (Muncul jika sudah tertaut) -->
+                    <button type="button" id="btnUnlinkTg" onclick="handleUnlinkTelegram()" style="display: none;"
+                        class="w-full neo-btn-rect bg-neoPink text-white font-cyber font-extrabold text-sm sm:text-base py-3.5 flex items-center justify-center gap-2 uppercase tracking-wide">
+                        <i class="fa-solid fa-link-slash text-base"></i>
+                        <span>PUTUSKAN TAUTAN TELEGRAM</span>
+                    </button>
+                </div>
+
+                <!-- STEP 2: AKTIFKAN / NONAKTIFKAN NOTIFIKASI -->
+                <div id="tour-card-toggle" class="pt-5 border-t-[2.5px] border-dashed border-black/25">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-xs font-black uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-6 h-6 bg-neoPurple border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">2</span>
+                            PENGATURAN NOTIFIKASI REAL-TIME
+                        </label>
+                        <span class="text-[10px] font-extrabold bg-neoGreen border-2 border-black px-2 py-0.5 shadow-[1px_1px_0px_#000]">INSTAN</span>
+                    </div>
+
+                    <div class="bg-neoBg border-[2.5px] border-black p-4 shadow-[4px_4px_0px_#000] flex items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <h3 id="toggleTitle" class="font-cyber font-extrabold text-sm sm:text-base text-black">
+                                Kirim Notifikasi ke Bot Telegram
+                            </h3>
+                            <p id="toggleDesc" class="text-xs font-bold text-slate-700 leading-relaxed">
+                                Aktifkan untuk menerima info deposit, status pesanan, promo & pengumuman penting di private chat bot.
+                            </p>
+                        </div>
+                        <label class="neo-switch" aria-label="Aktifkan atau Nonaktifkan Notifikasi">
+                            <input type="checkbox" id="notifToggle" disabled onchange="handleToggleNotification(this.checked)" />
+                            <span class="neo-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. CHANNEL INFORMASI WHATSAPP & TELEGRAM -->
+            <section id="tour-card-channels" class="lg:col-span-5 neo-rect bg-white p-5 space-y-4">
+                <div class="flex items-center justify-between border-b-[2.5px] border-black pb-3">
+                    <h2 class="font-cyber font-extrabold text-base flex items-center gap-2 uppercase">
+                        <span class="w-6 h-6 bg-neoGreen border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">3</span>
+                        CHANNEL INFORMASI RESMI
+                    </h2>
+                    <span class="bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase">WA & TG</span>
+                </div>
+
+                <p class="text-xs font-bold text-slate-700">
+                    Ikuti saluran resmi ArulzXD Store agar tidak ketinggalan update stok produk, kode voucher gratis, dan info server.
+                </p>
+
+                <div class="space-y-3">
+                    <!-- Channel WhatsApp -->
+                    <a href="https://whatsapp.com/channel/0029Vb94zQcJUM2hE0pYz40U" target="_blank" rel="noopener" onclick="triggerHaptic('light')"
+                        class="neo-btn-rect bg-neoGreen/25 hover:bg-neoGreen/45 p-4 flex items-center justify-between gap-3 block">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-11 h-11 bg-neoGreen border-[2.5px] border-black flex items-center justify-center shrink-0 shadow-[3px_3px_0px_#000]">
+                                <i class="fa-brands fa-whatsapp text-xl text-black"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="font-cyber font-extrabold text-sm text-black uppercase">Channel WhatsApp</span>
+                                    <span class="bg-neoYellow border border-black text-[9px] font-black px-1.5 py-0.5">RESMI</span>
+                                </div>
+                                <p class="text-[11px] font-bold text-slate-700 mt-0.5 truncate">Info stok, promo kilat & status maintenance</p>
+                            </div>
+                        </div>
+                        <span class="bg-white border-2 border-black px-2.5 py-1.5 font-cyber font-black text-xs shrink-0 shadow-[2px_2px_0px_#000]">
+                            IKUTI <i class="fa-solid fa-arrow-up-right-from-square ml-0.5"></i>
+                        </span>
+                    </a>
+
+                    <!-- Channel Telegram -->
+                    <a href="https://t.me/information_arulz" target="_blank" rel="noopener" onclick="triggerHaptic('light')"
+                        class="neo-btn-rect bg-neoCyan/25 hover:bg-neoCyan/45 p-4 flex items-center justify-between gap-3 block">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-11 h-11 bg-neoCyan border-[2.5px] border-black flex items-center justify-center shrink-0 shadow-[3px_3px_0px_#000]">
+                                <i class="fa-brands fa-telegram text-xl text-black"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="font-cyber font-extrabold text-sm text-black uppercase">Channel Telegram</span>
+                                    <span class="bg-neoPurple border border-black text-[9px] font-black px-1.5 py-0.5">UPDATE</span>
+                                </div>
+                                <p class="text-[11px] font-bold text-slate-700 mt-0.5 truncate">Update bot otomatis, giveaway & pengumuman</p>
+                            </div>
+                        </div>
+                        <span class="bg-white border-2 border-black px-2.5 py-1.5 font-cyber font-black text-xs shrink-0 shadow-[2px_2px_0px_#000]">
+                            JOIN <i class="fa-solid fa-arrow-up-right-from-square ml-0.5"></i>
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Tombol Ulangi Tutorial Langsung -->
+                <div class="pt-2">
+                    <button type="button" onclick="startLiveTutorial()"
+                        class="w-full neo-btn-rect bg-neoYellow text-black font-cyber font-extrabold text-xs py-3 flex items-center justify-center gap-2 uppercase">
+                        <i class="fa-solid fa-graduation-cap"></i> MULAI TUTORIAL INTERAKTIF LANGSUNG
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- =========================================================
+         POPUP FLOATING TUTORIAL LANGSUNG (INTERACTIVE WALKTHROUGH)
+         ========================================================= -->
+    <div id="liveTourTooltip" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[75] hidden w-[calc(100%-24px)] max-w-md bg-neoBg border-[3px] border-black shadow-[8px_8px_0px_#000]">
+        <div class="bg-neoYellow border-b-[3px] border-black px-4 py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 bg-neoPink border border-black"></span>
+                <span class="w-2.5 h-2.5 bg-neoCyan border border-black"></span>
+                <span id="liveTourStepBadge" class="font-cyber font-black text-xs uppercase tracking-wider text-black ml-1">
+                    TUTORIAL LANGSUNG • 1/4
+                </span>
+            </div>
+            <button type="button" onclick="endLiveTutorial()" class="w-7 h-7 bg-white border-2 border-black flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]" title="Tutup Tutorial">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="p-4 space-y-3">
+            <div>
+                <h3 id="liveTourTitle" class="font-cyber font-extrabold text-base text-black">1. Cek Identitas & Status Akun</h3>
+                <p id="liveTourDesc" class="text-xs font-bold text-slate-700 mt-1 leading-relaxed">
+                    Di kartu ini Anda dapat melihat akun ArulzXD Store yang terhubung beserta status tautan Telegram saat ini.
+                </p>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 pt-1">
+                <button type="button" id="btnTourPrev" onclick="prevLiveTourStep()"
+                    class="neo-btn-rect bg-white text-black font-cyber font-extrabold text-xs px-3.5 py-2">
+                    ← SEBELUMNYA
+                </button>
+                <div class="flex items-center gap-1.5" id="liveTourDots"></div>
+                <button type="button" id="btnTourNext" onclick="nextLiveTourStep()"
+                    class="neo-btn-rect bg-neoGreen text-black font-cyber font-extrabold text-xs px-4 py-2">
+                    LANJUT →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram?.WebApp;
+        let pollTimer = null;
+
+        // Inisialisasi Telegram WebApp
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            tg.setHeaderColor('#FFDF4F');
+            tg.setBackgroundColor('#FAF9F2');
+        }
+
+        function triggerHaptic(type = 'medium') {
+            try {
+                if (tg?.HapticFeedback) {
+                    if (type === 'success' || type === 'error') {
+                        tg.HapticFeedback.notificationOccurred(type);
+                    } else {
+                        tg.HapticFeedback.impactOccurred(type);
+                    }
+                }
+            } catch (_) {}
+        }
+
+        function getApiHeaders() {
+            const headers = { 'Content-Type': 'application/json' };
+            if (tg?.initData) {
+                headers['X-Telegram-Init-Data'] = tg.initData;
+            }
+            return headers;
+        }
+
+        /* =========================================================
+           1. DATA & RENDER ANIMASI CAROUSEL PANDUAN (IDENTIK DEPOSIT.HTML)
+           ========================================================= */
+        let currentTutorialStep = 0;
+        let tutorialTimer = null;
+        const TUTORIAL_DURATION = 4200;
+
+        const MINIAPP_TUTORIAL_STEPS = [
+            {
+                title: 'Tautkan Bot Telegram',
+                desc: 'Tekan tombol Tautkan Notifikasi Telegram, lalu tekan tombol START di ruang obrolan bot.',
+                renderAnim: () => `
+                    <div class="gpu-layer anim-link-pulse relative flex items-center justify-center">
+                        <svg class="w-16 h-16" viewBox="0 0 64 64" fill="none">
+                            <rect x="12" y="12" width="44" height="44" fill="#000"/>
+                            <rect x="9" y="9" width="44" height="44" fill="#1AE5FF" stroke="#000" stroke-width="3"/>
+                            <path d="M27 35L37 25" stroke="#000" stroke-width="3.5" stroke-linecap="square"/>
+                            <path d="M22 30L18 34C15.5 36.5 15.5 40.5 18 43C20.5 45.5 24.5 45.5 27 43L31 39" stroke="#000" stroke-width="3.5" stroke-linecap="square"/>
+                            <path d="M42 30L46 26C48.5 23.5 48.5 19.5 46 17C43.5 14.5 39.5 14.5 37 17L33 21" stroke="#000" stroke-width="3.5" stroke-linecap="square"/>
+                        </svg>
+                    </div>
+                `
+            },
+            {
+                title: 'Atur Switch Notifikasi',
+                desc: 'Nyalakan atau matikan pengiriman notifikasi real-time kapan saja lewat sakelar di bawah.',
+                renderAnim: () => `
+                    <div class="gpu-layer anim-smooth-float relative flex items-center justify-center">
+                        <svg class="w-16 h-16" viewBox="0 0 64 64" fill="none">
+                            <rect x="11" y="21" width="46" height="26" fill="#000"/>
+                            <rect x="8" y="18" width="46" height="26" fill="#2CE875" stroke="#000" stroke-width="3"/>
+                            <rect x="33" y="22" width="17" height="18" fill="#FFDF4F" stroke="#000" stroke-width="2.5"/>
+                            <path d="M16 31L20 35L27 27" stroke="#000" stroke-width="3" stroke-linecap="square"/>
+                        </svg>
+                    </div>
+                `
+            },
+            {
+                title: 'Terima Alert Instan di Bot',
+                desc: 'Info deposit masuk, status transaksi, hingga pengumuman admin otomatis dikirim ke chat Anda.',
+                renderAnim: () => `
+                    <div class="relative flex items-center justify-center">
+                        <span class="gpu-layer anim-soft-halo absolute w-14 h-14 bg-neoYellow border-2 border-black"></span>
+                        <div class="gpu-layer anim-bell-ring relative">
+                            <svg class="w-16 h-16" viewBox="0 0 64 64" fill="none">
+                                <path d="M32 10C22 10 16 17 16 26V36L11 42H53L48 36V26C48 17 42 10 32 10Z" fill="#FFDF4F" stroke="#000" stroke-width="3" stroke-linejoin="miter"/>
+                                <rect x="26" y="42" width="12" height="7" fill="#FF4D6D" stroke="#000" stroke-width="2.5"/>
+                                <circle cx="46" cy="17" r="7" fill="#2CE875" stroke="#000" stroke-width="2.5"/>
+                            </svg>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                title: 'Gabung Channel WA & Telegram',
+                desc: 'Ikuti kedua saluran informasi resmi untuk update stok produk dan kode voucher terbaru.',
+                renderAnim: () => `
+                    <div class="gpu-layer anim-smooth-float relative flex items-center justify-center">
+                        <svg class="w-16 h-16" viewBox="0 0 64 64" fill="none">
+                            <rect x="13" y="13" width="42" height="42" fill="#000"/>
+                            <rect x="10" y="10" width="42" height="42" fill="#D896FF" stroke="#000" stroke-width="3"/>
+                            <path d="M18 33L39 22V42L18 33Z" fill="#FFDF4F" stroke="#000" stroke-width="3" stroke-linejoin="miter"/>
+                            <rect x="42" y="25" width="4" height="14" fill="#000"/>
+                            <path d="M23 36L26 45H31L29 38" fill="#1AE5FF" stroke="#000" stroke-width="2.5"/>
+                        </svg>
+                    </div>
+                `
+            }
+        ];
+
+        function renderTutorialSlide(direction = 'right') {
+            const step = MINIAPP_TUTORIAL_STEPS[currentTutorialStep] || MINIAPP_TUTORIAL_STEPS[0];
+            document.getElementById('tutorialStepTag').innerText = `LANGKAH ${currentTutorialStep + 1}/4`;
+            document.getElementById('tutorialStepTitle').innerText = step.title;
+            document.getElementById('tutorialStepDesc').innerText = step.desc;
+            document.getElementById('tutorialAnimationBox').innerHTML = step.renderAnim();
+
+            const contentEl = document.getElementById('tutorialSlideContent');
+            contentEl.classList.remove('slide-enter-right', 'slide-enter-left');
+            void contentEl.offsetWidth;
+            contentEl.classList.add(direction === 'left' ? 'slide-enter-left' : 'slide-enter-right');
+
+            const fills = document.querySelectorAll('.tut-bar-fill');
+            fills.forEach((fill, idx) => {
+                fill.style.transition = 'none';
+                if (idx < currentTutorialStep) {
+                    fill.style.width = '100%';
+                } else if (idx === currentTutorialStep) {
+                    fill.style.width = '0%';
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            fill.style.transition = `width ${TUTORIAL_DURATION}ms linear`;
+                            fill.style.width = '100%';
+                        });
+                    });
+                } else {
+                    fill.style.width = '0%';
+                }
+            });
+        }
+
+        function startTutorialAutoSlide() {
+            if (tutorialTimer) clearInterval(tutorialTimer);
+            tutorialTimer = setInterval(() => {
+                currentTutorialStep = (currentTutorialStep + 1) % MINIAPP_TUTORIAL_STEPS.length;
+                renderTutorialSlide('right');
+            }, TUTORIAL_DURATION);
+        }
+
+        function initTutorialTouchSwipe() {
+            const area = document.getElementById('tutorialSwipeArea');
+            let startX = 0;
+            let startY = 0;
+            let isDragging = false;
+
+            area.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                isDragging = true;
+            }, { passive: true });
+
+            area.addEventListener('touchend', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                const diffX = e.changedTouches[0].clientX - startX;
+                const diffY = e.changedTouches[0].clientY - startY;
+
+                if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY)) {
+                    triggerHaptic('light');
+                    if (diffX < 0) {
+                        currentTutorialStep = (currentTutorialStep + 1) % 4;
+                        renderTutorialSlide('right');
+                    } else {
+                        currentTutorialStep = (currentTutorialStep + 3) % 4;
+                        renderTutorialSlide('left');
+                    }
+                    startTutorialAutoSlide();
+                }
+            }, { passive: true });
+        }
+
+        /* =========================================================
+           2. TUTORIAL LANGSUNG (INTERACTIVE SPOTLIGHT WALKTHROUGH)
+           ========================================================= */
+        let liveTourIndex = 0;
+        const LIVE_TOUR_STEPS = [
+            {
+                targetId: 'tour-card-profile',
+                title: '1. Identitas & Status Sinkronisasi',
+                desc: 'Kartu ini menampilkan profil akun ArulzXD Store Anda serta badge apakah bot Telegram sudah tertaut dan aktif.'
+            },
+            {
+                targetId: 'tour-card-link',
+                title: '2. Tautkan / Putuskan Tautan Bot',
+                desc: 'Klik tombol Tautkan Notifikasi Telegram untuk membuka bot & tekan START. Jika ingin melepas koneksi, klik Putuskan Tautan.'
+            },
+            {
+                targetId: 'tour-card-toggle',
+                title: '3. Sakelar Aktif / Nonaktif Notifikasi',
+                desc: 'Gunakan sakelar ini untuk mengaktifkan atau menjeda seluruh notifikasi otomatis yang dikirim bot ke chat Anda.'
+            },
+            {
+                targetId: 'tour-card-channels',
+                title: '4. Channel Informasi WhatsApp & Telegram',
+                desc: 'Bergabunglah ke saluran resmi WhatsApp dan Telegram kami di bagian ini untuk info stok & promo terbaru!'
+            }
+        ];
+
+        function clearTourHighlights() {
+            document.querySelectorAll('.tour-highlight-target').forEach(el => {
+                el.classList.remove('tour-highlight-target');
+            });
+        }
+
+        function renderLiveTourStep() {
+            clearTourHighlights();
+            const step = LIVE_TOUR_STEPS[liveTourIndex];
+            const targetEl = document.getElementById(step.targetId);
+
+            if (targetEl) {
+                targetEl.classList.add('tour-highlight-target');
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            document.getElementById('liveTourStepBadge').innerText = `TUTORIAL LANGSUNG • ${liveTourIndex + 1}/${LIVE_TOUR_STEPS.length}`;
+            document.getElementById('liveTourTitle').innerText = step.title;
+            document.getElementById('liveTourDesc').innerText = step.desc;
+
+            const prevBtn = document.getElementById('btnTourPrev');
+            const nextBtn = document.getElementById('btnTourNext');
+
+            prevBtn.disabled = liveTourIndex === 0;
+            if (liveTourIndex === LIVE_TOUR_STEPS.length - 1) {
+                nextBtn.innerText = 'SELESAI ✓';
+                nextBtn.className = 'neo-btn-rect bg-neoCyan text-black font-cyber font-extrabold text-xs px-4 py-2';
+            } else {
+                nextBtn.innerText = 'LANJUT →';
+                nextBtn.className = 'neo-btn-rect bg-neoGreen text-black font-cyber font-extrabold text-xs px-4 py-2';
+            }
+
+            const dotsContainer = document.getElementById('liveTourDots');
+            dotsContainer.innerHTML = LIVE_TOUR_STEPS.map((_, idx) => `
+                <span class="w-2.5 h-2.5 border border-black ${idx === liveTourIndex ? 'bg-neoYellow' : 'bg-white'}"></span>
+            `).join('');
+        }
+
+        function startLiveTutorial() {
+            triggerHaptic('medium');
+            liveTourIndex = 0;
+            document.getElementById('liveTourTooltip').classList.remove('hidden');
+            renderLiveTourStep();
+        }
+
+        function nextLiveTourStep() {
+            triggerHaptic('light');
+            if (liveTourIndex < LIVE_TOUR_STEPS.length - 1) {
+                liveTourIndex++;
+                renderLiveTourStep();
+            } else {
+                endLiveTutorial();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Tutorial Selesai!',
+                    text: 'Anda siap menautkan dan mengelola notifikasi Bot Telegram.',
+                    confirmButtonText: 'MANTAP',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
+        }
+
+        function prevLiveTourStep() {
+            triggerHaptic('light');
+            if (liveTourIndex > 0) {
+                liveTourIndex--;
+                renderLiveTourStep();
+            }
+        }
+
+        function endLiveTutorial() {
+            clearTourHighlights();
+            document.getElementById('liveTourTooltip').classList.add('hidden');
+            try { localStorage.setItem('arulz_miniapp_tour_done', '1'); } catch (_) {}
+        }
+
+        /* =========================================================
+           3. LOGIKA SINKRONISASI BACKEND (TAUTKAN, PUTUSKAN, TOGGLE)
+           ========================================================= */
+        function renderUserState({ loggedIn, user }) {
+            const tgUser = tg?.initDataUnsafe?.user;
+            const avatarEl = document.getElementById('userAvatar');
+            const nameEl = document.getElementById('userName');
+            const emailEl = document.getElementById('userEmail');
+            const statusBadge = document.getElementById('statusBadge');
+            const notifBadge = document.getElementById('notifBadge');
+            const linkHeadline = document.getElementById('linkHeadline');
+            const linkSubtext = document.getElementById('linkSubtext');
+            const linkIconBox = document.getElementById('linkStatusIconBox');
+            const btnLink = document.getElementById('btnLinkTg');
+            const btnUnlink = document.getElementById('btnUnlinkTg');
+            const toggleInput = document.getElementById('notifToggle');
+
+            if (!loggedIn || !user) {
+                nameEl.innerText = tgUser ? (tgUser.first_name || 'Pengguna Telegram') : 'Belum Login';
+                emailEl.innerText = tgUser?.username ? `@${tgUser.username}` : 'Login di ArulzXD Store untuk menautkan';
+                if (tgUser?.photo_url) avatarEl.src = tgUser.photo_url;
+
+                statusBadge.className = 'bg-neoPink text-white border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase';
+                statusBadge.innerText = 'BELUM LOGIN';
+                notifBadge.innerText = 'NOTIF: MATI';
+
+                linkHeadline.innerText = 'Akun Store Belum Terhubung';
+                linkSubtext.innerText = 'Login akun web lalu tautkan ke Bot Telegram';
+                linkIconBox.className = 'w-11 h-11 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]';
+                linkIconBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-lg text-black"></i>';
+
+                btnLink.style.display = 'flex';
+                btnUnlink.style.display = 'none';
+                toggleInput.checked = false;
+                toggleInput.disabled = true;
+                return;
+            }
+
+            nameEl.innerText = user.username || user.name || 'Member Store';
+            emailEl.innerText = user.email;
+            if (user.avatar) avatarEl.src = user.avatar;
+
+            const isLinked = Boolean(user.telegramLinked);
+            const isNotifOn = isLinked && user.telegramNotifEnabled !== false;
+
+            if (isLinked) {
+                statusBadge.className = 'bg-neoGreen text-black border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase';
+                statusBadge.innerText = 'TERTAUT ✓';
+
+                linkHeadline.innerText = user.telegramUsername
+                    ? `Terhubung ke @${user.telegramUsername}`
+                    : 'Terhubung ke Bot Telegram';
+                linkSubtext.innerText = `Chat ID: ${user.telegramChatId || '-'}`;
+                linkIconBox.className = 'w-11 h-11 bg-neoGreen border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]';
+                linkIconBox.innerHTML = '<i class="fa-solid fa-check text-lg text-black"></i>';
+
+                btnLink.style.display = 'none';
+                btnUnlink.style.display = 'flex';
+                toggleInput.disabled = false;
+                toggleInput.checked = isNotifOn;
+            } else {
+                statusBadge.className = 'bg-neoPink text-white border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase';
+                statusBadge.innerText = 'BELUM TERTAUT';
+
+                linkHeadline.innerText = 'Notifikasi Telegram Belum Tertaut';
+                linkSubtext.innerText = 'Klik tombol di bawah untuk menghubungkan bot';
+                linkIconBox.className = 'w-11 h-11 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]';
+                linkIconBox.innerHTML = '<i class="fa-solid fa-link text-lg text-black"></i>';
+
+                btnLink.style.display = 'flex';
+                btnUnlink.style.display = 'none';
+                toggleInput.checked = false;
+                toggleInput.disabled = true;
+            }
+
+            notifBadge.innerText = isNotifOn ? 'NOTIF: AKTIF' : 'NOTIF: MATI';
+            notifBadge.className = isNotifOn
+                ? 'bg-neoCyan text-black border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase'
+                : 'bg-neoYellow text-black border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase';
+        }
+
+        async function loadUserStatus() {
+            try {
+                const res = await fetch('/api/user-status', { headers: getApiHeaders() });
+                const data = await res.json();
+                renderUserState(data);
+            } catch (_) {
+                document.getElementById('linkHeadline').innerText = 'Gagal memuat data server';
+            }
+        }
+
+        // Tautkan Bot Telegram
+        async function handleLinkTelegram() {
+            triggerHaptic('medium');
+            const btn = document.getElementById('btnLinkTg');
+            btn.disabled = true;
+
+            Swal.fire({
+                title: 'MEMBUAT TIKET TAUTAN...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); },
+                customClass: { popup: 'cyber-swal' }
+            });
+
+            try {
+                const res = await fetch('/api/telegram/ticket', {
+                    method: 'POST',
+                    headers: getApiHeaders()
+                });
+                const data = await res.json();
+                Swal.close();
+
+                if (!data.status) {
+                    triggerHaptic('error');
+                    return Swal.fire({
+                        icon: 'warning',
+                        title: 'Perlu Login Akun',
+                        text: data.message || 'Silakan login ke ArulzXD Store terlebih dahulu.',
+                        confirmButtonText: 'LOGIN SEKARANG',
+                        customClass: { popup: 'cyber-swal' }
+                    }).then((r) => {
+                        if (r.isConfirmed && res.status === 401) {
+                            window.location.href = '/login';
+                        }
+                    });
+                }
+
+                if (tg?.openTelegramLink) {
+                    tg.openTelegramLink(data.botUrl);
+                } else {
+                    window.open(data.botUrl, '_blank');
+                }
+
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Tekan START di Bot!',
+                    text: 'Bot Telegram telah dibuka. Tekan tombol START di ruang obrolan bot untuk menyelesaikan penautan.',
+                    confirmButtonText: 'SAYA SUDAH START',
+                    customClass: { popup: 'cyber-swal' }
+                });
+
+                clearInterval(pollTimer);
+                pollTimer = setInterval(async () => {
+                    try {
+                        const check = await fetch(`/api/telegram/ticket/${data.token}`, { headers: getApiHeaders() });
+                        const st = await check.json();
+                        if (st.completed) {
+                            clearInterval(pollTimer);
+                            triggerHaptic('success');
+                            await loadUserStatus();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'BERHASIL TERTAUT!',
+                                text: 'Notifikasi Telegram kini aktif di akun Anda.',
+                                confirmButtonText: 'MANTAP',
+                                customClass: { popup: 'cyber-swal' }
+                            });
+                        }
+                    } catch (_) {}
+                }, 2500);
+            } catch (_) {
+                Swal.close();
+                triggerHaptic('error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Koneksi Gagal',
+                    text: 'Tidak dapat menghubungi server.',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Putuskan Tautan Telegram
+        async function handleUnlinkTelegram() {
+            triggerHaptic('medium');
+            const confirmRes = await Swal.fire({
+                icon: 'warning',
+                title: 'Putuskan Tautan?',
+                text: 'Anda tidak akan menerima notifikasi bot Telegram lagi setelah tautan diputuskan.',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Putuskan',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#FF4D6D',
+                customClass: { popup: 'cyber-swal' }
+            });
+
+            if (!confirmRes.isConfirmed) return;
+
+            const btn = document.getElementById('btnUnlinkTg');
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/user/unlink-telegram', {
+                    method: 'POST',
+                    headers: getApiHeaders()
+                });
+                const data = await res.json();
+
+                if (data.status) {
+                    triggerHaptic('success');
+                    await loadUserStatus();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Tautan Diputuskan',
+                        text: 'Akun Telegram berhasil dilepas dari profil Anda.',
+                        customClass: { popup: 'cyber-swal' }
+                    });
+                } else {
+                    triggerHaptic('error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: data.message || 'Gagal memutuskan tautan.',
+                        customClass: { popup: 'cyber-swal' }
+                    });
+                }
+            } catch (_) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Terjadi kesalahan jaringan.',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // Aktifkan / Nonaktifkan Notifikasi
+        async function handleToggleNotification(enabled) {
+            triggerHaptic('light');
+            const toggle = document.getElementById('notifToggle');
+            toggle.disabled = true;
+
+            try {
+                const res = await fetch('/api/user/telegram-notif-toggle', {
+                    method: 'POST',
+                    headers: getApiHeaders(),
+                    body: JSON.stringify({ enabled })
+                });
+                const data = await res.json();
+
+                if (data.status) {
+                    triggerHaptic('success');
+                    await loadUserStatus();
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: enabled ? 'Notifikasi Diaktifkan!' : 'Notifikasi Dinonaktifkan!',
+                        showConfirmButton: false,
+                        timer: 1800,
+                        customClass: { popup: 'cyber-swal' }
+                    });
+                } else {
+                    toggle.checked = !enabled;
+                    triggerHaptic('error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: data.message || 'Gagal mengubah pengaturan notifikasi.',
+                        customClass: { popup: 'cyber-swal' }
+                    });
+                }
+            } catch (_) {
+                toggle.checked = !enabled;
+            } finally {
+                toggle.disabled = false;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTutorialSlide('right');
+            startTutorialAutoSlide();
+            initTutorialTouchSwipe();
+            loadUserStatus();
+
+            // Otomatis jalankan Tutorial Langsung saat pengguna pertama kali membuka Mini App
+            try {
+                if (!localStorage.getItem('arulz_miniapp_tour_done')) {
+                    setTimeout(() => startLiveTutorial(), 650);
+                }
+            } catch (_) {}
+        });
+    </script>
+</body>
+</html>
