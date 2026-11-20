@@ -577,7 +577,7 @@
         </div>
     </footer>
     
-        <!-- BOTTOM NAVIGATION 6-MENU DENGAN LEKUKAN BERSIH -->
+    <!-- BOTTOM NAVIGATION 6-MENU DENGAN LEKUKAN BERSIH -->
     <nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
         <div class="liquid-nav-bg">
             <svg class="liquid-nav-svg" id="liquidNavSvg" xmlns="http://www.w3.org/2000/svg">
@@ -1034,9 +1034,9 @@
             const W = rect.width;
             const H = rect.height;
             const padLeft = 18;
-            const padRight = 68;
+            const padRight = 72;
             const padTop = 20;
-            const padBottom = 32;
+            const padBottom = 34;
             const plotW = W - padLeft - padRight;
             const plotH = H - padTop - padBottom;
 
@@ -1054,30 +1054,36 @@
 
             const allHighs = series.map(d => Number(d.h || 0));
             const allLows = series.map(d => Number(d.l || 0));
-            let rawMax = Math.max(...allHighs);
-            let rawMin = Math.min(...allLows);
+            let rawMax = Math.max(...allHighs, 0);
+            let rawMin = Math.min(...allLows, 0);
 
             if (rawMax === rawMin) {
                 rawMin = rawMin - 3000;
                 rawMax = rawMax + 5000;
             }
 
-            const rangeSpan = rawMax - rawMin;
-            const yMin = rawMin - rangeSpan * 0.14;
+            // Pastikan rentang Y selalu mencakup nilai minus di bawah & puncak di atas dengan margin lega
+            const rangeSpan = Math.max(1000, rawMax - rawMin);
+            const yMin = rawMin < 0
+                ? rawMin - rangeSpan * 0.16
+                : Math.min(0, rawMin - rangeSpan * 0.12);
             const yMax = rawMax + rangeSpan * 0.14;
             const ySpan = Math.max(1, yMax - yMin);
 
             const toY = (val) => padTop + plotH - ((val - yMin) / ySpan) * plotH;
-
             const stepW = plotW / series.length;
+
+            // 1. Grid Horizontal & Label Sumbu Y (termasuk angka minus di bawah nol)
             ctx.save();
             ctx.setLineDash([3, 3]);
             ctx.lineWidth = 1;
             ctx.strokeStyle = 'rgba(0, 0, 0, 0.12)';
-
-            const ySteps = 5;
             ctx.font = '800 10px "JetBrains Mono", monospace';
             ctx.textAlign = 'left';
+
+            const ySteps = 5;
+            const yZero = toY(0);
+            const hasZeroLine = yMin < 0 && yMax > 0;
 
             for (let i = 0; i <= ySteps; i++) {
                 const val = yMin + (ySpan * i) / ySteps;
@@ -1088,41 +1094,63 @@
                 ctx.lineTo(W - padRight, y);
                 ctx.stroke();
 
-                ctx.fillStyle = val < 0 ? '#E11D48' : '#1F2937';
-                ctx.fillText(formatCompactAxisVal(val), W - padRight + 8, y + 3.5);
+                // Hindari tumpang tindih teks jika tick grid terlalu dekat dengan garis 0
+                if (!hasZeroLine || Math.abs(y - yZero) > 13) {
+                    ctx.fillStyle = val < -1 ? '#E11D48' : '#1F2937';
+                    ctx.fillText(formatCompactAxisVal(val), W - padRight + 8, y + 3.5);
+                }
             }
 
-            if (yMin < 0 && yMax > 0) {
-                const yZero = Math.round(toY(0)) + 0.5;
+            // Garis acuan 0 Rupiah (jika grafik memiliki area positif & negatif)
+            if (hasZeroLine) {
+                const yZeroRounded = Math.round(yZero) + 0.5;
                 ctx.save();
                 ctx.setLineDash([5, 4]);
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
-                ctx.lineWidth = 1.2;
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.42)';
+                ctx.lineWidth = 1.3;
                 ctx.beginPath();
-                ctx.moveTo(padLeft, yZero);
-                ctx.lineTo(W - padRight, yZero);
+                ctx.moveTo(padLeft, yZeroRounded);
+                ctx.lineTo(W - padRight, yZeroRounded);
                 ctx.stroke();
+
+                ctx.fillStyle = '#000000';
+                ctx.fillText('0', W - padRight + 8, yZeroRounded + 3.5);
                 ctx.restore();
             }
 
-            // Label Sumbu X dengan perlindungan batas kiri & kanan agar tidak terpotong atau menumpuk
+            // 2. Label Sumbu X & Grid Vertikal (anti-tabrakan & tidak keluar batas)
             ctx.font = '800 9.5px "JetBrains Mono", monospace';
-            const minLabelGapPx = 86;
-            const maxTicks = Math.max(2, Math.floor(plotW / minLabelGapPx));
-            const labelStep = Math.max(1, Math.ceil((series.length - 1) / maxTicks));
+            const sampleTextW = ctx.measureText(series[series.length - 1].label || '00/00 00:00').width;
+            const minCenterDist = sampleTextW + 18;
+            const maxLabels = Math.max(2, Math.floor(plotW / minCenterDist));
+            const labelStep = Math.max(1, Math.ceil((series.length - 1) / (maxLabels - 1)));
+
+            const candidateIndices = [];
+            for (let i = 0; i < series.length; i += labelStep) {
+                candidateIndices.push(i);
+            }
+            if (candidateIndices[candidateIndices.length - 1] !== series.length - 1) {
+                candidateIndices.push(series.length - 1);
+            }
+
             let lastDrawnRight = -999;
-
-            series.forEach((d, idx) => {
+            candidateIndices.forEach((idx, posIdx) => {
+                const d = series[idx];
                 const cx = Math.round(padLeft + idx * stepW + stepW / 2);
-                const isLast = idx === series.length - 1;
-                const shouldTry = (idx % labelStep === 0) || isLast;
-                if (!shouldTry) return;
-
                 const textW = ctx.measureText(d.label).width;
                 const halfW = textW / 2;
                 const clampedX = Math.max(padLeft + halfW, Math.min(padLeft + plotW - halfW, cx));
                 const leftBound = clampedX - halfW;
                 const rightBound = clampedX + halfW;
+
+                // Jika label terakhir terlalu mepet dengan label sebelumnya, lewati yang sebelumnya
+                const isLastCandidate = posIdx === candidateIndices.length - 1;
+                if (!isLastCandidate && posIdx === candidateIndices.length - 2) {
+                    const lastD = series[series.length - 1];
+                    const lastHalfW = ctx.measureText(lastD.label).width / 2;
+                    const lastLeftBound = (padLeft + plotW - lastHalfW) - lastHalfW;
+                    if (lastLeftBound - rightBound < 14) return;
+                }
 
                 if (leftBound - lastDrawnRight >= 14) {
                     ctx.beginPath();
@@ -1138,7 +1166,12 @@
             });
             ctx.restore();
 
-            // Lebar candle & jarak antar-candle yang jelas
+            // 3. Clip Area Plot agar candle/wick tidak pernah tembus ke luar kotak grafik
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(padLeft, padTop, plotW, plotH);
+            ctx.clip();
+
             const gapPx = Math.max(2, Math.round(stepW * 0.32));
             const candleW = Math.max(4, Math.min(13, Math.floor(stepW - gapPx)));
             const barW = candleW;
@@ -1172,7 +1205,6 @@
                 const yOpen = toY(open);
                 const yClose = toY(close);
 
-                ctx.save();
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 1.5;
                 ctx.beginPath();
@@ -1195,9 +1227,10 @@
                     drawRoundRect(ctx, leftBody, topBody, candleW, visibleBodyH, Math.min(2.5, candleW / 2));
                     ctx.fill();
                 }
-                ctx.restore();
             });
+            ctx.restore(); // Selesai clip area plot
 
+            // 4. Garis & Pill Nilai Live Terkini
             const lastCandle = series[series.length - 1];
             const lastClose = Number(lastCandle.c || 0);
             const yLive = Math.round(toY(lastClose)) + 0.5;
@@ -1226,6 +1259,7 @@
             ctx.fillText(formatCompactAxisVal(lastClose), pillX + pillW / 2, pillY + 13.5);
             ctx.restore();
 
+            // 5. Crosshair saat disentuh / hover
             if (hoverCandleIndex >= 0 && hoverCandleIndex < series.length) {
                 const target = series[hoverCandleIndex];
                 const hx = Math.round(padLeft + hoverCandleIndex * stepW + stepW / 2) + 0.5;
@@ -1252,7 +1286,7 @@
                 ctx.arc(hx, hy, 4, 0, Math.PI * 2);
                 ctx.fill();
 
-                const lblW = 76;
+                const lblW = 82;
                 const lblX = Math.max(padLeft, Math.min(W - padRight - lblW, hx - lblW / 2));
                 ctx.fillStyle = '#000000';
                 drawRoundRect(ctx, lblX, H - padBottom + 4, lblW, 18, 4);
@@ -1280,7 +1314,7 @@
             const handleMove = (clientX) => {
                 const rect = canvas.getBoundingClientRect();
                 const padLeft = 18;
-                const padRight = 68;
+                const padRight = 72;
                 const plotW = rect.width - padLeft - padRight;
                 const series = getVisibleCandles();
                 if (!series.length || plotW <= 0) return;
