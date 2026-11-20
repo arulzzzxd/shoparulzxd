@@ -6,7 +6,7 @@
     <title>Admin Console - ArulzXD Store</title>
     <link rel="icon" type="image/png" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -15,16 +15,17 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        cyber: ['Space Grotesk', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        cyber: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     },
                     colors: {
-                        neoYellow: '#FFDE59',
-                        neoCyan: '#00E5FF',
-                        neoPink: '#FF79C6',
-                        neoGreen: '#00E676',
-                        neoBg: '#F4F0EA',
+                        neoBg: '#FAF9F2',
+                        neoYellow: '#FFDF4F',
+                        neoCyan: '#1AE5FF',
+                        neoGreen: '#2CE875',
+                        neoPink: '#FF4D6D',
+                        neoPurple: '#D896FF',
                         neoCard: '#FFFFFF'
                     }
                 }
@@ -32,30 +33,75 @@
         }
     </script>
     <style>
-        body { background-color: #F4F0EA; color: #000000; overflow-x: hidden; }
-        .neo-box { background-color: #FFFFFF; border: 3.5px solid #000000; box-shadow: 5px 5px 0px #000000; }
-        .neo-btn { border: 3px solid #000000; box-shadow: 4px 4px 0px #000000; transition: transform 0.15s ease, box-shadow 0.15s ease; cursor: pointer; }
-        .neo-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000000; }
-        .neo-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #000000; }
-        .tab-btn.active { background-color: #FFDE59 !important; box-shadow: 5px 5px 0px #000000 !important; }
-        .subtab-btn.active { background-color: #00E5FF !important; box-shadow: 4px 4px 0px #000000 !important; }
+        body {
+            background-color: #FAF9F2;
+            color: #000000;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            background-image: radial-gradient(#00000018 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+        /* Neo-Brutalisme Persegi Panjang Tegas (Sama seperti deposit.html) */
+        .neo-box {
+            background-color: #FFFFFF;
+            border: 3px solid #000000;
+            box-shadow: 6px 6px 0px #000000;
+            border-radius: 0px;
+            transition: transform 0.14s ease, box-shadow 0.14s ease;
+        }
+        .neo-btn {
+            border: 3px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
+            border-radius: 0px;
+            transition: all 0.12s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
+        }
+        .neo-btn:hover {
+            transform: translate(-1.5px, -1.5px);
+            box-shadow: 5.5px 5.5px 0px #000000;
+        }
+        .neo-btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: 1px 1px 0px #000000;
+        }
+        .tab-btn.active {
+            background-color: #FFDF4F !important;
+            transform: translateY(-3px);
+            box-shadow: 4px 6px 0px #000000 !important;
+        }
+        .subtab-btn.active {
+            background-color: #1AE5FF !important;
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000000 !important;
+        }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .user-pill { border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; transition: all 0.2s ease; }
-        .user-pill.active { background-color: #FFDE59 !important; transform: translate(-1px, -1px); box-shadow: 4.5px 4.5px 0px #000000; }
-        .swal2-popup.cyber-swal { background: #FFFFFF !important; border: 3.5px solid #000000 !important; border-radius: 20px !important; color: #000000 !important; box-shadow: 6px 6px 0px #000000 !important; font-family: 'Plus Jakarta Sans', sans-serif !important; }
-        .bottom-nav-fixed { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 440px; height: 64px; z-index: 9999; }
-        .bottom-nav-bg { position: absolute; inset: 0; background: #FFFFFF; border: 3.5px solid #000000; border-radius: 32px; box-shadow: 5px 5px 0px #000000; }
-        .nav-items-wrapper { position: relative; z-index: 10; display: flex; height: 100%; width: 100%; justify-content: space-around; align-items: center; }
-        .nav-item-btn { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60px; height: 100%; color: #000000; text-decoration: none; }
-        .nav-icon-box { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .nav-item-btn i { font-size: 18px; }
-        .nav-item-btn span { font-size: 10px; font-weight: 800; font-family: 'Space Grotesk', sans-serif; position: absolute; bottom: 6px; }
+
+        .user-pill {
+            border: 2.5px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
+            border-radius: 0px;
+            transition: all 0.15s ease;
+        }
+        .user-pill.active {
+            background-color: #FFDF4F !important;
+            transform: translate(1.5px, 1.5px);
+            box-shadow: 1.5px 1.5px 0px #000000;
+        }
+        .swal2-popup.cyber-swal {
+            background: #FAF9F2 !important;
+            border: 3px solid #000000 !important;
+            border-radius: 0px !important;
+            color: #000000 !important;
+            box-shadow: 6px 6px 0px #000000 !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
 
         /* Custom Neo-Brutalist Select & Radio Card */
         .neo-select-trigger {
             border: 3px solid #000000;
             box-shadow: 4px 4px 0px #000000;
+            border-radius: 0px;
             transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
         }
         .neo-select-trigger:hover {
@@ -63,12 +109,14 @@
             box-shadow: 5px 5px 0px #000000;
         }
         .neo-select-menu {
-            border: 3.5px solid #000000;
+            border: 3px solid #000000;
             box-shadow: 6px 6px 0px #000000;
+            border-radius: 0px;
         }
         .delivery-mode-card {
             border: 3px solid #000000;
             box-shadow: 4px 4px 0px #000000;
+            border-radius: 0px;
             transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
         }
         .delivery-mode-card:hover {
@@ -76,79 +124,65 @@
             box-shadow: 5px 5px 0px #000000;
         }
         .delivery-mode-card.selected-broadcast {
-            background-color: #00E676 !important;
+            background-color: #2CE875 !important;
         }
         .delivery-mode-card.selected-webonly {
-            background-color: #FFDE59 !important;
+            background-color: #FFDF4F !important;
         }
     </style>
 </head>
-<body class="font-sans antialiased text-black min-h-screen pb-32">
+<body class="font-sans antialiased text-black min-h-screen pb-28 selection:bg-neoYellow selection:text-black">
 
     <!-- TOP NAVBAR -->
-    <nav class="sticky top-0 z-40 bg-neoYellow border-b-3 border-black shadow-[0_4px_0_#000]">
+    <nav class="sticky top-0 z-40 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="/dashboard" class="text-2xl font-black font-cyber tracking-tight text-black flex items-center gap-2">
+            <a href="/admin" class="text-xl sm:text-2xl font-extrabold font-cyber tracking-tight text-black flex items-center gap-2">
                 <i class="fa-solid fa-user-shield text-black text-xl"></i>
                 <span>Admin<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">Panel</span></span>
             </a>
-            <span class="text-xs font-cyber font-black bg-neoGreen text-black px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] flex items-center gap-1.5 uppercase">
-                <i class="fa-solid fa-lock"></i> Owner Access
-            </span>
+
+            <!-- TOMBOL KEMBALI MENUJU (/) -->
+            <a href="/" class="neo-btn bg-white hover:bg-neoCyan text-black text-xs font-cyber font-extrabold px-3.5 py-1.5 flex items-center gap-2 uppercase tracking-wider">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
         </div>
     </nav>
 
     <!-- MAIN CONTAINER -->
-    <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 space-y-5">
-
-        <!-- TAB SWITCHER -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <button id="tabBtnDeposits" onclick="switchAdminTab('deposits')" class="tab-btn active neo-btn bg-white text-black font-cyber font-black py-3.5 px-4 rounded-2xl text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
-                <i class="fa-solid fa-qrcode"></i>
-                <span>Deposit QRIS v2</span>
-                <span id="pendingDepositBadge" class="bg-neoPink border border-black text-[10px] px-2 py-0.5 rounded-full">0</span>
-            </button>
-
-            <button id="tabBtnChat" onclick="switchAdminTab('chat')" class="tab-btn neo-btn bg-white text-black font-cyber font-black py-3.5 px-4 rounded-2xl text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
-                <i class="fa-solid fa-headset"></i>
-                <span>Live Chat CS</span>
-            </button>
-
-            <button id="tabBtnNotifications" onclick="switchAdminTab('notifications')" class="tab-btn neo-btn bg-white text-black font-cyber font-black py-3.5 px-4 rounded-2xl text-xs sm:text-sm uppercase flex items-center justify-center gap-2">
-                <i class="fa-solid fa-bell"></i>
-                <span>Notifikasi</span>
-                <span id="totalNotifBadge" class="bg-neoCyan border border-black text-[10px] px-2 py-0.5 rounded-full">0</span>
-            </button>
-        </div>
+    <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 space-y-6">
 
         <!-- ======================================================= -->
         <!-- SECTION 1: VERIFIKASI BUKTI DEPOSIT QRIS V2             -->
         <!-- ======================================================= -->
         <section id="sectionDeposits" class="space-y-4">
-            <div class="p-5 neo-box rounded-2xl bg-neoCyan flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                    <h1 class="text-xl sm:text-2xl font-black font-cyber text-black flex items-center gap-2">
-                        <i class="fa-solid fa-file-invoice-dollar"></i> Verifikasi Deposit QRIS v2
+            <div class="p-4 sm:p-5 neo-box bg-neoCyan flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative overflow-hidden">
+                <div class="relative z-10">
+                    <h1 class="text-lg sm:text-2xl font-extrabold font-cyber text-black flex items-center gap-2 uppercase tracking-tight">
+                        <span class="w-8 h-8 bg-black text-neoYellow border-2 border-black flex items-center justify-center text-xs shadow-[2px_2px_0px_#fff]">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </span>
+                        Verifikasi Deposit QRIS v2
                     </h1>
-                    <p class="text-xs font-bold text-black mt-1">Periksa bukti pembayaran user, konfirmasi penambahan saldo, atau batalkan deposit.</p>
+                    <p class="text-xs font-bold text-black mt-1.5">Periksa bukti pembayaran user, konfirmasi penambahan saldo, atau batalkan deposit.</p>
                 </div>
-                <button onclick="loadDepositsQrisV2()" class="neo-btn bg-white text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
+                <button onclick="loadDepositsQrisV2()" class="neo-btn bg-white text-black font-cyber font-extrabold px-4 py-2.5 text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0 relative z-10">
                     <i class="fa-solid fa-rotate-right"></i> Refresh Data
                 </button>
             </div>
 
             <!-- FILTER STATUS -->
             <div class="flex flex-wrap items-center gap-2">
-                <button onclick="setDepositFilter('all')" id="filterAll" class="neo-btn bg-neoYellow px-3 py-1.5 rounded-xl text-xs font-cyber font-black uppercase">Semua</button>
-                <button onclick="setDepositFilter('waiting_verification')" id="filterWaiting" class="neo-btn bg-white px-3 py-1.5 rounded-xl text-xs font-cyber font-black uppercase">Perlu Dicek</button>
-                <button onclick="setDepositFilter('pending')" id="filterPending" class="neo-btn bg-white px-3 py-1.5 rounded-xl text-xs font-cyber font-black uppercase">Belum Upload</button>
-                <button onclick="setDepositFilter('success')" id="filterSuccess" class="neo-btn bg-white px-3 py-1.5 rounded-xl text-xs font-cyber font-black uppercase">Sukses</button>
-                <button onclick="setDepositFilter('cancelled')" id="filterCancelled" class="neo-btn bg-white px-3 py-1.5 rounded-xl text-xs font-cyber font-black uppercase">Dibatalkan</button>
+                <button onclick="setDepositFilter('all')" id="filterAll" class="neo-btn bg-neoYellow px-3 py-1.5 text-xs font-cyber font-extrabold uppercase">Semua</button>
+                <button onclick="setDepositFilter('waiting_verification')" id="filterWaiting" class="neo-btn bg-white px-3 py-1.5 text-xs font-cyber font-extrabold uppercase">Perlu Dicek</button>
+                <button onclick="setDepositFilter('pending')" id="filterPending" class="neo-btn bg-white px-3 py-1.5 text-xs font-cyber font-extrabold uppercase">Belum Upload</button>
+                <button onclick="setDepositFilter('success')" id="filterSuccess" class="neo-btn bg-white px-3 py-1.5 text-xs font-cyber font-extrabold uppercase">Sukses</button>
+                <button onclick="setDepositFilter('cancelled')" id="filterCancelled" class="neo-btn bg-white px-3 py-1.5 text-xs font-cyber font-extrabold uppercase">Dibatalkan</button>
             </div>
 
             <!-- DAFTAR KARTU DEPOSIT QRIS V2 -->
             <div id="adminDepositsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="neo-box p-6 rounded-2xl text-center text-xs font-mono font-bold col-span-full">
+                <div class="neo-box p-6 text-center text-xs font-mono font-bold col-span-full">
                     Memuat data deposit QRIS v2...
                 </div>
             </div>
@@ -158,27 +192,30 @@
         <!-- SECTION 2: PANEL LIVE CHAT PENGGUNA                     -->
         <!-- ======================================================= -->
         <section id="sectionChat" class="hidden space-y-5">
-            <div class="p-5 neo-box rounded-2xl bg-neoPink flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="p-4 sm:p-5 neo-box bg-neoPink flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-black font-cyber text-black flex items-center gap-2">
-                        <i class="fa-solid fa-headset"></i> Panel Balas Chat Pengguna
+                    <h1 class="text-lg sm:text-2xl font-extrabold font-cyber text-black flex items-center gap-2 uppercase tracking-tight">
+                        <span class="w-8 h-8 bg-black text-neoYellow border-2 border-black flex items-center justify-center text-xs shadow-[2px_2px_0px_#fff]">
+                            <i class="fa-solid fa-headset"></i>
+                        </span>
+                        Panel Balas Chat Pengguna
                     </h1>
-                    <p class="text-xs font-bold text-black mt-1">Pilih pengguna di bawah untuk membaca dan membalas pesan CS.</p>
+                    <p class="text-xs font-bold text-black mt-1.5">Pilih pengguna di bawah untuk membaca dan membalas pesan CS.</p>
                 </div>
-                <button onclick="loadUserList()" class="neo-btn bg-white text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
+                <button onclick="loadUserList()" class="neo-btn bg-white text-black font-cyber font-extrabold px-4 py-2.5 text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
                     <i class="fa-solid fa-rotate-right"></i> Refresh Percakapan
                 </button>
             </div>
 
-            <div class="neo-box rounded-2xl bg-white overflow-hidden flex flex-col h-[580px]">
-                <div class="bg-neoCyan p-3.5 border-b-3 border-black space-y-2">
+            <div class="neo-box bg-white overflow-hidden flex flex-col h-[560px]">
+                <div class="bg-neoCyan p-3.5 border-b-[3px] border-black space-y-2">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-xs font-black font-cyber uppercase tracking-wider flex items-center gap-2">
+                        <h3 class="text-xs font-extrabold font-cyber uppercase tracking-wider flex items-center gap-2">
                             <i class="fa-solid fa-users"></i> Pilih Pengguna (<span id="userCountText">0</span>)
                         </h3>
                         <div class="flex items-center gap-1.5">
-                            <button onclick="scrollUserCarousel('left')" class="w-7 h-7 rounded-lg bg-white border-2 border-black font-black text-xs"><i class="fa-solid fa-chevron-left"></i></button>
-                            <button onclick="scrollUserCarousel('right')" class="w-7 h-7 rounded-lg bg-white border-2 border-black font-black text-xs"><i class="fa-solid fa-chevron-right"></i></button>
+                            <button onclick="scrollUserCarousel('left')" class="w-7 h-7 bg-white border-2 border-black font-black text-xs shadow-[2px_2px_0px_#000]"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button onclick="scrollUserCarousel('right')" class="w-7 h-7 bg-white border-2 border-black font-black text-xs shadow-[2px_2px_0px_#000]"><i class="fa-solid fa-chevron-right"></i></button>
                         </div>
                     </div>
                     <div id="adminUserList" class="flex items-center gap-2.5 overflow-x-auto no-scrollbar py-1 scroll-smooth"></div>
@@ -186,14 +223,14 @@
 
                 <div id="adminChatMessages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-neoBg scroll-smooth">
                     <div class="flex flex-col items-center justify-center h-full text-center space-y-2 text-slate-600">
-                        <i class="fa-solid fa-comments text-4xl"></i>
+                        <i class="fa-solid fa-comments text-4xl text-black"></i>
                         <p class="text-xs font-bold font-cyber">Pilih salah satu pengguna di atas untuk melihat isi pesan.</p>
                     </div>
                 </div>
 
-                <form id="adminChatForm" onsubmit="sendAdminReply(event)" class="p-3 bg-white border-t-3 border-black flex items-center gap-3 opacity-50 pointer-events-none">
-                    <input type="text" id="adminChatInput" required placeholder="Tuliskan balasan sebagai Admin/Owner..." class="flex-1 bg-neoBg border-2 border-black rounded-xl px-4 py-3 text-xs text-black font-bold focus:outline-none">
-                    <button type="submit" class="neo-btn bg-neoYellow text-black font-cyber font-black px-5 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2 shrink-0">
+                <form id="adminChatForm" onsubmit="sendAdminReply(event)" class="p-3 bg-white border-t-[3px] border-black flex items-center gap-3 opacity-50 pointer-events-none">
+                    <input type="text" id="adminChatInput" required placeholder="Tuliskan balasan sebagai Admin/Owner..." class="flex-1 bg-neoBg border-[2.5px] border-black px-4 py-3 text-xs text-black font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                    <button type="submit" class="neo-btn bg-neoYellow text-black font-cyber font-extrabold px-5 py-3 text-xs uppercase tracking-wider flex items-center gap-2 shrink-0">
                         <i class="fa-solid fa-reply"></i> <span>Kirim</span>
                     </button>
                 </form>
@@ -204,38 +241,41 @@
         <!-- SECTION 3: PUSAT NOTIFIKASI (TAMBAH, EDIT, KELOLA)      -->
         <!-- ======================================================= -->
         <section id="sectionNotifications" class="hidden space-y-5">
-            <div class="p-5 neo-box rounded-2xl bg-neoYellow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="p-4 sm:p-5 neo-box bg-neoYellow flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-black font-cyber text-black flex items-center gap-2">
-                        <i class="fa-solid fa-bullhorn"></i> Pusat Notifikasi &amp; Broadcast
+                    <h1 class="text-lg sm:text-2xl font-extrabold font-cyber text-black flex items-center gap-2 uppercase tracking-tight">
+                        <span class="w-8 h-8 bg-black text-neoYellow border-2 border-black flex items-center justify-center text-xs shadow-[2px_2px_0px_#fff]">
+                            <i class="fa-solid fa-bullhorn"></i>
+                        </span>
+                        Pusat Notifikasi &amp; Broadcast
                     </h1>
-                    <p class="text-xs font-bold text-black mt-1">Pilih untuk broadcast ke semua Email &amp; Telegram User atau simpan ke halaman notifikasi web saja.</p>
+                    <p class="text-xs font-bold text-black mt-1.5">Pilih untuk broadcast ke semua Email &amp; Telegram User atau simpan ke halaman notifikasi web saja.</p>
                 </div>
-                <button onclick="loadAdminNotifications()" class="neo-btn bg-white text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
+                <button onclick="loadAdminNotifications()" class="neo-btn bg-white text-black font-cyber font-extrabold px-4 py-2.5 text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
                     <i class="fa-solid fa-rotate-right"></i> Refresh Notifikasi
                 </button>
             </div>
 
             <!-- SUB-TAB SWITCHER NOTIFIKASI -->
             <div class="grid grid-cols-3 gap-2.5">
-                <button type="button" id="notifSubBtnAdd" onclick="switchNotifSubTab('add')" class="subtab-btn active neo-btn bg-white text-black font-cyber font-black py-2.5 px-3 rounded-xl text-[11px] sm:text-xs uppercase flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-plus"></i> <span>Tambah Notifikasi</span>
+                <button type="button" id="notifSubBtnAdd" onclick="switchNotifSubTab('add')" class="subtab-btn active neo-btn bg-white text-black font-cyber font-extrabold py-2.5 px-3 text-[11px] sm:text-xs uppercase flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i> <span>Tambah</span>
                 </button>
-                <button type="button" id="notifSubBtnEdit" onclick="switchNotifSubTab('edit')" class="subtab-btn neo-btn bg-white text-black font-cyber font-black py-2.5 px-3 rounded-xl text-[11px] sm:text-xs uppercase flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-pen-to-square"></i> <span>Edit Notifikasi</span>
+                <button type="button" id="notifSubBtnEdit" onclick="switchNotifSubTab('edit')" class="subtab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2.5 px-3 text-[11px] sm:text-xs uppercase flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-pen-to-square"></i> <span>Edit</span>
                 </button>
-                <button type="button" id="notifSubBtnManage" onclick="switchNotifSubTab('manage')" class="subtab-btn neo-btn bg-white text-black font-cyber font-black py-2.5 px-3 rounded-xl text-[11px] sm:text-xs uppercase flex items-center justify-center gap-1.5">
+                <button type="button" id="notifSubBtnManage" onclick="switchNotifSubTab('manage')" class="subtab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2.5 px-3 text-[11px] sm:text-xs uppercase flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-list-check"></i> <span>Kelola (<span id="notifManageCountTab">0</span>)</span>
                 </button>
             </div>
 
             <!-- SUB-PANEL 1: TAMBAH NOTIFIKASI BARU -->
-            <div id="notifPanelAdd" class="neo-box rounded-2xl bg-white overflow-hidden">
-                <div class="bg-neoCyan border-b-3 border-black px-5 py-3 flex items-center justify-between gap-2">
-                    <span class="font-cyber font-black text-sm uppercase flex items-center gap-2">
+            <div id="notifPanelAdd" class="neo-box bg-white overflow-hidden">
+                <div class="bg-neoCyan border-b-[3px] border-black px-5 py-3 flex items-center justify-between gap-2">
+                    <span class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i> Buat &amp; Kirim Notifikasi Baru
                     </span>
-                    <span id="addNotifHeaderBadge" class="text-[10px] font-mono font-extrabold bg-neoGreen border-2 border-black px-2.5 py-0.5 rounded uppercase">
+                    <span id="addNotifHeaderBadge" class="text-[10px] font-mono font-extrabold bg-neoGreen border-2 border-black px-2.5 py-0.5 uppercase shadow-[2px_2px_0px_#000]">
                         BROADCAST EMAIL + TELEGRAM
                     </span>
                 </div>
@@ -243,12 +283,12 @@
                 <form id="createNotifForm" onsubmit="submitCreateNotification(event)" class="p-5 space-y-4">
                     <!-- PILIHAN MODE PENGIRIMAN NOTIFIKASI -->
                     <div class="space-y-2">
-                        <label class="block font-cyber font-black text-xs uppercase">Mode Pengiriman Notifikasi *</label>
+                        <label class="block font-cyber font-extrabold text-xs uppercase">Mode Pengiriman Notifikasi *</label>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <label id="modeCardBroadcast" onclick="selectDeliveryMode('broadcast')" class="delivery-mode-card selected-broadcast rounded-xl p-3.5 bg-white cursor-pointer flex items-start gap-3 select-none">
+                            <label id="modeCardBroadcast" onclick="selectDeliveryMode('broadcast')" class="delivery-mode-card selected-broadcast p-3.5 bg-white cursor-pointer flex items-start gap-3 select-none">
                                 <input type="radio" name="addNotifDeliveryMode" value="broadcast" checked class="mt-1 w-4 h-4 accent-black">
                                 <div class="space-y-0.5">
-                                    <div class="font-cyber font-black text-xs uppercase flex items-center gap-1.5">
+                                    <div class="font-cyber font-extrabold text-xs uppercase flex items-center gap-1.5">
                                         <i class="fa-solid fa-tower-broadcast"></i>
                                         <span>Kirim ke Semua User</span>
                                     </div>
@@ -258,10 +298,10 @@
                                 </div>
                             </label>
 
-                            <label id="modeCardWebOnly" onclick="selectDeliveryMode('web_only')" class="delivery-mode-card rounded-xl p-3.5 bg-white cursor-pointer flex items-start gap-3 select-none">
+                            <label id="modeCardWebOnly" onclick="selectDeliveryMode('web_only')" class="delivery-mode-card p-3.5 bg-white cursor-pointer flex items-start gap-3 select-none">
                                 <input type="radio" name="addNotifDeliveryMode" value="web_only" class="mt-1 w-4 h-4 accent-black">
                                 <div class="space-y-0.5">
-                                    <div class="font-cyber font-black text-xs uppercase flex items-center gap-1.5">
+                                    <div class="font-cyber font-extrabold text-xs uppercase flex items-center gap-1.5">
                                         <i class="fa-solid fa-bell"></i>
                                         <span>Kirim Notifikasi Saja</span>
                                     </div>
@@ -274,14 +314,14 @@
                     </div>
 
                     <div>
-                        <label for="addNotifTitle" class="block font-cyber font-black text-xs uppercase mb-1.5">Judul Notifikasi *</label>
-                        <input type="text" id="addNotifTitle" required placeholder="Contoh: Promo Flash Sale Diskon 50% Hari Ini!" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                        <label for="addNotifTitle" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Judul Notifikasi *</label>
+                        <input type="text" id="addNotifTitle" required placeholder="Contoh: Promo Flash Sale Diskon 50% Hari Ini!" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label for="addNotifType" class="block font-cyber font-black text-xs uppercase mb-1.5">Kategori / Tipe</label>
-                            <select id="addNotifType" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                            <label for="addNotifType" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kategori / Tipe</label>
+                            <select id="addNotifType" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                                 <option value="info">Info (info)</option>
                                 <option value="promo">Promo (promo)</option>
                                 <option value="transaksi">Transaksi (transaksi)</option>
@@ -290,69 +330,66 @@
                         </div>
 
                         <div>
-                            <label for="addNotifTargetEmail" class="block font-cyber font-black text-xs uppercase mb-1.5">Target Email User (Opsional)</label>
-                            <input type="text" id="addNotifTargetEmail" placeholder="Kosongkan = Semua User (atau isi email spesifik)" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                            <label for="addNotifTargetEmail" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Target Email User (Opsional)</label>
+                            <input type="text" id="addNotifTargetEmail" placeholder="Kosongkan = Semua User (atau isi email spesifik)" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                         </div>
                     </div>
 
                     <div>
-                        <label for="addNotifLink" class="block font-cyber font-black text-xs uppercase mb-1.5">Link Tujuan / Tombol CTA (Opsional)</label>
-                        <input type="text" id="addNotifLink" placeholder="Contoh: /store atau https://www.shoparulzxd.biz.id/store" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                        <label for="addNotifLink" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Link Tujuan / Tombol CTA (Opsional)</label>
+                        <input type="text" id="addNotifLink" placeholder="Contoh: /store atau https://www.shoparulzxd.biz.id/store" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                     </div>
 
                     <div>
-                        <label for="addNotifMessage" class="block font-cyber font-black text-xs uppercase mb-1.5">Isi Pesan Notifikasi *</label>
-                        <textarea id="addNotifMessage" required rows="4" placeholder="Tuliskan detail pengumuman atau notifikasi untuk user..." class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white"></textarea>
+                        <label for="addNotifMessage" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Isi Pesan Notifikasi *</label>
+                        <textarea id="addNotifMessage" required rows="4" placeholder="Tuliskan detail pengumuman atau notifikasi untuk user..." class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]"></textarea>
                     </div>
 
-                    <button type="submit" id="btnSubmitAddNotif" class="w-full neo-btn bg-neoGreen text-black font-cyber font-black py-3.5 px-5 rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                    <button type="submit" id="btnSubmitAddNotif" class="w-full neo-btn bg-neoGreen text-black font-cyber font-extrabold py-3.5 px-5 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i> <span id="btnSubmitAddNotifText">Kirim Notifikasi ke Semua Email &amp; Telegram</span>
                     </button>
                 </form>
             </div>
 
             <!-- SUB-PANEL 2: EDIT NOTIFIKASI -->
-            <div id="notifPanelEdit" class="hidden neo-box rounded-2xl bg-white overflow-visible">
-                <div class="bg-neoPink border-b-3 border-black px-5 py-3 rounded-t-[13px] flex items-center justify-between">
-                    <span class="font-cyber font-black text-sm uppercase flex items-center gap-2">
+            <div id="notifPanelEdit" class="hidden neo-box bg-white overflow-visible">
+                <div class="bg-neoPink border-b-[3px] border-black px-5 py-3 flex items-center justify-between">
+                    <span class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
                         <i class="fa-solid fa-pen-to-square"></i> Edit Notifikasi Tersimpan
                     </span>
-                    <span id="editNotifBadge" class="text-[10px] font-mono font-extrabold bg-white border-2 border-black px-2 py-0.5 rounded">PILIH NOTIFIKASI</span>
+                    <span id="editNotifBadge" class="text-[10px] font-mono font-extrabold bg-white border-2 border-black px-2 py-0.5 shadow-[2px_2px_0px_#000]">PILIH NOTIFIKASI</span>
                 </div>
 
                 <div class="p-5 space-y-4">
                     <!-- CUSTOM NEO-BRUTALIST SELECT DROPDOWN -->
-                    <div class="bg-neoBg border-3 border-black rounded-2xl p-4 space-y-2.5 relative" id="customNotifSelectWrapper">
+                    <div class="bg-neoBg border-[3px] border-black p-4 space-y-2.5 relative shadow-[4px_4px_0px_#000]" id="customNotifSelectWrapper">
                         <div class="flex items-center justify-between">
-                            <label class="block font-cyber font-black text-xs uppercase">1. Pilih Notifikasi yang Akan Diedit *</label>
-                            <span id="editSelectAvailableBadge" class="text-[10px] font-mono font-extrabold bg-neoYellow border-2 border-black px-2 py-0.5 rounded">0 Tersedia</span>
+                            <label class="block font-cyber font-extrabold text-xs uppercase">1. Pilih Notifikasi yang Akan Diedit *</label>
+                            <span id="editSelectAvailableBadge" class="text-[10px] font-mono font-extrabold bg-neoYellow border-2 border-black px-2 py-0.5">0 Tersedia</span>
                         </div>
 
-                        <!-- Hidden select sinkron -->
                         <select id="editNotifSelector" class="hidden"></select>
 
-                        <!-- Custom Trigger Button -->
-                        <button type="button" id="customNotifSelectTrigger" onclick="toggleCustomNotifDropdown()" class="neo-select-trigger w-full bg-white rounded-xl px-4 py-3 text-left flex items-center justify-between gap-3">
+                        <button type="button" id="customNotifSelectTrigger" onclick="toggleCustomNotifDropdown()" class="neo-select-trigger w-full bg-white px-4 py-3 text-left flex items-center justify-between gap-3">
                             <div id="customNotifTriggerContent" class="flex items-center gap-2.5 min-w-0 flex-1">
-                                <span class="w-8 h-8 rounded-lg bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
+                                <span class="w-8 h-8 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
                                     <i class="fa-solid fa-bell text-xs"></i>
                                 </span>
                                 <div class="min-w-0">
-                                    <div class="text-xs font-black font-cyber text-black truncate">Pilih Notifikasi...</div>
+                                    <div class="text-xs font-extrabold font-cyber text-black truncate">Pilih Notifikasi...</div>
                                     <div class="text-[10px] font-mono font-bold text-slate-600 truncate">Klik untuk membuka daftar notifikasi</div>
                                 </div>
                             </div>
-                            <span class="w-7 h-7 rounded-lg bg-neoCyan border-2 border-black flex items-center justify-center shrink-0">
+                            <span class="w-7 h-7 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0">
                                 <i id="customNotifChevron" class="fa-solid fa-chevron-down text-xs transition-transform duration-200"></i>
                             </span>
                         </button>
 
-                        <!-- Custom Dropdown Menu -->
-                        <div id="customNotifDropdownMenu" class="hidden neo-select-menu absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl z-50 overflow-hidden">
-                            <div class="p-2.5 bg-neoYellow border-b-3 border-black">
+                        <div id="customNotifDropdownMenu" class="hidden neo-select-menu absolute left-0 right-0 top-full mt-2 bg-white z-50 overflow-hidden">
+                            <div class="p-2.5 bg-neoYellow border-b-[3px] border-black">
                                 <div class="relative">
                                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-black"></i>
-                                    <input type="text" id="customNotifDropdownSearch" oninput="renderCustomNotifDropdownItems()" placeholder="Cari judul, kategori, atau target..." class="w-full bg-white border-2 border-black rounded-xl pl-8 pr-3 py-2 text-xs font-bold focus:outline-none">
+                                    <input type="text" id="customNotifDropdownSearch" oninput="renderCustomNotifDropdownItems()" placeholder="Cari judul, kategori, atau target..." class="w-full bg-white border-2 border-black pl-8 pr-3 py-2 text-xs font-bold focus:outline-none">
                                 </div>
                             </div>
                             <div id="customNotifDropdownList" class="max-h-64 overflow-y-auto divide-y-2 divide-black"></div>
@@ -363,14 +400,14 @@
                         <input type="hidden" id="editNotifId">
 
                         <div>
-                            <label for="editNotifTitle" class="block font-cyber font-black text-xs uppercase mb-1.5">Judul Notifikasi *</label>
-                            <input type="text" id="editNotifTitle" required placeholder="Judul notifikasi..." class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                            <label for="editNotifTitle" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Judul Notifikasi *</label>
+                            <input type="text" id="editNotifTitle" required placeholder="Judul notifikasi..." class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label for="editNotifType" class="block font-cyber font-black text-xs uppercase mb-1.5">Kategori / Tipe</label>
-                                <select id="editNotifType" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                                <label for="editNotifType" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kategori / Tipe</label>
+                                <select id="editNotifType" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                                     <option value="info">Info (info)</option>
                                     <option value="promo">Promo (promo)</option>
                                     <option value="transaksi">Transaksi (transaksi)</option>
@@ -379,34 +416,34 @@
                             </div>
 
                             <div>
-                                <label for="editNotifTargetEmail" class="block font-cyber font-black text-xs uppercase mb-1.5">Target Email User (Kosongkan = Broadcast)</label>
-                                <input type="text" id="editNotifTargetEmail" placeholder="Broadcast ke semua user" class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                                <label for="editNotifTargetEmail" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Target Email User (Kosongkan = Broadcast)</label>
+                                <input type="text" id="editNotifTargetEmail" placeholder="Broadcast ke semua user" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                             </div>
                         </div>
 
                         <div>
-                            <label for="editNotifLink" class="block font-cyber font-black text-xs uppercase mb-1.5">Link Tujuan / CTA (Opsional)</label>
-                            <input type="text" id="editNotifLink" placeholder="/store atau https://..." class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white">
+                            <label for="editNotifLink" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Link Tujuan / Tombol CTA (Opsional)</label>
+                            <input type="text" id="editNotifLink" placeholder="/store atau https://..." class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                         </div>
 
                         <div>
-                            <label for="editNotifMessage" class="block font-cyber font-black text-xs uppercase mb-1.5">Isi Pesan Notifikasi *</label>
-                            <textarea id="editNotifMessage" required rows="4" placeholder="Isi lengkap notifikasi..." class="w-full bg-neoBg border-2 border-black rounded-xl px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white"></textarea>
+                            <label for="editNotifMessage" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Isi Pesan Notifikasi *</label>
+                            <textarea id="editNotifMessage" required rows="4" placeholder="Isi lengkap notifikasi..." class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]"></textarea>
                         </div>
 
                         <div class="space-y-2">
-                            <label class="flex items-center gap-2.5 bg-neoBg border-2 border-black rounded-xl p-3 cursor-pointer select-none">
+                            <label class="flex items-center gap-2.5 bg-neoBg border-2 border-black p-3 cursor-pointer select-none">
                                 <input type="checkbox" id="editNotifResetRead" class="w-4 h-4 accent-black">
                                 <span class="text-xs font-extrabold">Reset status "Sudah Dibaca" agar muncul kembali sebagai notifikasi baru</span>
                             </label>
 
-                            <label class="flex items-center gap-2.5 bg-neoYellow/50 border-2 border-black rounded-xl p-3 cursor-pointer select-none">
+                            <label class="flex items-center gap-2.5 bg-neoYellow/50 border-2 border-black p-3 cursor-pointer select-none">
                                 <input type="checkbox" id="editNotifResendBroadcast" class="w-4 h-4 accent-black">
                                 <span class="text-xs font-extrabold">Kirim ulang notifikasi yang diperbarui ke Email &amp; Telegram User</span>
                             </label>
                         </div>
 
-                        <button type="submit" id="btnSubmitEditNotif" class="w-full neo-btn bg-neoCyan text-black font-cyber font-black py-3.5 px-5 rounded-xl text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                        <button type="submit" id="btnSubmitEditNotif" class="w-full neo-btn bg-neoCyan text-black font-cyber font-extrabold py-3.5 px-5 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
                             <i class="fa-solid fa-floppy-disk"></i> <span>Simpan Perubahan Notifikasi</span>
                         </button>
                     </form>
@@ -414,12 +451,12 @@
             </div>
 
             <!-- SUB-PANEL 3: KELOLA & HAPUS NOTIFIKASI -->
-            <div id="notifPanelManage" class="hidden neo-box rounded-2xl bg-white overflow-hidden">
-                <div class="bg-neoGreen border-b-3 border-black px-5 py-3 flex flex-wrap items-center justify-between gap-2">
-                    <span class="font-cyber font-black text-sm uppercase flex items-center gap-2">
+            <div id="notifPanelManage" class="hidden neo-box bg-white overflow-hidden">
+                <div class="bg-neoGreen border-b-[3px] border-black px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+                    <span class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
                         <i class="fa-solid fa-list-check"></i> Kelola Daftar Notifikasi (<span id="manageNotifTotalText">0</span>)
                     </span>
-                    <input type="text" id="searchNotifInput" oninput="renderManageNotifList()" placeholder="Cari judul, isi, atau target..." class="bg-white border-2 border-black rounded-xl px-3 py-1.5 text-xs font-bold focus:outline-none w-full sm:w-64">
+                    <input type="text" id="searchNotifInput" oninput="renderManageNotifList()" placeholder="Cari judul, isi, atau target..." class="bg-white border-2 border-black px-3 py-1.5 text-xs font-bold focus:outline-none w-full sm:w-64">
                 </div>
 
                 <div id="manageNotifListContainer" class="divide-y-2 divide-black max-h-[540px] overflow-y-auto">
@@ -430,15 +467,33 @@
 
     </main>
 
-    <!-- BOTTOM NAV BAR -->
-    <div class="bottom-nav-fixed">
-        <div class="bottom-nav-bg"></div>
-        <div class="nav-items-wrapper">
-            <a href="/dashboard" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-solid fa-house"></i></div><span>Home</span></a>
-            <a href="/store" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-solid fa-bag-shopping"></i></div><span>Toko</span></a>
-            <a href="/deposit" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-solid fa-wallet"></i></div><span>Deposit</span></a>
-            <a href="/riwayat" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-solid fa-clock-rotate-left"></i></div><span>Riwayat</span></a>
-            <a href="/profile" class="nav-item-btn"><div class="nav-icon-box"><i class="fa-regular fa-user"></i></div><span>Profil</span></a>
+    <!-- ======================================================= -->
+    <!-- BOTTOM TAB SWITCHER (DIPINDAH DARI ATAS KE BAWAH)       -->
+    <!-- ======================================================= -->
+    <div class="fixed bottom-0 left-0 right-0 z-40 bg-neoBg border-t-[3px] border-black shadow-[0_-4px_0_rgba(0,0,0,0.08)]">
+        <div class="max-w-6xl mx-auto px-3 py-2.5">
+            <div class="grid grid-cols-3 gap-2 sm:gap-3.5">
+                <!-- TAB 1: DEPOSIT QRIS V2 -->
+                <button id="tabBtnDeposits" onclick="switchAdminTab('deposits')" class="tab-btn active neo-btn bg-white text-black font-cyber font-extrabold py-2 sm:py-2.5 px-2 sm:px-4 text-[10px] sm:text-xs uppercase flex items-center justify-center gap-1.5 sm:gap-2">
+                    <i class="fa-solid fa-qrcode text-xs sm:text-sm"></i>
+                    <span class="truncate">QRIS v2</span>
+                    <span id="pendingDepositBadge" class="bg-neoPink text-white border-2 border-black font-mono font-black text-[10px] px-1.5 py-0.2 shadow-[1.5px_1.5px_0px_#000] shrink-0">0</span>
+                </button>
+
+                <!-- TAB 2: LIVE CHAT CS -->
+                <button id="tabBtnChat" onclick="switchAdminTab('chat')" class="tab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2 sm:py-2.5 px-2 sm:px-4 text-[10px] sm:text-xs uppercase flex items-center justify-center gap-1.5 sm:gap-2">
+                    <i class="fa-solid fa-headset text-xs sm:text-sm"></i>
+                    <span class="truncate">Live Chat</span>
+                    <span id="unreadChatBadge" class="bg-neoGreen text-black border-2 border-black font-mono font-black text-[10px] px-1.5 py-0.2 shadow-[1.5px_1.5px_0px_#000] shrink-0">0</span>
+                </button>
+
+                <!-- TAB 3: NOTIFIKASI -->
+                <button id="tabBtnNotifications" onclick="switchAdminTab('notifications')" class="tab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2 sm:py-2.5 px-2 sm:px-4 text-[10px] sm:text-xs uppercase flex items-center justify-center gap-1.5 sm:gap-2">
+                    <i class="fa-solid fa-bell text-xs sm:text-sm"></i>
+                    <span class="truncate">Notifikasi</span>
+                    <span id="totalNotifBadge" class="bg-neoCyan text-black border-2 border-black font-mono font-black text-[10px] px-1.5 py-0.2 shadow-[1.5px_1.5px_0px_#000] shrink-0">0</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -451,6 +506,12 @@
         let selectedUserEmail = '';
         let adminPollInterval = null;
         let selectedDeliveryMode = 'broadcast';
+
+        function setTextSafe(id, text) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = text;
+            return el;
+        }
 
         function formatRupiah(angka) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
@@ -466,25 +527,33 @@
             const broadcastCard = document.getElementById('modeCardBroadcast');
             const webOnlyCard = document.getElementById('modeCardWebOnly');
             const headerBadge = document.getElementById('addNotifHeaderBadge');
-            const submitBtnText = document.getElementById('btnSubmitAddNotifText');
+            const submitBtn = document.getElementById('btnSubmitAddNotif');
 
             const radioBroadcast = document.querySelector('input[name="addNotifDeliveryMode"][value="broadcast"]');
             const radioWebOnly = document.querySelector('input[name="addNotifDeliveryMode"][value="web_only"]');
 
             if (selectedDeliveryMode === 'broadcast') {
                 if (radioBroadcast) radioBroadcast.checked = true;
-                broadcastCard.classList.add('selected-broadcast');
-                webOnlyCard.classList.remove('selected-webonly');
-                headerBadge.innerText = 'BROADCAST EMAIL + TELEGRAM';
-                headerBadge.className = 'text-[10px] font-mono font-extrabold bg-neoGreen border-2 border-black px-2.5 py-0.5 rounded uppercase';
-                submitBtnText.innerText = 'Kirim Notifikasi ke Semua Email & Telegram';
+                if (broadcastCard) broadcastCard.classList.add('selected-broadcast');
+                if (webOnlyCard) webOnlyCard.classList.remove('selected-webonly');
+                if (headerBadge) {
+                    headerBadge.innerText = 'BROADCAST EMAIL + TELEGRAM';
+                    headerBadge.className = 'text-[10px] font-mono font-extrabold bg-neoGreen border-2 border-black px-2.5 py-0.5 uppercase shadow-[2px_2px_0px_#000]';
+                }
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span id="btnSubmitAddNotifText">Kirim Notifikasi ke Semua Email &amp; Telegram</span>';
+                }
             } else {
                 if (radioWebOnly) radioWebOnly.checked = true;
-                webOnlyCard.classList.add('selected-webonly');
-                broadcastCard.classList.remove('selected-broadcast');
-                headerBadge.innerText = 'NOTIFIKASI WEB SAJA';
-                headerBadge.className = 'text-[10px] font-mono font-extrabold bg-neoYellow border-2 border-black px-2.5 py-0.5 rounded uppercase';
-                submitBtnText.innerText = 'Simpan & Tampilkan Notifikasi Saja';
+                if (webOnlyCard) webOnlyCard.classList.add('selected-webonly');
+                if (broadcastCard) broadcastCard.classList.remove('selected-broadcast');
+                if (headerBadge) {
+                    headerBadge.innerText = 'NOTIFIKASI WEB SAJA';
+                    headerBadge.className = 'text-[10px] font-mono font-extrabold bg-neoYellow border-2 border-black px-2.5 py-0.5 uppercase shadow-[2px_2px_0px_#000]';
+                }
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span id="btnSubmitAddNotifText">Simpan &amp; Tampilkan Notifikasi Saja</span>';
+                }
             }
         }
 
@@ -497,27 +566,47 @@
         }
 
         function switchAdminTab(tab) {
-            document.getElementById('sectionDeposits').classList.toggle('hidden', tab !== 'deposits');
-            document.getElementById('sectionChat').classList.toggle('hidden', tab !== 'chat');
-            document.getElementById('sectionNotifications').classList.toggle('hidden', tab !== 'notifications');
+            const secDep = document.getElementById('sectionDeposits');
+            const secChat = document.getElementById('sectionChat');
+            const secNotif = document.getElementById('sectionNotifications');
 
-            document.getElementById('tabBtnDeposits').classList.toggle('active', tab === 'deposits');
-            document.getElementById('tabBtnChat').classList.toggle('active', tab === 'chat');
-            document.getElementById('tabBtnNotifications').classList.toggle('active', tab === 'notifications');
+            if (secDep) secDep.classList.toggle('hidden', tab !== 'deposits');
+            if (secChat) secChat.classList.toggle('hidden', tab !== 'chat');
+            if (secNotif) secNotif.classList.toggle('hidden', tab !== 'notifications');
+
+            const btnDep = document.getElementById('tabBtnDeposits');
+            const btnChat = document.getElementById('tabBtnChat');
+            const btnNotif = document.getElementById('tabBtnNotifications');
+
+            if (btnDep) btnDep.classList.toggle('active', tab === 'deposits');
+            if (btnChat) btnChat.classList.toggle('active', tab === 'chat');
+            if (btnNotif) btnNotif.classList.toggle('active', tab === 'notifications');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 
             if (tab === 'notifications') {
                 loadAdminNotifications();
+            } else if (tab === 'chat') {
+                loadUserList();
             }
         }
 
         function switchNotifSubTab(sub) {
-            document.getElementById('notifPanelAdd').classList.toggle('hidden', sub !== 'add');
-            document.getElementById('notifPanelEdit').classList.toggle('hidden', sub !== 'edit');
-            document.getElementById('notifPanelManage').classList.toggle('hidden', sub !== 'manage');
+            const pAdd = document.getElementById('notifPanelAdd');
+            const pEdit = document.getElementById('notifPanelEdit');
+            const pManage = document.getElementById('notifPanelManage');
 
-            document.getElementById('notifSubBtnAdd').classList.toggle('active', sub === 'add');
-            document.getElementById('notifSubBtnEdit').classList.toggle('active', sub === 'edit');
-            document.getElementById('notifSubBtnManage').classList.toggle('active', sub === 'manage');
+            if (pAdd) pAdd.classList.toggle('hidden', sub !== 'add');
+            if (pEdit) pEdit.classList.toggle('hidden', sub !== 'edit');
+            if (pManage) pManage.classList.toggle('hidden', sub !== 'manage');
+
+            const bAdd = document.getElementById('notifSubBtnAdd');
+            const bEdit = document.getElementById('notifSubBtnEdit');
+            const bManage = document.getElementById('notifSubBtnManage');
+
+            if (bAdd) bAdd.classList.toggle('active', sub === 'add');
+            if (bEdit) bEdit.classList.toggle('active', sub === 'edit');
+            if (bManage) bManage.classList.toggle('active', sub === 'manage');
             closeCustomNotifDropdown();
         }
 
@@ -541,7 +630,7 @@
                 if (data.status && Array.isArray(data.deposits)) {
                     allDepositsData = data.deposits;
                     const waitingCount = allDepositsData.filter(d => d.status === 'waiting_verification').length;
-                    document.getElementById('pendingDepositBadge').innerText = waitingCount;
+                    setTextSafe('pendingDepositBadge', waitingCount);
                     renderDepositsGrid();
                 }
             } catch (e) {}
@@ -549,54 +638,56 @@
 
         function renderDepositsGrid() {
             const grid = document.getElementById('adminDepositsGrid');
+            if (!grid) return;
+
             const filtered = currentDepositFilter === 'all'
                 ? allDepositsData
                 : allDepositsData.filter(d => (d.status || '').toLowerCase() === currentDepositFilter);
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="neo-box p-6 rounded-2xl text-center text-xs font-mono font-bold col-span-full bg-white">Tidak ada transaksi deposit QRIS v2 pada kategori ini.</div>`;
+                grid.innerHTML = `<div class="neo-box p-6 text-center text-xs font-mono font-bold col-span-full bg-white">Tidak ada transaksi deposit QRIS v2 pada kategori ini.</div>`;
                 return;
             }
 
             grid.innerHTML = filtered.map(dep => {
                 const st = (dep.status || 'pending').toLowerCase();
-                let badgeHtml = `<span class="bg-neoYellow border border-black px-2 py-0.5 rounded text-[10px] font-black font-cyber">PENDING</span>`;
+                let badgeHtml = `<span class="bg-neoYellow border-2 border-black px-2 py-0.5 text-[10px] font-black font-cyber">PENDING</span>`;
                 if (st === 'waiting_verification') {
-                    badgeHtml = `<span class="bg-neoCyan border border-black px-2 py-0.5 rounded text-[10px] font-black font-cyber animate-pulse">PERLU VERIFIKASI</span>`;
+                    badgeHtml = `<span class="bg-neoCyan border-2 border-black px-2 py-0.5 text-[10px] font-black font-cyber animate-pulse">PERLU VERIFIKASI</span>`;
                 } else if (['success', 'paid', 'settlement'].includes(st)) {
-                    badgeHtml = `<span class="bg-neoGreen border border-black px-2 py-0.5 rounded text-[10px] font-black font-cyber">SUKSES</span>`;
+                    badgeHtml = `<span class="bg-neoGreen border-2 border-black px-2 py-0.5 text-[10px] font-black font-cyber">SUKSES</span>`;
                 } else if (st === 'cancelled') {
-                    badgeHtml = `<span class="bg-neoPink border border-black px-2 py-0.5 rounded text-[10px] font-black font-cyber">DIBATALKAN</span>`;
+                    badgeHtml = `<span class="bg-neoPink text-white border-2 border-black px-2 py-0.5 text-[10px] font-black font-cyber">DIBATALKAN</span>`;
                 }
 
                 const dateStr = new Date(dep.createdAt).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
                 const proofHtml = dep.proofImage
-                    ? `<div class="border-2 border-black rounded-xl overflow-hidden bg-neoBg p-2 text-center">
+                    ? `<div class="border-2 border-black bg-neoBg p-2 text-center">
                            <img src="${dep.proofImage}" onclick="viewFullProof('${dep.orderId}')" title="Klik untuk memperbesar"
-                                class="max-h-44 mx-auto rounded-lg object-contain border border-black cursor-zoom-in">
+                                class="max-h-44 mx-auto object-contain border-2 border-black cursor-zoom-in">
                            <button type="button" onclick="viewFullProof('${dep.orderId}')" class="mt-1.5 text-[10px] font-cyber font-black underline text-black">
                                <i class="fa-solid fa-magnifying-glass-plus"></i> Perbesar Bukti Pembayaran
                            </button>
                        </div>`
-                    : `<div class="border-2 border-dashed border-black rounded-xl p-4 text-center text-[11px] font-bold text-slate-500 bg-neoBg">
+                    : `<div class="border-2 border-dashed border-black p-4 text-center text-[11px] font-bold text-slate-600 bg-neoBg">
                            <i class="fa-regular fa-image text-lg block mb-1"></i> User belum mengunggah bukti pembayaran
                        </div>`;
 
                 const canAction = ['pending', 'waiting_verification'].includes(st);
                 const actionButtons = canAction
-                    ? `<div class="grid grid-cols-2 gap-2 pt-1">
-                           <button onclick="adminApproveDeposit('${escapeHtml(dep.orderId)}')" class="neo-btn bg-neoGreen text-black font-cyber font-black py-2.5 rounded-xl text-xs uppercase flex items-center justify-center gap-1.5">
+                    ? `<div class="grid grid-cols-2 gap-2.5 pt-1">
+                           <button onclick="adminApproveDeposit('${escapeHtml(dep.orderId)}')" class="neo-btn bg-neoGreen text-black font-cyber font-extrabold py-2.5 text-xs uppercase flex items-center justify-center gap-1.5">
                                <i class="fa-solid fa-check"></i> Konfirmasi
                            </button>
-                           <button onclick="adminCancelDeposit('${escapeHtml(dep.orderId)}')" class="neo-btn bg-neoPink text-black font-cyber font-black py-2.5 rounded-xl text-xs uppercase flex items-center justify-center gap-1.5">
+                           <button onclick="adminCancelDeposit('${escapeHtml(dep.orderId)}')" class="neo-btn bg-neoPink text-white font-cyber font-extrabold py-2.5 text-xs uppercase flex items-center justify-center gap-1.5">
                                <i class="fa-solid fa-xmark"></i> Batalkan
                            </button>
                        </div>`
                     : `<div class="text-center text-[10px] font-mono font-bold text-slate-600 pt-1">Tindakan selesai (${st.toUpperCase()})</div>`;
 
                 return `
-                    <div class="neo-box rounded-2xl p-4 bg-white space-y-3 flex flex-col justify-between">
+                    <div class="neo-box p-4 bg-white space-y-3 flex flex-col justify-between">
                         <div class="space-y-2.5">
                             <div class="flex items-center justify-between gap-2 border-b-2 border-black pb-2">
                                 <span class="text-[11px] font-mono font-black text-black">${escapeHtml(dep.orderId)}</span>
@@ -605,13 +696,13 @@
 
                             <div class="flex items-center justify-between text-xs">
                                 <div>
-                                    <div class="font-black font-cyber text-black">${escapeHtml(dep.username)}</div>
+                                    <div class="font-extrabold font-cyber text-black">${escapeHtml(dep.username)}</div>
                                     <div class="text-[11px] font-mono text-slate-600">${escapeHtml(dep.userEmail || '-')}</div>
                                     <div class="text-[10px] font-bold text-slate-500 mt-0.5">${dateStr}</div>
                                 </div>
                                 <div class="text-right">
                                     <span class="text-[9px] font-black uppercase text-slate-500 block">Nominal</span>
-                                    <span class="text-base font-black font-cyber bg-neoYellow border-2 border-black px-2.5 py-0.5 rounded-lg inline-block">
+                                    <span class="text-base font-extrabold font-cyber bg-neoYellow border-2 border-black px-2.5 py-0.5 inline-block shadow-[2px_2px_0px_#000]">
                                         ${formatRupiah(dep.amount)}
                                     </span>
                                 </div>
@@ -630,7 +721,7 @@
             if (!dep || !dep.proofImage) return;
             Swal.fire({
                 title: `BUKTI // ${dep.orderId}`,
-                html: `<img src="${dep.proofImage}" class="max-h-[70vh] mx-auto rounded-xl border-2 border-black">`,
+                html: `<img src="${dep.proofImage}" class="max-h-[70vh] mx-auto border-2 border-black">`,
                 width: 600,
                 confirmButtonText: 'Tutup',
                 customClass: { popup: 'cyber-swal' }
@@ -699,11 +790,10 @@
                 if (data.status && Array.isArray(data.notifications)) {
                     allNotificationsData = data.notifications;
                     const count = allNotificationsData.length;
-                    document.getElementById('totalNotifBadge').innerText = count;
-                    document.getElementById('notifManageCountTab').innerText = count;
-                    document.getElementById('manageNotifTotalText').innerText = count;
-                    const availBadge = document.getElementById('editSelectAvailableBadge');
-                    if (availBadge) availBadge.innerText = `${count} Tersedia`;
+                    setTextSafe('totalNotifBadge', count);
+                    setTextSafe('notifManageCountTab', count);
+                    setTextSafe('manageNotifTotalText', count);
+                    setTextSafe('editSelectAvailableBadge', `${count} Tersedia`);
                     populateEditNotifDropdown();
                     renderManageNotifList();
                 }
@@ -765,22 +855,22 @@
                 return `
                     <button type="button" onclick="chooseCustomNotifOption('${escapeHtml(nid)}')" class="w-full text-left p-3.5 transition flex items-start justify-between gap-3 ${isSelected ? 'bg-neoCyan/35' : 'bg-white hover:bg-neoBg'}">
                         <div class="flex items-start gap-2.5 min-w-0 flex-1">
-                            <span class="w-8 h-8 rounded-lg ${style.bg} border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
+                            <span class="w-8 h-8 ${style.bg} border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
                                 <i class="fa-solid ${style.icon} text-xs"></i>
                             </span>
                             <div class="min-w-0 flex-1 space-y-1">
                                 <div class="flex flex-wrap items-center gap-1.5">
-                                    <span class="${style.bg} border border-black px-1.5 py-0.2 rounded text-[9px] font-black font-cyber">${style.label}</span>
-                                    <span class="bg-neoBg border border-black px-1.5 py-0.2 rounded text-[9px] font-mono font-bold truncate max-w-[170px]">${escapeHtml(target)}</span>
+                                    <span class="${style.bg} border border-black px-1.5 py-0.2 text-[9px] font-black font-cyber">${style.label}</span>
+                                    <span class="bg-neoBg border border-black px-1.5 py-0.2 text-[9px] font-mono font-bold truncate max-w-[170px]">${escapeHtml(target)}</span>
                                     <span class="text-[9px] font-mono font-bold text-slate-500">${dateStr}</span>
                                 </div>
-                                <div class="text-xs font-black font-cyber text-black truncate">${escapeHtml(n.title)}</div>
+                                <div class="text-xs font-extrabold font-cyber text-black truncate">${escapeHtml(n.title)}</div>
                             </div>
                         </div>
                         <span class="shrink-0 mt-1">
                             ${isSelected
-                                ? `<span class="w-6 h-6 rounded-full bg-neoGreen border-2 border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-check"></i></span>`
-                                : `<span class="w-6 h-6 rounded-full bg-white border-2 border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-arrow-right"></i></span>`
+                                ? `<span class="w-6 h-6 bg-neoGreen border-2 border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-check"></i></span>`
+                                : `<span class="w-6 h-6 bg-white border-2 border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-arrow-right"></i></span>`
                             }
                         </span>
                     </button>
@@ -794,11 +884,11 @@
 
             if (!notif) {
                 triggerContent.innerHTML = `
-                    <span class="w-8 h-8 rounded-lg bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
+                    <span class="w-8 h-8 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
                         <i class="fa-solid fa-bell text-xs"></i>
                     </span>
                     <div class="min-w-0">
-                        <div class="text-xs font-black font-cyber text-black truncate">Pilih Notifikasi (${allNotificationsData.length} tersedia)...</div>
+                        <div class="text-xs font-extrabold font-cyber text-black truncate">Pilih Notifikasi (${allNotificationsData.length} tersedia)...</div>
                         <div class="text-[10px] font-mono font-bold text-slate-600 truncate">Klik untuk membuka daftar notifikasi</div>
                     </div>
                 `;
@@ -808,15 +898,15 @@
             const style = getNotifTypeStyle(notif.type);
             const target = notif.targetEmail ? notif.targetEmail : 'Broadcast Semua User';
             triggerContent.innerHTML = `
-                <span class="w-8 h-8 rounded-lg ${style.bg} border-2 border-black flex items-center justify-center shrink-0">
+                <span class="w-8 h-8 ${style.bg} border-2 border-black flex items-center justify-center shrink-0">
                     <i class="fa-solid ${style.icon} text-xs"></i>
                 </span>
                 <div class="min-w-0 flex-1">
                     <div class="flex items-center gap-1.5">
-                        <span class="${style.bg} border border-black px-1.5 rounded text-[9px] font-black font-cyber">${style.label}</span>
+                        <span class="${style.bg} border border-black px-1.5 text-[9px] font-black font-cyber">${style.label}</span>
                         <span class="text-[10px] font-mono font-bold text-slate-600 truncate">${escapeHtml(target)}</span>
                     </div>
-                    <div class="text-xs font-black font-cyber text-black truncate mt-0.5">${escapeHtml(notif.title)}</div>
+                    <div class="text-xs font-extrabold font-cyber text-black truncate mt-0.5">${escapeHtml(notif.title)}</div>
                 </div>
             `;
         }
@@ -852,21 +942,26 @@
             const notif = allNotificationsData.find(n => String(n._id) === String(notifId));
             const badge = document.getElementById('editNotifBadge');
             if (!notif) {
-                document.getElementById('editNotifId').value = '';
-                document.getElementById('editNotifForm').reset();
-                badge.innerText = 'PILIH NOTIFIKASI';
+                const editIdEl = document.getElementById('editNotifId');
+                const editFormEl = document.getElementById('editNotifForm');
+                if (editIdEl) editIdEl.value = '';
+                if (editFormEl) editFormEl.reset();
+                if (badge) badge.innerText = 'PILIH NOTIFIKASI';
                 updateCustomNotifTriggerUI(null);
                 return;
             }
-            document.getElementById('editNotifId').value = notif._id;
-            document.getElementById('editNotifTitle').value = notif.title || '';
-            document.getElementById('editNotifType').value = notif.type || 'info';
-            document.getElementById('editNotifTargetEmail').value = notif.targetEmail || '';
-            document.getElementById('editNotifLink').value = notif.link || '';
-            document.getElementById('editNotifMessage').value = notif.message || '';
-            document.getElementById('editNotifResetRead').checked = false;
-            document.getElementById('editNotifResendBroadcast').checked = false;
-            badge.innerText = `ID: ${String(notif._id).slice(-6).toUpperCase()}`;
+            const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+            const setChk = (id, val) => { const el = document.getElementById(id); if (el) el.checked = val; };
+
+            setVal('editNotifId', notif._id);
+            setVal('editNotifTitle', notif.title || '');
+            setVal('editNotifType', notif.type || 'info');
+            setVal('editNotifTargetEmail', notif.targetEmail || '');
+            setVal('editNotifLink', notif.link || '');
+            setVal('editNotifMessage', notif.message || '');
+            setChk('editNotifResetRead', false);
+            setChk('editNotifResendBroadcast', false);
+            if (badge) badge.innerText = `ID: ${String(notif._id).slice(-6).toUpperCase()}`;
             updateCustomNotifTriggerUI(notif);
         }
 
@@ -882,21 +977,28 @@
         async function submitCreateNotification(e) {
             e.preventDefault();
             const btn = document.getElementById('btnSubmitAddNotif');
-            const originalHtml = btn.innerHTML;
-            btn.disabled = true;
-
             const isWebOnly = selectedDeliveryMode === 'web_only';
-            btn.innerHTML = isWebOnly
-                ? `<i class="fa-solid fa-spinner fa-spin"></i> <span>Menyimpan Notifikasi Web...</span>`
-                : `<i class="fa-solid fa-spinner fa-spin"></i> <span>Mengirim ke Email &amp; Telegram...</span>`;
+
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = isWebOnly
+                    ? `<i class="fa-solid fa-spinner fa-spin"></i> <span>Menyimpan Notifikasi Web...</span>`
+                    : `<i class="fa-solid fa-spinner fa-spin"></i> <span>Mengirim ke Email &amp; Telegram...</span>`;
+            }
 
             try {
+                const titleEl = document.getElementById('addNotifTitle');
+                const typeEl = document.getElementById('addNotifType');
+                const targetEmailEl = document.getElementById('addNotifTargetEmail');
+                const linkEl = document.getElementById('addNotifLink');
+                const messageEl = document.getElementById('addNotifMessage');
+
                 const payload = {
-                    title: document.getElementById('addNotifTitle').value.trim(),
-                    type: document.getElementById('addNotifType').value,
-                    targetEmail: document.getElementById('addNotifTargetEmail').value.trim() || null,
-                    link: document.getElementById('addNotifLink').value.trim() || null,
-                    message: document.getElementById('addNotifMessage').value.trim(),
+                    title: (titleEl?.value || '').trim(),
+                    type: typeEl?.value || 'info',
+                    targetEmail: (targetEmailEl?.value || '').trim() || null,
+                    link: (linkEl?.value || '').trim() || null,
+                    message: (messageEl?.value || '').trim(),
                     deliveryMode: selectedDeliveryMode
                 };
 
@@ -911,7 +1013,8 @@
                     throw new Error(result.message || 'Gagal mengirim notifikasi.');
                 }
 
-                document.getElementById('createNotifForm').reset();
+                const formEl = document.getElementById('createNotifForm');
+                if (formEl) formEl.reset();
                 selectDeliveryMode('broadcast');
                 await loadAdminNotifications();
 
@@ -929,33 +1032,35 @@
                     customClass: { popup: 'cyber-swal' }
                 });
             } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalHtml;
+                if (btn) btn.disabled = false;
+                selectDeliveryMode(selectedDeliveryMode);
             }
         }
 
         async function submitEditNotification(e) {
             e.preventDefault();
-            const notifId = document.getElementById('editNotifId').value.trim();
+            const notifId = (document.getElementById('editNotifId')?.value || '').trim();
             if (!notifId) {
                 Swal.fire({ icon: 'warning', title: 'PILIH NOTIFIKASI', text: 'Pilih notifikasi yang ingin diedit terlebih dahulu!', customClass: { popup: 'cyber-swal' } });
                 return;
             }
 
             const btn = document.getElementById('btnSubmitEditNotif');
-            const originalHtml = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Menyimpan...</span>`;
+            const originalHtml = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Menyimpan...</span>`;
+            }
 
             try {
                 const payload = {
-                    title: document.getElementById('editNotifTitle').value.trim(),
-                    type: document.getElementById('editNotifType').value,
-                    targetEmail: document.getElementById('editNotifTargetEmail').value.trim() || null,
-                    link: document.getElementById('editNotifLink').value.trim() || null,
-                    message: document.getElementById('editNotifMessage').value.trim(),
-                    resetReadBy: document.getElementById('editNotifResetRead').checked,
-                    resendBroadcast: document.getElementById('editNotifResendBroadcast').checked
+                    title: (document.getElementById('editNotifTitle')?.value || '').trim(),
+                    type: document.getElementById('editNotifType')?.value || 'info',
+                    targetEmail: (document.getElementById('editNotifTargetEmail')?.value || '').trim() || null,
+                    link: (document.getElementById('editNotifLink')?.value || '').trim() || null,
+                    message: (document.getElementById('editNotifMessage')?.value || '').trim(),
+                    resetReadBy: Boolean(document.getElementById('editNotifResetRead')?.checked),
+                    resendBroadcast: Boolean(document.getElementById('editNotifResendBroadcast')?.checked)
                 };
 
                 const res = await fetch(`/api/admin/notifications/${encodeURIComponent(notifId)}`, {
@@ -985,8 +1090,10 @@
                     customClass: { popup: 'cyber-swal' }
                 });
             } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalHtml;
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHtml;
+                }
             }
         }
 
@@ -1019,22 +1126,22 @@
                 const dateStr = new Date(n.createdAt).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
                 return `
-                    <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neoBg/60">
+                    <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neoBg/70">
                         <div class="space-y-1 min-w-0">
                             <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="bg-neoCyan border border-black px-2 py-0.5 rounded text-[10px] font-black font-cyber">${type}</span>
-                                <span class="bg-neoYellow border border-black px-2 py-0.5 rounded text-[10px] font-black font-mono">${target}</span>
+                                <span class="bg-neoCyan border border-black px-2 py-0.5 text-[10px] font-black font-cyber">${type}</span>
+                                <span class="bg-neoYellow border border-black px-2 py-0.5 text-[10px] font-black font-mono">${target}</span>
                                 <span class="text-[10px] font-mono font-bold text-slate-600">Dibaca: ${readCount} • ${dateStr}</span>
                             </div>
-                            <h4 class="font-cyber font-black text-sm text-black truncate">${title}</h4>
+                            <h4 class="font-cyber font-extrabold text-sm text-black truncate">${title}</h4>
                             <p class="text-xs font-bold text-slate-700 whitespace-pre-line break-words">${message}</p>
                             ${n.link ? `<div class="text-[11px] font-mono text-blue-700 truncate"><i class="fa-solid fa-link"></i> ${escapeHtml(n.link)}</div>` : ''}
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
-                            <button type="button" onclick="jumpToEditNotif('${nid}')" class="neo-btn bg-neoCyan text-black font-cyber font-black px-3 py-2 rounded-xl text-xs uppercase flex items-center gap-1">
+                            <button type="button" onclick="jumpToEditNotif('${nid}')" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-3 py-2 text-xs uppercase flex items-center gap-1">
                                 <i class="fa-solid fa-pen"></i> Edit
                             </button>
-                            <button type="button" onclick="deleteAdminNotification('${nid}', '${title}')" class="neo-btn bg-neoPink text-black font-cyber font-black px-3 py-2 rounded-xl text-xs uppercase flex items-center gap-1">
+                            <button type="button" onclick="deleteAdminNotification('${nid}', '${title}')" class="neo-btn bg-neoPink text-white font-cyber font-extrabold px-3 py-2 text-xs uppercase flex items-center gap-1">
                                 <i class="fa-solid fa-trash"></i> Hapus
                             </button>
                         </div>
@@ -1061,7 +1168,8 @@
                 if (!res.ok || !result.status) {
                     throw new Error(result.message || 'Gagal menghapus notifikasi.');
                 }
-                if (document.getElementById('editNotifId').value === notifId) {
+                const editIdEl = document.getElementById('editNotifId');
+                if (editIdEl && editIdEl.value === notifId) {
                     onSelectEditNotification('');
                 }
                 await loadAdminNotifications();
@@ -1071,10 +1179,10 @@
             }
         }
 
-        // LIVE CHAT FUNCTIONS
+        // LIVE CHAT FUNCTIONS + PENANDA UNREAD BADGE
         function scrollUserCarousel(direction) {
             const container = document.getElementById('adminUserList');
-            container.scrollBy({ left: direction === 'left' ? -240 : 240, behavior: 'smooth' });
+            if (container) container.scrollBy({ left: direction === 'left' ? -240 : 240, behavior: 'smooth' });
         }
 
         async function loadUserList() {
@@ -1082,17 +1190,25 @@
                 const res = await fetch('/api/bantuan/admin/users');
                 const data = await res.json();
                 const listEl = document.getElementById('adminUserList');
-                document.getElementById('userCountText').innerText = data.users ? data.users.length : 0;
+                const users = (data.status && Array.isArray(data.users)) ? data.users : [];
 
-                if (data.status && data.users && data.users.length > 0) {
-                    listEl.innerHTML = data.users.map(u => {
+                setTextSafe('userCountText', users.length);
+
+                // Hitung total pesan belum dibaca untuk penanda pada tombol Live Chat CS
+                const totalUnreadChats = users.reduce((sum, u) => sum + (Number(u.unreadCount) || 0), 0);
+                setTextSafe('unreadChatBadge', totalUnreadChats);
+
+                if (!listEl) return;
+
+                if (users.length > 0) {
+                    listEl.innerHTML = users.map(u => {
                         const isActive = u.userId === selectedUserId;
-                        const unreadBadge = u.unreadCount > 0 ? `<span class="bg-neoPink text-black border border-black text-[9px] font-black px-1.5 rounded-full ml-1.5">${u.unreadCount}</span>` : '';
+                        const unreadBadge = u.unreadCount > 0 ? `<span class="bg-neoPink text-white border border-black text-[9px] font-black px-1.5 ml-1.5">${u.unreadCount}</span>` : '';
                         return `
                             <button onclick="selectUserChat('${escapeHtml(u.userId)}', '${escapeHtml(u.username)}', '${escapeHtml(u.email || u.userId)}')" 
-                                    class="user-pill shrink-0 px-3 py-2 rounded-xl text-left flex items-center gap-2.5 cursor-pointer ${isActive ? 'active' : 'bg-white'}">
+                                    class="user-pill shrink-0 px-3 py-2 text-left flex items-center gap-2.5 cursor-pointer ${isActive ? 'active' : 'bg-white'}">
                                 <div class="whitespace-nowrap">
-                                    <div class="text-xs font-black font-cyber text-black flex items-center">${escapeHtml(u.username)}${unreadBadge}</div>
+                                    <div class="text-xs font-extrabold font-cyber text-black flex items-center">${escapeHtml(u.username)}${unreadBadge}</div>
                                     <div class="text-[10px] font-mono text-slate-600">${escapeHtml(u.email || u.userId)}</div>
                                 </div>
                             </button>`;
@@ -1107,7 +1223,8 @@
             selectedUserId = userId;
             selectedUsername = username;
             selectedUserEmail = email || userId;
-            document.getElementById('adminChatForm').classList.remove('opacity-50', 'pointer-events-none');
+            const chatForm = document.getElementById('adminChatForm');
+            if (chatForm) chatForm.classList.remove('opacity-50', 'pointer-events-none');
             loadUserMessages();
             loadUserList();
         }
@@ -1118,14 +1235,15 @@
                 const res = await fetch(`/api/bantuan/admin/messages/${encodeURIComponent(selectedUserId)}`);
                 const data = await res.json();
                 const container = document.getElementById('adminChatMessages');
+                if (!container) return;
                 if (data.status && data.messages) {
                     container.innerHTML = data.messages.map(msg => {
                         const isAdmin = msg.sender === 'admin' || msg.sender === 'owner';
                         return `
                             <div class="flex ${isAdmin ? 'justify-end' : 'justify-start'}">
-                                <div class="max-w-[80%] p-3 rounded-2xl text-xs space-y-1 ${isAdmin ? 'bg-neoYellow rounded-br-none' : 'bg-white rounded-bl-none'} border-2 border-black font-bold">
-                                    <div class="font-black font-cyber text-[10px] border-b border-black/20 pb-1">${isAdmin ? 'Admin / Owner' : escapeHtml(selectedUsername)}</div>
-                                    <p class="pt-1">${escapeHtml(msg.message)}</p>
+                                <div class="max-w-[80%] p-3 text-xs space-y-1 ${isAdmin ? 'bg-neoYellow' : 'bg-white'} border-[2.5px] border-black shadow-[3px_3px_0px_#000] font-bold">
+                                    <div class="font-extrabold font-cyber text-[10px] border-b-2 border-black/20 pb-1 uppercase">${isAdmin ? 'Admin / Owner' : escapeHtml(selectedUsername)}</div>
+                                    <p class="pt-1 whitespace-pre-line break-words">${escapeHtml(msg.message)}</p>
                                 </div>
                             </div>`;
                     }).join('');
@@ -1138,6 +1256,7 @@
             e.preventDefault();
             if (!selectedUserId) return;
             const input = document.getElementById('adminChatInput');
+            if (!input) return;
             const message = input.value.trim();
             if (!message) return;
             input.value = '';
