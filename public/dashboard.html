@@ -197,7 +197,7 @@
             border-radius: 99px;
         }
 
-/* =========================================================
+        /* =========================================================
            LIQUID NOTCH CURVE BOTTOM NAVIGATION (6 MENU + NOTIF BADGE)
            ========================================================= */
         .liquid-nav-wrapper {
@@ -292,7 +292,6 @@
             font-weight: 900;
             transform: translateY(3px);
         }
-        /* Penanda Merah + Angka Jumlah Notifikasi Belum Dibaca */
         .nav-notif-badge {
             position: absolute;
             top: 8px;
@@ -424,7 +423,7 @@
                             </span>
                         </div>
                         <p id="tradingSubtitle" class="text-xs font-bold text-black/80 mt-0.5">
-                            Grafik transaksi per 10 menit WIB (setiap 10 menit membuat candle baru)
+                            Grafik transaksi 1 Hari terakhir (interval 10 menit WIB)
                         </p>
                     </div>
                 </div>
@@ -530,7 +529,6 @@
             </div>
 
             <div class="p-4 sm:p-5 bg-neoPaper">
-                <!-- Geser horizontal touchscreen hanya menggulir kolom tabel yang tersembunyi -->
                 <div id="trxTableScrollWrapper" class="overflow-x-auto neo-scroll rounded-xl border-[3px] border-black shadow-[4px_4px_0_#000] bg-white">
                     <table class="neo-table text-left text-xs font-bold min-w-[720px]">
                         <thead>
@@ -552,13 +550,11 @@
                     </table>
                 </div>
 
-                <!-- KONTROL SLIDE TRANSAKSI (MUNCUL OTOMATIS JIKA TRANSAKSI > 10, PINDAH SLIDE HANYA LEWAT TOMBOL) -->
                 <div id="trxPaginationContainer" class="hidden mt-4 pt-4 border-t-[2.5px] border-dashed border-black flex-col sm:flex-row items-center justify-between gap-3">
                     <div id="trxPaginationInfo" class="text-xs font-mono font-extrabold text-black bg-white border-2 border-black px-3 py-1.5 rounded-lg shadow-[2px_2px_0_#000]">
                         Menampilkan 1-10 dari 0 transaksi
                     </div>
                     <div id="trxPaginationButtons" class="flex flex-wrap items-center justify-center gap-1.5">
-                        <!-- Tombol Slide 1, Slide 2, dst. dirender lewat JavaScript -->
                     </div>
                 </div>
             </div>
@@ -580,8 +576,8 @@
             <a href="/privacy" class="hover:underline">Kebijakan Privasi</a>
         </div>
     </footer>
-
-    <!-- BOTTOM NAVIGATION 6-MENU DENGAN LEKUKAN BERSIH -->
+    
+        <!-- BOTTOM NAVIGATION 6-MENU DENGAN LEKUKAN BERSIH -->
     <nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
         <div class="liquid-nav-bg">
             <svg class="liquid-nav-svg" id="liquidNavSvg" xmlns="http://www.w3.org/2000/svg">
@@ -787,7 +783,6 @@
                     }
                 }
 
-                // Fallback jika endpoint utama mengembalikan daftar notifikasi
                 const listRes = await fetch('/api/notifications', { cache: 'no-store' });
                 if (listRes.ok) {
                     const listData = await listRes.json();
@@ -801,13 +796,11 @@
             } catch (e) {}
         }
 
-        // Tampilkan angka tersimpan seketika saat halaman dibuka agar tidak berkedip
         try {
             const cachedUnread = Number(localStorage.getItem('arulz_unread_notif_count') || 0);
             if (cachedUnread > 0) renderUnreadNotifBadge(cachedUnread);
         } catch (e) {}
 
-        // Sinkronisasi real-time antar tab jika user membaca notifikasi di /notifikasi
         window.addEventListener('storage', (e) => {
             if (e.key === 'arulz_unread_notif_count') {
                 renderUnreadNotifBadge(Number(e.newValue || 0));
@@ -844,7 +837,6 @@
         let cachedTradingSeries = { '1d': [], '7d': [], '1m': [], 'all': [] };
         let hoverCandleIndex = -1;
 
-        // State untuk Slide Status Transaksi (10 transaksi per slide)
         let allTransactions = [];
         let currentTrxSlide = 1;
         const TRX_PER_SLIDE = 10;
@@ -855,7 +847,6 @@
             return `${orderId.substring(0, 6)}•••${orderId.substring(orderId.length - 4)}`;
         }
 
-        // Mendukung format positif maupun negatif (-1,5K, -2,10Jt, dll.)
         function formatCompactAxisVal(val) {
             const num = Number(val || 0);
             const sign = num < 0 ? '-' : '';
@@ -950,10 +941,10 @@
             });
 
             const descMap = {
-                '1d': 'Grafik transaksi per 10 menit WIB (24 jam terakhir — candle baru tiap 10 menit)',
-                '7d': 'Grafik transaksi per 10 menit WIB (7 hari terakhir — candle baru tiap 10 menit)',
-                '1m': 'Grafik transaksi per 10 menit WIB (30 hari terakhir — candle baru tiap 10 menit)',
-                'all': 'Grafik seluruh riwayat transaksi per 10 menit WIB dari awal hingga sekarang'
+                '1d': 'Grafik transaksi 1 Hari terakhir (interval 10 menit WIB)',
+                '7d': 'Grafik transaksi 7 Hari terakhir (interval 1 jam WIB)',
+                '1m': 'Grafik transaksi 1 Bulan terakhir (interval 6 jam WIB)',
+                'all': 'Grafik seluruh riwayat transaksi dari awal hingga sekarang (WIB)'
             };
             const subEl = document.getElementById('tradingSubtitle');
             if (subEl) subEl.innerText = descMap[range] || descMap['1d'];
@@ -967,21 +958,21 @@
             const totalLunas = safe.reduce((s, d) => s + Number(d.lunas || 0), 0);
             const totalOmzet = safe.reduce((s, d) => s + Number(d.omzet || 0), 0);
 
-            const first = safe.length ? safe[0] : { o: 0, h: 0, l: 0, c: 0 };
             const last = safe.length ? safe[safe.length - 1] : { o: 0, h: 0, l: 0, c: 0 };
+            const firstActive = safe.find(d => Number(d.volume || 0) > 0) || (safe[0] || { o: 0, c: 0 });
 
             const maxH = safe.length ? Math.max(...safe.map(d => Number(d.h || 0))) : 0;
             const minL = safe.length ? Math.min(...safe.map(d => Number(d.l || 0))) : 0;
 
-            const startVal = Number(first.o || 0);
+            const startVal = Number(firstActive.o || 0);
             const endVal = Number(last.c || 0);
             const diff = endVal - startVal;
 
             let pct = '0.0';
             if (Math.abs(startVal) > 0) {
                 pct = ((diff / Math.abs(startVal)) * 100).toFixed(1);
-            } else if (diff !== 0) {
-                pct = diff > 0 ? '100.0' : '-100.0';
+            } else if (totalOmzet > 0) {
+                pct = '100.0';
             }
 
             const closeEl = document.getElementById('tdCloseMain');
@@ -1023,12 +1014,7 @@
 
         function getVisibleCandles() {
             const full = cachedTradingSeries[activeTradingRange] || [];
-            const canvas = document.getElementById('tradingCanvas');
-            const width = canvas ? canvas.getBoundingClientRect().width : 640;
-            // Tampilkan ~25-36 candle per 10 menit terakhir (4-6 jam) agar sumbu waktu terbaca 00:10, 00:20, 00:30
-            const maxVisible = width < 480 ? 25 : (width < 768 ? 31 : 37);
-            if (full.length <= maxVisible) return full;
-            return full.slice(full.length - maxVisible);
+            return Array.isArray(full) ? full : [];
         }
 
         function drawStockChart() {
@@ -1076,7 +1062,6 @@
                 rawMax = rawMax + 5000;
             }
 
-            // Izinkan rentang Y turun hingga nilai negatif
             const rangeSpan = rawMax - rawMin;
             const yMin = rawMin - rangeSpan * 0.14;
             const yMax = rawMax + rangeSpan * 0.14;
@@ -1107,7 +1092,6 @@
                 ctx.fillText(formatCompactAxisVal(val), W - padRight + 8, y + 3.5);
             }
 
-            // Garis referensi titik 0 jika grafik melewati nilai positif & negatif
             if (yMin < 0 && yMax > 0) {
                 const yZero = Math.round(toY(0)) + 0.5;
                 ctx.save();
@@ -1121,29 +1105,38 @@
                 ctx.restore();
             }
 
-            const labelStep = Math.max(1, Math.ceil(series.length / 4));
             ctx.textAlign = 'center';
+            const minLabelGapPx = 76;
+            const maxTicks = Math.max(2, Math.floor(plotW / minLabelGapPx));
+            const labelStep = Math.max(1, Math.ceil((series.length - 1) / maxTicks));
+            let lastDrawnX = -999;
 
             series.forEach((d, idx) => {
-                if (idx % labelStep === 0 || idx === series.length - 1) {
-                    const cx = Math.round(padLeft + idx * stepW + stepW / 2) + 0.5;
-                    ctx.beginPath();
-                    ctx.moveTo(cx, padTop);
-                    ctx.lineTo(cx, H - padBottom);
-                    ctx.stroke();
+                const cx = Math.round(padLeft + idx * stepW + stepW / 2);
+                const isLast = idx === series.length - 1;
+                const shouldTry = (idx % labelStep === 0) || isLast;
 
-                    ctx.fillStyle = '#111827';
-                    ctx.fillText(d.label, cx, H - 11);
+                if (shouldTry) {
+                    const distFromLast = cx - lastDrawnX;
+                    const distFromEnd = (padLeft + plotW) - cx;
+                    if (distFromLast >= 54 && (!isLast || distFromEnd >= -10 || lastDrawnX < 0)) {
+                        ctx.beginPath();
+                        ctx.moveTo(cx + 0.5, padTop);
+                        ctx.lineTo(cx + 0.5, H - padBottom);
+                        ctx.stroke();
+
+                        ctx.fillStyle = '#111827';
+                        ctx.fillText(d.label, cx, H - 11);
+                        lastDrawnX = cx;
+                    }
                 }
             });
             ctx.restore();
 
-            // Jarak antar candle agar hijau & merah terpisah tegas
-            const gapPx = Math.max(3, Math.round(stepW * 0.32));
-            const candleW = Math.max(4, Math.min(13, Math.floor(stepW - gapPx)));
+            const gapPx = Math.max(1.5, Math.round(stepW * 0.28));
+            const candleW = Math.max(2.5, Math.min(13, Math.floor(stepW - gapPx)));
             const barW = candleW;
 
-            // Volume histogram di bagian bawah grafik
             const maxVol = Math.max(...series.map(d => Number(d.volume || 0)), 1);
             const maxVolBarH = plotH * 0.16;
 
@@ -1158,7 +1151,6 @@
                 ctx.fillRect(Math.round(cx - barW / 2), H - padBottom - vh, barW, vh);
             });
 
-            // Candlestick OHLC dengan wick tajam & sudut body membulat halus
             series.forEach((d, idx) => {
                 const cx = Math.round(padLeft + idx * stepW + stepW / 2);
                 const open = Number(d.o || 0);
@@ -1200,7 +1192,6 @@
                 ctx.restore();
             });
 
-            // Garis harga terakhir + Pill indikator di sumbu Y kanan
             const lastCandle = series[series.length - 1];
             const lastClose = Number(lastCandle.c || 0);
             const yLive = Math.round(toY(lastClose)) + 0.5;
@@ -1229,7 +1220,6 @@
             ctx.fillText(formatCompactAxisVal(lastClose), pillX + pillW / 2, pillY + 13.5);
             ctx.restore();
 
-            // Crosshair interaktif saat disentuh / hover
             if (hoverCandleIndex >= 0 && hoverCandleIndex < series.length) {
                 const target = series[hoverCandleIndex];
                 const hx = Math.round(padLeft + hoverCandleIndex * stepW + stepW / 2) + 0.5;
