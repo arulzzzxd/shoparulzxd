@@ -534,7 +534,7 @@ function createFreshMailTransporter() {
 }
 
 // HELPER KIRIM EMAIL NOTIFIKASI NEO-BRUTALISME
-async function sendNotificationEmail(toEmail, title, message, linkUrl = null, existingTransporter = null) {
+async function sendNotificationEmail(toEmail, title, message, linkUrl = null, existingTransporter = null, notifType = 'info', createdAt = new Date()) {
     const transporter = existingTransporter || createFreshMailTransporter();
     if (!transporter || !toEmail || toEmail.endsWith('@telegram.user')) return false;
 
@@ -543,46 +543,123 @@ async function sendNotificationEmail(toEmail, title, message, linkUrl = null, ex
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
 
-    const ctaHtml = linkUrl ? `
-        <div style="margin-top:20px;text-align:center;">
-            <a href="${escapeHtml(linkUrl)}" style="display:inline-block;background-color:#FFDE59;color:#000000;border:3px solid #000000;border-radius:10px;padding:12px 24px;font-weight:900;font-size:13px;text-decoration:none;box-shadow:4px 4px 0px #000000;">
-                LIHAT DETAIL DI ARULZXD STORE →
-            </a>
-        </div>
-    ` : '';
+    const typeUpper = String(notifType || 'info').toUpperCase();
+    let badgeBg = '#00E5FF'; // INFO (neoCyan)
+    if (typeUpper === 'PROMO') badgeBg = '#FFDE59'; // neoYellow
+    else if (typeUpper === 'SISTEM') badgeBg = '#FF79C6'; // neoPink
+    else if (typeUpper === 'TRANSAKSI') badgeBg = '#00E676'; // neoGreen
+
+    const formattedDate = moment(createdAt || new Date())
+        .tz('Asia/Jakarta')
+        .locale('id')
+        .format('DD MMM YYYY, HH:mm') + ' WIB';
+
+    const targetHref = linkUrl || `${BASE_URL}/notifikasi`;
 
     await transporter.sendMail({
         from: MAIL_FROM || SMTP_USER,
         to: toEmail,
-        subject: `🔔 ${title} - ArulzXD Store`,
+        subject: `[${typeUpper}] ${title} - ArulzXD Store`,
         html: `
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F5F2EB;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F4F0EA;font-size:1px;line-height:1px;">
+    ${escapeHtml(title)} — ${escapeHtml(message).slice(0, 110)}
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F4F0EA;">
 <tr>
-<td align="center" style="padding:36px 16px;">
+<td align="center" style="padding:36px 14px;">
+
+    <!-- MAIN CARD CONTAINER (notifikasi.html neo-box style) -->
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-           style="max-width:520px;background-color:#FFFFFF;border:4px solid #000000;border-radius:16px;box-shadow:8px 8px 0px #000000;font-family:'Plus Jakarta Sans','Segoe UI',Arial,sans-serif;">
+           style="max-width:560px;background-color:#FFFFFF;border:3px solid #000000;border-radius:18px;box-shadow:6px 6px 0px #000000;font-family:'Plus Jakarta Sans','Segoe UI',Helvetica,Arial,sans-serif;overflow:hidden;">
+
+        <!-- TOP NAVBAR BAR (Arulz Store) -->
         <tr>
-            <td style="background-color:#FFDE59;border-bottom:4px solid #000000;border-radius:12px 12px 0 0;padding:20px 24px;">
-                <span style="font-size:20px;font-weight:900;color:#000000;">🔔 ArulzXD Store</span>
+            <td style="background-color:#FFDE59;border-bottom:3px solid #000000;padding:18px 24px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td style="font-size:21px;font-weight:900;color:#000000;letter-spacing:-0.4px;">
+                            &#9889; Arulz<span style="display:inline-block;background-color:#000000;color:#FFFFFF;padding:2px 8px;margin-left:4px;border-radius:6px;font-size:18px;">Store</span>
+                        </td>
+                        <td align="right">
+                            <span style="display:inline-block;background-color:#00E5FF;color:#000000;border:2px solid #000000;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:900;letter-spacing:0.5px;">
+                                PUSAT NOTIFIKASI
+                            </span>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
+
+        <!-- HERO SUB-HEADER -->
         <tr>
-            <td style="padding:26px 24px;">
-                <h2 style="margin:0 0 12px 0;color:#000000;font-size:18px;font-weight:900;">${escapeHtml(title)}</h2>
-                <div style="background-color:#F4F0EA;border:3px solid #000000;border-radius:12px;padding:16px;color:#111111;font-size:14px;line-height:1.6;">
-                    ${escapeHtml(message).replace(/\n/g, '<br>')}
-                </div>
-                ${ctaHtml}
+            <td style="background-color:#00E5FF;border-bottom:3px solid #000000;padding:16px 24px;">
+                <p style="margin:0;color:#000000;font-size:15px;font-weight:900;">
+                    &#128276; Pemberitahuan Resmi Akun Anda
+                </p>
+                <p style="margin:4px 0 0 0;color:#000000;font-size:12px;font-weight:700;">
+                    Informasi promo, pembaruan layanan, dan pengumuman resmi dari ArulzXD Store.
+                </p>
             </td>
         </tr>
+
+        <!-- NOTIFICATION CARD BODY -->
         <tr>
-            <td style="border-top:3px solid #000000;background-color:#00E5FF;border-radius:0 0 12px 12px;padding:14px 24px;">
-                <p style="margin:0;color:#000000;font-size:11px;font-weight:700;">
-                    Notifikasi resmi dari ArulzXD Store. Tautkan Telegram di halaman Profil untuk menerima notifikasi instan via Bot Telegram.
+            <td style="padding:24px;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                       style="background-color:#FFFDF2;border:3px solid #000000;border-radius:16px;box-shadow:5px 5px 0px #000000;">
+                    <tr>
+                        <td style="padding:20px;">
+                            <!-- BADGE BARU + KATEGORI + WAKTU -->
+                            <div style="margin-bottom:12px;">
+                                <span style="display:inline-block;background-color:#FF2E4C;color:#FFFFFF;border:2px solid #000000;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:900;margin-right:6px;">
+                                    &#9679; BARU
+                                </span>
+                                <span style="display:inline-block;background-color:${badgeBg};color:#000000;border:2px solid #000000;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:900;margin-right:6px;">
+                                    ${escapeHtml(typeUpper)}
+                                </span>
+                                <span style="display:inline-block;color:#475569;font-family:'Courier New',Courier,monospace;font-size:11px;font-weight:700;">
+                                    ${escapeHtml(formattedDate)}
+                                </span>
+                            </div>
+
+                            <!-- JUDUL NOTIFIKASI -->
+                            <h2 style="margin:0 0 14px 0;color:#000000;font-size:18px;font-weight:900;line-height:1.35;">
+                                ${escapeHtml(title)}
+                            </h2>
+
+                            <!-- KOTAK PESAN UTAMA (bg-neoBg border-2 border-black) -->
+                            <div style="background-color:#F4F0EA;border:2.5px solid #000000;border-radius:12px;padding:15px 16px;color:#000000;font-size:13.5px;font-weight:700;line-height:1.65;">
+                                ${escapeHtml(message).replace(/\n/g, '<br>')}
+                            </div>
+
+                            <!-- ACTION BUTTONS -->
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:18px;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="${escapeHtml(targetHref)}"
+                                           style="display:inline-block;background-color:#00E676;color:#000000;border:3px solid #000000;border-radius:12px;padding:11px 22px;font-weight:900;font-size:12px;text-decoration:none;box-shadow:4px 4px 0px #000000;letter-spacing:0.4px;">
+                                            BUKA PUSAT NOTIFIKASI &#8599;
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+            <td style="border-top:3px solid #000000;background-color:#F4F0EA;padding:16px 24px;">
+                <p style="margin:0;color:#1E293B;font-size:11px;font-weight:700;line-height:1.6;">
+                    Email ini dikirim otomatis oleh sistem <strong>ArulzXD Store</strong>. Ingin menerima notifikasi lebih cepat lewat chat? Tautkan akun Telegram Anda di halaman <a href="${BASE_URL}/profile" style="color:#000000;font-weight:900;text-decoration:underline;">Profil Saya</a>.
                 </p>
             </td>
         </tr>
     </table>
+
 </td>
 </tr>
 </table>`
@@ -635,7 +712,6 @@ async function sendTelegramUserPrivateMessage(chatId, title, message, linkUrl = 
     }
 }
 
-// HELPER DISPATCH NOTIFIKASI PARALEL KE SEMUA EMAIL USER & TELEGRAM USER
 async function dispatchNotificationToUsers(notifDoc) {
     const transporter = createFreshMailTransporter();
     try {
@@ -682,12 +758,20 @@ async function dispatchNotificationToUsers(notifDoc) {
                     );
                 }
 
-                // 2. Kirim ke Email User yang valid
+                // 2. Kirim ke Email User yang valid (dengan badge kategori & tanggal WIB)
                 const cleanEmail = (u.email || '').toLowerCase().trim();
                 if (cleanEmail && cleanEmail.includes('@') && !cleanEmail.endsWith('@telegram.user') && !sentEmails.has(cleanEmail)) {
                     sentEmails.add(cleanEmail);
                     tasks.push(
-                        sendNotificationEmail(cleanEmail, notifDoc.title, notifDoc.message, targetLink, transporter)
+                        sendNotificationEmail(
+                            cleanEmail,
+                            notifDoc.title,
+                            notifDoc.message,
+                            targetLink,
+                            transporter,
+                            notifDoc.type,
+                            notifDoc.createdAt
+                        )
                             .then((ok) => { if (ok) emailSent++; })
                             .catch((e) => console.error(`❌ Gagal kirim email notif ke ${cleanEmail}:`, e.message))
                     );
@@ -883,6 +967,26 @@ Pilih tindakan di bawah ini atau cek melalui Web Admin:
         });
     } catch (err) {
         console.error('❌ Gagal kirim foto bukti deposit ke Telegram:', err.message);
+    }
+}
+
+// Helper verifikasi initData dari Telegram WebApp
+function verifyTelegramWebAppUser(initData) {
+    if (!initData || !TELEGRAM_BOT_TOKEN) return null;
+    try {
+        const params = new URLSearchParams(initData);
+        const hash = params.get('hash');
+        params.delete('hash');
+        const dataCheckString = Array.from(params.entries())
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([k, v]) => `${k}=${v}`)
+            .join('\n');
+        const secretKey = crypto.createHmac('sha256', 'WebAppData').update(TELEGRAM_BOT_TOKEN).digest();
+        const computedHash = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
+        if (computedHash !== hash) return null;
+        return JSON.parse(params.get('user') || 'null');
+    } catch {
+        return null;
     }
 }
 
@@ -4745,6 +4849,10 @@ app.get('/privacy', (req, res) => res.sendFile(path.join(__dirname, 'public', 'p
 app.get('/notifikasi', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'notifikasi.html'));
 });
+app.get('/miniapp', (req, res) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    res.sendFile(path.join(__dirname, 'public', 'miniapp.html'));
+});
 app.get('/profile', checkAuthSession, (req, res) => {
     if (!req.user) {
         return res.redirect('/login');
@@ -5212,7 +5320,7 @@ app.get('/api/admin/notifications', checkAuthSession, checkAdminRole, async (req
 
 app.post('/api/admin/notifications', checkAuthSession, checkAdminRole, async (req, res) => {
     try {
-        const { title, message, type, link, targetEmail } = req.body;
+        const { title, message, type, link, targetEmail, deliveryMode } = req.body;
         if (!title || !title.trim() || !message || !message.trim()) {
             return res.status(400).json({ status: false, message: 'Judul dan isi notifikasi wajib diisi!' });
         }
@@ -5226,6 +5334,15 @@ app.post('/api/admin/notifications', checkAuthSession, checkAdminRole, async (re
             readBy: [],
             createdBy: req.user.username || 'Admin'
         });
+
+        if (deliveryMode === 'web_only') {
+            return res.json({
+                status: true,
+                message: 'Notifikasi berhasil disimpan & ditampilkan di halaman notifikasi website (tanpa broadcast Email/Telegram).',
+                data: newNotif,
+                stats: { totalUsers: 0, emailSent: 0, telegramSent: 0 }
+            });
+        }
 
         const stats = await dispatchNotificationToUsers(newNotif);
 
@@ -5293,6 +5410,40 @@ app.delete('/api/admin/notifications/:id', checkAuthSession, checkAdminRole, asy
         return res.json({ status: true, message: `Notifikasi "${deleted.title}" berhasil dihapus!` });
     } catch (err) {
         return res.status(500).json({ status: false, message: 'Gagal menghapus notifikasi.' });
+    }
+});
+
+app.post('/api/user/telegram-notif-toggle', checkAuthSession, async (req, res) => {
+    try {
+        let userDoc = null;
+        if (req.user) {
+            userDoc = await UserV2.findById(req.user.id || req.user._id);
+        } else {
+            const tgUser = verifyTelegramWebAppUser(req.headers['x-telegram-init-data']);
+            if (tgUser?.id) {
+                userDoc = await UserV2.findOne({
+                    $or: [{ telegramChatId: String(tgUser.id) }, { provider: 'telegram', providerId: String(tgUser.id) }]
+                });
+            }
+        }
+
+        if (!userDoc) {
+            return res.status(401).json({ status: false, message: 'Akun tidak ditemukan atau belum tertaut.' });
+        }
+        if (!userDoc.telegramChatId) {
+            return res.status(400).json({ status: false, message: 'Tautkan akun Telegram terlebih dahulu.' });
+        }
+
+        userDoc.telegramNotifEnabled = Boolean(req.body.enabled);
+        await userDoc.save();
+
+        return res.json({
+            status: true,
+            telegramNotifEnabled: userDoc.telegramNotifEnabled,
+            message: userDoc.telegramNotifEnabled ? 'Notifikasi diaktifkan.' : 'Notifikasi dinonaktifkan.'
+        });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal memperbarui status notifikasi.' });
     }
 });
 
