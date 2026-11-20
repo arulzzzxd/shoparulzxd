@@ -210,6 +210,7 @@ const userSchemaV2 = new mongoose.Schema({
     telegramChatId: { type: String, default: null, index: true },
     telegramUsername: { type: String, default: null },
     telegramLinkedAt: { type: Date, default: null },
+    telegramNotifEnabled: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now }
 });
 
