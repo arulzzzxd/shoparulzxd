@@ -1017,7 +1017,7 @@
             return Array.isArray(full) ? full : [];
         }
 
-        function drawStockChart() {
+                function drawStockChart() {
             const canvas = document.getElementById('tradingCanvas');
             if (!canvas) return;
 
@@ -1033,7 +1033,7 @@
 
             const W = rect.width;
             const H = rect.height;
-            const padLeft = 12;
+            const padLeft = 14;
             const padRight = 68;
             const padTop = 20;
             const padBottom = 32;
@@ -1048,7 +1048,7 @@
                 ctx.fillStyle = '#000000';
                 ctx.font = '800 12px "JetBrains Mono", monospace';
                 ctx.textAlign = 'center';
-                ctx.fillText('Memuat data grafik...', W / 2, H / 2);
+                ctx.fillText('Belum ada transaksi pada periode ini', W / 2, H / 2);
                 return;
             }
 
@@ -1058,18 +1058,23 @@
             let rawMin = Math.min(...allLows);
 
             if (rawMax === rawMin) {
-                rawMin = rawMin - 3000;
-                rawMax = rawMax + 5000;
+                rawMin = Math.max(0, rawMin - 5000);
+                rawMax = rawMax + 10000;
             }
 
-            const rangeSpan = rawMax - rawMin;
-            const yMin = rawMin - rangeSpan * 0.14;
+            const rangeSpan = Math.max(1000, rawMax - rawMin);
+            const yMin = Math.max(0, rawMin - rangeSpan * 0.12);
             const yMax = rawMax + rangeSpan * 0.14;
             const ySpan = Math.max(1, yMax - yMin);
 
             const toY = (val) => padTop + plotH - ((val - yMin) / ySpan) * plotH;
 
-            const stepW = plotW / series.length;
+            // Slot lebar merata per candle (maksimal 48px jika transaksi masih sedikit agar candle tetap proporsional)
+            const maxSlotW = 48;
+            const stepW = Math.min(maxSlotW, plotW / series.length);
+            const totalCandlesW = stepW * series.length;
+            const startX = padLeft + Math.max(0, (plotW - totalCandlesW) / 2);
+
             ctx.save();
             ctx.setLineDash([3, 3]);
             ctx.lineWidth = 1;
@@ -1092,49 +1097,44 @@
                 ctx.fillText(formatCompactAxisVal(val), W - padRight + 8, y + 3.5);
             }
 
-            if (yMin < 0 && yMax > 0) {
-                const yZero = Math.round(toY(0)) + 0.5;
-                ctx.save();
-                ctx.setLineDash([5, 4]);
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
-                ctx.lineWidth = 1.2;
-                ctx.beginPath();
-                ctx.moveTo(padLeft, yZero);
-                ctx.lineTo(W - padRight, yZero);
-                ctx.stroke();
-                ctx.restore();
-            }
-
-            ctx.textAlign = 'center';
-            const minLabelGapPx = 76;
-            const maxTicks = Math.max(2, Math.floor(plotW / minLabelGapPx));
+            // Label sumbu X anti-tumpuk dan anti-terpotong di tepi layar
+            const minLabelGapPx = 88;
+            const maxTicks = Math.max(2, Math.floor(totalCandlesW / minLabelGapPx));
             const labelStep = Math.max(1, Math.ceil((series.length - 1) / maxTicks));
             let lastDrawnX = -999;
 
             series.forEach((d, idx) => {
-                const cx = Math.round(padLeft + idx * stepW + stepW / 2);
+                const cx = Math.round(startX + idx * stepW + stepW / 2);
+                const isFirst = idx === 0;
                 const isLast = idx === series.length - 1;
-                const shouldTry = (idx % labelStep === 0) || isLast;
+                const shouldTry = isFirst || isLast || (idx % labelStep === 0);
 
                 if (shouldTry) {
                     const distFromLast = cx - lastDrawnX;
-                    const distFromEnd = (padLeft + plotW) - cx;
-                    if (distFromLast >= 54 && (!isLast || distFromEnd >= -10 || lastDrawnX < 0)) {
+                    if (isFirst || distFromLast >= 74) {
                         ctx.beginPath();
                         ctx.moveTo(cx + 0.5, padTop);
                         ctx.lineTo(cx + 0.5, H - padBottom);
                         ctx.stroke();
 
                         ctx.fillStyle = '#111827';
-                        ctx.fillText(d.label, cx, H - 11);
+                        if (cx < padLeft + 36) {
+                            ctx.textAlign = 'left';
+                            ctx.fillText(d.label, padLeft, H - 11);
+                        } else if (cx > W - padRight - 36) {
+                            ctx.textAlign = 'right';
+                            ctx.fillText(d.label, W - padRight, H - 11);
+                        } else {
+                            ctx.textAlign = 'center';
+                            ctx.fillText(d.label, cx, H - 11);
+                        }
                         lastDrawnX = cx;
                     }
                 }
             });
             ctx.restore();
 
-            const gapPx = Math.max(1.5, Math.round(stepW * 0.28));
-            const candleW = Math.max(2.5, Math.min(13, Math.floor(stepW - gapPx)));
+            const candleW = Math.max(6, Math.min(20, Math.floor(stepW * 0.62)));
             const barW = candleW;
 
             const maxVol = Math.max(...series.map(d => Number(d.volume || 0)), 1);
@@ -1143,7 +1143,7 @@
             series.forEach((d, idx) => {
                 const vol = Number(d.volume || 0);
                 if (vol <= 0) return;
-                const cx = Math.round(padLeft + idx * stepW + stepW / 2);
+                const cx = Math.round(startX + idx * stepW + stepW / 2);
                 const vh = Math.max(4, (vol / maxVol) * maxVolBarH);
                 const isBull = Number(d.c) >= Number(d.o);
 
@@ -1152,7 +1152,7 @@
             });
 
             series.forEach((d, idx) => {
-                const cx = Math.round(padLeft + idx * stepW + stepW / 2);
+                const cx = Math.round(startX + idx * stepW + stepW / 2);
                 const open = Number(d.o || 0);
                 const close = Number(d.c || 0);
                 const high = Number(d.h || 0);
@@ -1168,7 +1168,7 @@
 
                 ctx.save();
                 ctx.strokeStyle = color;
-                ctx.lineWidth = 1.4;
+                ctx.lineWidth = 1.8;
                 ctx.beginPath();
                 ctx.moveTo(cx + 0.5, yHigh);
                 ctx.lineTo(cx + 0.5, yLow);
@@ -1176,34 +1176,32 @@
 
                 const rawBodyH = Math.abs(yClose - yOpen);
                 const leftBody = Math.round(cx - candleW / 2);
+                const visibleBodyH = Math.max(5, rawBodyH);
+                const topBody = rawBodyH < 5
+                    ? (Math.min(yOpen, yClose) - (5 - rawBodyH) / 2)
+                    : Math.min(yOpen, yClose);
 
-                if (close === open && rawBodyH < 2) {
-                    ctx.fillStyle = color;
-                    ctx.fillRect(leftBody, Math.round(yClose) - 1, candleW, 2);
-                } else {
-                    const visibleBodyH = Math.max(4.5, rawBodyH);
-                    const topBody = rawBodyH < 4.5
-                        ? (Math.min(yOpen, yClose) - (4.5 - rawBodyH) / 2)
-                        : Math.min(yOpen, yClose);
-                    ctx.fillStyle = color;
-                    drawRoundRect(ctx, leftBody, topBody, candleW, visibleBodyH, Math.min(2.5, candleW / 2));
-                    ctx.fill();
-                }
+                ctx.fillStyle = color;
+                drawRoundRect(ctx, leftBody, topBody, candleW, visibleBodyH, Math.min(3, candleW / 2));
+                ctx.fill();
                 ctx.restore();
             });
 
+            // Garis harga terakhir + Pill indikator kanan
             const lastCandle = series[series.length - 1];
             const lastClose = Number(lastCandle.c || 0);
             const yLive = Math.round(toY(lastClose)) + 0.5;
-            const liveLineColor = lastClose < 0 ? '#F23645' : '#3B5BDB';
+            const liveLineColor = '#3B5BDB';
 
             ctx.save();
+            ctx.setLineDash([4, 4]);
             ctx.strokeStyle = liveLineColor;
             ctx.lineWidth = 1.2;
             ctx.beginPath();
             ctx.moveTo(padLeft, yLive);
             ctx.lineTo(W - padRight, yLive);
             ctx.stroke();
+            ctx.setLineDash([]);
 
             const pillX = W - padRight + 4;
             const pillW = padRight - 8;
@@ -1220,9 +1218,10 @@
             ctx.fillText(formatCompactAxisVal(lastClose), pillX + pillW / 2, pillY + 13.5);
             ctx.restore();
 
+            // Crosshair saat disentuh / hover
             if (hoverCandleIndex >= 0 && hoverCandleIndex < series.length) {
                 const target = series[hoverCandleIndex];
-                const hx = Math.round(padLeft + hoverCandleIndex * stepW + stepW / 2) + 0.5;
+                const hx = Math.round(startX + hoverCandleIndex * stepW + stepW / 2) + 0.5;
                 const hy = Math.round(toY(Number(target.c || 0))) + 0.5;
 
                 ctx.save();
@@ -1246,7 +1245,7 @@
                 ctx.arc(hx, hy, 4, 0, Math.PI * 2);
                 ctx.fill();
 
-                const lblW = 72;
+                const lblW = 84;
                 const lblX = Math.max(padLeft, Math.min(W - padRight - lblW, hx - lblW / 2));
                 ctx.fillStyle = '#000000';
                 drawRoundRect(ctx, lblX, H - padBottom + 4, lblW, 18, 4);
@@ -1271,16 +1270,21 @@
             const wrapper = document.getElementById('tradingChartWrapper');
             if (!canvas) return;
 
-            const handleMove = (clientX) => {
+        const handleMove = (clientX) => {
                 const rect = canvas.getBoundingClientRect();
-                const padLeft = 12;
+                const padLeft = 14;
                 const padRight = 68;
                 const plotW = rect.width - padLeft - padRight;
                 const series = getVisibleCandles();
                 if (!series.length || plotW <= 0) return;
 
-                const relX = clientX - rect.left - padLeft;
-                const idx = Math.max(0, Math.min(series.length - 1, Math.floor((relX / plotW) * series.length)));
+                const maxSlotW = 48;
+                const stepW = Math.min(maxSlotW, plotW / series.length);
+                const totalCandlesW = stepW * series.length;
+                const startX = padLeft + Math.max(0, (plotW - totalCandlesW) / 2);
+
+                const relX = clientX - rect.left - startX;
+                const idx = Math.max(0, Math.min(series.length - 1, Math.floor(relX / stepW)));
                 if (hoverCandleIndex !== idx) {
                     hoverCandleIndex = idx;
                     drawStockChart();
