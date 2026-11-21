@@ -211,6 +211,7 @@ const userSchemaV2 = new mongoose.Schema({
     telegramUsername: { type: String, default: null },
     telegramLinkedAt: { type: Date, default: null },
     telegramNotifEnabled: { type: Boolean, default: true },
+    emailNotifEnabled: { type: Boolean, default: true },
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -725,8 +726,8 @@ async function dispatchNotificationToUsers(notifDoc) {
             query = targets.length > 1 ? { email: { $in: targets } } : { email: targets[0] };
         }
 
-        const users = await UserV2.find(query)
-            .select('email username telegramChatId provider providerId')
+            const users = await UserV2.find(query)
+            .select('email username telegramChatId telegramNotifEnabled emailNotifEnabled provider providerId')
             .lean();
 
         if (!users.length) return { totalUsers: 0, telegramSent: 0, emailSent: 0 };
@@ -747,11 +748,11 @@ async function dispatchNotificationToUsers(notifDoc) {
             await Promise.allSettled(batch.map(async (u) => {
                 const tasks = [];
 
-                // 1. Kirim ke Telegram User (baik telegramChatId tertaut maupun providerId login Telegram)
+                // 1. Kirim ke Telegram User jika tertaut & notifikasi Telegram ON
                 const tgChatId = (u.telegramChatId && String(u.telegramChatId).trim())
                     || (u.provider === 'telegram' && u.providerId ? String(u.providerId).trim() : null);
 
-                if (tgChatId && !sentChatIds.has(tgChatId)) {
+                if (tgChatId && u.telegramNotifEnabled !== false && !sentChatIds.has(tgChatId)) {
                     sentChatIds.add(tgChatId);
                     tasks.push(
                         sendTelegramUserPrivateMessage(tgChatId, notifDoc.title, notifDoc.message, targetLink)
@@ -759,9 +760,9 @@ async function dispatchNotificationToUsers(notifDoc) {
                     );
                 }
 
-                // 2. Kirim ke Email User yang valid (dengan badge kategori & tanggal WIB)
+                // 2. Kirim ke Email User jika valid & notifikasi Email ON
                 const cleanEmail = (u.email || '').toLowerCase().trim();
-                if (cleanEmail && cleanEmail.includes('@') && !cleanEmail.endsWith('@telegram.user') && !sentEmails.has(cleanEmail)) {
+                if (cleanEmail && cleanEmail.includes('@') && !cleanEmail.endsWith('@telegram.user') && u.emailNotifEnabled !== false && !sentEmails.has(cleanEmail)) {
                     sentEmails.add(cleanEmail);
                     tasks.push(
                         sendNotificationEmail(
@@ -5448,6 +5449,48 @@ app.post('/api/user/telegram-notif-toggle', checkAuthSession, async (req, res) =
     }
 });
 
+app.post('/api/user/notif-preferences', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
+        }
+
+        const userDoc = await UserV2.findById(req.user.id || req.user._id);
+        if (!userDoc) {
+            return res.status(404).json({ status: false, message: 'Akun tidak ditemukan.' });
+        }
+
+        const messages = [];
+
+        if (typeof req.body.telegramNotifEnabled === 'boolean') {
+            if (req.body.telegramNotifEnabled && !userDoc.telegramChatId) {
+                return res.status(400).json({ status: false, message: 'Tautkan akun Telegram terlebih dahulu.' });
+            }
+            userDoc.telegramNotifEnabled = req.body.telegramNotifEnabled;
+            messages.push(`Notifikasi Telegram ${userDoc.telegramNotifEnabled ? 'diaktifkan (ON)' : 'dinonaktifkan (OFF)'}.`);
+        }
+
+        if (typeof req.body.emailNotifEnabled === 'boolean') {
+            if (req.body.emailNotifEnabled && (!userDoc.email || userDoc.email.endsWith('@telegram.user'))) {
+                return res.status(400).json({ status: false, message: 'Akun ini tidak memiliki email aktif.' });
+            }
+            userDoc.emailNotifEnabled = req.body.emailNotifEnabled;
+            messages.push(`Notifikasi Email ${userDoc.emailNotifEnabled ? 'diaktifkan (ON)' : 'dinonaktifkan (OFF)'}.`);
+        }
+
+        await userDoc.save();
+
+        return res.json({
+            status: true,
+            telegramNotifEnabled: userDoc.telegramNotifEnabled !== false,
+            emailNotifEnabled: userDoc.emailNotifEnabled !== false,
+            message: messages.join(' ') || 'Pengaturan notifikasi diperbarui.'
+        });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal memperbarui pengaturan notifikasi.' });
+    }
+});
+
 app.get('/api/user-status', async (req, res) => {
     if (req.user) {
         try {
@@ -5522,6 +5565,8 @@ app.get('/api/user-status', async (req, res) => {
                     telegramLinked: Boolean(activeUser.telegramChatId),
                     telegramUsername: activeUser.telegramUsername || null,
                     telegramChatId: activeUser.telegramChatId || null,
+                    telegramNotifEnabled: activeUser.telegramNotifEnabled !== false,
+                    emailNotifEnabled: activeUser.emailNotifEnabled !== false,
                     createdAt: activeUser.createdAt
                 }
             });
