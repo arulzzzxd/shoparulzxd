@@ -22,14 +22,14 @@
     <meta name="twitter:description" content="Kelola informasi akun, cek saldo, riwayat transaksi, dan dapatkan bonus referral di ArulzXD Store.">
     <meta name="twitter:image" content="https://cdn.larasxd.my.id/files/jz6nDF8g.jpg">
 
-    <!-- Perbaikan Favicon & Apple Touch Icon -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
     <link rel="shortcut icon" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
     <link rel="apple-touch-icon" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -38,48 +38,103 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        cyber: ['Space Grotesk', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        cyber: ['"Space Grotesk"', 'sans-serif'],
                     },
                     colors: {
-                        neoYellow: '#FFDE59',
-                        neoCyan: '#00E5FF',
-                        neoPink: '#FF79C6',
-                        neoGreen: '#00E676',
-                        neoBg: '#F4F0EA',
-                        neoCard: '#FFFFFF'
+                        neoBg: '#FAF9F2',
+                        neoYellow: '#FFDF4F',
+                        neoCyan: '#1AE5FF',
+                        neoGreen: '#2CE875',
+                        neoPink: '#FF4D6D',
+                        neoPurple: '#D896FF',
                     }
                 }
             }
         }
     </script>
     <style>
-        body { background-color: #F4F0EA; color: #000000; overflow-x: hidden; }
-        
-        .neo-box {
-            background-color: #FFFFFF;
-            border: 3px solid #000000;
-            box-shadow: 5px 5px 0px #000000;
+        body {
+            background-color: #FAF9F2;
+            color: #000000;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            background-image: radial-gradient(#00000018 1px, transparent 1px);
+            background-size: 16px 16px;
         }
 
-        .neo-btn {
+        /* Neo-Brutalisme Persegi Panjang Tegas (Sama dengan deposit.html) */
+        .neo-rect {
+            border: 3px solid #000000;
+            box-shadow: 6px 6px 0px #000000;
+            border-radius: 0px;
+            transition: transform 0.14s ease, box-shadow 0.14s ease;
+        }
+
+        .neo-btn-rect {
             border: 3px solid #000000;
             box-shadow: 4px 4px 0px #000000;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            border-radius: 0px;
+            transition: all 0.12s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
         }
-        .neo-btn:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px #000000;
+        .neo-btn-rect:hover {
+            transform: translate(-1.5px, -1.5px);
+            box-shadow: 5.5px 5.5px 0px #000000;
         }
-        .neo-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px #000000;
+        .neo-btn-rect:active {
+            transform: translate(3px, 3px);
+            box-shadow: 1px 1px 0px #000000;
+        }
+        .neo-btn-rect:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Neo-Brutalist Toggle Switch */
+        .neo-switch {
+            position: relative;
+            width: 64px;
+            height: 32px;
+            background-color: #E2E8F0;
+            border: 3px solid #000000;
+            box-shadow: 3px 3px 0px #000000;
+            cursor: pointer;
+            transition: background-color 0.18s ease;
+            flex-shrink: 0;
+        }
+        .neo-switch.active {
+            background-color: #2CE875;
+        }
+        .neo-switch-knob {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background-color: #FFFFFF;
+            border: 2.5px solid #000000;
+            transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 900;
+        }
+        .neo-switch.active .neo-switch-knob {
+            transform: translateX(32px);
+            background-color: #FFDF4F;
+        }
+        .neo-switch:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
         }
 
         .swal2-popup.cyber-swal {
-            background: #FFFFFF !important;
+            background: #FAF9F2 !important;
             border: 3px solid #000000 !important;
-            border-radius: 20px !important;
+            border-radius: 0px !important;
             color: #000000 !important;
             box-shadow: 6px 6px 0px #000000 !important;
             font-family: 'Plus Jakarta Sans', sans-serif !important;
@@ -180,7 +235,6 @@
             font-weight: 900;
             transform: translateY(3px);
         }
-        /* Penanda Merah + Angka Jumlah Notifikasi Belum Dibaca */
         .nav-notif-badge {
             position: absolute;
             top: 8px;
@@ -209,266 +263,319 @@
         }
     </style>
 </head>
-<body class="font-sans antialiased text-black min-h-screen pb-44">
+<body class="pb-36 antialiased selection:bg-neoYellow selection:text-black min-h-screen">
 
     <!-- FLOATING LIVE CHAT WIDGET POP-UP -->
     <div id="liveChatWidgetContainer">
-        <div id="floatingChatWindow" class="fixed bottom-36 right-4 sm:right-6 z-[99999] hidden w-[calc(100vw-2rem)] max-w-[360px] h-[420px] max-h-[calc(100vh-170px)] bg-white border-[3px] border-black rounded-2xl shadow-[6px_6px_0px_#000] overflow-hidden flex flex-col transition-all duration-300">
-            
-            <!-- HEADER WINDOW -->
-            <div class="bg-neoYellow p-3 border-b-3 border-black flex items-center justify-between shrink-0">
+        <div id="floatingChatWindow" class="fixed bottom-36 right-4 sm:right-6 z-[99999] hidden w-[calc(100vw-2rem)] max-w-[360px] h-[420px] max-h-[calc(100vh-170px)] bg-white border-[3px] border-black rounded-none shadow-[6px_6px_0px_#000] overflow-hidden flex flex-col transition-all duration-300">
+            <div class="bg-neoYellow p-3 border-b-[3px] border-black flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-2.5">
                     <div class="relative">
-                        <div class="w-8 h-8 rounded-full bg-white text-black border-2 border-black flex items-center justify-center font-bold text-xs shadow-[2px_2px_0px_#000]">
+                        <div class="w-8 h-8 bg-white text-black border-2 border-black flex items-center justify-center font-bold text-xs shadow-[2px_2px_0px_#000]">
                             <i class="fa-solid fa-headset"></i>
                         </div>
-                        <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-neoGreen border border-black rounded-full"></span>
+                        <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-neoGreen border border-black"></span>
                     </div>
                     <div>
-                        <h3 class="text-xs font-black font-cyber text-black">Customer Support</h3>
+                        <h3 class="text-xs font-black font-cyber text-black uppercase">Customer Support</h3>
                         <p class="text-[9px] text-black font-mono font-bold flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-neoGreen animate-pulse"></span> Online 24/7
+                            <span class="w-1.5 h-1.5 bg-neoGreen border border-black animate-pulse"></span> ONLINE 24/7
                         </p>
                     </div>
                 </div>
-                <button onclick="toggleChatWidget()" class="text-black font-black text-base transition p-1 hover:scale-110">
+                <button onclick="toggleChatWidget()" class="w-7 h-7 bg-white border-2 border-black text-black font-black text-xs flex items-center justify-center shadow-[2px_2px_0px_#000]">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <!-- AREA CHAT MESSAGES -->
             <div id="widgetChatMessages" class="flex-1 p-3 overflow-y-auto space-y-3 bg-neoBg scroll-smooth">
                 <div class="text-center text-[11px] text-slate-600 font-mono my-2 animate-pulse font-bold">Memuat pesan...</div>
             </div>
 
-            <!-- FORM KIRIM PESAN -->
-            <form id="widgetChatForm" onsubmit="sendWidgetMessage(event)" class="p-2.5 bg-white border-t-3 border-black flex items-center gap-2 shrink-0">
+            <form id="widgetChatForm" onsubmit="sendWidgetMessage(event)" class="p-2.5 bg-white border-t-[3px] border-black flex items-center gap-2 shrink-0">
                 <input type="text" id="widgetChatInput" required placeholder="Tuliskan pesan Anda..." 
-                       class="flex-1 bg-neoBg border-2 border-black rounded-xl px-3 py-2 text-xs text-black font-bold placeholder-slate-500 focus:outline-none">
-                <button type="submit" class="neo-btn w-9 h-9 rounded-xl bg-neoYellow text-black flex items-center justify-center shrink-0 font-black">
+                       class="flex-1 bg-neoBg border-[2.5px] border-black rounded-none px-3 py-2 text-xs text-black font-bold placeholder-slate-500 focus:outline-none focus:bg-white">
+                <button type="submit" class="neo-btn-rect w-9 h-9 bg-neoYellow text-black flex items-center justify-center shrink-0 font-black">
                     <i class="fa-solid fa-paper-plane text-xs"></i>
                 </button>
             </form>
-
         </div>
     </div>
 
-    <!-- TOP NAVBAR -->
-    <nav class="sticky top-0 z-40 bg-neoYellow border-b-3 border-black shadow-[0_4px_0_#000]">
+    <!-- TOP HEADER (IDENTIK DENGAN DEPOSIT.HTML) -->
+    <header class="sticky top-0 z-40 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="/store" class="text-2xl font-black font-cyber tracking-tight text-black">
-                Arulz<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">Store</span>
+            <a href="/" class="flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-black text-xl"></i>
+                <span class="font-cyber font-extrabold text-xl tracking-tight text-black">
+                    Arulz <span class="bg-black text-white px-2 py-0.5 rounded-md">Store</span>
+                </span>
             </a>
-            <a href="/auth/logout" onclick="handleUserLogout()" class="neo-btn text-xs bg-neoPink text-black font-cyber font-black px-4 py-2 rounded-xl flex items-center gap-2 uppercase tracking-wider">
+            <a href="/auth/logout" onclick="handleUserLogout()" class="neo-btn-rect text-xs bg-neoPink text-white font-cyber font-extrabold px-3.5 py-2 flex items-center gap-2 uppercase tracking-wider">
                 <i class="fa-solid fa-right-from-bracket text-sm"></i> Keluar
             </a>
         </div>
-    </nav>
+    </header>
 
-    <!-- MAIN CONTAINER -->
+    <!-- MAIN CONTAINER FULLSCREEN DESKTOP (MAX-W-6XL SEPERTI DEPOSIT.HTML) -->
     <main class="max-w-6xl mx-auto px-4 py-6 w-full space-y-6">
 
-        <!-- PROFILE CARD (FULL BANNER BACKGROUND DALAM KOTAK LAMA) -->
-        <div class="neo-box rounded-2xl p-6 bg-white text-center space-y-4 relative overflow-hidden">
-            
-            <!-- BACKGROUND BANNER (MP4 / GIF / GAMBAR / GRADIENT) -->
+        <!-- PROFILE BANNER CARD (NEO-RECT TEGAS) -->
+        <section class="neo-rect bg-white p-6 text-center space-y-4 relative overflow-hidden">
+            <!-- BACKGROUND BANNER (MP4 / GIF / GAMBAR) -->
             <div id="bannerBgContainer" class="absolute inset-0 w-full h-full z-0">
                 <div class="w-full h-full bg-white"></div>
             </div>
 
-            <!-- BUTTON UBAH BANNER (POJOK KANAN ATAS KOTAK) -->
-            <button onclick="openBannerModal()" title="Ubah Banner Profil" class="neo-btn absolute top-3 right-3 bg-white text-black text-[11px] font-cyber font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-[2px_2px_0px_#000] hover:scale-105 z-20">
+            <!-- TOMBOL UBAH BANNER -->
+            <button onclick="openBannerModal()" title="Ubah Banner Profil" class="neo-btn-rect absolute top-3 right-3 bg-neoYellow text-black text-[11px] font-cyber font-extrabold px-3 py-1.5 flex items-center gap-1.5 uppercase z-20">
                 <i class="fa-solid fa-image"></i> Ubah Banner
             </button>
 
-            <!-- ISI KONTEN PROFIL (DI ATAS BANNER) -->
-            <div class="relative z-10 space-y-4">
+            <!-- KONTEN AVATAR & IDENTITAS -->
+            <div class="relative z-10 space-y-3 pt-2">
                 <div class="relative w-24 h-24 mx-auto">
-                    <img id="profileAvatar" src="https://arulz-xd.my.id/files/X1F0Cn.png" class="w-24 h-24 rounded-full object-cover border-3 border-black shadow-[4px_4px_0px_#000] bg-white">
-                    <label for="avatarInput" title="Ganti Avatar" class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-neoYellow border-2 border-black text-black flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#000] hover:scale-110 transition z-10">
+                    <img id="profileAvatar" src="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png" class="w-24 h-24 rounded-full object-cover border-[3px] border-black shadow-[4px_4px_0px_#000] bg-white">
+                    <label for="avatarInput" title="Ganti Avatar" class="absolute bottom-0 right-0 w-8 h-8 bg-neoYellow border-2 border-black text-black flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#000] hover:scale-110 transition z-10">
                         <i class="fa-solid fa-camera text-xs"></i>
                     </label>
                     <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="uploadAvatar(this)">
                 </div>
 
-                <div class="space-y-1">
+                <div class="space-y-1.5">
                     <div class="flex items-center justify-center gap-1.5">
-                        <h2 id="profileUsername" class="text-xl font-black font-cyber text-black bg-white/80 backdrop-blur-md px-3 py-0.5 rounded-xl border-2 border-black inline-block shadow-[2px_2px_0px_#000]">Loading...</h2>
-                        <button onclick="editUsernameModal()" title="Edit Username" class="text-black hover:text-slate-700 text-xs ml-1 bg-white p-1.5 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000]">
+                        <h1 id="profileUsername" class="text-xl font-black font-cyber text-black bg-white/90 px-3.5 py-1 border-[2.5px] border-black inline-block shadow-[3px_3px_0px_#000]">Loading...</h1>
+                        <button onclick="editUsernameModal()" title="Edit Username" class="neo-btn-rect text-black text-xs bg-neoCyan p-2">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
                     </div>
-                    <div class="pt-1">
-                        <span id="profileEmail" class="text-xs text-black font-mono font-bold bg-white/80 backdrop-blur-md px-2.5 py-0.5 rounded-lg border border-black inline-block">-</span>
+                    <div>
+                        <span id="profileEmail" class="text-xs text-black font-mono font-extrabold bg-white/90 px-2.5 py-0.5 border-2 border-black inline-block">-</span>
                     </div>
-                    <div class="pt-0.5">
-                        <span id="profileJoined" class="text-[11px] font-bold font-mono text-black bg-white/80 backdrop-blur-md px-2.5 py-0.5 rounded-lg border border-black inline-block">Terdaftar sejak: -</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- WIDGET SALDO TERPISAH -->
-        <div class="neo-box rounded-2xl p-6 bg-neoCyan relative overflow-hidden">
-            <div class="flex items-center justify-between">
-                <div>
-                    <span class="text-[10px] font-black font-cyber uppercase tracking-wider block text-black">Saldo Akun Anda</span>
-                    <h3 id="profileSaldo" class="text-2xl sm:text-3xl font-black font-cyber text-black mt-0.5">Rp 0</h3>
-                </div>
-                <a href="/deposit" class="neo-btn bg-neoYellow text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 uppercase tracking-wider">
-                    <i class="fa-solid fa-plus-circle"></i> Top Up
-                </a>
-            </div>
-        </div>
-
-        <!-- WIDGET STATISTIK TOTAL DEPOSIT & TOTAL BELANJA -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="neo-box p-4 rounded-2xl bg-neoGreen relative overflow-hidden">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-[10px] font-black font-cyber uppercase tracking-wider">Total Deposit</span>
-                    <i class="fa-solid fa-circle-arrow-down text-black text-sm"></i>
-                </div>
-                <h4 id="profileTotalDeposit" class="text-lg font-black font-cyber text-black">Rp 0</h4>
-                <p class="text-[9px] text-slate-800 font-mono font-bold mt-1">Akumulasi Depo Berhasil</p>
-            </div>
-
-            <div class="neo-box p-4 rounded-2xl bg-neoPink relative overflow-hidden">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-[10px] font-black font-cyber uppercase tracking-wider">Total Belanja</span>
-                    <i class="fa-solid fa-bag-shopping text-black text-sm"></i>
-                </div>
-                <h4 id="profileTotalBelanja" class="text-lg font-black font-cyber text-black">Rp 0</h4>
-                <p class="text-[9px] text-slate-800 font-mono font-bold mt-1">Akumulasi Belanja Produk</p>
-            </div>
-        </div>
-
-        <!-- WIDGET INFORMASI AKUN -->
-        <div class="neo-box rounded-2xl p-5 bg-white space-y-4">
-            <div class="flex items-center gap-2 pb-2 border-b-3 border-black">
-                <i class="fa-regular fa-user text-black text-base"></i>
-                <h3 class="text-xs font-black font-cyber text-black uppercase tracking-wider">Informasi Akun</h3>
-            </div>
-
-            <div class="space-y-3.5 text-xs font-bold">
-                <div class="flex items-center justify-between">
-                    <span class="text-slate-600">Nama</span>
-                    <span id="infoNama" class="font-black text-black">-</span>
-                </div>
-                <div class="border-b-2 border-black/20"></div>
-
-                <div class="flex items-center justify-between">
-                    <span class="text-slate-600">Email</span>
-                    <div class="text-right space-y-1">
-                        <div class="flex items-center justify-end gap-2">
-                            <span id="infoEmail" class="font-mono text-black">-</span>
-                            <button onclick="toggleEmailVisibility()" title="Tampilkan/Sembunyikan Email" class="text-black transition text-xs">
-                                <i id="toggleEmailIcon" class="fa-solid fa-eye-slash"></i>
-                            </button>
-                        </div>
-
-                        <div id="emailVerifiedBadge" class="hidden flex justify-end">
-                            <span class="inline-flex items-center gap-1.5 text-[11px] bg-neoGreen text-black border border-black px-2.5 py-0.5 rounded-full font-black">
-                                <i class="fa-solid fa-circle-check"></i> Terverifikasi
-                            </span>
-                        </div>
+                    <div>
+                        <span id="profileJoined" class="text-[11px] font-extrabold font-mono text-black bg-neoYellow px-2.5 py-0.5 border-2 border-black inline-block">Terdaftar sejak: -</span>
                     </div>
                 </div>
-                <div class="border-b-2 border-black/20"></div>
-
-                <div class="flex items-center justify-between">
-                    <span class="text-slate-600">Metode Login</span>
-                    <span id="infoLoginMethod" class="font-black text-black">Google OAuth</span>
-                </div>
-                <div class="border-b-2 border-black/20"></div>
-
-                <div class="flex items-center justify-between">
-                    <span class="text-slate-600">Status Akun</span>
-                    <span id="infoStatusAkun" class="text-[10px] font-black bg-neoGreen text-black border border-black px-2.5 py-0.5 rounded-md uppercase tracking-wider">
-                        AKTIF
-                    </span>
-                </div>
             </div>
-        </div>
+        </section>
 
-        <!-- WIDGET TAUTKAN TELEGRAM UNTUK NOTIFIKASI BOT -->
-        <div class="neo-box rounded-2xl p-5 bg-white space-y-4">
-            <div class="flex items-center justify-between pb-2 border-b-3 border-black">
-                <div class="flex items-center gap-2">
-                    <i class="fa-brands fa-telegram text-black text-lg"></i>
-                    <h3 class="text-xs font-black font-cyber text-black uppercase tracking-wider">Notifikasi Telegram Bot</h3>
-                </div>
-                <span id="tgLinkStatusBadge" class="text-[10px] font-black font-cyber bg-neoYellow text-black border-2 border-black px-2.5 py-0.5 rounded-md uppercase">
-                    BELUM TERTAUT
-                </span>
-            </div>
-
-            <p class="text-xs font-bold text-slate-700 leading-relaxed">
-                Tautkan akun Telegram Anda untuk menerima notifikasi langsung lewat <strong>Private Chat Bot Telegram</strong>. Jika belum ditautkan, notifikasi akan dikirimkan secara otomatis ke <strong>Email</strong> Anda.
-            </p>
-
-            <!-- TAMPILAN JIKA BELUM TERTAUT -->
-            <div id="tgUnlinkedContainer" class="space-y-3">
-                <div class="flex flex-col sm:flex-row gap-2">
-                    <button type="button" id="btnLinkTelegram" onclick="startTelegramLink()" class="neo-btn flex-1 bg-[#229ED9] text-white px-4 py-3 rounded-xl text-xs font-black font-cyber uppercase flex items-center justify-center gap-2">
-                        <i class="fa-brands fa-telegram text-lg"></i> Tautkan Bot Telegram
-                    </button>
-                    <a id="telegramBotDirectLink" href="#" target="_blank" rel="noopener" class="neo-btn bg-white text-black px-4 py-3 rounded-xl text-xs font-black font-cyber uppercase flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Bot
+        <!-- BARIS STATISTIK SALDO, TOTAL DEPOSIT, TOTAL BELANJA (SEJAJAR 3 KOLOM DESKTOP) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <!-- SALDO AKUN -->
+            <div class="neo-rect bg-neoCyan p-5 relative overflow-hidden flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-2">
+                    <div>
+                        <span class="bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase tracking-wider">SALDO AKTIF</span>
+                        <h2 id="profileSaldo" class="text-2xl sm:text-3xl font-cyber font-extrabold text-black mt-2">Rp 0</h2>
+                    </div>
+                    <a href="/deposit" class="neo-btn-rect bg-neoYellow text-black font-cyber font-extrabold px-3.5 py-2.5 text-xs flex items-center gap-1.5 uppercase">
+                        <i class="fa-solid fa-plus"></i> Top Up
                     </a>
                 </div>
-                <p id="telegramLinkHelp" class="text-[11px] font-bold text-slate-600 text-center">Klik tautkan, lalu tekan Start di Telegram. Proses ini tetap berlaku meskipun Anda login menggunakan Google/GitHub.</p>
-                <div class="bg-neoBg border-2 border-black rounded-xl p-3 text-[11px] font-bold text-slate-700 space-y-1">
-                    <p><i class="fa-solid fa-circle-info text-black mr-1"></i> Pastikan Anda sudah pernah menekan <strong>/start</strong> pada Bot Telegram kami agar bot dapat mengirimkan notifikasi melalui private chat.</p>
+            </div>
+
+            <!-- TOTAL DEPOSIT -->
+            <div class="neo-rect bg-neoGreen p-5 relative overflow-hidden flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-black font-cyber uppercase tracking-wider text-black">Total Deposit</span>
+                    <div class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000]">
+                        <i class="fa-solid fa-circle-arrow-down text-black text-sm"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <h3 id="profileTotalDeposit" class="text-2xl font-cyber font-extrabold text-black">Rp 0</h3>
+                    <p class="text-[10px] text-black font-mono font-bold mt-0.5">Akumulasi Depo Berhasil</p>
                 </div>
             </div>
 
-            <!-- TAMPILAN JIKA SUDAH TERTAUT -->
-            <div id="tgLinkedContainer" class="hidden bg-neoCyan/30 border-2 border-black rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div class="space-y-0.5">
-                    <span class="text-[10px] font-black font-cyber uppercase text-slate-700 block">Terhubung Dengan Akun Telegram</span>
-                    <p id="tgLinkedUsernameDisplay" class="text-sm font-black font-cyber text-black">@username</p>
-                    <p id="tgLinkedChatIdDisplay" class="text-[11px] font-mono font-bold text-slate-700">Chat ID: -</p>
+            <!-- TOTAL BELANJA -->
+            <div class="neo-rect bg-neoPurple p-5 relative overflow-hidden flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-black font-cyber uppercase tracking-wider text-black">Total Belanja</span>
+                    <div class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000]">
+                        <i class="fa-solid fa-bag-shopping text-black text-sm"></i>
+                    </div>
                 </div>
-                <button type="button" onclick="unlinkTelegramAccount()" class="neo-btn bg-neoPink text-black font-cyber font-black px-4 py-2 rounded-xl text-xs uppercase flex items-center gap-1.5 self-start sm:self-center">
-                    <i class="fa-solid fa-link-slash"></i> Putuskan Tautan
-                </button>
+                <div class="mt-2">
+                    <h3 id="profileTotalBelanja" class="text-2xl font-cyber font-extrabold text-black">Rp 0</h3>
+                    <p class="text-[10px] text-black font-mono font-bold mt-0.5">Akumulasi Belanja Produk</p>
+                </div>
             </div>
+        </div>
+
+        <!-- BARIS TENGAH: INFORMASI AKUN & PENGATURAN NOTIFIKASI (TELEGRAM + EMAIL ON/OFF) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- INFORMASI AKUN (5 KOLOM DESKTOP) -->
+            <section class="lg:col-span-5 neo-rect bg-white p-5 space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b-[2.5px] border-black">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 bg-neoYellow border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">
+                            <i class="fa-regular fa-user"></i>
+                        </span>
+                        <h3 class="text-sm font-black font-cyber text-black uppercase tracking-wider">Informasi Akun</h3>
+                    </div>
+                    <span class="bg-neoGreen border-2 border-black text-black font-cyber font-black text-[10px] px-2 py-0.5 uppercase">AKTIF</span>
+                </div>
+
+                <div class="space-y-3 text-xs font-bold">
+                    <div class="bg-neoBg border-2 border-black p-3 flex items-center justify-between">
+                        <span class="text-slate-600 uppercase font-extrabold">Nama</span>
+                        <span id="infoNama" class="font-black text-black">-</span>
+                    </div>
+
+                    <div class="bg-neoBg border-2 border-black p-3 flex items-center justify-between gap-2">
+                        <span class="text-slate-600 uppercase font-extrabold">Email</span>
+                        <div class="text-right space-y-1">
+                            <div class="flex items-center justify-end gap-2">
+                                <span id="infoEmail" class="font-mono font-extrabold text-black">-</span>
+                                <button onclick="toggleEmailVisibility()" title="Tampilkan/Sembunyikan Email" class="w-6 h-6 bg-white border-2 border-black flex items-center justify-center text-black text-xs shadow-[2px_2px_0px_#000]">
+                                    <i id="toggleEmailIcon" class="fa-solid fa-eye-slash"></i>
+                                </button>
+                            </div>
+                            <div id="emailVerifiedBadge" class="hidden flex justify-end">
+                                <span class="inline-flex items-center gap-1 text-[10px] bg-neoGreen text-black border border-black px-2 py-0.5 font-black uppercase">
+                                    <i class="fa-solid fa-circle-check"></i> Terverifikasi
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-neoBg border-2 border-black p-3 flex items-center justify-between">
+                        <span class="text-slate-600 uppercase font-extrabold">Metode Login</span>
+                        <span id="infoLoginMethod" class="font-cyber font-extrabold text-black bg-neoCyan border border-black px-2 py-0.5">Google OAuth</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PENGATURAN NOTIFIKASI TELEGRAM & EMAIL ON/OFF (7 KOLOM DESKTOP) -->
+            <section class="lg:col-span-7 neo-rect bg-white p-5 space-y-5">
+                <div class="flex items-center justify-between pb-3 border-b-[2.5px] border-black">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 bg-neoCyan border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">
+                            <i class="fa-solid fa-bell"></i>
+                        </span>
+                        <h3 class="text-sm font-black font-cyber text-black uppercase tracking-wider">Pengaturan Notifikasi</h3>
+                    </div>
+                    <span class="bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2.5 py-0.5 uppercase">REAL-TIME</span>
+                </div>
+
+                <!-- 1. PANEL NOTIFIKASI EMAIL (ON / OFF) -->
+                <div class="bg-neoBg border-[2.5px] border-black p-4 shadow-[4px_4px_0px_#000] space-y-3">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                <i class="fa-solid fa-envelope text-black text-base"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h4 class="font-cyber font-extrabold text-xs sm:text-sm text-black uppercase">Notifikasi Email</h4>
+                                    <span id="emailNotifStateBadge" class="text-[10px] font-cyber font-black bg-neoGreen border border-black px-2 py-0.5 uppercase">ON</span>
+                                </div>
+                                <p id="emailNotifDesc" class="text-[11px] font-bold text-slate-700 mt-0.5 leading-snug">
+                                    Kirim pemberitahuan promo, transaksi, dan pengumuman resmi ke alamat Email Anda.
+                                </p>
+                            </div>
+                        </div>
+
+                        <button type="button" id="toggleEmailNotifBtn" onclick="toggleNotificationPref('email')" aria-label="Toggle Notifikasi Email" class="neo-switch active">
+                            <span class="neo-switch-knob" id="toggleEmailNotifKnob">ON</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. PANEL NOTIFIKASI TELEGRAM BOT (TAUTKAN + ON / OFF) -->
+                <div class="bg-neoBg border-[2.5px] border-black p-4 shadow-[4px_4px_0px_#000] space-y-4">
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                <i class="fa-brands fa-telegram text-black text-lg"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h4 class="font-cyber font-extrabold text-xs sm:text-sm text-black uppercase">Notifikasi Telegram Bot</h4>
+                                    <span id="tgLinkStatusBadge" class="text-[10px] font-cyber font-black bg-neoYellow border border-black px-2 py-0.5 uppercase">BELUM TERTAUT</span>
+                                    <span id="tgNotifStateBadge" class="hidden text-[10px] font-cyber font-black bg-neoGreen border border-black px-2 py-0.5 uppercase">ON</span>
+                                </div>
+                                <p class="text-[11px] font-bold text-slate-700 mt-0.5 leading-snug">
+                                    Terima notifikasi instan langsung melalui <strong>Private Chat Bot Telegram</strong>.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- SAKELAR ON/OFF TELEGRAM (AKTIF JIKA SUDAH TERTAUT) -->
+                        <button type="button" id="toggleTelegramNotifBtn" onclick="toggleNotificationPref('telegram')" aria-label="Toggle Notifikasi Telegram" class="neo-switch" disabled title="Tautkan akun Telegram terlebih dahulu">
+                            <span class="neo-switch-knob" id="toggleTelegramNotifKnob">OFF</span>
+                        </button>
+                    </div>
+
+                    <!-- TAMPILAN JIKA BELUM TERTAUT -->
+                    <div id="tgUnlinkedContainer" class="pt-3 border-t-2 border-dashed border-black/30 space-y-3">
+                        <div class="flex flex-col sm:flex-row gap-2.5">
+                            <button type="button" id="btnLinkTelegram" onclick="startTelegramLink()" class="neo-btn-rect flex-1 bg-[#229ED9] text-white px-4 py-3 text-xs font-extrabold font-cyber uppercase flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-telegram text-base"></i> Tautkan Bot Telegram
+                            </button>
+                            <a id="telegramBotDirectLink" href="https://t.me/arulzxd_bot" target="_blank" rel="noopener" class="neo-btn-rect bg-white text-black px-4 py-3 text-xs font-extrabold font-cyber uppercase flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Bot
+                            </a>
+                        </div>
+                        <p class="text-[11px] font-bold text-slate-700">
+                            <i class="fa-solid fa-circle-info text-black mr-1"></i> Klik <strong>Tautkan Bot Telegram</strong> lalu tekan <strong>/start</strong> di Telegram untuk mengaktifkan notifikasi bot.
+                        </p>
+                    </div>
+
+                    <!-- TAMPILAN JIKA SUDAH TERTAUT -->
+                    <div id="tgLinkedContainer" class="hidden pt-3 border-t-2 border-dashed border-black/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="bg-white border-2 border-black px-3 py-2 flex-1">
+                            <span class="text-[9px] font-black font-cyber uppercase text-slate-600 block">Terhubung Dengan Akun Telegram</span>
+                            <p id="tgLinkedUsernameDisplay" class="text-xs font-black font-cyber text-black">@username</p>
+                            <p id="tgLinkedChatIdDisplay" class="text-[10px] font-mono font-bold text-slate-700">Chat ID: -</p>
+                        </div>
+                        <button type="button" onclick="unlinkTelegramAccount()" class="neo-btn-rect bg-neoPink text-white font-cyber font-extrabold px-3.5 py-2.5 text-xs uppercase flex items-center gap-1.5 self-start sm:self-center">
+                            <i class="fa-solid fa-link-slash"></i> Putuskan Tautan
+                        </button>
+                    </div>
+                </div>
+            </section>
         </div>
 
         <!-- WIDGET REFERAL UNDANGAN -->
-        <div class="neo-box rounded-2xl p-6 bg-white space-y-4">
-            <div class="flex items-center justify-between">
-                <label class="block text-xs font-black font-cyber text-black uppercase tracking-wider">
-                    <i class="fa-solid fa-gift"></i> Undang Teman
-                </label>
-                <span class="text-[10px] bg-neoGreen border border-black font-mono font-black px-2 py-0.5 rounded">+Rp 1.000 / Undangan</span>
+        <section class="neo-rect bg-white p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b-[2.5px] border-black">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 bg-neoPurple border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">
+                        <i class="fa-solid fa-gift"></i>
+                    </span>
+                    <h3 class="text-sm font-black font-cyber text-black uppercase tracking-wider">Program Referral Undang Teman</h3>
+                </div>
+                <span class="text-[10px] bg-neoGreen border-2 border-black font-mono font-black px-2.5 py-0.5 shadow-[2px_2px_0px_#000]">+Rp 1.000 / Undangan</span>
             </div>
+
             <p class="text-xs font-bold text-slate-700 leading-relaxed">
-                Bagikan link undangan Anda! User yang mendaftar via link Anda otomatis mendapatkan saldo <strong>Rp 500</strong>, dan Anda mendapatkan bonus <strong>Rp 1.000</strong>.
+                Bagikan link undangan Anda! User yang mendaftar melalui link Anda otomatis mendapatkan saldo <strong>Rp 500</strong>, dan Anda mendapatkan bonus <strong>Rp 1.000</strong>.
             </p>
 
-            <div class="flex items-center gap-2 pt-1">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                 <div class="relative flex-1">
                     <input type="text" id="referralLinkInput" readonly value="Memuat link..." 
-                           class="w-full px-3 py-2.5 text-xs bg-neoBg border-2 border-black rounded-xl text-black font-mono font-bold focus:outline-none select-all">
+                           class="w-full px-3.5 py-3 text-xs bg-neoBg border-[2.5px] border-black rounded-none text-black font-mono font-bold focus:outline-none select-all shadow-[3px_3px_0px_#000]">
                 </div>
-                <button onclick="copyReferralLink()" class="neo-btn bg-neoYellow text-black font-cyber font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 uppercase tracking-wider">
+                <button onclick="copyReferralLink()" class="neo-btn-rect bg-neoYellow text-black font-cyber font-extrabold px-4 py-3 text-xs flex items-center justify-center gap-1.5 uppercase tracking-wider">
                     <i class="fa-solid fa-copy"></i> Salin Link
                 </button>
             </div>
 
-            <div class="pt-4 border-t-3 border-black space-y-2.5">
+            <div class="pt-4 border-t-[2.5px] border-dashed border-black/25 space-y-2.5">
                 <div class="flex items-center justify-between">
                     <h4 class="text-xs font-black font-cyber text-black uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-users"></i> Daftar Teman Diundang (<span id="invitedCount">0</span>)
                     </h4>
                 </div>
 
-                <div class="overflow-x-auto rounded-xl border-2 border-black bg-white">
+                <div class="overflow-x-auto border-[2.5px] border-black bg-white shadow-[4px_4px_0px_#000]">
                     <table class="w-full text-left border-collapse text-[11px]">
                         <thead>
-                            <tr class="bg-neoYellow border-b-2 border-black font-cyber font-black">
+                            <tr class="bg-neoYellow border-b-[2.5px] border-black font-cyber font-extrabold uppercase">
                                 <th class="p-2.5">Username</th>
                                 <th class="p-2.5">Email</th>
                                 <th class="p-2.5 text-right">Tgl Bergabung</th>
@@ -482,7 +589,7 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </section>
 
     </main>
 
@@ -494,12 +601,10 @@
             </svg>
         </div>
 
-        <!-- Bulatan Ikon Aktif (Profil - Index 5: 91.667%) -->
         <div class="liquid-floating-orb" id="liquidFloatingOrb" style="left: 91.667%;">
             <i id="liquidOrbIcon" class="fa-regular fa-user text-base"></i>
         </div>
 
-        <!-- 6 Item Menu -->
         <div class="liquid-nav-items">
             <a href="/" data-index="0" data-icon="fa-solid fa-house" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
                 <i class="fa-solid fa-house"></i>
@@ -530,7 +635,7 @@
     </nav>
 
     <!-- FLOATING LIVE CHAT BUTTON -->
-    <button id="floatingChatToggleBtn" onclick="toggleChatWidget()" title="Bantuan & Live Chat" class="fixed bottom-32 right-4 sm:right-6 z-[99990] flex items-center justify-center w-12 h-12 rounded-full bg-neoYellow border-[3px] border-black text-black shadow-[4px_4px_0px_#000] hover:scale-110 transition-transform duration-200 font-black">
+    <button id="floatingChatToggleBtn" onclick="toggleChatWidget()" title="Bantuan & Live Chat" class="fixed bottom-24 right-4 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-neoYellow border-[3px] border-black text-black shadow-[4px_4px_0px_#000] hover:scale-105 transition-transform font-black">
         <i class="fa-solid fa-comment-dots text-xl"></i>
         <span class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-neoGreen border-2 border-black rounded-full"></span>
     </button>
@@ -538,7 +643,13 @@
     <script>
         let fullEmail = '';
         let isEmailShown = false;
-        
+        let currentUserState = {
+            telegramLinked: false,
+            telegramNotifEnabled: true,
+            emailNotifEnabled: true,
+            isTelegramOnlyAccount: false
+        };
+
         /* =========================================================
            LIQUID NOTCH CURVE NAVIGATION (6 MENU + SINKRON NOTIFIKASI)
            ========================================================= */
@@ -547,7 +658,7 @@
         let currentNotchPixelX = 0;
         let activeNavIndex = (() => {
             const activeEl = document.querySelector('.liquid-nav-item.active');
-            return activeEl ? Number(activeEl.dataset.index) : 0;
+            return activeEl ? Number(activeEl.dataset.index) : 5;
         })();
 
         function buildPixelNotchPath(cx, totalW, totalH) {
@@ -666,9 +777,6 @@
             }
         }
 
-        /* =========================================================
-           SINKRONISASI BADGE MERAH NOTIFIKASI BELUM DIBACA
-           ========================================================= */
         function renderUnreadNotifBadge(count) {
             const badge = document.getElementById('nav-notif-badge');
             if (!badge) return;
@@ -723,13 +831,6 @@
             setLiquidNavActive(activeNavIndex, false);
         });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const activeEl = document.querySelector('.liquid-nav-item.active');
-            const initialIdx = activeEl ? Number(activeEl.dataset.index) : activeNavIndex;
-            setLiquidNavActive(initialIdx, false);
-            syncUnreadNotificationCount();
-        });
-
         function handleUserLogout() {
             Object.keys(localStorage).forEach((k) => {
                 if (k.startsWith('arulz_notif_read_session_')) {
@@ -762,7 +863,7 @@
         }
 
         function formatRupiah(angka) {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
+            return 'Rp ' + Number(angka || 0).toLocaleString('id-ID');
         }
 
         function maskEmail(email) {
@@ -806,38 +907,169 @@
             }
         }
 
-        async function renderTelegramLinkSection(user) {
-    const badge = document.getElementById('tgLinkStatusBadge');
-    const unlinkedBox = document.getElementById('tgUnlinkedContainer');
-    const linkedBox = document.getElementById('tgLinkedContainer');
+        /* =========================================================
+           RENDER & TOGGLE PREFERENSI NOTIFIKASI TELEGRAM & EMAIL
+           ========================================================= */
+        function renderNotificationPreferencesUI(user) {
+            const isTgLinked = Boolean(user.telegramLinked && user.telegramChatId);
+            const tgEnabled = user.telegramNotifEnabled !== false;
+            const isTgPseudoEmail = !user.email || user.email.endsWith('@telegram.user');
+            const emailEnabled = !isTgPseudoEmail && (user.emailNotifEnabled !== false);
 
-    if (!badge || !unlinkedBox || !linkedBox) return;
+            currentUserState = {
+                telegramLinked: isTgLinked,
+                telegramNotifEnabled: tgEnabled,
+                emailNotifEnabled: emailEnabled,
+                isTelegramOnlyAccount: isTgPseudoEmail
+            };
 
-    if (user.telegramLinked && user.telegramChatId) {
-        badge.innerText = 'TERTAUT AKTIF';
-        badge.className = 'text-[10px] font-black font-cyber bg-neoGreen text-black border-2 border-black px-2.5 py-0.5 rounded-md uppercase';
-        unlinkedBox.classList.add('hidden');
-        linkedBox.classList.remove('hidden');
-        document.getElementById('tgLinkedUsernameDisplay').innerText = user.telegramUsername || 'Akun Telegram';
-        document.getElementById('tgLinkedChatIdDisplay').innerText = `Chat ID: ${user.telegramChatId}`;
-        return;
-    }
+            // 1. UI Toggle Email
+            const emailBtn = document.getElementById('toggleEmailNotifBtn');
+            const emailKnob = document.getElementById('toggleEmailNotifKnob');
+            const emailBadge = document.getElementById('emailNotifStateBadge');
+            const emailDesc = document.getElementById('emailNotifDesc');
 
-    badge.innerText = 'BELUM TERTAUT';
-    badge.className = 'text-[10px] font-black font-cyber bg-neoYellow text-black border-2 border-black px-2.5 py-0.5 rounded-md uppercase';
-    linkedBox.classList.add('hidden');
-    unlinkedBox.classList.remove('hidden');
+            if (isTgPseudoEmail) {
+                emailBtn.disabled = true;
+                emailBtn.classList.remove('active');
+                emailKnob.innerText = 'OFF';
+                emailBadge.innerText = 'TIDAK TERSEDIA';
+                emailBadge.className = 'text-[10px] font-cyber font-black bg-slate-200 border border-black px-2 py-0.5 uppercase';
+                emailDesc.innerText = 'Akun login via Telegram tidak memiliki alamat email aktif.';
+            } else {
+                emailBtn.disabled = false;
+                if (emailEnabled) {
+                    emailBtn.classList.add('active');
+                    emailKnob.innerText = 'ON';
+                    emailBadge.innerText = 'ON';
+                    emailBadge.className = 'text-[10px] font-cyber font-black bg-neoGreen border border-black px-2 py-0.5 uppercase';
+                } else {
+                    emailBtn.classList.remove('active');
+                    emailKnob.innerText = 'OFF';
+                    emailBadge.innerText = 'OFF';
+                    emailBadge.className = 'text-[10px] font-cyber font-black bg-neoPink text-white border border-black px-2 py-0.5 uppercase';
+                }
+            }
 
-}
+            // 2. UI Toggle & Tautan Telegram
+            const badge = document.getElementById('tgLinkStatusBadge');
+            const tgStateBadge = document.getElementById('tgNotifStateBadge');
+            const unlinkedBox = document.getElementById('tgUnlinkedContainer');
+            const linkedBox = document.getElementById('tgLinkedContainer');
+            const tgBtn = document.getElementById('toggleTelegramNotifBtn');
+            const tgKnob = document.getElementById('toggleTelegramNotifKnob');
+
+            if (isTgLinked) {
+                badge.innerText = 'TERTAUT';
+                badge.className = 'text-[10px] font-black font-cyber bg-neoCyan text-black border border-black px-2 py-0.5 uppercase';
+                unlinkedBox.classList.add('hidden');
+                linkedBox.classList.remove('hidden');
+                document.getElementById('tgLinkedUsernameDisplay').innerText = user.telegramUsername
+                    ? `@${String(user.telegramUsername).replace(/^@/, '')}`
+                    : 'Akun Telegram';
+                document.getElementById('tgLinkedChatIdDisplay').innerText = `Chat ID: ${user.telegramChatId}`;
+
+                tgBtn.disabled = false;
+                tgStateBadge.classList.remove('hidden');
+                if (tgEnabled) {
+                    tgBtn.classList.add('active');
+                    tgKnob.innerText = 'ON';
+                    tgStateBadge.innerText = 'ON';
+                    tgStateBadge.className = 'text-[10px] font-cyber font-black bg-neoGreen border border-black px-2 py-0.5 uppercase';
+                } else {
+                    tgBtn.classList.remove('active');
+                    tgKnob.innerText = 'OFF';
+                    tgStateBadge.innerText = 'OFF';
+                    tgStateBadge.className = 'text-[10px] font-cyber font-black bg-neoPink text-white border border-black px-2 py-0.5 uppercase';
+                }
+            } else {
+                badge.innerText = 'BELUM TERTAUT';
+                badge.className = 'text-[10px] font-black font-cyber bg-neoYellow text-black border border-black px-2 py-0.5 uppercase';
+                linkedBox.classList.add('hidden');
+                unlinkedBox.classList.remove('hidden');
+
+                tgBtn.disabled = true;
+                tgBtn.classList.remove('active');
+                tgKnob.innerText = 'OFF';
+                tgStateBadge.classList.add('hidden');
+            }
+        }
+
+        async function toggleNotificationPref(channel) {
+            if (channel === 'telegram' && !currentUserState.telegramLinked) {
+                return Swal.fire({
+                    icon: 'info',
+                    title: 'BELUM TERTAUT',
+                    text: 'Tautkan akun Telegram Anda terlebih dahulu untuk mengaktifkan notifikasi Telegram.',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
+
+            if (channel === 'email' && currentUserState.isTelegramOnlyAccount) {
+                return;
+            }
+
+            const targetBtn = document.getElementById(channel === 'telegram' ? 'toggleTelegramNotifBtn' : 'toggleEmailNotifBtn');
+            const nextState = channel === 'telegram'
+                ? !currentUserState.telegramNotifEnabled
+                : !currentUserState.emailNotifEnabled;
+
+            targetBtn.disabled = true;
+
+            try {
+                const payload = channel === 'telegram'
+                    ? { telegramNotifEnabled: nextState }
+                    : { emailNotifEnabled: nextState };
+
+                const res = await fetch('/api/user/notif-preferences', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (!data.status) {
+                    throw new Error(data.message || 'Gagal memperbarui pengaturan notifikasi.');
+                }
+
+                renderNotificationPreferencesUI({
+                    telegramLinked: currentUserState.telegramLinked,
+                    telegramChatId: document.getElementById('tgLinkedChatIdDisplay').innerText.replace('Chat ID: ', ''),
+                    telegramUsername: document.getElementById('tgLinkedUsernameDisplay').innerText,
+                    email: fullEmail,
+                    telegramNotifEnabled: data.telegramNotifEnabled,
+                    emailNotifEnabled: data.emailNotifEnabled
+                });
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: data.message,
+                    showConfirmButton: false,
+                    timer: 1800,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } catch (err) {
+                targetBtn.disabled = false;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'GAGAL',
+                    text: err.message || 'Terjadi kesalahan saat menyimpan pengaturan.',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
+        }
 
         async function unlinkTelegramAccount() {
             const confirm = await Swal.fire({
                 icon: 'warning',
                 title: 'PUTUSKAN TAUTAN TELEGRAM?',
-                text: 'Notifikasi selanjutnya akan dikirimkan melalui Email Anda.',
+                text: 'Notifikasi Telegram akan berhenti dikirim sampai Anda menautkannya kembali.',
                 showCancelButton: true,
                 confirmButtonText: 'Ya, Putuskan',
                 cancelButtonText: 'Batal',
+                confirmButtonColor: '#FF4D6D',
                 customClass: { popup: 'cyber-swal' }
             });
             if (!confirm.isConfirmed) return;
@@ -861,7 +1093,7 @@
 
         async function loadUserProfile() {
             try {
-                const res = await fetch('/api/user-status');
+                const res = await fetch('/api/user-status', { cache: 'no-store' });
                 const data = await res.json();
                 const authLabel = document.getElementById('nav-auth-label');
 
@@ -904,7 +1136,7 @@
                     
                     if (authLabel) authLabel.innerText = 'Profil';
 
-                    renderTelegramLinkSection(data.user);
+                    renderNotificationPreferencesUI(data.user);
                     syncNotifBadge(fullEmail);
                     renderInvitedUsers(data.user.invitedUsers || []);
                 } else {
@@ -920,13 +1152,13 @@
                     <div class="space-y-4 text-left text-xs font-bold font-sans">
                         <div>
                             <label class="block mb-1 font-cyber uppercase font-black text-black">1. Upload File (GIF / MP4 / Image)</label>
-                            <input type="file" id="swalBannerFile" accept="image/*,video/mp4" class="w-full text-xs p-2 bg-neoBg border-2 border-black rounded-xl">
+                            <input type="file" id="swalBannerFile" accept="image/*,video/mp4" class="w-full text-xs p-2 bg-white border-2 border-black rounded-none">
                             <p class="text-[10px] text-black font-bold mt-1">* Maksimal ukuran file berkas: <strong>4 MB</strong></p>
                         </div>
                         <div class="text-center font-black font-cyber uppercase tracking-wider text-slate-500 text-[10px]">--- ATAU ---</div>
                         <div>
                             <label class="block mb-1 font-cyber uppercase font-black text-black">2. Tempel URL Link (GIF / MP4 / Image)</label>
-                            <input type="url" id="swalBannerUrl" placeholder="https://example.com/banner.mp4 atau .gif" class="w-full px-3 py-2 text-xs border-2 border-black rounded-xl focus:outline-none">
+                            <input type="url" id="swalBannerUrl" placeholder="https://example.com/banner.mp4 atau .gif" class="w-full px-3 py-2 text-xs bg-white border-2 border-black rounded-none focus:outline-none">
                         </div>
                     </div>
                 `,
@@ -957,12 +1189,8 @@
 
             if (formValues) {
                 const formData = new FormData();
-                if (formValues.file) {
-                    formData.append('bannerFile', formValues.file);
-                }
-                if (formValues.url) {
-                    formData.append('bannerUrl', formValues.url);
-                }
+                if (formValues.file) formData.append('bannerFile', formValues.file);
+                if (formValues.url) formData.append('bannerUrl', formValues.url);
 
                 Swal.fire({ 
                     title: 'MEMPROSES...', 
@@ -1083,8 +1311,51 @@
                 Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
             }
         }
-        
-        document.addEventListener('DOMContentLoaded', loadUserProfile);
+
+        async function startTelegramLink() {
+            const btn = document.getElementById('btnLinkTelegram');
+            const old = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENYIAPKAN...';
+            try {
+                const r = await fetch('/api/telegram/ticket', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'link' })
+                });
+                const d = await r.json();
+                if (!d.status) throw new Error(d.message || 'Gagal membuat tautan Telegram.');
+                document.getElementById('telegramBotDirectLink').href = d.botUrl;
+                window.open(d.botUrl, '_blank', 'noopener');
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENUNGGU START...';
+                const started = Date.now();
+                while (Date.now() - started < 5 * 60 * 1000) {
+                    await new Promise(resolve => setTimeout(resolve, 2500));
+                    const check = await fetch('/api/telegram/ticket/' + encodeURIComponent(d.token), { cache: 'no-store' });
+                    const state = await check.json();
+                    if (state.completed) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'TELEGRAM TERTAUT!',
+                            text: 'Notifikasi Bot Telegram berhasil diaktifkan.',
+                            timer: 1600,
+                            showConfirmButton: false,
+                            customClass: { popup: 'cyber-swal' }
+                        });
+                        loadUserProfile();
+                        return;
+                    }
+                    if (!check.ok) throw new Error(state.message || 'Tautan kedaluwarsa.');
+                }
+                throw new Error('Waktu penautan habis. Silakan coba lagi.');
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'GAGAL MENAUTKAN', text: e.message, customClass: { popup: 'cyber-swal' } });
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = old;
+            }
+        }
+
         let widgetChatInterval = null;
 
         function toggleChatWidget() {
@@ -1113,7 +1384,7 @@
                 if (data.status && data.messages) {
                     if (data.messages.length === 0) {
                         container.innerHTML = `
-                            <div class="neo-box p-3 rounded-xl bg-white text-xs text-black space-y-1">
+                            <div class="neo-rect p-3 bg-white text-xs text-black space-y-1">
                                 <p class="font-black font-cyber">Halo! Selamat datang 👋</p>
                                 <p class="text-[10px] font-bold text-slate-600">Silakan kirimkan pertanyaan Anda. Customer Service kami siap membantu.</p>
                             </div>
@@ -1125,15 +1396,15 @@
                         const isUser = msg.sender === 'user';
                         const alignClass = isUser ? 'justify-end' : 'justify-start';
                         const bgClass = isUser 
-                            ? 'bg-neoYellow text-black font-bold rounded-br-none border-2 border-black' 
-                            : 'bg-white text-black font-bold rounded-bl-none border-2 border-black';
+                            ? 'bg-neoYellow text-black font-bold border-2 border-black shadow-[2px_2px_0px_#000]' 
+                            : 'bg-white text-black font-bold border-2 border-black shadow-[2px_2px_0px_#000]';
                         
                         const timeStr = new Date(msg.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
                         const displayName = isUser ? (msg.senderName || 'Anda') : 'Owner CS';
 
                         return `
                             <div class="flex ${alignClass}">
-                                <div class="max-w-[82%] p-2.5 rounded-2xl text-[11px] space-y-1 ${bgClass}">
+                                <div class="max-w-[82%] p-2.5 text-[11px] space-y-1 ${bgClass}">
                                     <div class="flex items-center justify-between gap-2 border-b border-black/20 pb-1">
                                         <span class="font-black font-cyber text-[10px] text-black">${displayName}</span>
                                         <span class="text-[8px] opacity-75 font-mono font-bold">${timeStr}</span>
@@ -1166,48 +1437,20 @@
                 loadWidgetMessages();
             } catch(e) {}
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeEl = document.querySelector('.liquid-nav-item.active');
+            const initialIdx = activeEl ? Number(activeEl.dataset.index) : activeNavIndex;
+            setLiquidNavActive(initialIdx, false);
+            syncUnreadNotificationCount();
+            loadUserProfile();
+        });
+
         setInterval(() => {
             if (!document.hidden) {
                 syncUnreadNotificationCount();
             }
         }, 12000);
     </script>
-
-<script>
-async function startTelegramLink() {
-    const btn = document.getElementById('btnLinkTelegram');
-    const old = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENYIAPKAN...';
-    try {
-        const r = await fetch('/api/telegram/ticket', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type:'link'})});
-        const d = await r.json();
-        if (!d.status) throw new Error(d.message || 'Gagal membuat tautan Telegram.');
-        document.getElementById('telegramBotDirectLink').href = d.botUrl;
-        window.open(d.botUrl, '_blank', 'noopener');
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> MENUNGGU START...';
-        const started = Date.now();
-        while (Date.now() - started < 5 * 60 * 1000) {
-            await new Promise(resolve => setTimeout(resolve, 2500));
-            const check = await fetch('/api/telegram/ticket/' + encodeURIComponent(d.token), {cache:'no-store'});
-            const state = await check.json();
-            if (state.completed) {
-                const statusRes = await fetch('/api/user-status', {cache:'no-store'});
-                const status = await statusRes.json();
-                if (status.loggedIn) location.reload();
-                return;
-            }
-            if (!check.ok) throw new Error(state.message || 'Tautan kedaluwarsa.');
-        }
-        throw new Error('Waktu penautan habis. Silakan coba lagi.');
-    } catch (e) {
-        if (window.Swal) Swal.fire({icon:'error', title:'GAGAL MENAUTKAN', text:e.message, customClass:{popup:'cyber-swal'}});
-        else alert(e.message);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = old;
-    }
-}
-</script>
 </body>
 </html>
