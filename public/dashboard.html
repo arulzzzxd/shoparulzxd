@@ -360,24 +360,30 @@
     <!-- MAIN DASHBOARD CONTENT -->
     <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
 
-        <!-- WELCOME BANNER -->
+                        <!-- WELCOME BANNER -->
         <section class="p-6 sm:p-7 neo-rect bg-neoCyan relative overflow-hidden">
-            <div class="absolute right-0 top-0 bottom-0 w-24 bg-white/15 border-l-2 border-black/15 pointer-events-none"></div>
-            <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div>
-                    <span class="inline-flex items-center gap-1.5 bg-black text-neoYellow text-[11px] font-extrabold px-2.5 py-1 uppercase font-cyber tracking-wider mb-3">
-                        <i class="fa-solid fa-store"></i> BERANDA TOKO • 24 JAM
+            <!-- Watermark Logo Store / Marketplace Solid Besar di Pojok Kanan -->
+            <div class="absolute -right-6 -bottom-8 pointer-events-none select-none text-black/[0.10] -rotate-12">
+                <svg class="w-56 h-56 sm:w-64 sm:h-64" viewBox="0 0 24 24" fill="currentColor">
+                    <!-- Atap Kanopi Toko Utuh -->
+                    <path d="M21.9 8.89l-1.05-4.37c-.22-.9-1-1.52-1.91-1.52H5.05c-.9 0-1.69.63-1.9 1.52L2.1 8.89c-.24 1.02-.02 2.06.62 2.88.08.11.19.19.28.29V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6.94c.09-.09.2-.18.28-.28.64-.82.87-1.87.62-2.89zm-2.99-3.9l1.05 4.37c.1.42.01.84-.25 1.17-.14.18-.44.47-.94.47-.61 0-1.14-.49-1.21-1.14L16.98 5l1.93-.01zM13 5h1.96l.54 4.52c.05.39-.07.78-.33 1.07-.22.26-.54.41-.95.41-.67 0-1.22-.59-1.22-1.31V5zM8.49 9.52L9.04 5H11v4.69c0 .72-.55 1.31-1.29 1.31-.34 0-.65-.15-.89-.41-.25-.29-.37-.68-.33-1.07zm-4.45-.16L5.05 5h1.97l-.58 4.86c-.08.65-.6 1.14-1.21 1.14-.49 0-.8-.29-.93-.47-.27-.32-.36-.75-.26-1.17zM5 19v-6.03c.08.01.15.03.23.03.87 0 1.66-.36 2.24-.95.6.6 1.4.95 2.31.95.87 0 1.65-.36 2.23-.93.59.57 1.39.93 2.29.93.84 0 1.64-.35 2.24-.95.58.59 1.37.95 2.24.95.08 0 .15-.02.23-.03V19H5z"/>
+                </svg>
+            </div>
+
+            <div class="relative z-10">
+                <span class="inline-flex items-center gap-1.5 bg-black text-neoYellow text-[11px] font-extrabold px-2.5 py-1 uppercase font-cyber tracking-wider mb-3">
+                    <i class="fa-solid fa-store"></i> BERANDA TOKO • 24 JAM
+                </span>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-black font-cyber tracking-tight flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                    <span>Halo,</span>
+                    <span class="inline-flex items-center gap-1.5 max-w-full">
+                        <span id="dashUsername" class="bg-white border-2 border-black px-2.5 py-0.5 shadow-[3px_3px_0px_#000] truncate max-w-[230px] sm:max-w-md">Pengunjung</span>
+                        <span class="font-black select-none">!</span>
                     </span>
-                    <h1 class="text-2xl sm:text-4xl font-extrabold text-black font-cyber tracking-tight">
-                        Halo, <span id="dashUsername" class="bg-white border-2 border-black px-2 py-0.5 shadow-[3px_3px_0px_#000]">Pengunjung</span>!
-                    </h1>
-                    <p class="text-xs sm:text-sm font-bold text-black mt-3 max-w-xl leading-relaxed">
-                        Lihat perkembangan penjualan, pergerakan transaksi harian, dan pesanan terbaru di ArulzXD Store.
-                    </p>
-                </div>
-                <a href="/store" class="neo-btn-rect bg-neoYellow text-black font-cyber font-extrabold px-5 py-3.5 text-xs uppercase tracking-wider flex items-center gap-2 shrink-0">
-                    <i class="fa-solid fa-bag-shopping text-sm"></i> LIHAT KATALOG
-                </a>
+                </h1>
+                <p class="text-xs sm:text-sm font-bold text-black mt-3 max-w-xl leading-relaxed">
+                    Lihat perkembangan penjualan, pergerakan transaksi harian, dan pesanan terbaru di ArulzXD Store.
+                </p>
             </div>
         </section>
 
@@ -601,7 +607,7 @@
 
     </main>
 
-        <!-- FOOTER NEO-BRUTALISME (SOSMED + CHANNEL WHATSAPP & CHANNEL TELEGRAM DENGAN LOGO SVG) -->
+            <!-- FOOTER NEO-BRUTALISME (SOSMED + CHANNEL WHATSAPP & CHANNEL TELEGRAM PROPORSIONAL) -->
     <footer class="max-w-6xl mx-auto px-4 mt-2 mb-4">
         <div class="neo-rect bg-white overflow-hidden">
             <!-- Bagian Atas: Brand, Deskripsi & 5 Tombol Kotak Media Sosial SVG -->
@@ -624,7 +630,7 @@
                 <!-- 5 Kotak Ikon Media Sosial dengan SVG Masing-Masing -->
                 <div class="flex flex-wrap items-center gap-2.5 pt-1">
                     <!-- TikTok -->
-                    <a href="https://www.tiktok.com/@arulzxd" target="_blank" rel="noopener noreferrer" aria-label="TikTok ArulzXD" title="TikTok"
+                    <a href="https://www.tiktok.com/@arulzxd8" target="_blank" rel="noopener noreferrer" aria-label="TikTok ArulzXD" title="TikTok"
                         class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoYellow flex items-center justify-center text-black">
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
@@ -632,7 +638,7 @@
                     </a>
 
                     <!-- Instagram -->
-                    <a href="https://www.instagram.com/arulzxd" target="_blank" rel="noopener noreferrer" aria-label="Instagram ArulzXD" title="Instagram"
+                    <a href="https://www.instagram.com/arulzz.xd" target="_blank" rel="noopener noreferrer" aria-label="Instagram ArulzXD" title="Instagram"
                         class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoPink flex items-center justify-center text-black">
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -659,7 +665,7 @@
                     </a>
 
                     <!-- WhatsApp -->
-                    <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ArulzXD" title="WhatsApp Admin"
+                    <a href="https://wa.me/6285122629940" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ArulzXD" title="WhatsApp Admin"
                         class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoGreen flex items-center justify-center text-black">
                         <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.459 3.473 1.331 4.985L2 22l5.188-1.361a9.93 9.93 0 0 0 4.843 1.258h.004c5.515 0 9.969-4.454 9.969-9.969A9.936 9.936 0 0 0 19.08 4.92 9.91 9.91 0 0 0 12.031 2zm5.811 14.234c-.246.693-1.43 1.326-1.979 1.409-.506.076-1.147.108-1.852-.116-.428-.136-.977-.318-1.681-.622-2.956-1.276-4.887-4.253-5.035-4.45-.147-.197-1.202-1.599-1.202-3.051 0-1.452.761-2.165 1.031-2.46.27-.295.59-.369.787-.369.197 0 .393.002.565.01.181.009.424-.069.663.506.246.591.836 2.041.909 2.189.074.148.123.32.025.517-.098.197-.148.32-.295.492-.148.172-.31.385-.443.517-.148.147-.302.307-.13.602.172.295.764 1.261 1.641 2.043 1.128 1.006 2.079 1.318 2.374 1.466.295.147.467.123.639-.074.172-.197.738-.861.935-1.156.197-.295.393-.246.663-.148.271.099 1.721.812 2.016.959.295.148.492.222.565.345.074.123.074.713-.172 1.406z"/>
@@ -670,32 +676,57 @@
 
             <!-- Bagian Tengah: 2 Kolom (Saluran & Legal/Menu) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 border-t-[3px] border-black bg-neoBg divide-y-[3px] sm:divide-y-0 sm:divide-x-[3px] divide-black">
-                <!-- Kolom 1: Saluran Resmi (Channel WhatsApp & Channel Telegram berlogo SVG) -->
+                <!-- Kolom 1: Saluran Resmi (Grid 2 Kolom Seimbang Memenuhi Lebar) -->
                 <div class="p-5 sm:px-7 sm:py-6 space-y-3.5">
-                    <div class="inline-block bg-neoGreen border-2 border-black px-2.5 py-0.5 font-cyber font-extrabold text-[11px] uppercase tracking-wider text-black shadow-[2px_2px_0px_#000]">
-                        SALURAN &amp; KOMUNITAS
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="inline-block bg-neoGreen border-2 border-black px-2.5 py-0.5 font-cyber font-extrabold text-[11px] uppercase tracking-wider text-black shadow-[2px_2px_0px_#000]">
+                            SALURAN &amp; KOMUNITAS
+                        </span>
+                        <span class="text-[10px] font-mono font-extrabold text-slate-600 uppercase">
+                            UPDATE &amp; PROMO
+                        </span>
                     </div>
-                    <ul class="space-y-2.5 text-xs sm:text-sm font-extrabold">
-                        <li>
-                            <a href="https://whatsapp.com/channel/0029VaArulzXDStore" target="_blank" rel="noopener noreferrer"
-                                class="inline-flex items-center gap-2.5 bg-white border-2 border-black px-3 py-2 shadow-[3px_3px_0px_#000] hover:bg-neoGreen transition-colors">
-                                <svg class="w-4 h-4 shrink-0 text-black" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.459 3.473 1.331 4.985L2 22l5.188-1.361a9.93 9.93 0 0 0 4.843 1.258h.004c5.515 0 9.969-4.454 9.969-9.969A9.936 9.936 0 0 0 19.08 4.92 9.91 9.91 0 0 0 12.031 2zm5.811 14.234c-.246.693-1.43 1.326-1.979 1.409-.506.076-1.147.108-1.852-.116-.428-.136-.977-.318-1.681-.622-2.956-1.276-4.887-4.253-5.035-4.45-.147-.197-1.202-1.599-1.202-3.051 0-1.452.761-2.165 1.031-2.46.27-.295.59-.369.787-.369.197 0 .393.002.565.01.181.009.424-.069.663.506.246.591.836 2.041.909 2.189.074.148.123.32.025.517-.098.197-.148.32-.295.492-.148.172-.31.385-.443.517-.148.147-.302.307-.13.602.172.295.764 1.261 1.641 2.043 1.128 1.006 2.079 1.318 2.374 1.466.295.147.467.123.639-.074.172-.197.738-.861.935-1.156.197-.295.393-.246.663-.148.271.099 1.721.812 2.016.959.295.148.492.222.565.345.074.123.074.713-.172 1.406z"/>
-                                </svg>
-                                <span>Channel WhatsApp</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="https://t.me/arulzxdchannel" target="_blank" rel="noopener noreferrer"
-                                class="inline-flex items-center gap-2.5 bg-white border-2 border-black px-3 py-2 shadow-[3px_3px_0px_#000] hover:bg-neoCyan transition-colors">
-                                <svg class="w-4 h-4 shrink-0 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M22 2L11 13"></path>
-                                    <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
-                                </svg>
-                                <span>Channel Telegram</span>
-                            </a>
-                        </li>
-                    </ul>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <!-- Channel WhatsApp -->
+                        <a href="https://whatsapp.com/channel/0029Vb94zQcJUM2hE0pYz40U" target="_blank" rel="noopener noreferrer"
+                            class="neo-btn-rect flex items-center justify-between gap-2 bg-white hover:bg-neoGreen p-2.5 text-black">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-8 h-8 bg-neoGreen border-2 border-black flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.459 3.473 1.331 4.985L2 22l5.188-1.361a9.93 9.93 0 0 0 4.843 1.258h.004c5.515 0 9.969-4.454 9.969-9.969A9.936 9.936 0 0 0 19.08 4.92 9.91 9.91 0 0 0 12.031 2zm5.811 14.234c-.246.693-1.43 1.326-1.979 1.409-.506.076-1.147.108-1.852-.116-.428-.136-.977-.318-1.681-.622-2.956-1.276-4.887-4.253-5.035-4.45-.147-.197-1.202-1.599-1.202-3.051 0-1.452.761-2.165 1.031-2.46.27-.295.59-.369.787-.369.197 0 .393.002.565.01.181.009.424-.069.663.506.246.591.836 2.041.909 2.189.074.148.123.32.025.517-.098.197-.148.32-.295.492-.148.172-.31.385-.443.517-.148.147-.302.307-.13.602.172.295.764 1.261 1.641 2.043 1.128 1.006 2.079 1.318 2.374 1.466.295.147.467.123.639-.074.172-.197.738-.861.935-1.156.197-.295.393-.246.663-.148.271.099 1.721.812 2.016.959.295.148.492.222.565.345.074.123.074.713-.172 1.406z"/>
+                                    </svg>
+                                </span>
+                                <div class="min-w-0 leading-tight">
+                                    <div class="text-[11px] sm:text-xs font-extrabold truncate">Channel WhatsApp</div>
+                                    <div class="text-[9.5px] font-mono font-bold text-slate-600 truncate">Channel Informasi WhatsApp</div>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 shrink-0 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square">
+                                <path d="M7 17L17 7M17 7H8M17 7V16"/>
+                            </svg>
+                        </a>
+
+                        <!-- Channel Telegram -->
+                        <a href="https://t.me/information_arulz" target="_blank" rel="noopener noreferrer"
+                            class="neo-btn-rect flex items-center justify-between gap-2 bg-white hover:bg-neoCyan p-2.5 text-black">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-8 h-8 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 2L11 13"></path>
+                                        <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                                    </svg>
+                                </span>
+                                <div class="min-w-0 leading-tight">
+                                    <div class="text-[11px] sm:text-xs font-extrabold truncate">Channel Telegram</div>
+                                    <div class="text-[9.5px] font-mono font-bold text-slate-600 truncate">Channel Informasi Telegram</div>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 shrink-0 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square">
+                                <path d="M7 17L17 7M17 7H8M17 7V16"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Kolom 2: Navigasi & Legal -->

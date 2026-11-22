@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#FFDE59">
+    <meta name="theme-color" content="#FFDF4F">
     <title>Notifikasi & Info Terbaru - ArulzXD Store</title>
     <meta name="description" content="Pusat pemberitahuan promo, pembaruan sistem, dan informasi penting akun Anda di ArulzXD Store.">
 
@@ -14,7 +14,7 @@
 
     <!-- Styles & Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -23,15 +23,17 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        cyber: ['Space Grotesk', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        cyber: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     },
                     colors: {
-                        neoYellow: '#FFDE59',
-                        neoCyan: '#00E5FF',
-                        neoPink: '#FF79C6',
-                        neoGreen: '#00E676',
-                        neoBg: '#F4F0EA',
+                        neoYellow: '#FFDF4F',
+                        neoCyan: '#1AE5FF',
+                        neoPink: '#FF4D6D',
+                        neoGreen: '#2CE875',
+                        neoPurple: '#D896FF',
+                        neoBg: '#FAF9F2',
                         neoCard: '#FFFFFF'
                     }
                 }
@@ -39,30 +41,71 @@
         }
     </script>
     <style>
-        body { background-color: #F4F0EA; color: #000000; overflow-x: hidden; }
+        body {
+            background-color: #FAF9F2;
+            color: #000000;
+            overflow-x: hidden;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            background-image: radial-gradient(#00000018 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
 
-        .neo-box {
+        /* Neo-Brutalisme Persegi Panjang Tegas (Selaras dengan dashboard.html) */
+        .neo-box,
+        .neo-rect {
             background-color: #FFFFFF;
             border: 3px solid #000000;
-            box-shadow: 5px 5px 0px #000000;
+            box-shadow: 6px 6px 0px #000000;
+            border-radius: 0px !important;
         }
 
-        .neo-btn {
-            border: 3px solid #000000;
+        .neo-card-sm {
+            background-color: #FFFFFF;
+            border: 2.5px solid #000000;
             box-shadow: 4px 4px 0px #000000;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            border-radius: 0px !important;
+            transition: transform 0.14s ease, box-shadow 0.14s ease;
         }
-        .neo-btn:hover {
-            transform: translate(-2px, -2px);
+        @media (min-width: 640px) {
+            .neo-card-sm {
+                border: 3px solid #000000;
+                box-shadow: 5px 5px 0px #000000;
+            }
+        }
+        .neo-card-sm:hover {
+            transform: translate(-1.5px, -1.5px);
             box-shadow: 6px 6px 0px #000000;
         }
-        .neo-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px #000000;
+
+        .neo-btn,
+        .neo-btn-rect {
+            border: 2.5px solid #000000;
+            box-shadow: 3.5px 3.5px 0px #000000;
+            border-radius: 0px !important;
+            transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.12s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
+        }
+        @media (min-width: 640px) {
+            .neo-btn,
+            .neo-btn-rect {
+                border: 3px solid #000000;
+                box-shadow: 4px 4px 0px #000000;
+            }
+        }
+        .neo-btn:hover,
+        .neo-btn-rect:hover {
+            transform: translate(-1.5px, -1.5px);
+            box-shadow: 5.5px 5.5px 0px #000000;
+        }
+        .neo-btn:active,
+        .neo-btn-rect:active {
+            transform: translate(2.5px, 2.5px);
+            box-shadow: 1px 1px 0px #000000;
         }
 
         /* =========================================================
-           LIQUID NOTCH CURVE BOTTOM NAVIGATION (6 ITEM: NOTIF + PROFIL)
+           LIQUID NOTCH CURVE BOTTOM NAVIGATION (6 MENU, SINGLE BADGE)
            ========================================================= */
         .liquid-nav-wrapper {
             position: fixed;
@@ -92,10 +135,10 @@
         }
         .liquid-floating-orb {
             position: absolute;
-            top: -26px;
-            width: 46px;
-            height: 46px;
-            margin-left: -23px;
+            top: -24px;
+            width: 44px;
+            height: 44px;
+            margin-left: -22px;
             border-radius: 9999px;
             background-color: #FFDF4F;
             border: 3px solid #000000;
@@ -107,6 +150,7 @@
             pointer-events: none;
             will-change: left, transform;
             transition: left 0.48s cubic-bezier(0.34, 1.38, 0.64, 1);
+            z-index: 15;
         }
         .liquid-floating-orb.orb-bounce {
             animation: orbJump 0.48s cubic-bezier(0.34, 1.5, 0.64, 1);
@@ -143,6 +187,7 @@
             font-size: 9.5px;
             font-weight: 800;
             margin-top: 3px;
+            letter-spacing: -0.01em;
             transition: opacity 0.2s ease, transform 0.32s ease, color 0.25s ease;
         }
         .liquid-nav-item.active i {
@@ -155,54 +200,64 @@
             font-weight: 900;
             transform: translateY(3px);
         }
+
+        /* Single Badge Merah Notifikasi (Otomatis sembunyi jika item Notif sedang aktif / masuk ke lekukan) */
         .notif-nav-badge {
             position: absolute;
-            top: 6px;
-            right: calc(50% - 19px);
+            top: 8px;
+            right: calc(50% - 17px);
             min-width: 17px;
             height: 17px;
             padding: 0 4px;
             border-radius: 9999px;
-            background-color: #FF2E4C;
+            background-color: #EF233C;
             color: #FFFFFF;
             border: 2px solid #000000;
+            font-family: 'Space Grotesk', sans-serif;
             font-size: 9px;
             font-weight: 900;
             line-height: 1;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            z-index: 20;
             box-shadow: 1.5px 1.5px 0px #000000;
+            z-index: 20;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
-        .notif-nav-badge.hidden {
+        .notif-nav-badge.hidden,
+        .liquid-nav-item.active .notif-nav-badge {
             display: none !important;
         }
 
         .swal2-popup.cyber-swal {
             background: #FFFFFF !important;
-            border: 3px solid #000000 !important;
-            border-radius: 20px !important;
+            border: 3.5px solid #000000 !important;
+            border-radius: 0px !important;
             color: #000000 !important;
             box-shadow: 6px 6px 0px #000000 !important;
             font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
     </style>
 </head>
-<body class="font-sans antialiased text-black min-h-screen pb-36">
+<body class="font-sans antialiased text-black min-h-screen pb-36 selection:bg-neoYellow selection:text-black">
 
-    <!-- TOP NAVBAR -->
-    <header class="sticky top-0 z-40 bg-neoYellow border-b-3 border-black shadow-[0_4px_0_#000]">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="/store" class="text-2xl font-black font-cyber tracking-tight text-black flex items-center gap-2">
-                <i class="fa-solid fa-bolt text-black text-xl"></i>
-                <span>Arulz<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">Store</span></span>
+    <!-- TOP NAVBAR NEO-BRUTALISME (IDENTIK DENGAN DASHBOARD.HTML) -->
+    <header class="sticky top-0 z-30 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
+        <div class="max-w-6xl mx-auto px-3 sm:px-4 py-3 flex items-center justify-between gap-2.5 sm:gap-3">
+            <a href="/dashboard" class="flex items-center gap-2 flex-shrink-0">
+                <i class="fa-solid fa-bolt text-black text-lg sm:text-xl"></i>
+                <span class="text-xl sm:text-2xl font-extrabold font-cyber tracking-tight text-black">
+                    Arulz <span class="bg-black text-white px-2 py-0.5 rounded-none">Store</span>
+                </span>
             </a>
             <div class="flex items-center gap-2">
-                <button type="button" onclick="markAllNotificationsRead()" class="neo-btn bg-neoGreen text-black font-cyber font-black px-3 py-1.5 rounded-xl text-xs uppercase flex items-center gap-1.5">
-                    <i class="fa-solid fa-check-double"></i> <span class="hidden sm:inline">Tandai Semua Dibaca</span><span class="sm:hidden">Baca Semua</span>
+                <button type="button" onclick="markAllNotificationsRead()" class="neo-btn bg-neoGreen text-black font-cyber font-extrabold px-3 py-1.5 rounded-none text-xs uppercase flex items-center gap-1.5">
+                    <i class="fa-solid fa-check-double"></i>
+                    <span class="hidden sm:inline">Tandai Semua Dibaca</span>
+                    <span class="sm:hidden">Baca Semua</span>
                 </button>
-                <button type="button" onclick="loadNotifications()" class="neo-btn bg-white text-black font-cyber font-black px-3 py-1.5 rounded-xl text-xs uppercase flex items-center gap-1.5">
+                <button type="button" onclick="loadNotifications()" title="Muat Ulang Notifikasi" class="neo-btn bg-white text-black font-cyber font-extrabold px-3 py-1.5 rounded-none text-xs uppercase flex items-center gap-1.5">
                     <i class="fa-solid fa-rotate"></i>
                 </button>
             </div>
@@ -210,98 +265,265 @@
     </header>
 
     <!-- MAIN CONTAINER -->
-    <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 space-y-6">
+    <main class="max-w-6xl mx-auto px-3 sm:px-4 py-5 sm:py-6 w-full flex-1 space-y-5 sm:space-y-6">
 
-        <!-- HERO HEADER -->
-        <section class="neo-box p-6 rounded-2xl bg-neoCyan flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-                <h1 class="text-xl sm:text-3xl font-black font-cyber text-black flex items-center gap-2">
-                    <i class="fa-solid fa-bell"></i> Pusat Notifikasi
+        <!-- HERO HEADER DENGAN WATERMARK BELL SOLID TRANSPARAN -->
+        <section class="neo-rect p-6 sm:p-7 bg-neoCyan relative overflow-hidden flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+            <!-- Watermark Lonceng Notifikasi Solid Besar di Pojok Kanan -->
+            <div class="absolute -right-6 -bottom-8 pointer-events-none select-none text-black/[0.10] -rotate-12">
+                <svg class="w-56 h-56 sm:w-64 sm:h-64" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                </svg>
+            </div>
+
+            <div class="relative z-10 max-w-xl">
+                <span class="inline-flex items-center gap-1.5 bg-black text-neoYellow text-[11px] font-extrabold px-2.5 py-1 uppercase font-cyber tracking-wider mb-3">
+                    <i class="fa-solid fa-bell"></i> PUSAT PEMBERITAHUAN • REALTIME
+                </span>
+                <h1 class="text-2xl sm:text-4xl font-extrabold font-cyber text-black tracking-tight leading-tight flex flex-wrap items-center gap-2">
+                    <span>Pusat</span>
+                    <span class="bg-white border-2 border-black px-2.5 py-0.5 shadow-[3px_3px_0px_#000]">Notifikasi</span>
                 </h1>
-                <p class="text-xs sm:text-sm font-bold text-black mt-1">
-                    Informasi promo, pembaruan layanan, dan pengumuman resmi dari ArulzXD Store.
+                <p class="text-xs sm:text-sm font-bold text-black mt-3 leading-relaxed">
+                    Informasi promo terbaru, pembaruan sistem, status transaksi, dan pengumuman resmi dari ArulzXD Store.
                 </p>
             </div>
-            <div class="flex flex-wrap items-center gap-3">
-                <div class="bg-white border-3 border-black px-4 py-3 rounded-xl shadow-[4px_4px_0px_#000] flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-[#FF2E4C] text-white border-2 border-black flex items-center justify-center font-black">
+
+            <div class="relative z-10 flex flex-wrap items-center gap-3">
+                <div class="bg-white border-[3px] border-black px-4 py-3 rounded-none shadow-[4px_4px_0px_#000] flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-none bg-[#EF233C] text-white border-2 border-black flex items-center justify-center font-black shadow-[2px_2px_0px_#000]">
                         <i class="fa-solid fa-envelope-open-text"></i>
                     </div>
                     <div>
-                        <span class="text-[10px] font-black font-cyber uppercase block">Belum Dibaca</span>
-                        <span id="unreadNotifBadgeCount" class="text-base font-black font-cyber">0 Notifikasi</span>
+                        <span class="text-[10px] font-extrabold font-cyber uppercase block text-slate-600">Belum Dibaca</span>
+                        <span id="unreadNotifBadgeCount" class="text-base font-extrabold font-cyber text-black">0 Notifikasi</span>
                     </div>
                 </div>
-                <a href="/profile" class="neo-btn bg-neoYellow text-black font-cyber font-black px-4 py-3 rounded-xl text-xs uppercase flex items-center gap-2">
+                <a href="/profile" class="neo-btn bg-neoYellow text-black font-cyber font-extrabold px-4 py-3 rounded-none text-xs uppercase flex items-center gap-2">
                     <i class="fa-brands fa-telegram text-base"></i> Atur Notif Telegram
                 </a>
             </div>
         </section>
 
-        <!-- FILTER & SEARCH BAR -->
-        <section class="neo-box p-4 rounded-2xl bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <!-- FILTER & SEARCH BAR NEO-BRUTALISME PERSEGI TEGAS -->
+        <section class="neo-box p-4 rounded-none bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
             <div class="flex flex-wrap items-center gap-2">
-                <button type="button" onclick="setNotifFilter('all', this)" class="notif-filter-tab neo-btn bg-neoYellow px-3.5 py-2 rounded-xl text-xs font-cyber font-black uppercase">
+                <button type="button" onclick="setNotifFilter('all', this)" class="notif-filter-tab neo-btn bg-neoYellow px-3.5 py-2 rounded-none text-xs font-cyber font-extrabold uppercase">
                     Semua
                 </button>
-                <button type="button" onclick="setNotifFilter('unread', this)" class="notif-filter-tab neo-btn bg-white px-3.5 py-2 rounded-xl text-xs font-cyber font-black uppercase">
+                <button type="button" onclick="setNotifFilter('unread', this)" class="notif-filter-tab neo-btn bg-white px-3.5 py-2 rounded-none text-xs font-cyber font-extrabold uppercase">
                     Belum Dibaca
                 </button>
-                <button type="button" onclick="setNotifFilter('promo', this)" class="notif-filter-tab neo-btn bg-white px-3.5 py-2 rounded-xl text-xs font-cyber font-black uppercase">
+                <button type="button" onclick="setNotifFilter('promo', this)" class="notif-filter-tab neo-btn bg-white px-3.5 py-2 rounded-none text-xs font-cyber font-extrabold uppercase">
                     Promo
                 </button>
-                <button type="button" onclick="setNotifFilter('sistem', this)" class="notif-filter-tab neo-btn bg-white px-3.5 py-2 rounded-xl text-xs font-cyber font-black uppercase">
+                <button type="button" onclick="setNotifFilter('sistem', this)" class="notif-filter-tab neo-btn bg-white px-3.5 py-2 rounded-none text-xs font-cyber font-extrabold uppercase">
                     Sistem
                 </button>
             </div>
 
             <div class="relative flex-1 sm:max-w-xs">
-                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-slate-600"></i>
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-black"></i>
                 <input type="text" id="notifSearchInput" oninput="renderFilteredNotifications()" placeholder="Cari judul atau isi notifikasi..." 
-                       class="w-full bg-neoBg border-2 border-black rounded-xl pl-9 pr-3.5 py-2 text-xs font-bold text-black placeholder-slate-500 focus:outline-none">
+                       class="w-full bg-neoBg border-[2.5px] border-black shadow-[3px_3px_0px_#000] rounded-none pl-9 pr-3.5 py-2 text-xs font-bold text-black placeholder-slate-500 focus:outline-none">
             </div>
         </section>
 
         <!-- DAFTAR NOTIFIKASI -->
         <section id="notificationListContainer" class="space-y-4">
-            <div class="neo-box p-8 rounded-2xl bg-white text-center font-mono font-bold text-xs">
+            <div class="neo-box p-8 rounded-none bg-white text-center font-mono font-bold text-xs">
                 <i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Memuat notifikasi Anda...
             </div>
         </section>
 
     </main>
 
-    <!-- MODAL DETAIL NOTIFIKASI -->
+    <!-- FOOTER NEO-BRUTALISME (IDENTIK DENGAN DASHBOARD.HTML) -->
+    <footer class="max-w-6xl mx-auto px-3 sm:px-4 mt-2 mb-4">
+        <div class="neo-rect bg-white overflow-hidden">
+            <!-- Bagian Atas: Brand, Deskripsi & 5 Tombol Kotak Media Sosial SVG -->
+            <div class="p-5 sm:p-7 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-neoYellow border-[3px] border-black shadow-[3px_3px_0px_#000] flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter">
+                            <path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" fill="#000000"/>
+                        </svg>
+                    </div>
+                    <span class="font-cyber font-extrabold text-xl sm:text-2xl tracking-tight text-black">
+                        ArulzXD <span class="bg-black text-neoYellow px-2 py-0.5">Store</span>
+                    </span>
+                </div>
+
+                <p class="text-xs sm:text-sm font-bold text-slate-800 max-w-xl leading-relaxed">
+                    Platform belanja Source Code, Script Bot, Rest API, dan Layanan Digital otomatis 24 jam. Cepat, aman, dan langsung diproses setelah pembayaran.
+                </p>
+
+                <!-- 5 Kotak Ikon Media Sosial dengan SVG Masing-Masing -->
+                <div class="flex flex-wrap items-center gap-2.5 pt-1">
+                    <!-- TikTok -->
+                    <a href="https://www.tiktok.com/@arulzxd8" target="_blank" rel="noopener noreferrer" aria-label="TikTok ArulzXD" title="TikTok"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoYellow flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                        </svg>
+                    </a>
+
+                    <!-- Instagram -->
+                    <a href="https://www.instagram.com/arulzz.xd" target="_blank" rel="noopener noreferrer" aria-label="Instagram ArulzXD" title="Instagram"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoPink flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                    </a>
+
+                    <!-- Telegram -->
+                    <a href="https://t.me/arulzxd" target="_blank" rel="noopener noreferrer" aria-label="Telegram ArulzXD" title="Telegram"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoCyan flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 2L11 13"></path>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                        </svg>
+                    </a>
+
+                    <!-- YouTube -->
+                    <a href="https://www.youtube.com/@arulzxd" target="_blank" rel="noopener noreferrer" aria-label="YouTube ArulzXD" title="YouTube"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoPink flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/6285122629940" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ArulzXD" title="WhatsApp Admin"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoGreen flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.459 3.473 1.331 4.985L2 22l5.188-1.361a9.93 9.93 0 0 0 4.843 1.258h.004c5.515 0 9.969-4.454 9.969-9.969A9.936 9.936 0 0 0 19.08 4.92 9.91 9.91 0 0 0 12.031 2zm5.811 14.234c-.246.693-1.43 1.326-1.979 1.409-.506.076-1.147.108-1.852-.116-.428-.136-.977-.318-1.681-.622-2.956-1.276-4.887-4.253-5.035-4.45-.147-.197-1.202-1.599-1.202-3.051 0-1.452.761-2.165 1.031-2.46.27-.295.59-.369.787-.369.197 0 .393.002.565.01.181.009.424-.069.663.506.246.591.836 2.041.909 2.189.074.148.123.32.025.517-.098.197-.148.32-.295.492-.148.172-.31.385-.443.517-.148.147-.302.307-.13.602.172.295.764 1.261 1.641 2.043 1.128 1.006 2.079 1.318 2.374 1.466.295.147.467.123.639-.074.172-.197.738-.861.935-1.156.197-.295.393-.246.663-.148.271.099 1.721.812 2.016.959.295.148.492.222.565.345.074.123.074.713-.172 1.406z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bagian Tengah: 2 Kolom (Saluran & Legal/Menu) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 border-t-[3px] border-black bg-neoBg divide-y-[3px] sm:divide-y-0 sm:divide-x-[3px] divide-black">
+                <!-- Kolom 1: Saluran Resmi -->
+                <div class="p-5 sm:px-7 sm:py-6 space-y-3.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="inline-block bg-neoGreen border-2 border-black px-2.5 py-0.5 font-cyber font-extrabold text-[11px] uppercase tracking-wider text-black shadow-[2px_2px_0px_#000]">
+                            SALURAN &amp; KOMUNITAS
+                        </span>
+                        <span class="text-[10px] font-mono font-extrabold text-slate-600 uppercase">
+                            UPDATE &amp; PROMO
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <!-- Channel WhatsApp -->
+                        <a href="https://whatsapp.com/channel/0029Vb94zQcJUM2hE0pYz40U" target="_blank" rel="noopener noreferrer"
+                            class="neo-btn-rect flex items-center justify-between gap-2 bg-white hover:bg-neoGreen p-2.5 text-black">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-8 h-8 bg-neoGreen border-2 border-black flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.459 3.473 1.331 4.985L2 22l5.188-1.361a9.93 9.93 0 0 0 4.843 1.258h.004c5.515 0 9.969-4.454 9.969-9.969A9.936 9.936 0 0 0 19.08 4.92 9.91 9.91 0 0 0 12.031 2zm5.811 14.234c-.246.693-1.43 1.326-1.979 1.409-.506.076-1.147.108-1.852-.116-.428-.136-.977-.318-1.681-.622-2.956-1.276-4.887-4.253-5.035-4.45-.147-.197-1.202-1.599-1.202-3.051 0-1.452.761-2.165 1.031-2.46.27-.295.59-.369.787-.369.197 0 .393.002.565.01.181.009.424-.069.663.506.246.591.836 2.041.909 2.189.074.148.123.32.025.517-.098.197-.148.32-.295.492-.148.172-.31.385-.443.517-.148.147-.302.307-.13.602.172.295.764 1.261 1.641 2.043 1.128 1.006 2.079 1.318 2.374 1.466.295.147.467.123.639-.074.172-.197.738-.861.935-1.156.197-.295.393-.246.663-.148.271.099 1.721.812 2.016.959.295.148.492.222.565.345.074.123.074.713-.172 1.406z"/>
+                                    </svg>
+                                </span>
+                                <div class="min-w-0 leading-tight">
+                                    <div class="text-[11px] sm:text-xs font-extrabold truncate">Channel WhatsApp</div>
+                                    <div class="text-[9.5px] font-mono font-bold text-slate-600 truncate">Channel Informasi WhatsApp</div>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 shrink-0 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square">
+                                <path d="M7 17L17 7M17 7H8M17 7V16"/>
+                            </svg>
+                        </a>
+
+                        <!-- Channel Telegram -->
+                        <a href="https://t.me/information_arulz" target="_blank" rel="noopener noreferrer"
+                            class="neo-btn-rect flex items-center justify-between gap-2 bg-white hover:bg-neoCyan p-2.5 text-black">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-8 h-8 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 2L11 13"></path>
+                                        <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                                    </svg>
+                                </span>
+                                <div class="min-w-0 leading-tight">
+                                    <div class="text-[11px] sm:text-xs font-extrabold truncate">Channel Telegram</div>
+                                    <div class="text-[9.5px] font-mono font-bold text-slate-600 truncate">Channel Informasi Telegram</div>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 shrink-0 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square">
+                                <path d="M7 17L17 7M17 7H8M17 7V16"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Kolom 2: Navigasi & Legal -->
+                <div class="p-5 sm:px-7 sm:py-6 space-y-3.5">
+                    <div class="inline-block bg-neoCyan border-2 border-black px-2.5 py-0.5 font-cyber font-extrabold text-[11px] uppercase tracking-wider text-black shadow-[2px_2px_0px_#000]">
+                        NAVIGASI &amp; LEGAL
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5 text-xs sm:text-sm font-extrabold">
+                        <a href="/store" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Katalog Toko
+                        </a>
+                        <a href="/deposit" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Isi Saldo
+                        </a>
+                        <a href="/riwayat" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Riwayat Pesanan
+                        </a>
+                        <a href="/login" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Masuk &amp; Daftar
+                        </a>
+                        <a href="/privacy" class="hover:underline flex items-center gap-1.5 col-span-2">
+                            <span class="w-2 h-2 bg-neoPink border border-black inline-block"></span> Kebijakan Privasi &amp; Layanan
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian Bawah: Bar Hak Cipta Hitam Tegas -->
+            <div class="bg-black text-white border-t-[3px] border-black px-5 sm:px-7 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono font-bold">
+                <span class="text-neoYellow">© 2026 ArulzXD Store. Hak cipta dilindungi.</span>
+                <span class="text-white/80 text-center sm:text-right">Layanan Digital Otomatis 24 Jam • WIB</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL DETAIL NOTIFIKASI NEO-BRUTALISME PERSEGI TEGAS -->
     <div id="notifDetailModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4 overflow-y-auto">
-        <div class="neo-box w-full max-w-lg rounded-2xl bg-white p-5 sm:p-6 space-y-4 relative my-auto">
-            <button type="button" onclick="closeNotifModal()" class="w-8 h-8 rounded-lg border-2 border-black bg-neoBg hover:bg-neoPink flex items-center justify-center absolute top-4 right-4 text-black font-black text-sm transition">
+        <div class="neo-box w-full max-w-lg rounded-none bg-white p-5 sm:p-6 space-y-4 relative my-auto">
+            <button type="button" onclick="closeNotifModal()" class="w-8 h-8 rounded-none border-2 border-black bg-neoBg hover:bg-neoPink shadow-[2px_2px_0px_#000] flex items-center justify-center absolute top-4 right-4 text-black font-black text-sm transition">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
-            <div class="border-b-3 border-black pb-3 pr-8">
-                <span id="modalNotifTypeBadge" class="inline-block bg-neoYellow border-2 border-black px-2.5 py-0.5 rounded-md text-[10px] font-black font-cyber uppercase">
+            <div class="border-b-[3px] border-black pb-3 pr-8">
+                <span id="modalNotifTypeBadge" class="inline-block bg-neoYellow border-2 border-black px-2.5 py-0.5 rounded-none text-[10px] font-extrabold font-cyber uppercase shadow-[2px_2px_0px_#000]">
                     INFO
                 </span>
-                <h3 id="modalNotifTitle" class="text-lg font-black font-cyber mt-1.5">-</h3>
+                <h3 id="modalNotifTitle" class="text-lg font-extrabold font-cyber mt-2">-</h3>
                 <p id="modalNotifDate" class="text-[11px] font-mono font-bold text-slate-600 mt-0.5">-</p>
             </div>
 
-            <div class="bg-neoBg border-2 border-black rounded-xl p-4 text-xs sm:text-sm font-bold text-black leading-relaxed whitespace-pre-line" id="modalNotifMessage">
+            <div class="bg-neoBg border-2 border-black rounded-none p-4 text-xs sm:text-sm font-bold text-black leading-relaxed whitespace-pre-line" id="modalNotifMessage">
                 -
             </div>
 
-            <div class="flex items-center gap-2 pt-1">
-                <a id="modalNotifLinkBtn" href="#" class="hidden neo-btn flex-1 bg-neoCyan text-black font-cyber font-black py-2.5 rounded-xl text-xs uppercase flex items-center justify-center gap-1.5">
+            <div class="flex items-center gap-2.5 pt-1">
+                <a id="modalNotifLinkBtn" href="#" class="hidden neo-btn flex-1 bg-neoCyan text-black font-cyber font-extrabold py-2.5 rounded-none text-xs uppercase flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Tautan
                 </a>
-                <button type="button" onclick="closeNotifModal()" class="neo-btn flex-1 bg-white text-black font-cyber font-black py-2.5 rounded-xl text-xs uppercase">
+                <button type="button" onclick="closeNotifModal()" class="neo-btn flex-1 bg-white text-black font-cyber font-extrabold py-2.5 rounded-none text-xs uppercase">
                     Tutup
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION DENGAN LEKUKAN BERSIH (6 ITEM: RIWAYAT | NOTIFIKASI | PROFIL) -->
+    <!-- BOTTOM NAVIGATION DENGAN LEKUKAN BERSIH (SINGLE BADGE, TANPA DOUBLE BADGE BERTUMPUK) -->
     <nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
         <div class="liquid-nav-bg">
             <svg class="liquid-nav-svg" id="liquidNavSvg" xmlns="http://www.w3.org/2000/svg">
@@ -309,15 +531,14 @@
             </svg>
         </div>
 
-        <!-- Bulatan Ikon Aktif (Notifikasi - index 4) -->
+        <!-- Bulatan Ikon Aktif (Notifikasi - index 4: 75%) -->
         <div class="liquid-floating-orb" id="liquidFloatingOrb" style="left: 75%;">
-            <i id="liquidOrbIcon" class="fa-solid fa-bell text-lg"></i>
-            <span id="orbNotifBadge" class="notif-nav-badge hidden" style="top: -4px; right: -4px;">0</span>
+            <i id="liquidOrbIcon" class="fa-solid fa-bell text-base"></i>
         </div>
 
         <!-- 6 Item Menu -->
         <div class="liquid-nav-items">
-            <a href="/" data-index="0" data-icon="fa-solid fa-house" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
+            <a href="/dashboard" data-index="0" data-icon="fa-solid fa-house" onclick="handleLiquidNavClick(event, this)" class="liquid-nav-item">
                 <i class="fa-solid fa-house"></i>
                 <span class="nav-text">Home</span>
             </a>
@@ -351,7 +572,7 @@
         let currentSessionUserKey = 'guest';
 
         /* =========================================================
-           LIQUID NOTCH CURVE NAVIGATION (6 ITEM)
+           LIQUID NOTCH CURVE NAVIGATION (6 ITEM, IDENTIK DENGAN STORE & DASHBOARD)
            ========================================================= */
         let liquidNavAnimationFrame = null;
         let currentNotchPixelX = 0;
@@ -359,10 +580,10 @@
         const NAV_ITEM_COUNT = 6;
 
         function buildPixelNotchPath(cx, totalW, totalH) {
-            const notchHalfW = 42;
-            const notchDepth = 27;
-            const c1 = 19;
-            const c2 = 17;
+            const notchHalfW = 40;
+            const notchDepth = 26;
+            const c1 = 18;
+            const c2 = 16;
 
             const leftEdge = Math.max(2, cx - notchHalfW);
             const rightEdge = Math.min(totalW - 2, cx + notchHalfW);
@@ -444,7 +665,7 @@
             const targetPxX = ((index + 0.5) / NAV_ITEM_COUNT) * w;
 
             orb.style.left = `${percentLeft}%`;
-            orbIcon.className = `${activeItem.dataset.icon} text-lg`;
+            orbIcon.className = `${activeItem.dataset.icon} text-base`;
 
             if (animate) {
                 orb.classList.remove('orb-bounce');
@@ -479,7 +700,7 @@
         });
 
         /* =========================================================
-           MANAJEMEN STATUS BACA SESI (HILANG SAAT DIBACA, MUNCUL LAGI SAAT LOGOUT -> LOGIN)
+           MANAJEMEN STATUS BACA SESI & SINKRON BADGE LINTAS HALAMAN
            ========================================================= */
         function getSessionReadStorageKey() {
             return `arulz_notif_read_session_${currentSessionUserKey}`;
@@ -510,23 +731,26 @@
 
         function updateNavBadgeUI(unreadCount) {
             const navBadge = document.getElementById('navNotifBadge');
-            const orbBadge = document.getElementById('orbNotifBadge');
             const heroCount = document.getElementById('unreadNotifBadgeCount');
+            const cleanUnread = Math.max(0, Number(unreadCount) || 0);
 
             if (heroCount) {
-                heroCount.innerText = `${unreadCount} Notifikasi`;
+                heroCount.innerText = `${cleanUnread} Notifikasi`;
             }
 
-            const displayVal = unreadCount > 99 ? '99+' : String(unreadCount);
-            [navBadge, orbBadge].forEach((badge) => {
-                if (!badge) return;
-                if (unreadCount > 0) {
-                    badge.innerText = displayVal;
-                    badge.classList.remove('hidden');
+            try {
+                localStorage.setItem('arulz_unread_notif_count', String(cleanUnread));
+            } catch (e) {}
+
+            if (navBadge) {
+                if (cleanUnread > 0) {
+                    navBadge.innerText = cleanUnread > 99 ? '99+' : String(cleanUnread);
+                    navBadge.classList.remove('hidden');
                 } else {
-                    badge.classList.add('hidden');
+                    navBadge.innerText = '0';
+                    navBadge.classList.add('hidden');
                 }
-            });
+            }
         }
 
         function setNotifFilter(filterVal, btnEl) {
@@ -557,7 +781,7 @@
                     if (authLink) authLink.href = '/profile';
                 } else {
                     currentSessionUserKey = 'guest';
-                    if (authLabel) authLabel.innerText = 'Akun';
+                    if (authLabel) authLabel.innerText = 'Profil';
                     if (authLink) authLink.href = '/login';
                 }
 
@@ -576,7 +800,7 @@
                 }
             } catch (err) {
                 container.innerHTML = `
-                    <div class="neo-box p-6 rounded-2xl bg-neoPink text-center text-xs font-black font-cyber">
+                    <div class="neo-box p-6 rounded-none bg-neoPink text-center text-xs font-extrabold font-cyber uppercase">
                         Gagal memuat notifikasi. Silakan coba lagi.
                     </div>
                 `;
@@ -604,11 +828,11 @@
 
             if (filtered.length === 0) {
                 container.innerHTML = `
-                    <div class="neo-box p-8 rounded-2xl bg-white text-center space-y-3">
-                        <div class="w-12 h-12 rounded-2xl bg-neoYellow border-2 border-black mx-auto flex items-center justify-center text-xl">
+                    <div class="neo-box p-8 rounded-none bg-white text-center space-y-3">
+                        <div class="w-12 h-12 rounded-none bg-neoYellow border-[3px] border-black shadow-[3px_3px_0px_#000] mx-auto flex items-center justify-center text-xl">
                             <i class="fa-regular fa-bell-slash"></i>
                         </div>
-                        <h3 class="text-sm font-black font-cyber uppercase">Tidak Ada Notifikasi</h3>
+                        <h3 class="text-sm font-extrabold font-cyber uppercase">Tidak Ada Notifikasi</h3>
                         <p class="text-xs font-bold text-slate-600">Belum ada pemberitahuan yang sesuai dengan filter saat ini.</p>
                     </div>
                 `;
@@ -643,36 +867,36 @@
                     : '-';
 
                 return `
-                    <article onclick="openNotificationDetail('${notif.id}')" class="neo-box p-4 sm:p-5 rounded-2xl ${isRead ? 'bg-white' : 'bg-[#FFFDF2]'} cursor-pointer hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative">
-                        <div class="space-y-1.5 flex-1">
+                    <article onclick="openNotificationDetail('${notif.id}')" class="neo-card-sm p-4 sm:p-5 rounded-none ${isRead ? 'bg-white' : 'bg-[#FFFBE6]'} cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative">
+                        <div class="space-y-2 flex-1">
                             <div class="flex flex-wrap items-center gap-2">
                                 ${!isRead ? `
-                                    <span class="inline-flex items-center gap-1 text-[10px] font-black font-cyber px-2.5 py-0.5 rounded-md border-2 border-black bg-[#FF2E4C] text-white">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span> BARU
+                                    <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold font-cyber px-2.5 py-0.5 rounded-none border-2 border-black bg-[#EF233C] text-white shadow-[2px_2px_0px_#000]">
+                                        <span class="w-1.5 h-1.5 bg-white animate-ping"></span> BARU
                                     </span>
                                 ` : `
-                                    <span class="inline-flex items-center gap-1 text-[10px] font-black font-cyber px-2.5 py-0.5 rounded-md border-2 border-black bg-neoBg text-slate-700">
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-extrabold font-cyber px-2.5 py-0.5 rounded-none border-2 border-black bg-neoBg text-slate-700">
                                         <i class="fa-solid fa-check"></i> DIBACA
                                     </span>
                                 `}
-                                <span class="inline-flex items-center gap-1 text-[10px] font-black font-cyber px-2.5 py-0.5 rounded-md border-2 border-black ${typeClass}">
+                                <span class="inline-flex items-center gap-1 text-[10px] font-extrabold font-cyber px-2.5 py-0.5 rounded-none border-2 border-black shadow-[2px_2px_0px_#000] ${typeClass}">
                                     <i class="fa-solid ${typeIcon}"></i> ${typeUpper}
                                 </span>
                                 <span class="text-[11px] font-mono font-bold text-slate-600">
                                     <i class="fa-regular fa-clock mr-1"></i>${dateStr} WIB
                                 </span>
                             </div>
-                            <h2 class="text-sm sm:text-base font-black font-cyber text-black">${notif.title}</h2>
+                            <h2 class="text-sm sm:text-base font-extrabold font-cyber text-black">${notif.title}</h2>
                             <p class="text-xs font-bold text-slate-700 line-clamp-2">${notif.message}</p>
                         </div>
 
                         <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
                             ${!isRead ? `
-                                <button type="button" onclick="event.stopPropagation(); markSingleNotificationRead('${notif.id}')" class="neo-btn bg-neoGreen text-black font-cyber font-black px-3 py-2 rounded-xl text-[11px] uppercase flex items-center gap-1">
+                                <button type="button" onclick="event.stopPropagation(); markSingleNotificationRead('${notif.id}')" class="neo-btn bg-neoGreen text-black font-cyber font-extrabold px-3 py-2 rounded-none text-[11px] uppercase flex items-center gap-1">
                                     <i class="fa-solid fa-check"></i> Tandai Baca
                                 </button>
                             ` : ''}
-                            <button type="button" class="neo-btn bg-neoYellow text-black font-cyber font-black px-3.5 py-2 rounded-xl text-[11px] uppercase flex items-center gap-1">
+                            <button type="button" class="neo-btn bg-neoYellow text-black font-cyber font-extrabold px-3.5 py-2 rounded-none text-[11px] uppercase flex items-center gap-1">
                                 <i class="fa-solid fa-eye"></i> Baca
                             </button>
                         </div>
@@ -725,7 +949,6 @@
             const notif = allNotifications.find((n) => String(n.id) === String(notifId));
             if (!notif) return;
 
-            // Tandai baca otomatis saat dibuka
             markSingleNotificationRead(notif.id);
 
             document.getElementById('modalNotifTypeBadge').innerText = (notif.type || 'info').toUpperCase();

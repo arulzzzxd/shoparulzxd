@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#FFDE59">
+    <meta name="theme-color" content="#FFDF4F">
     <title>Masuk & Daftar Akun - ArulzXD Store</title>
     <meta name="description" content="Masuk atau daftar akun ArulzXD Store untuk menikmati layanan digital premium, source code, dan transaksi otomatis 24/7.">
     <meta name="robots" content="noindex, nofollow">
@@ -36,7 +36,7 @@
     <!-- Styles & Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script>
@@ -44,16 +44,18 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        cyber: ['Space Grotesk', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        cyber: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     },
                     colors: {
-                        neoYellow: '#FFDE59',
-                        neoCyan: '#00E5FF',
-                        neoPink: '#FF79C6',
-                        neoGreen: '#00E676',
+                        neoYellow: '#FFDF4F',
+                        neoCyan: '#1AE5FF',
+                        neoPink: '#FF4D6D',
+                        neoGreen: '#2CE875',
+                        neoPurple: '#D896FF',
                         neoTelegram: '#229ED9',
-                        neoBg: '#F5F2EB',
+                        neoBg: '#FAF9F2',
                         neoCard: '#FFFFFF'
                     }
                 }
@@ -61,33 +63,56 @@
         }
     </script>
     <style>
+        html, body {
+            min-height: 100dvh;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            background-color: #F5F2EB;
-            background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1.2px, transparent 1.2px);
+            background-color: #FAF9F2;
+            background-image: radial-gradient(#00000018 1px, transparent 1px);
             background-size: 16px 16px;
             color: #000000;
             overflow-x: hidden;
             touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .neo-box {
+        /* Neo-Brutalisme Persegi Panjang Tegas (Identik dengan dashboard.html) */
+        .neo-box,
+        .neo-rect {
             background-color: #FFFFFF;
-            border: 3.5px solid #000000;
+            border: 3px solid #000000;
             box-shadow: 6px 6px 0px #000000;
+            border-radius: 0px !important;
         }
 
-        .neo-btn {
-            border: 3px solid #000000;
-            box-shadow: 4px 4px 0px #000000;
-            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease, filter 0.2s ease;
+        .neo-btn,
+        .neo-btn-rect {
+            border: 2.5px solid #000000;
+            box-shadow: 3.5px 3.5px 0px #000000;
+            border-radius: 0px !important;
+            transition: transform 0.14s ease, box-shadow 0.14s ease, opacity 0.2s ease, filter 0.2s ease;
+            cursor: pointer;
         }
-        .neo-btn:not(:disabled):hover {
-            transform: translate(-2px, -2px);
+        @media (min-width: 640px) {
+            .neo-btn,
+            .neo-btn-rect {
+                border: 3px solid #000000;
+                box-shadow: 4px 4px 0px #000000;
+            }
+        }
+        .neo-btn:not(:disabled):not(.btn-disabled):hover,
+        .neo-btn-rect:not(:disabled):not(.btn-disabled):hover {
+            transform: translate(-1.5px, -1.5px);
             box-shadow: 5.5px 5.5px 0px #000000;
         }
-        .neo-btn:not(:disabled):active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px #000000;
+        .neo-btn:not(:disabled):not(.btn-disabled):active,
+        .neo-btn-rect:not(:disabled):not(.btn-disabled):active {
+            transform: translate(2.5px, 2.5px);
+            box-shadow: 1px 1px 0px #000000;
         }
 
         .btn-disabled {
@@ -103,14 +128,16 @@
             background-color: #FFFFFF;
             border: 3px solid #000000;
             box-shadow: 3.5px 3.5px 0px #000000;
-            transition: all 0.15s ease;
+            border-radius: 0px !important;
+            transition: all 0.14s ease;
+            cursor: pointer;
         }
         .tab-nav-btn:hover {
             transform: translate(-1px, -1px);
             box-shadow: 4.5px 4.5px 0px #000000;
         }
         .tab-nav-btn.active {
-            background-color: #FFDE59;
+            background-color: #FFDF4F;
             transform: translate(2px, 2px);
             box-shadow: 1.5px 1.5px 0px #000000;
         }
@@ -118,7 +145,8 @@
         .neo-input {
             border: 3px solid #000000;
             box-shadow: 3px 3px 0px #000000;
-            transition: all 0.15s ease;
+            border-radius: 0px !important;
+            transition: all 0.14s ease;
         }
         .neo-input:focus {
             box-shadow: 4.5px 4.5px 0px #000000;
@@ -130,7 +158,7 @@
         .swal2-popup.cyber-swal {
             background: #FFFFFF !important;
             border: 3.5px solid #000000 !important;
-            border-radius: 20px !important;
+            border-radius: 0px !important;
             color: #000000 !important;
             box-shadow: 6px 6px 0px #000000 !important;
             font-family: 'Plus Jakarta Sans', sans-serif !important;
@@ -155,14 +183,14 @@
 
         .brutal-glitch::before {
             left: -2px;
-            text-shadow: 2px 0 #00E5FF;
+            text-shadow: 2px 0 #1AE5FF;
             clip: rect(24px, 550px, 90px, 0);
             animation: brutal-glitch-anim-1 3.5s infinite ease-in-out;
         }
 
         .brutal-glitch::after {
             left: 2px;
-            text-shadow: -2px 0 #FF79C6;
+            text-shadow: -2px 0 #FF4D6D;
             clip: rect(85px, 550px, 140px, 0);
             animation: brutal-glitch-anim-2 4.2s infinite ease-in-out;
         }
@@ -193,213 +221,312 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4 antialiased text-black">
+<body class="flex flex-col justify-between min-h-[100dvh] w-full antialiased text-black selection:bg-neoYellow selection:text-black">
 
-    <!-- MAIN PORTAL AUTHENTICATION CARD -->
-    <main class="neo-box p-5 sm:p-7 rounded-2xl w-full max-w-md bg-white relative overflow-hidden flex flex-col justify-start my-auto z-10 space-y-3.5">
-
-        <!-- HEADER PORTAL -->
-        <header class="text-center relative z-10 pt-1 pb-2 border-b-3 border-black">
-            <h1 class="text-2xl sm:text-3xl font-black font-cyber tracking-tight uppercase leading-none">
-                <a href="/" class="brutal-glitch" data-text="ARULZXD-STORE">ARULZXD-STORE</a>
-            </h1>
-            <div class="mt-2 flex items-center justify-center">
-                <span class="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono font-bold text-slate-800 tracking-wider uppercase bg-white border-2 border-black px-3 py-0.5 rounded-full shadow-[2px_2px_0px_#000]">
-                    <i class="fa-solid fa-gear text-neoGreen text-xs animate-spin" style="animation-duration: 6s;"></i>
-                    AUTHENTICATION PORTAL
+    <!-- TOP NAVBAR NEO-BRUTALISME IDENTIK DENGAN DASHBOARD.HTML -->
+    <header class="sticky top-0 z-30 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-2.5 sm:gap-3">
+            <a href="/dashboard" class="flex items-center gap-2 flex-shrink-0">
+                <i class="fa-solid fa-bolt text-black text-lg sm:text-xl"></i>
+                <span class="text-xl sm:text-2xl font-extrabold font-cyber tracking-tight text-black">
+                    Arulz <span class="bg-black text-white px-2 py-0.5 rounded-none">Store</span>
                 </span>
-            </div>
-        </header>
+            </a>
 
-        <!-- BANNER ASPECT 16:9 PRESISI -->
-        <div class="relative w-full aspect-video rounded-xl border-3 border-black shadow-[3px_3px_0px_#000] overflow-hidden bg-black shrink-0">
-            <img src="https://cdn.larasxd.my.id/files/gmNmPPTi.gif" alt="Banner ArulzXD Store" class="w-full h-full object-cover pointer-events-none opacity-90">
-            <div class="absolute bottom-2 left-2 bg-black/75 backdrop-blur-sm text-white text-[9px] font-cyber font-bold px-2 py-0.5 rounded border border-white/30 flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-neoGreen animate-pulse"></span> ARULZXD OFFICIAL
+            <div class="flex items-center gap-2">
+                <a href="/store" class="neo-btn bg-white text-black px-3 py-1.5 rounded-none text-xs font-extrabold font-cyber uppercase flex items-center gap-1.5">
+                    <i class="fa-solid fa-store text-xs"></i>
+                    <span class="hidden sm:inline">Katalog Toko</span>
+                    <span class="sm:hidden">Toko</span>
+                </a>
+                <a href="/dashboard" class="neo-btn bg-neoCyan text-black px-3 py-1.5 rounded-none text-xs font-extrabold font-cyber uppercase flex items-center gap-1.5">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Dashboard</span>
+                </a>
             </div>
         </div>
+    </header>
 
-        <!-- TAB NAVIGATION -->
-        <div class="grid grid-cols-3 gap-2">
-            <button type="button" id="tab-login" onclick="switchTab('signin')" class="tab-nav-btn active py-2 text-xs font-black font-cyber uppercase tracking-wider text-black rounded-xl">
-                LOGIN
-            </button>
-            <button type="button" id="tab-register" onclick="switchTab('signup')" class="tab-nav-btn py-2 text-xs font-black font-cyber uppercase tracking-wider text-black rounded-xl">
-                REGISTER
-            </button>
-            <button type="button" id="tab-forgot" onclick="switchTab('forgot')" class="tab-nav-btn py-2 text-xs font-black font-cyber uppercase tracking-wider text-black rounded-xl">
-                RESET PASSWORD
-            </button>
-        </div>
+    <!-- FULLSCREEN MAIN PORTAL CONTAINER -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-5 sm:py-8 flex items-center justify-center">
+        <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
 
-        <!-- ================= FORM SIGN IN ================= -->
-        <div id="signin-form" class="space-y-3 relative z-10">
-            <form id="loginForm" action="/auth/login" method="POST" class="space-y-2.5">
-                <div>
-                    <label for="login-username" class="block text-[11px] font-black uppercase font-cyber text-black mb-1">
-                        USERNAME / EMAIL
-                    </label>
-                    <div class="relative">
-                        <input type="text" id="login-username" name="username" required placeholder="Masukkan username atau email" class="neo-input w-full bg-white rounded-xl pl-3.5 pr-12 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition" oninput="handleUsernameInput(this.value)">
-                        <button type="button" onclick="toggleUsernameVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-black hover:text-amber-600 transition text-sm">
-                            <i id="eye-icon-login-user" class="fa-solid fa-eye-slash"></i>
+                        <!-- KOLOM KIRI: AUTHENTICATION PORTAL PALING ATAS + BANNER 16:9 DI BAWAHNYA -->
+            <section class="lg:col-span-6 flex flex-col justify-between gap-5">
+
+                <!-- 1. HERO CARD AUTHENTICATION PORTAL (PALING ATAS) -->
+                <div class="neo-rect bg-neoCyan p-5 sm:p-6 relative overflow-hidden flex-1 flex flex-col justify-between">
+                    <div class="absolute -right-6 -bottom-8 pointer-events-none select-none text-black/[0.10] -rotate-12">
+                        <svg class="w-48 h-48 sm:w-56 sm:h-56" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                        </svg>
+                    </div>
+
+                    <div class="relative z-10 space-y-2.5">
+                        <span class="inline-flex items-center gap-1.5 bg-black text-neoYellow text-[11px] font-extrabold px-2.5 py-1 uppercase font-cyber tracking-wider">
+                            <i class="fa-solid fa-gear animate-spin" style="animation-duration: 6s;"></i> AUTHENTICATION PORTAL
+                        </span>
+
+                        <h1 class="text-2xl sm:text-4xl font-black font-cyber tracking-tight uppercase leading-none">
+                            <a href="/" class="brutal-glitch" data-text="ARULZXD-STORE">ARULZXD-STORE</a>
+                        </h1>
+
+                        <p class="text-xs sm:text-sm font-bold text-black leading-relaxed max-w-lg">
+                            Akses cepat ke seluruh Source Code, Script Bot, Rest API, dan Layanan Digital otomatis 24 jam dengan proteksi verifikasi OTP 6 digit.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 2. BANNER 16:9 TERPISAH DI BAWAH AUTHENTICATION PORTAL -->
+                <div class="neo-rect w-full aspect-video overflow-hidden bg-black">
+                    <img src="https://cdn.larasxd.my.id/files/gmNmPPTi.gif" alt="Banner ArulzXD Store" class="w-full h-full object-cover pointer-events-none block">
+                </div>
+
+                <!-- 3. KOTAK KEUNGGULAN PERSEGI TEGAS -->
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="neo-box p-3 bg-white flex flex-col justify-between gap-1.5">
+                        <div class="w-8 h-8 bg-neoGreen border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center">
+                            <i class="fa-solid fa-shield-halved text-black text-xs"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-extrabold font-cyber uppercase">100% Aman</div>
+                            <div class="text-[10px] font-bold text-slate-600">Proteksi OTP 6 Digit</div>
+                        </div>
+                    </div>
+
+                    <div class="neo-box p-3 bg-white flex flex-col justify-between gap-1.5">
+                        <div class="w-8 h-8 bg-neoYellow border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center">
+                            <i class="fa-solid fa-bolt text-black text-xs"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-extrabold font-cyber uppercase">Otomatis</div>
+                            <div class="text-[10px] font-bold text-slate-600">Aktif 24 Jam Nonstop</div>
+                        </div>
+                    </div>
+
+                    <div class="neo-box p-3 bg-white flex flex-col justify-between gap-1.5">
+                        <div class="w-8 h-8 bg-neoCyan border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center">
+                            <i class="fa-solid fa-headset text-black text-xs"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-extrabold font-cyber uppercase">Support CS</div>
+                            <div class="text-[10px] font-bold text-slate-600">Fast Response Admin</div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- KOLOM KANAN: FORM PORTAL AUTENTIKASI NEO-BRUTALISME -->
+            <section class="lg:col-span-6 neo-box p-5 sm:p-7 bg-white flex flex-col justify-between space-y-4">
+                <div class="space-y-4">
+                    <!-- HEADER CARD FORM -->
+                    <div class="flex items-center justify-between border-b-[3px] border-black pb-3">
+                        <div>
+                            <span class="inline-block bg-neoYellow border-2 border-black px-2 py-0.5 text-[10px] font-extrabold font-cyber uppercase shadow-[2px_2px_0px_#000]">
+                                AKUN PENGGUNA
+                            </span>
+                            <h2 class="text-lg sm:text-xl font-extrabold font-cyber uppercase mt-1.5">
+                                Portal Masuk &amp; Daftar
+                            </h2>
+                        </div>
+                        <div class="w-10 h-10 bg-neoBg border-[3px] border-black shadow-[3px_3px_0px_#000] flex items-center justify-center">
+                            <i class="fa-solid fa-key text-black text-base"></i>
+                        </div>
+                    </div>
+
+                    <!-- TAB NAVIGATION -->
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" id="tab-login" onclick="switchTab('signin')" class="tab-nav-btn active py-2.5 text-xs font-extrabold font-cyber uppercase tracking-wider text-black">
+                            LOGIN
+                        </button>
+                        <button type="button" id="tab-register" onclick="switchTab('signup')" class="tab-nav-btn py-2.5 text-xs font-extrabold font-cyber uppercase tracking-wider text-black">
+                            REGISTER
+                        </button>
+                        <button type="button" id="tab-forgot" onclick="switchTab('forgot')" class="tab-nav-btn py-2.5 text-xs font-extrabold font-cyber uppercase tracking-wider text-black">
+                            RESET PW
                         </button>
                     </div>
-                </div>
-                <div>
-                    <label for="login-password" class="block text-[11px] font-black uppercase font-cyber text-black mb-1">
-                        PASSWORD
-                    </label>
-                    <div class="relative">
-                        <input id="login-password" type="password" name="password" required placeholder="Min. 8 karakter" class="neo-input w-full bg-white rounded-xl pl-3.5 pr-12 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition">
-                        <button type="button" onclick="togglePassword('login-password', 'eye-icon-login')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-black hover:text-amber-600 transition text-sm">
-                            <i id="eye-icon-login" class="fa-solid fa-eye-slash"></i>
-                        </button>
+
+                    <!-- ================= FORM SIGN IN ================= -->
+                    <div id="signin-form" class="space-y-3.5 relative z-10">
+                        <form id="loginForm" action="/auth/login" method="POST" class="space-y-3">
+                            <div>
+                                <label for="login-username" class="block text-[11px] font-extrabold uppercase font-cyber text-black mb-1">
+                                    USERNAME / EMAIL
+                                </label>
+                                <div class="relative">
+                                    <input type="text" id="login-username" name="username" required placeholder="Masukkan username atau email" class="neo-input w-full bg-white pl-3.5 pr-12 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none" oninput="handleUsernameInput(this.value)">
+                                    <button type="button" onclick="toggleUsernameVisibility()" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-black hover:text-amber-600 transition text-sm">
+                                        <i id="eye-icon-login-user" class="fa-solid fa-eye-slash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="login-password" class="block text-[11px] font-extrabold uppercase font-cyber text-black mb-1">
+                                    PASSWORD
+                                </label>
+                                <div class="relative">
+                                    <input id="login-password" type="password" name="password" required placeholder="Min. 8 karakter" class="neo-input w-full bg-white pl-3.5 pr-12 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none">
+                                    <button type="button" onclick="togglePassword('login-password', 'eye-icon-login')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-black hover:text-amber-600 transition text-sm">
+                                        <i id="eye-icon-login" class="fa-solid fa-eye-slash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="neo-input p-2.5 bg-neoBg flex items-center gap-2.5">
+                                <input type="checkbox" id="terms-login" onchange="toggleFormButtons('login')" class="w-4 h-4 accent-amber-400 border-2 border-black cursor-pointer shrink-0">
+                                <label for="terms-login" class="text-[11px] font-bold text-slate-800 leading-snug cursor-pointer select-none">
+                                    Saya menyetujui <a href="/privacy" target="_blank" class="text-black font-extrabold underline bg-neoYellow/60 px-1">Syarat &amp; Kebijakan Privasi</a> layanan.
+                                </label>
+                            </div>
+
+                            <button type="submit" id="btnSubmitLogin" disabled class="neo-btn btn-disabled w-full bg-neoYellow text-black font-extrabold font-cyber py-3 text-xs uppercase tracking-wider flex items-center justify-center gap-2 mt-1">
+                                <i class="fa-solid fa-right-to-bracket text-xs"></i> MASUK KE AKUN
+                            </button>
+                        </form>
+
+                        <div class="relative flex py-1 items-center">
+                            <div class="flex-grow border-t-[2.5px] border-black"></div>
+                            <span class="flex-shrink mx-2.5 text-black text-[10px] font-extrabold font-cyber uppercase bg-neoBg px-2.5 py-0.5 border-2 border-black shadow-[2px_2px_0px_#000]">
+                                atau masuk dengan
+                            </span>
+                            <div class="flex-grow border-t-[2.5px] border-black"></div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            <a id="btnGithubAuth" href="/auth/github" class="neo-btn btn-disabled flex items-center justify-center gap-2 bg-neoCyan text-black py-2.5 px-3 text-xs font-extrabold font-cyber uppercase w-full">
+                                <i class="fa-brands fa-github text-base leading-none"></i> GITHUB
+                            </a>
+                            <a id="btnGoogleAuth" href="/auth/google" class="neo-btn btn-disabled flex items-center justify-center gap-2 bg-white text-black py-2.5 px-3 text-xs font-extrabold font-cyber uppercase w-full">
+                                <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-4 h-4 object-contain" alt="Google"> GOOGLE
+                            </a>
+                            <a id="btnTelegramAuth" href="/auth/telegram" class="neo-btn btn-disabled flex items-center justify-center gap-2 bg-neoTelegram text-white py-2.5 px-3 text-xs font-extrabold font-cyber uppercase w-full">
+                                <i class="fa-brands fa-telegram text-base leading-none"></i> TELEGRAM
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- ================= FORM SIGN UP ================= -->
+                    <div id="signup-form" class="space-y-3 relative z-10 hidden-form">
+                        <form id="registerForm" action="/auth/register" method="POST" class="space-y-2.5">
+                            <div>
+                                <label for="register-username" class="block text-[11px] font-extrabold uppercase font-cyber text-black mb-1">NAMA LENGKAP / USERNAME</label>
+                                <input type="text" id="register-username" name="username" required placeholder="Nama kamu" class="neo-input w-full bg-white px-3.5 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label for="register-email" class="block text-[11px] font-extrabold uppercase font-cyber text-black mb-1">EMAIL ADDRESS</label>
+                                <input type="email" id="register-email" name="email" required placeholder="emailkamu@gmail.com" class="neo-input w-full bg-white px-3.5 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label for="register-password" class="block text-[11px] font-extrabold uppercase font-cyber text-black mb-1">PASSWORD</label>
+                                <div class="relative">
+                                    <input id="register-password" type="password" name="password" required placeholder="Min. 8 karakter" class="neo-input w-full bg-white pl-3.5 pr-12 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none">
+                                    <button type="button" onclick="togglePassword('register-password', 'eye-icon-register')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-black hover:text-amber-600 transition text-sm">
+                                        <i id="eye-icon-register" class="fa-solid fa-eye-slash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="referralCodeInput" class="block text-[11px] font-extrabold uppercase font-cyber text-black mb-1 flex items-center justify-between">
+                                    <span>KODE REFERAL</span>
+                                    <span class="text-[9px] bg-neoGreen text-black border border-black font-extrabold px-1.5 py-0.5 uppercase">(Bonus Rp 500)</span>
+                                </label>
+                                <input type="text" id="referralCodeInput" name="referralCode" placeholder="Kode undangan (opsional)" class="neo-input w-full bg-white px-3.5 py-2.5 text-xs font-mono font-extrabold text-black uppercase placeholder-slate-400 focus:outline-none">
+                            </div>
+
+                            <div class="neo-input p-2.5 bg-neoBg flex items-center gap-2.5">
+                                <input type="checkbox" id="terms-register" onchange="toggleFormButtons('register')" class="w-4 h-4 accent-amber-400 border-2 border-black cursor-pointer shrink-0">
+                                <label for="terms-register" class="text-[11px] font-bold text-slate-800 leading-tight cursor-pointer select-none">
+                                    Saya menyetujui <a href="/privacy" target="_blank" class="text-black font-extrabold underline bg-neoYellow/60 px-1">Syarat &amp; Kebijakan Privasi</a> layanan.
+                                </label>
+                            </div>
+
+                            <button type="submit" id="btnSubmitRegister" disabled class="neo-btn btn-disabled w-full bg-neoGreen text-black font-extrabold font-cyber py-3 text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-user-plus text-xs"></i> DAFTAR SEKARANG
+                            </button>
+                        </form>
+
+                        <div class="relative flex py-1 items-center">
+                            <div class="flex-grow border-t-[2.5px] border-black"></div>
+                            <span class="flex-shrink mx-2.5 text-black text-[10px] font-extrabold font-cyber uppercase bg-neoBg px-2.5 py-0.5 border-2 border-black shadow-[2px_2px_0px_#000]">
+                                atau daftar dengan
+                            </span>
+                            <div class="flex-grow border-t-[2.5px] border-black"></div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            <a id="btnGithubAuthRegister" href="/auth/github" class="neo-btn btn-disabled flex items-center justify-center gap-2 bg-neoCyan text-black py-2.5 px-3 text-xs font-extrabold font-cyber uppercase w-full">
+                                <i class="fa-brands fa-github text-base leading-none"></i> GITHUB
+                            </a>
+                            <a id="btnGoogleAuthRegister" href="/auth/google" class="neo-btn btn-disabled flex items-center justify-center gap-2 bg-white text-black py-2.5 px-3 text-xs font-extrabold font-cyber uppercase w-full">
+                                <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-4 h-4 object-contain" alt="Google"> GOOGLE
+                            </a>
+                            <a id="btnTelegramAuthRegister" href="/auth/telegram" class="neo-btn btn-disabled flex items-center justify-center gap-2 bg-neoTelegram text-white py-2.5 px-3 text-xs font-extrabold font-cyber uppercase w-full">
+                                <i class="fa-brands fa-telegram text-base leading-none"></i> TELEGRAM
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- ================= FORM FORGOT PASSWORD (OTP 6 DIGIT) ================= -->
+                    <div id="forgot-form" class="space-y-3.5 relative z-10 hidden-form">
+                        <form id="forgotForm" class="space-y-3">
+                            <div>
+                                <label for="forgot-email" class="block text-[11px] font-extrabold uppercase font-cyber text-black mb-1">EMAIL ADDRESS TERDAFTAR</label>
+                                <div class="flex gap-2">
+                                    <input type="email" id="forgot-email" name="email" required placeholder="emailkamu@gmail.com" class="neo-input w-full bg-white px-3.5 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none">
+                                    <button type="button" onclick="requestForgotPasswordOTP()" class="neo-btn bg-neoCyan text-black text-xs font-extrabold font-cyber px-3.5 py-2.5 uppercase whitespace-nowrap">KIRIM OTP</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="forgot-otp" class="block text-[11px] font-extrabold uppercase font-cyber text-black mb-1">KODE OTP 6 DIGIT</label>
+                                <input type="text" id="forgot-otp" maxlength="6" placeholder="123456" class="neo-input w-full bg-white px-3.5 py-2.5 text-xs font-mono font-extrabold tracking-widest text-black placeholder-slate-400 focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label for="forgot-new-password" class="block text-[11px] font-extrabold uppercase font-cyber text-black mb-1">PASSWORD BARU</label>
+                                <div class="relative">
+                                    <input type="password" id="forgot-new-password" placeholder="••••••••" class="neo-input w-full bg-white pl-3.5 pr-12 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none">
+                                    <button type="button" onclick="togglePassword('forgot-new-password', 'eye-icon-forgot')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-black hover:text-amber-600 transition text-sm">
+                                        <i id="eye-icon-forgot" class="fa-solid fa-eye-slash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="neo-btn w-full bg-neoPink text-black font-extrabold font-cyber py-3 text-xs uppercase tracking-wider mt-1">
+                                SIMPAN PASSWORD BARU
+                            </button>
+                        </form>
                     </div>
                 </div>
 
-                <div class="neo-input p-2.5 bg-amber-50/60 rounded-xl flex items-center gap-2.5">
-                    <input type="checkbox" id="terms-login" onchange="toggleFormButtons('login')" class="w-4 h-4 accent-amber-400 border-2 border-black rounded cursor-pointer shrink-0">
-                    <label for="terms-login" class="text-[11px] font-bold text-slate-800 leading-snug cursor-pointer select-none">
-                        Saya menyetujui <a href="/privacy" target="_blank" class="text-amber-700 font-black underline hover:bg-neoYellow px-0.5 rounded">Syarat & Kebijakan Privasi</a> layanan.
-                    </label>
+                <!-- FOOTER NAVIGASI CARD -->
+                <div class="pt-3 border-t-[3px] border-black flex flex-wrap items-center justify-between gap-2 text-[11px] font-extrabold font-cyber">
+                    <div class="flex items-center gap-3">
+                        <a href="/" class="hover:underline text-black">Beranda</a>
+                        <span>•</span>
+                        <a href="/store" class="hover:underline text-black">Katalog Toko</a>
+                        <span>•</span>
+                        <a href="/privacy" class="hover:underline text-black">Kebijakan Privasi</a>
+                    </div>
+                    <span class="bg-neoGreen border-2 border-black px-2 py-0.5 text-[10px] shadow-[2px_2px_0px_#000]">
+                        ● SERVER ONLINE
+                    </span>
                 </div>
+            </section>
 
-                <button type="submit" id="btnSubmitLogin" disabled class="neo-btn btn-disabled w-full bg-neoYellow text-black font-black font-cyber py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2 mt-1">
-                    <i class="fa-solid fa-right-to-bracket text-xs"></i> MASUK KE AKUN
-                </button>
-            </form>
-
-            <div class="relative flex py-0.5 items-center">
-                <div class="flex-grow border-t-2 border-black"></div>
-                <span class="flex-shrink mx-2 text-black text-[9px] font-black font-cyber uppercase bg-neoBg px-2.5 py-0.5 border border-black rounded-md shadow-[1px_1px_0px_#000]">
-                    atau
-                </span>
-                <div class="flex-grow border-t-2 border-black"></div>
-            </div>
-
-            <div class="space-y-2">
-                <a id="btnGithubAuth" href="/auth/github" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-neoCyan text-black py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
-                    <i class="fa-brands fa-github text-lg leading-none"></i> LANJUTKAN DENGAN GITHUB
-                </a>
-                <a id="btnGoogleAuth" href="/auth/google" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-white text-black py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
-                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-5 h-5 object-contain" alt="Google"> LANJUTKAN DENGAN GOOGLE
-                </a>
-                <a id="btnTelegramAuth" href="/auth/telegram" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-neoTelegram text-white py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
-                    <i class="fa-brands fa-telegram text-lg leading-none"></i> LANJUTKAN DENGAN TELEGRAM
-                </a>
-            </div>
         </div>
-
-        <!-- ================= FORM SIGN UP ================= -->
-        <div id="signup-form" class="space-y-3 relative z-10 hidden-form">
-            <form id="registerForm" action="/auth/register" method="POST" class="space-y-2.5">
-                <div>
-                    <label for="register-username" class="block text-[11px] font-black uppercase font-cyber text-black mb-0.5">NAMA LENGKAP / USERNAME</label>
-                    <input type="text" id="register-username" name="username" required placeholder="Nama kamu" class="neo-input w-full bg-white rounded-xl px-3.5 py-2 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition">
-                </div>
-                <div>
-                    <label for="register-email" class="block text-[11px] font-black uppercase font-cyber text-black mb-0.5">EMAIL ADDRESS</label>
-                    <input type="email" id="register-email" name="email" required placeholder="emailkamu@gmail.com" class="neo-input w-full bg-white rounded-xl px-3.5 py-2 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition">
-                </div>
-                <div>
-                    <label for="register-password" class="block text-[11px] font-black uppercase font-cyber text-black mb-0.5">PASSWORD</label>
-                    <div class="relative">
-                        <input id="register-password" type="password" name="password" required placeholder="Min. 8 karakter" class="neo-input w-full bg-white rounded-xl pl-3.5 pr-12 py-2 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition">
-                        <button type="button" onclick="togglePassword('register-password', 'eye-icon-register')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-black hover:text-amber-600 transition text-sm">
-                            <i id="eye-icon-register" class="fa-solid fa-eye-slash"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="referralCodeInput" class="block text-[11px] font-black uppercase font-cyber text-black mb-0.5 flex items-center justify-between">
-                        <span>KODE REFERAL</span>
-                        <span class="text-[9px] bg-neoGreen text-black border border-black font-bold px-1 rounded lowercase">(Bonus Rp 500)</span>
-                    </label>
-                    <input type="text" id="referralCodeInput" name="referralCode" placeholder="Kode undangan (opsional)" class="neo-input w-full bg-white rounded-xl px-3.5 py-2 text-xs font-mono font-black text-black uppercase placeholder-slate-400 focus:outline-none transition">
-                </div>
-
-                <div class="neo-input p-2 bg-amber-50/60 rounded-xl flex items-center gap-2">
-                    <input type="checkbox" id="terms-register" onchange="toggleFormButtons('register')" class="w-4 h-4 accent-amber-400 border-2 border-black rounded cursor-pointer shrink-0">
-                    <label for="terms-register" class="text-[10px] font-bold text-slate-800 leading-tight cursor-pointer select-none">
-                        Saya menyetujui <a href="/privacy" target="_blank" class="text-amber-700 font-black underline hover:bg-neoYellow px-0.5 rounded">Syarat & Kebijakan Privasi</a> layanan.
-                    </label>
-                </div>
-
-                <button type="submit" id="btnSubmitRegister" disabled class="neo-btn btn-disabled w-full bg-neoGreen text-black font-black font-cyber py-2.5 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-user-plus text-xs"></i> DAFTAR SEKARANG
-                </button>
-            </form>
-
-            <div class="relative flex py-0.5 items-center">
-                <div class="flex-grow border-t-2 border-black"></div>
-                <span class="flex-shrink mx-2 text-black text-[9px] font-black font-cyber uppercase bg-neoBg px-2 py-0.5 border border-black rounded-md shadow-[1px_1px_0px_#000]">
-                    atau
-                </span>
-                <div class="flex-grow border-t-2 border-black"></div>
-            </div>
-
-            <div class="space-y-2">
-                <a id="btnGithubAuthRegister" href="/auth/github" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-neoCyan text-black py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
-                    <i class="fa-brands fa-github text-lg leading-none"></i> DAFTAR DENGAN GITHUB
-                </a>
-                <a id="btnGoogleAuthRegister" href="/auth/google" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-white text-black py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
-                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" class="w-5 h-5 object-contain" alt="Google"> DAFTAR DENGAN GOOGLE
-                </a>
-                <a id="btnTelegramAuthRegister" href="/auth/telegram" class="neo-btn btn-disabled flex items-center justify-center gap-2.5 bg-neoTelegram text-white py-2.5 rounded-xl text-xs font-black font-cyber uppercase w-full">
-                    <i class="fa-brands fa-telegram text-lg leading-none"></i> DAFTAR DENGAN TELEGRAM
-                </a>
-            </div>
-        </div>
-
-        <!-- ================= FORM FORGOT PASSWORD (OTP 6 DIGIT) ================= -->
-        <div id="forgot-form" class="space-y-3 relative z-10 hidden-form">
-            <form id="forgotForm" class="space-y-2.5">
-                <div>
-                    <label for="forgot-email" class="block text-[11px] font-black uppercase font-cyber text-black mb-1">EMAIL ADDRESS TERDAFTAR</label>
-                    <div class="flex gap-2">
-                        <input type="email" id="forgot-email" name="email" required placeholder="emailkamu@gmail.com" class="neo-input w-full bg-white rounded-xl px-3.5 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition">
-                        <button type="button" onclick="requestForgotPasswordOTP()" class="neo-btn bg-neoCyan text-black text-xs font-black font-cyber px-3 py-2.5 rounded-xl uppercase whitespace-nowrap">KIRIM OTP</button>
-                    </div>
-                </div>
-
-                <div>
-                    <label for="forgot-otp" class="block text-[11px] font-black uppercase font-cyber text-black mb-1">KODE OTP 6 DIGIT</label>
-                    <input type="text" id="forgot-otp" maxlength="6" placeholder="123456" class="neo-input w-full bg-white rounded-xl px-3.5 py-2.5 text-xs font-mono font-black tracking-widest text-black placeholder-slate-400 focus:outline-none transition">
-                </div>
-
-                <div>
-                    <label for="forgot-new-password" class="block text-[11px] font-black uppercase font-cyber text-black mb-1">PASSWORD BARU</label>
-                    <div class="relative">
-                        <input type="password" id="forgot-new-password" placeholder="••••••••" class="neo-input w-full bg-white rounded-xl pl-3.5 pr-12 py-2.5 text-xs font-bold text-black placeholder-slate-400 focus:outline-none transition">
-                        <button type="button" onclick="togglePassword('forgot-new-password', 'eye-icon-forgot')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-black hover:text-amber-600 transition text-sm">
-                            <i id="eye-icon-forgot" class="fa-solid fa-eye-slash"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <button type="submit" class="neo-btn w-full bg-neoPink text-black font-black font-cyber py-2.5 rounded-xl text-xs uppercase tracking-wider mt-1">SIMPAN PASSWORD BARU</button>
-            </form>
-        </div>
-
-        <!-- FOOTER BADGES & NAVIGASI -->
-        <footer class="pt-2.5 mt-2 border-t-2 border-black space-y-2">
-            <div class="flex items-center justify-around text-[9px] sm:text-[10px] font-black font-cyber text-black">
-                <span class="flex items-center gap-1"><i class="fa-solid fa-shield-halved text-neoGreen"></i> 100% Aman</span>
-                <span class="flex items-center gap-1"><i class="fa-solid fa-bolt text-neoYellow"></i> Otomatis</span>
-                <span class="flex items-center gap-1"><i class="fa-solid fa-headset text-neoCyan"></i> Fast Response</span>
-            </div>
-            <div class="flex items-center justify-center gap-3 text-[10px] font-bold text-slate-600">
-                <a href="/" class="hover:underline text-black">Beranda</a>
-                <span>•</span>
-                <a href="/store" class="hover:underline text-black">Katalog Toko</a>
-                <span>•</span>
-                <a href="/privacy" class="hover:underline text-black">Kebijakan Privasi</a>
-            </div>
-        </footer>
-
     </main>
+
+    <!-- FULL-WIDTH BOTTOM BAR HAK CIPTA HITAM TEGAS (IDENTIK DENGAN DASHBOARD) -->
+    <footer class="w-full bg-black text-white border-t-[3px] border-black">
+        <div class="w-full max-w-7xl mx-auto px-3 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-1.5 text-[11px] font-mono font-bold">
+            <span class="text-neoYellow">© 2026 ArulzXD Store. Hak cipta dilindungi.</span>
+            <span class="text-white/80 text-center sm:text-right">Layanan Digital Otomatis 24 Jam • WIB</span>
+        </div>
+    </footer>
 
     <script>
         const swalConfig = {
@@ -616,7 +743,7 @@
                 if (refInput) {
                     refInput.value = refCode.trim().toUpperCase();
                     refInput.readOnly = true;
-                    refInput.classList.add('bg-slate-100', 'cursor-not-allowed');
+                    refInput.classList.add('bg-neoBg', 'cursor-not-allowed');
                 }
 
                 const btnGoogleLogin = document.getElementById('btnGoogleAuth');
@@ -686,16 +813,16 @@
 
                 const { value: otpCode } = await Swal.fire({
                     ...swalConfig,
-                    title: '<span class="font-black font-cyber uppercase tracking-wider text-black">VERIFIKASI KODE OTP</span>',
+                    title: '<span class="font-extrabold font-cyber uppercase tracking-wider text-black">VERIFIKASI KODE OTP</span>',
                     html: `
                         <div class="space-y-3 text-left my-2 font-sans">
                             <p class="text-xs font-bold text-slate-800 leading-relaxed">
                                 Kode verifikasi 6 digit telah dikirim ke email Anda (<strong class="font-mono text-black">${targetUserOrEmail}</strong>).
                             </p>
                             <div class="space-y-1">
-                                <label class="block text-[11px] font-black font-cyber uppercase text-black">MASUKKAN KODE OTP</label>
+                                <label class="block text-[11px] font-extrabold font-cyber uppercase text-black">MASUKKAN KODE OTP</label>
                                 <input id="swal-neo-otp" type="text" maxlength="6" placeholder="123456"
-                                       class="neo-input w-full bg-neoBg rounded-xl px-3 py-3 text-center text-xl font-mono font-black tracking-[8px] text-black focus:outline-none uppercase">
+                                       class="neo-input w-full bg-neoBg px-3 py-3 text-center text-xl font-mono font-extrabold tracking-[8px] text-black focus:outline-none uppercase">
                             </div>
                         </div>
                     `,
@@ -704,8 +831,8 @@
                     cancelButtonText: 'BATAL',
                     customClass: {
                         popup: 'cyber-swal',
-                        confirmButton: 'neo-btn bg-neoYellow text-black font-black px-4 py-2.5 rounded-xl text-xs uppercase font-cyber mr-2',
-                        cancelButton: 'neo-btn bg-white text-black font-black px-4 py-2.5 rounded-xl text-xs uppercase font-cyber'
+                        confirmButton: 'neo-btn bg-neoYellow text-black font-extrabold px-4 py-2.5 text-xs uppercase font-cyber mr-2',
+                        cancelButton: 'neo-btn bg-white text-black font-extrabold px-4 py-2.5 text-xs uppercase font-cyber'
                     },
                     preConfirm: () => {
                         const val = document.getElementById('swal-neo-otp').value.trim();
@@ -803,16 +930,16 @@
 
                 const { value: otpCode } = await Swal.fire({
                     ...swalConfig,
-                    title: '<span class="font-black font-cyber uppercase tracking-wider text-black">VERIFIKASI EMAIL PENDAFTARAN</span>',
+                    title: '<span class="font-extrabold font-cyber uppercase tracking-wider text-black">VERIFIKASI EMAIL PENDAFTARAN</span>',
                     html: `
                         <div class="space-y-3 text-left my-2 font-sans">
                             <p class="text-xs font-bold text-slate-800 leading-relaxed">
                                 Kode verifikasi 6 digit telah dikirim ke email <strong class="font-mono text-black">${email}</strong>. Masukkan kode di bawah:
                             </p>
                             <div class="space-y-1">
-                                <label class="block text-[11px] font-black font-cyber uppercase text-black">MASUKKAN KODE OTP</label>
+                                <label class="block text-[11px] font-extrabold font-cyber uppercase text-black">MASUKKAN KODE OTP</label>
                                 <input id="swal-neo-otp-reg" type="text" maxlength="6" placeholder="123456"
-                                       class="neo-input w-full bg-neoBg rounded-xl px-3 py-3 text-center text-xl font-mono font-black tracking-[8px] text-black focus:outline-none uppercase">
+                                       class="neo-input w-full bg-neoBg px-3 py-3 text-center text-xl font-mono font-extrabold tracking-[8px] text-black focus:outline-none uppercase">
                             </div>
                         </div>
                     `,
@@ -821,8 +948,8 @@
                     cancelButtonText: 'BATAL',
                     customClass: {
                         popup: 'cyber-swal',
-                        confirmButton: 'neo-btn bg-neoGreen text-black font-black px-4 py-2.5 rounded-xl text-xs uppercase font-cyber mr-2',
-                        cancelButton: 'neo-btn bg-white text-black font-black px-4 py-2.5 rounded-xl text-xs uppercase font-cyber'
+                        confirmButton: 'neo-btn bg-neoGreen text-black font-extrabold px-4 py-2.5 text-xs uppercase font-cyber mr-2',
+                        cancelButton: 'neo-btn bg-white text-black font-extrabold px-4 py-2.5 text-xs uppercase font-cyber'
                     },
                     preConfirm: () => {
                         const val = document.getElementById('swal-neo-otp-reg').value.trim();

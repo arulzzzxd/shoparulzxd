@@ -29,7 +29,7 @@
     <link rel="apple-touch-icon" href="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -40,6 +40,7 @@
                     fontFamily: {
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                         cyber: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     },
                     colors: {
                         neoBg: '#FAF9F2',
@@ -59,32 +60,41 @@
             color: #000000;
             -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
-            background-image: radial-gradient(#00000018 1px, transparent 1px);
+            background-image: radial-gradient(#00000014 1px, transparent 1px);
             background-size: 16px 16px;
         }
 
-        /* Neo-Brutalisme Persegi Panjang Tegas (Sama dengan deposit.html) */
+        /* Neo-Brutalisme Persegi Panjang Ramping (Sama dengan Dashboard & Privacy) */
         .neo-rect {
-            border: 3px solid #000000;
-            box-shadow: 6px 6px 0px #000000;
+            background-color: #FFFFFF;
+            border: 2.5px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
             border-radius: 0px;
-            transition: transform 0.14s ease, box-shadow 0.14s ease;
+            transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .neo-subcard {
+            border: 2px solid #000000;
+            box-shadow: 2.5px 2.5px 0px #000000;
+            border-radius: 0px;
+            transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.14s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .neo-btn-rect {
-            border: 3px solid #000000;
-            box-shadow: 4px 4px 0px #000000;
+            border: 2px solid #000000;
+            box-shadow: 2.5px 2.5px 0px #000000;
             border-radius: 0px;
-            transition: all 0.12s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.12s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.15s ease;
             cursor: pointer;
+            user-select: none;
         }
         .neo-btn-rect:hover {
-            transform: translate(-1.5px, -1.5px);
-            box-shadow: 5.5px 5.5px 0px #000000;
+            transform: translate(-1px, -1px);
+            box-shadow: 3.5px 3.5px 0px #000000;
         }
         .neo-btn-rect:active {
-            transform: translate(3px, 3px);
-            box-shadow: 1px 1px 0px #000000;
+            transform: translate(2px, 2px);
+            box-shadow: 0.5px 0.5px 0px #000000;
         }
         .neo-btn-rect:disabled {
             opacity: 0.6;
@@ -92,14 +102,21 @@
             transform: none;
         }
 
+        /* Avatar Outline Merah Ramping Tanpa Shadow Agar Tidak Gepeng */
+        .avatar-ring-red {
+            border: 2.5px solid #EF233C;
+            outline: 1.5px solid #000000;
+            box-shadow: none !important;
+        }
+
         /* Neo-Brutalist Toggle Switch */
         .neo-switch {
             position: relative;
-            width: 64px;
-            height: 32px;
+            width: 60px;
+            height: 30px;
             background-color: #E2E8F0;
-            border: 3px solid #000000;
-            box-shadow: 3px 3px 0px #000000;
+            border: 2px solid #000000;
+            box-shadow: 2px 2px 0px #000000;
             cursor: pointer;
             transition: background-color 0.18s ease;
             flex-shrink: 0;
@@ -114,7 +131,7 @@
             width: 22px;
             height: 22px;
             background-color: #FFFFFF;
-            border: 2.5px solid #000000;
+            border: 2px solid #000000;
             transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: flex;
             align-items: center;
@@ -123,7 +140,7 @@
             font-weight: 900;
         }
         .neo-switch.active .neo-switch-knob {
-            transform: translateX(32px);
+            transform: translateX(30px);
             background-color: #FFDF4F;
         }
         .neo-switch:disabled {
@@ -133,10 +150,10 @@
 
         .swal2-popup.cyber-swal {
             background: #FAF9F2 !important;
-            border: 3px solid #000000 !important;
+            border: 2.5px solid #000000 !important;
             border-radius: 0px !important;
             color: #000000 !important;
-            box-shadow: 6px 6px 0px #000000 !important;
+            box-shadow: 4px 4px 0px #000000 !important;
             font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
 
@@ -263,27 +280,27 @@
         }
     </style>
 </head>
-<body class="pb-36 antialiased selection:bg-neoYellow selection:text-black min-h-screen">
+<body class="pb-28 antialiased selection:bg-neoYellow selection:text-black min-h-screen">
 
     <!-- FLOATING LIVE CHAT WIDGET POP-UP -->
     <div id="liveChatWidgetContainer">
-        <div id="floatingChatWindow" class="fixed bottom-36 right-4 sm:right-6 z-[99999] hidden w-[calc(100vw-2rem)] max-w-[360px] h-[420px] max-h-[calc(100vh-170px)] bg-white border-[3px] border-black rounded-none shadow-[6px_6px_0px_#000] overflow-hidden flex flex-col transition-all duration-300">
-            <div class="bg-neoYellow p-3 border-b-[3px] border-black flex items-center justify-between shrink-0">
+        <div id="floatingChatWindow" class="fixed bottom-36 right-4 sm:right-6 z-[99999] hidden w-[calc(100vw-2rem)] max-w-[360px] h-[420px] max-h-[calc(100vh-170px)] bg-white border-[2.5px] border-black rounded-none shadow-[4px_4px_0px_#000] overflow-hidden flex flex-col transition-all duration-300">
+            <div class="bg-neoYellow p-3 border-b-[2.5px] border-black flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-2.5">
                     <div class="relative">
-                        <div class="w-8 h-8 bg-white text-black border-2 border-black flex items-center justify-center font-bold text-xs shadow-[2px_2px_0px_#000]">
+                        <div class="w-8 h-8 bg-white text-black border-2 border-black flex items-center justify-center font-bold text-xs shadow-[1.5px_1.5px_0px_#000]">
                             <i class="fa-solid fa-headset"></i>
                         </div>
                         <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-neoGreen border border-black"></span>
                     </div>
                     <div>
-                        <h3 class="text-xs font-black font-cyber text-black uppercase">Customer Support</h3>
+                        <h3 class="text-xs font-extrabold font-cyber text-black uppercase">Customer Support</h3>
                         <p class="text-[9px] text-black font-mono font-bold flex items-center gap-1">
                             <span class="w-1.5 h-1.5 bg-neoGreen border border-black animate-pulse"></span> ONLINE 24/7
                         </p>
                     </div>
                 </div>
-                <button onclick="toggleChatWidget()" class="w-7 h-7 bg-white border-2 border-black text-black font-black text-xs flex items-center justify-center shadow-[2px_2px_0px_#000]">
+                <button onclick="toggleChatWidget()" class="neo-btn-rect w-7 h-7 bg-white text-black font-black text-xs flex items-center justify-center">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -292,9 +309,9 @@
                 <div class="text-center text-[11px] text-slate-600 font-mono my-2 animate-pulse font-bold">Memuat pesan...</div>
             </div>
 
-            <form id="widgetChatForm" onsubmit="sendWidgetMessage(event)" class="p-2.5 bg-white border-t-[3px] border-black flex items-center gap-2 shrink-0">
+            <form id="widgetChatForm" onsubmit="sendWidgetMessage(event)" class="p-2.5 bg-white border-t-[2.5px] border-black flex items-center gap-2 shrink-0">
                 <input type="text" id="widgetChatInput" required placeholder="Tuliskan pesan Anda..." 
-                       class="flex-1 bg-neoBg border-[2.5px] border-black rounded-none px-3 py-2 text-xs text-black font-bold placeholder-slate-500 focus:outline-none focus:bg-white">
+                       class="flex-1 bg-neoBg border-2 border-black rounded-none px-3 py-2 text-xs text-black font-bold placeholder-slate-500 focus:outline-none focus:bg-white">
                 <button type="submit" class="neo-btn-rect w-9 h-9 bg-neoYellow text-black flex items-center justify-center shrink-0 font-black">
                     <i class="fa-solid fa-paper-plane text-xs"></i>
                 </button>
@@ -302,8 +319,8 @@
         </div>
     </div>
 
-    <!-- TOP HEADER (IDENTIK DENGAN DEPOSIT.HTML) -->
-    <header class="sticky top-0 z-40 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
+    <!-- TOP HEADER NEO-BRUTALISME (IDENTIK DENGAN DASHBOARD) -->
+    <header class="sticky top-0 z-40 bg-neoYellow border-b-[2.5px] border-black shadow-[0_3px_0_#000]">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <a href="/" class="flex items-center gap-2">
                 <i class="fa-solid fa-bolt text-black text-xl"></i>
@@ -311,16 +328,16 @@
                     Arulz <span class="bg-black text-white px-2 py-0.5 rounded-md">Store</span>
                 </span>
             </a>
-            <a href="/auth/logout" onclick="handleUserLogout()" class="neo-btn-rect text-xs bg-neoPink text-white font-cyber font-extrabold px-3.5 py-2 flex items-center gap-2 uppercase tracking-wider">
-                <i class="fa-solid fa-right-from-bracket text-sm"></i> Keluar
+            <a href="/auth/logout" onclick="handleUserLogout()" class="neo-btn-rect text-xs bg-neoPink text-white font-cyber font-extrabold px-3.5 py-1.5 flex items-center gap-2 uppercase tracking-wider">
+                <i class="fa-solid fa-right-from-bracket text-xs"></i> Keluar
             </a>
         </div>
     </header>
 
-    <!-- MAIN CONTAINER FULLSCREEN DESKTOP (MAX-W-6XL SEPERTI DEPOSIT.HTML) -->
-    <main class="max-w-6xl mx-auto px-4 py-6 w-full space-y-6">
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-6xl mx-auto px-4 py-6 w-full space-y-5">
 
-        <!-- PROFILE BANNER CARD (NEO-RECT TEGAS) -->
+        <!-- PROFILE BANNER CARD (NEO-RECT RAMPING) -->
         <section class="neo-rect bg-white p-6 text-center space-y-4 relative overflow-hidden">
             <!-- BACKGROUND BANNER (MP4 / GIF / GAMBAR) -->
             <div id="bannerBgContainer" class="absolute inset-0 w-full h-full z-0">
@@ -334,23 +351,25 @@
 
             <!-- KONTEN AVATAR & IDENTITAS -->
             <div class="relative z-10 space-y-3 pt-2">
+                <!-- AVATAR TANPA SHADOW & DENGAN OUTLINE MERAH RAMPING -->
                 <div class="relative w-24 h-24 mx-auto">
-                    <img id="profileAvatar" src="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png" class="w-24 h-24 rounded-full object-cover border-[3px] border-black shadow-[4px_4px_0px_#000] bg-white">
-                    <label for="avatarInput" title="Ganti Avatar" class="absolute bottom-0 right-0 w-8 h-8 bg-neoYellow border-2 border-black text-black flex items-center justify-center cursor-pointer shadow-[2px_2px_0px_#000] hover:scale-110 transition z-10">
-                        <i class="fa-solid fa-camera text-xs"></i>
+                    <img id="profileAvatar" src="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png" alt="Avatar Profil"
+                         class="w-24 h-24 rounded-full object-cover avatar-ring-red bg-white">
+                    <label for="avatarInput" title="Ganti Avatar" class="absolute bottom-0 right-0 w-7 h-7 bg-neoYellow border-2 border-black text-black flex items-center justify-center cursor-pointer hover:scale-110 transition z-10">
+                        <i class="fa-solid fa-camera text-[11px]"></i>
                     </label>
                     <input type="file" id="avatarInput" accept="image/*" class="hidden" onchange="uploadAvatar(this)">
                 </div>
 
                 <div class="space-y-1.5">
                     <div class="flex items-center justify-center gap-1.5">
-                        <h1 id="profileUsername" class="text-xl font-black font-cyber text-black bg-white/90 px-3.5 py-1 border-[2.5px] border-black inline-block shadow-[3px_3px_0px_#000]">Loading...</h1>
+                        <h1 id="profileUsername" class="text-xl font-extrabold font-cyber text-black bg-white/95 px-3.5 py-1 border-2 border-black inline-block shadow-[2.5px_2.5px_0px_#000]">Loading...</h1>
                         <button onclick="editUsernameModal()" title="Edit Username" class="neo-btn-rect text-black text-xs bg-neoCyan p-2">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
                     </div>
                     <div>
-                        <span id="profileEmail" class="text-xs text-black font-mono font-extrabold bg-white/90 px-2.5 py-0.5 border-2 border-black inline-block">-</span>
+                        <span id="profileEmail" class="text-xs text-black font-mono font-extrabold bg-white/95 px-2.5 py-0.5 border-2 border-black inline-block">-</span>
                     </div>
                     <div>
                         <span id="profileJoined" class="text-[11px] font-extrabold font-mono text-black bg-neoYellow px-2.5 py-0.5 border-2 border-black inline-block">Terdaftar sejak: -</span>
@@ -359,8 +378,8 @@
             </div>
         </section>
 
-        <!-- BARIS STATISTIK SALDO, TOTAL DEPOSIT, TOTAL BELANJA (SEJAJAR 3 KOLOM DESKTOP) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- BARIS STATISTIK SALDO, TOTAL DEPOSIT, TOTAL BELANJA -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <!-- SALDO AKUN -->
             <div class="neo-rect bg-neoCyan p-5 relative overflow-hidden flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-2">
@@ -368,7 +387,7 @@
                         <span class="bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase tracking-wider">SALDO AKTIF</span>
                         <h2 id="profileSaldo" class="text-2xl sm:text-3xl font-cyber font-extrabold text-black mt-2">Rp 0</h2>
                     </div>
-                    <a href="/deposit" class="neo-btn-rect bg-neoYellow text-black font-cyber font-extrabold px-3.5 py-2.5 text-xs flex items-center gap-1.5 uppercase">
+                    <a href="/deposit" class="neo-btn-rect bg-neoYellow text-black font-cyber font-extrabold px-3.5 py-2 text-xs flex items-center gap-1.5 uppercase">
                         <i class="fa-solid fa-plus"></i> Top Up
                     </a>
                 </div>
@@ -377,7 +396,7 @@
             <!-- TOTAL DEPOSIT -->
             <div class="neo-rect bg-neoGreen p-5 relative overflow-hidden flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-black font-cyber uppercase tracking-wider text-black">Total Deposit</span>
+                    <span class="text-[11px] font-extrabold font-cyber uppercase tracking-wider text-black">Total Deposit</span>
                     <div class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000]">
                         <i class="fa-solid fa-circle-arrow-down text-black text-sm"></i>
                     </div>
@@ -391,7 +410,7 @@
             <!-- TOTAL BELANJA -->
             <div class="neo-rect bg-neoPurple p-5 relative overflow-hidden flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-black font-cyber uppercase tracking-wider text-black">Total Belanja</span>
+                    <span class="text-[11px] font-extrabold font-cyber uppercase tracking-wider text-black">Total Belanja</span>
                     <div class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000]">
                         <i class="fa-solid fa-bag-shopping text-black text-sm"></i>
                     </div>
@@ -403,65 +422,72 @@
             </div>
         </div>
 
-        <!-- BARIS TENGAH: INFORMASI AKUN & PENGATURAN NOTIFIKASI (TELEGRAM + EMAIL ON/OFF) -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- BARIS TENGAH: INFORMASI AKUN & PENGATURAN NOTIFIKASI -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
             <!-- INFORMASI AKUN (5 KOLOM DESKTOP) -->
             <section class="lg:col-span-5 neo-rect bg-white p-5 space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b-[2.5px] border-black">
                     <div class="flex items-center gap-2">
-                        <span class="w-6 h-6 bg-neoYellow border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">
+                        <span class="w-7 h-7 bg-neoYellow border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">
                             <i class="fa-regular fa-user"></i>
                         </span>
-                        <h3 class="text-sm font-black font-cyber text-black uppercase tracking-wider">Informasi Akun</h3>
+                        <h3 class="text-sm font-extrabold font-cyber text-black uppercase tracking-wider">Informasi Akun</h3>
                     </div>
-                    <span class="bg-neoGreen border-2 border-black text-black font-cyber font-black text-[10px] px-2 py-0.5 uppercase">AKTIF</span>
+                    <span class="bg-neoGreen border-2 border-black text-black font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase">AKTIF</span>
                 </div>
 
                 <div class="space-y-3 text-xs font-bold">
-                    <div class="bg-neoBg border-2 border-black p-3 flex items-center justify-between">
+                    <div class="neo-subcard bg-neoBg p-3 flex items-center justify-between">
                         <span class="text-slate-600 uppercase font-extrabold">Nama</span>
-                        <span id="infoNama" class="font-black text-black">-</span>
+                        <span id="infoNama" class="font-extrabold text-black">-</span>
                     </div>
 
-                    <div class="bg-neoBg border-2 border-black p-3 flex items-center justify-between gap-2">
+                    <div class="neo-subcard bg-neoBg p-3 flex items-center justify-between gap-2">
                         <span class="text-slate-600 uppercase font-extrabold">Email</span>
                         <div class="text-right space-y-1">
                             <div class="flex items-center justify-end gap-2">
                                 <span id="infoEmail" class="font-mono font-extrabold text-black">-</span>
-                                <button onclick="toggleEmailVisibility()" title="Tampilkan/Sembunyikan Email" class="w-6 h-6 bg-white border-2 border-black flex items-center justify-center text-black text-xs shadow-[2px_2px_0px_#000]">
+                                <button onclick="toggleEmailVisibility()" title="Tampilkan/Sembunyikan Email" class="w-6 h-6 bg-white border-2 border-black flex items-center justify-center text-black text-xs shadow-[1.5px_1.5px_0px_#000]">
                                     <i id="toggleEmailIcon" class="fa-solid fa-eye-slash"></i>
                                 </button>
                             </div>
                             <div id="emailVerifiedBadge" class="hidden flex justify-end">
-                                <span class="inline-flex items-center gap-1 text-[10px] bg-neoGreen text-black border border-black px-2 py-0.5 font-black uppercase">
+                                <span class="inline-flex items-center gap-1 text-[10px] bg-neoGreen text-black border border-black px-2 py-0.5 font-extrabold uppercase">
                                     <i class="fa-solid fa-circle-check"></i> Terverifikasi
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-neoBg border-2 border-black p-3 flex items-center justify-between">
+                    <!-- METODE LOGIN DENGAN LOGO SVG DINAMIS SESUAI PROVIDER -->
+                    <div class="neo-subcard bg-neoBg p-3 flex items-center justify-between gap-2">
                         <span class="text-slate-600 uppercase font-extrabold">Metode Login</span>
-                        <span id="infoLoginMethod" class="font-cyber font-extrabold text-black bg-neoCyan border border-black px-2 py-0.5">Google OAuth</span>
+                        <span id="infoLoginMethod" class="inline-flex items-center gap-1.5 font-cyber font-extrabold text-black bg-white border-2 border-black px-2.5 py-1 shadow-[1.5px_1.5px_0px_#000]">
+                            <svg class="w-3.5 h-3.5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square">
+                                <rect x="3" y="11" width="18" height="11"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                            <span>Memuat...</span>
+                        </span>
                     </div>
                 </div>
             </section>
 
             <!-- PENGATURAN NOTIFIKASI TELEGRAM & EMAIL ON/OFF (7 KOLOM DESKTOP) -->
-            <section class="lg:col-span-7 neo-rect bg-white p-5 space-y-5">
+            <section class="lg:col-span-7 neo-rect bg-white p-5 space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b-[2.5px] border-black">
                     <div class="flex items-center gap-2">
-                        <span class="w-6 h-6 bg-neoCyan border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">
+                        <span class="w-7 h-7 bg-neoCyan border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">
                             <i class="fa-solid fa-bell"></i>
                         </span>
-                        <h3 class="text-sm font-black font-cyber text-black uppercase tracking-wider">Pengaturan Notifikasi</h3>
+                        <h3 class="text-sm font-extrabold font-cyber text-black uppercase tracking-wider">Pengaturan Notifikasi</h3>
                     </div>
                     <span class="bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2.5 py-0.5 uppercase">REAL-TIME</span>
                 </div>
 
                 <!-- 1. PANEL NOTIFIKASI EMAIL (ON / OFF) -->
-                <div class="bg-neoBg border-[2.5px] border-black p-4 shadow-[4px_4px_0px_#000] space-y-3">
+                <div class="neo-subcard bg-neoBg p-4 space-y-3">
                     <div class="flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-10 h-10 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
@@ -470,7 +496,7 @@
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <h4 class="font-cyber font-extrabold text-xs sm:text-sm text-black uppercase">Notifikasi Email</h4>
-                                    <span id="emailNotifStateBadge" class="text-[10px] font-cyber font-black bg-neoGreen border border-black px-2 py-0.5 uppercase">ON</span>
+                                    <span id="emailNotifStateBadge" class="text-[10px] font-cyber font-extrabold bg-neoGreen border border-black px-2 py-0.5 uppercase">ON</span>
                                 </div>
                                 <p id="emailNotifDesc" class="text-[11px] font-bold text-slate-700 mt-0.5 leading-snug">
                                     Kirim pemberitahuan promo, transaksi, dan pengumuman resmi ke alamat Email Anda.
@@ -485,7 +511,7 @@
                 </div>
 
                 <!-- 2. PANEL NOTIFIKASI TELEGRAM BOT (TAUTKAN + ON / OFF) -->
-                <div class="bg-neoBg border-[2.5px] border-black p-4 shadow-[4px_4px_0px_#000] space-y-4">
+                <div class="neo-subcard bg-neoBg p-4 space-y-4">
                     <div class="flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-10 h-10 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
@@ -494,8 +520,8 @@
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <h4 class="font-cyber font-extrabold text-xs sm:text-sm text-black uppercase">Notifikasi Telegram Bot</h4>
-                                    <span id="tgLinkStatusBadge" class="text-[10px] font-cyber font-black bg-neoYellow border border-black px-2 py-0.5 uppercase">BELUM TERTAUT</span>
-                                    <span id="tgNotifStateBadge" class="hidden text-[10px] font-cyber font-black bg-neoGreen border border-black px-2 py-0.5 uppercase">ON</span>
+                                    <span id="tgLinkStatusBadge" class="text-[10px] font-cyber font-extrabold bg-neoYellow border border-black px-2 py-0.5 uppercase">BELUM TERTAUT</span>
+                                    <span id="tgNotifStateBadge" class="hidden text-[10px] font-cyber font-extrabold bg-neoGreen border border-black px-2 py-0.5 uppercase">ON</span>
                                 </div>
                                 <p class="text-[11px] font-bold text-slate-700 mt-0.5 leading-snug">
                                     Terima notifikasi instan langsung melalui <strong>Private Chat Bot Telegram</strong>.
@@ -512,10 +538,10 @@
                     <!-- TAMPILAN JIKA BELUM TERTAUT -->
                     <div id="tgUnlinkedContainer" class="pt-3 border-t-2 border-dashed border-black/30 space-y-3">
                         <div class="flex flex-col sm:flex-row gap-2.5">
-                            <button type="button" id="btnLinkTelegram" onclick="startTelegramLink()" class="neo-btn-rect flex-1 bg-[#229ED9] text-white px-4 py-3 text-xs font-extrabold font-cyber uppercase flex items-center justify-center gap-2">
+                            <button type="button" id="btnLinkTelegram" onclick="startTelegramLink()" class="neo-btn-rect flex-1 bg-[#229ED9] text-white px-4 py-2.5 text-xs font-extrabold font-cyber uppercase flex items-center justify-center gap-2">
                                 <i class="fa-brands fa-telegram text-base"></i> Tautkan Bot Telegram
                             </button>
-                            <a id="telegramBotDirectLink" href="https://t.me/arulzxd_bot" target="_blank" rel="noopener" class="neo-btn-rect bg-white text-black px-4 py-3 text-xs font-extrabold font-cyber uppercase flex items-center justify-center gap-2">
+                            <a id="telegramBotDirectLink" href="https://t.me/arulzxd_bot" target="_blank" rel="noopener" class="neo-btn-rect bg-white text-black px-4 py-2.5 text-xs font-extrabold font-cyber uppercase flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Bot
                             </a>
                         </div>
@@ -527,11 +553,11 @@
                     <!-- TAMPILAN JIKA SUDAH TERTAUT -->
                     <div id="tgLinkedContainer" class="hidden pt-3 border-t-2 border-dashed border-black/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div class="bg-white border-2 border-black px-3 py-2 flex-1">
-                            <span class="text-[9px] font-black font-cyber uppercase text-slate-600 block">Terhubung Dengan Akun Telegram</span>
-                            <p id="tgLinkedUsernameDisplay" class="text-xs font-black font-cyber text-black">@username</p>
+                            <span class="text-[9px] font-extrabold font-cyber uppercase text-slate-600 block">Terhubung Dengan Akun Telegram</span>
+                            <p id="tgLinkedUsernameDisplay" class="text-xs font-extrabold font-cyber text-black">@username</p>
                             <p id="tgLinkedChatIdDisplay" class="text-[10px] font-mono font-bold text-slate-700">Chat ID: -</p>
                         </div>
-                        <button type="button" onclick="unlinkTelegramAccount()" class="neo-btn-rect bg-neoPink text-white font-cyber font-extrabold px-3.5 py-2.5 text-xs uppercase flex items-center gap-1.5 self-start sm:self-center">
+                        <button type="button" onclick="unlinkTelegramAccount()" class="neo-btn-rect bg-neoPink text-white font-cyber font-extrabold px-3.5 py-2 text-xs uppercase flex items-center gap-1.5 self-start sm:self-center">
                             <i class="fa-solid fa-link-slash"></i> Putuskan Tautan
                         </button>
                     </div>
@@ -543,12 +569,12 @@
         <section class="neo-rect bg-white p-5 space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b-[2.5px] border-black">
                 <div class="flex items-center gap-2">
-                    <span class="w-6 h-6 bg-neoPurple border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">
+                    <span class="w-7 h-7 bg-neoPurple border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">
                         <i class="fa-solid fa-gift"></i>
                     </span>
-                    <h3 class="text-sm font-black font-cyber text-black uppercase tracking-wider">Program Referral Undang Teman</h3>
+                    <h3 class="text-sm font-extrabold font-cyber text-black uppercase tracking-wider">Program Referral Undang Teman</h3>
                 </div>
-                <span class="text-[10px] bg-neoGreen border-2 border-black font-mono font-black px-2.5 py-0.5 shadow-[2px_2px_0px_#000]">+Rp 1.000 / Undangan</span>
+                <span class="text-[10px] bg-neoGreen border-2 border-black font-mono font-extrabold px-2.5 py-0.5 shadow-[2px_2px_0px_#000]">+Rp 1.000 / Undangan</span>
             </div>
 
             <p class="text-xs font-bold text-slate-700 leading-relaxed">
@@ -558,24 +584,24 @@
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
                 <div class="relative flex-1">
                     <input type="text" id="referralLinkInput" readonly value="Memuat link..." 
-                           class="w-full px-3.5 py-3 text-xs bg-neoBg border-[2.5px] border-black rounded-none text-black font-mono font-bold focus:outline-none select-all shadow-[3px_3px_0px_#000]">
+                           class="w-full px-3.5 py-2.5 text-xs bg-neoBg border-2 border-black rounded-none text-black font-mono font-bold focus:outline-none select-all shadow-[2.5px_2.5px_0px_#000]">
                 </div>
-                <button onclick="copyReferralLink()" class="neo-btn-rect bg-neoYellow text-black font-cyber font-extrabold px-4 py-3 text-xs flex items-center justify-center gap-1.5 uppercase tracking-wider">
+                <button onclick="copyReferralLink()" class="neo-btn-rect bg-neoYellow text-black font-cyber font-extrabold px-4 py-2.5 text-xs flex items-center justify-center gap-1.5 uppercase tracking-wider">
                     <i class="fa-solid fa-copy"></i> Salin Link
                 </button>
             </div>
 
-            <div class="pt-4 border-t-[2.5px] border-dashed border-black/25 space-y-2.5">
+            <div class="pt-4 border-t-2 border-dashed border-black/25 space-y-2.5">
                 <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-black font-cyber text-black uppercase tracking-wider flex items-center gap-1.5">
+                    <h4 class="text-xs font-extrabold font-cyber text-black uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-users"></i> Daftar Teman Diundang (<span id="invitedCount">0</span>)
                     </h4>
                 </div>
 
-                <div class="overflow-x-auto border-[2.5px] border-black bg-white shadow-[4px_4px_0px_#000]">
+                <div class="overflow-x-auto border-2 border-black bg-white shadow-[3px_3px_0px_#000]">
                     <table class="w-full text-left border-collapse text-[11px]">
                         <thead>
-                            <tr class="bg-neoYellow border-b-[2.5px] border-black font-cyber font-extrabold uppercase">
+                            <tr class="bg-neoYellow border-b-2 border-black font-cyber font-extrabold uppercase">
                                 <th class="p-2.5">Username</th>
                                 <th class="p-2.5">Email</th>
                                 <th class="p-2.5 text-right">Tgl Bergabung</th>
@@ -592,6 +618,161 @@
         </section>
 
     </main>
+
+    <!-- FOOTER NEO-BRUTALISME (SAMA PERSIS DENGAN DASHBOARD) -->
+    <footer class="max-w-6xl mx-auto px-4 mt-2 mb-6">
+        <div class="neo-rect bg-white overflow-hidden">
+            <!-- Bagian Atas: Brand, Deskripsi & 5 Tombol Kotak Media Sosial SVG -->
+            <div class="p-5 sm:p-7 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-neoYellow border-2 border-black shadow-[2.5px_2.5px_0px_#000] flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter">
+                            <path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" fill="#000000"/>
+                        </svg>
+                    </div>
+                    <span class="font-cyber font-extrabold text-xl sm:text-2xl tracking-tight text-black">
+                        ArulzXD <span class="bg-black text-neoYellow px-2 py-0.5">Store</span>
+                    </span>
+                </div>
+
+                <p class="text-xs sm:text-sm font-bold text-slate-800 max-w-xl leading-relaxed">
+                    Platform belanja Source Code, Script Bot, dan Layanan Digital otomatis 24 jam. Cepat, aman, dan langsung diproses setelah pembayaran.
+                </p>
+
+                <!-- 5 Kotak Ikon Media Sosial dengan SVG Masing-Masing -->
+                <div class="flex flex-wrap items-center gap-2.5 pt-1">
+                    <!-- TikTok -->
+                    <a href="https://www.tiktok.com/@arulzxd8" target="_blank" rel="noopener noreferrer" aria-label="TikTok ArulzXD" title="TikTok"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoYellow flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                        </svg>
+                    </a>
+
+                    <!-- Instagram -->
+                    <a href="https://www.instagram.com/arulzz.xd" target="_blank" rel="noopener noreferrer" aria-label="Instagram ArulzXD" title="Instagram"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoPink flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                    </a>
+
+                    <!-- Telegram -->
+                    <a href="https://t.me/arulzxd" target="_blank" rel="noopener noreferrer" aria-label="Telegram ArulzXD" title="Telegram"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoCyan flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 2L11 13"></path>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                        </svg>
+                    </a>
+
+                    <!-- YouTube -->
+                    <a href="https://www.youtube.com/@arulzxd" target="_blank" rel="noopener noreferrer" aria-label="YouTube ArulzXD" title="YouTube"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoPink flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/6285122629940" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ArulzXD" title="WhatsApp Admin"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoGreen flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.459 3.473 1.331 4.985L2 22l5.188-1.361a9.93 9.93 0 0 0 4.843 1.258h.004c5.515 0 9.969-4.454 9.969-9.969A9.936 9.936 0 0 0 19.08 4.92 9.91 9.91 0 0 0 12.031 2zm5.811 14.234c-.246.693-1.43 1.326-1.979 1.409-.506.076-1.147.108-1.852-.116-.428-.136-.977-.318-1.681-.622-2.956-1.276-4.887-4.253-5.035-4.45-.147-.197-1.202-1.599-1.202-3.051 0-1.452.761-2.165 1.031-2.46.27-.295.59-.369.787-.369.197 0 .393.002.565.01.181.009.424-.069.663.506.246.591.836 2.041.909 2.189.074.148.123.32.025.517-.098.197-.148.32-.295.492-.148.172-.31.385-.443.517-.148.147-.302.307-.13.602.172.295.764 1.261 1.641 2.043 1.128 1.006 2.079 1.318 2.374 1.466.295.147.467.123.639-.074.172-.197.738-.861.935-1.156.197-.295.393-.246.663-.148.271.099 1.721.812 2.016.959.295.148.492.222.565.345.074.123.074.713-.172 1.406z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bagian Tengah: 2 Kolom (Saluran & Legal/Menu) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 border-t-[2.5px] border-black bg-neoBg divide-y-[2.5px] sm:divide-y-0 sm:divide-x-[2.5px] divide-black">
+                <!-- Kolom 1: Saluran Resmi -->
+                <div class="p-5 sm:px-7 sm:py-6 space-y-3.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="inline-block bg-neoGreen border-2 border-black px-2.5 py-0.5 font-cyber font-extrabold text-[11px] uppercase tracking-wider text-black shadow-[2px_2px_0px_#000]">
+                            SALURAN &amp; KOMUNITAS
+                        </span>
+                        <span class="text-[10px] font-mono font-extrabold text-slate-600 uppercase">
+                            UPDATE &amp; PROMO
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <!-- Channel WhatsApp -->
+                        <a href="https://whatsapp.com/channel/0029Vb94zQcJUM2hE0pYz40U" target="_blank" rel="noopener noreferrer"
+                            class="neo-btn-rect flex items-center justify-between gap-2 bg-white hover:bg-neoGreen p-2.5 text-black">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-8 h-8 bg-neoGreen border-2 border-black flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.459 3.473 1.331 4.985L2 22l5.188-1.361a9.93 9.93 0 0 0 4.843 1.258h.004c5.515 0 9.969-4.454 9.969-9.969A9.936 9.936 0 0 0 19.08 4.92 9.91 9.91 0 0 0 12.031 2zm5.811 14.234c-.246.693-1.43 1.326-1.979 1.409-.506.076-1.147.108-1.852-.116-.428-.136-.977-.318-1.681-.622-2.956-1.276-4.887-4.253-5.035-4.45-.147-.197-1.202-1.599-1.202-3.051 0-1.452.761-2.165 1.031-2.46.27-.295.59-.369.787-.369.197 0 .393.002.565.01.181.009.424-.069.663.506.246.591.836 2.041.909 2.189.074.148.123.32.025.517-.098.197-.148.32-.295.492-.148.172-.31.385-.443.517-.148.147-.302.307-.13.602.172.295.764 1.261 1.641 2.043 1.128 1.006 2.079 1.318 2.374 1.466.295.147.467.123.639-.074.172-.197.738-.861.935-1.156.197-.295.393-.246.663-.148.271.099 1.721.812 2.016.959.295.148.492.222.565.345.074.123.074.713-.172 1.406z"/>
+                                    </svg>
+                                </span>
+                                <div class="min-w-0 leading-tight">
+                                    <div class="text-[11px] sm:text-xs font-extrabold truncate">Channel WhatsApp</div>
+                                    <div class="text-[9.5px] font-mono font-bold text-slate-600 truncate">Channel Informasi WhatsApp</div>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 shrink-0 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square">
+                                <path d="M7 17L17 7M17 7H8M17 7V16"/>
+                            </svg>
+                        </a>
+
+                        <!-- Channel Telegram -->
+                        <a href="https://t.me/information_arulz" target="_blank" rel="noopener noreferrer"
+                            class="neo-btn-rect flex items-center justify-between gap-2 bg-white hover:bg-neoCyan p-2.5 text-black">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-8 h-8 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 2L11 13"></path>
+                                        <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                                    </svg>
+                                </span>
+                                <div class="min-w-0 leading-tight">
+                                    <div class="text-[11px] sm:text-xs font-extrabold truncate">Channel Telegram</div>
+                                    <div class="text-[9.5px] font-mono font-bold text-slate-600 truncate">Channel Informasi Telegram</div>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 shrink-0 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square">
+                                <path d="M7 17L17 7M17 7H8M17 7V16"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Kolom 2: Navigasi & Legal -->
+                <div class="p-5 sm:px-7 sm:py-6 space-y-3.5">
+                    <div class="inline-block bg-neoCyan border-2 border-black px-2.5 py-0.5 font-cyber font-extrabold text-[11px] uppercase tracking-wider text-black shadow-[2px_2px_0px_#000]">
+                        NAVIGASI &amp; LEGAL
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5 text-xs sm:text-sm font-extrabold">
+                        <a href="/store" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Katalog Toko
+                        </a>
+                        <a href="/deposit" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Isi Saldo
+                        </a>
+                        <a href="/riwayat" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Riwayat Pesanan
+                        </a>
+                        <a href="/login" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Masuk &amp; Daftar
+                        </a>
+                        <a href="/privacy" class="hover:underline flex items-center gap-1.5 col-span-2">
+                            <span class="w-2 h-2 bg-neoPink border border-black inline-block"></span> Kebijakan Privasi &amp; Hukum
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian Bawah: Bar Hak Cipta Hitam Tegas -->
+            <div class="bg-black text-white border-t-[2.5px] border-black px-5 sm:px-7 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono font-bold">
+                <span class="text-neoYellow">© 2026 ArulzXD Store. Hak cipta dilindungi.</span>
+                <span class="text-white/80 text-center sm:text-right">Layanan Digital Otomatis 24 Jam • WIB</span>
+            </div>
+        </div>
+    </footer>
 
     <!-- BOTTOM NAVIGATION 6-MENU DENGAN LEKUKAN BERSIH -->
     <nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
@@ -634,10 +815,10 @@
         </div>
     </nav>
 
-    <!-- FLOATING LIVE CHAT BUTTON -->
-    <button id="floatingChatToggleBtn" onclick="toggleChatWidget()" title="Bantuan & Live Chat" class="fixed bottom-24 right-4 z-40 flex items-center justify-center w-12 h-12 rounded-full bg-neoYellow border-[3px] border-black text-black shadow-[4px_4px_0px_#000] hover:scale-105 transition-transform font-black">
+    <!-- FLOATING LIVE CHAT BUTTON (TANPA SHADOW) -->
+    <button id="floatingChatToggleBtn" onclick="toggleChatWidget()" title="Bantuan & Live Chat" class="fixed bottom-24 right-5 z-[99990] flex items-center justify-center w-12 h-12 rounded-full bg-neoYellow border-[2.5px] border-black text-black shadow-none hover:scale-110 transition-transform duration-200 font-black">
         <i class="fa-solid fa-comment-dots text-xl"></i>
-        <span class="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-neoGreen border-2 border-black rounded-full"></span>
+        <span class="absolute top-0 right-0 w-3.5 h-3.5 bg-neoGreen border-2 border-black rounded-full"></span>
     </button>
 
     <script>
@@ -649,6 +830,54 @@
             emailNotifEnabled: true,
             isTelegramOnlyAccount: false
         };
+
+        /* =========================================================
+           RENDER BADGE & LOGO SVG METODE LOGIN SESUAI PROVIDER
+           ========================================================= */
+        function renderLoginMethodBadge(providerRaw) {
+            const el = document.getElementById('infoLoginMethod');
+            if (!el) return;
+
+            const provider = String(providerRaw || 'local').toLowerCase().trim();
+
+            if (provider === 'google') {
+                el.className = 'inline-flex items-center gap-1.5 font-cyber font-extrabold text-black bg-white border-2 border-black px-2.5 py-1 shadow-[1.5px_1.5px_0px_#000]';
+                el.innerHTML = `
+                    <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/>
+                        <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/>
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
+                    </svg>
+                    <span>Google OAuth</span>
+                `;
+            } else if (provider === 'github') {
+                el.className = 'inline-flex items-center gap-1.5 font-cyber font-extrabold text-white bg-black border-2 border-black px-2.5 py-1 shadow-[1.5px_1.5px_0px_#000]';
+                el.innerHTML = `
+                    <svg class="w-3.5 h-3.5 shrink-0 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                    </svg>
+                    <span>GitHub OAuth</span>
+                `;
+            } else if (provider === 'telegram') {
+                el.className = 'inline-flex items-center gap-1.5 font-cyber font-extrabold text-black bg-neoCyan border-2 border-black px-2.5 py-1 shadow-[1.5px_1.5px_0px_#000]';
+                el.innerHTML = `
+                    <svg class="w-3.5 h-3.5 shrink-0 text-black" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                    <span>Telegram OAuth</span>
+                `;
+            } else {
+                el.className = 'inline-flex items-center gap-1.5 font-cyber font-extrabold text-black bg-neoYellow border-2 border-black px-2.5 py-1 shadow-[1.5px_1.5px_0px_#000]';
+                el.innerHTML = `
+                    <svg class="w-3.5 h-3.5 shrink-0 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true">
+                        <rect x="2" y="4" width="20" height="16"/>
+                        <path d="M22 6l-10 7L2 6"/>
+                    </svg>
+                    <span>Email &amp; Password</span>
+                `;
+            }
+        }
 
         /* =========================================================
            LIQUID NOTCH CURVE NAVIGATION (6 MENU + SINKRON NOTIFIKASI)
@@ -923,7 +1152,6 @@
                 isTelegramOnlyAccount: isTgPseudoEmail
             };
 
-            // 1. UI Toggle Email
             const emailBtn = document.getElementById('toggleEmailNotifBtn');
             const emailKnob = document.getElementById('toggleEmailNotifKnob');
             const emailBadge = document.getElementById('emailNotifStateBadge');
@@ -934,7 +1162,7 @@
                 emailBtn.classList.remove('active');
                 emailKnob.innerText = 'OFF';
                 emailBadge.innerText = 'TIDAK TERSEDIA';
-                emailBadge.className = 'text-[10px] font-cyber font-black bg-slate-200 border border-black px-2 py-0.5 uppercase';
+                emailBadge.className = 'text-[10px] font-cyber font-extrabold bg-slate-200 border border-black px-2 py-0.5 uppercase';
                 emailDesc.innerText = 'Akun login via Telegram tidak memiliki alamat email aktif.';
             } else {
                 emailBtn.disabled = false;
@@ -942,16 +1170,15 @@
                     emailBtn.classList.add('active');
                     emailKnob.innerText = 'ON';
                     emailBadge.innerText = 'ON';
-                    emailBadge.className = 'text-[10px] font-cyber font-black bg-neoGreen border border-black px-2 py-0.5 uppercase';
+                    emailBadge.className = 'text-[10px] font-cyber font-extrabold bg-neoGreen border border-black px-2 py-0.5 uppercase';
                 } else {
                     emailBtn.classList.remove('active');
                     emailKnob.innerText = 'OFF';
                     emailBadge.innerText = 'OFF';
-                    emailBadge.className = 'text-[10px] font-cyber font-black bg-neoPink text-white border border-black px-2 py-0.5 uppercase';
+                    emailBadge.className = 'text-[10px] font-cyber font-extrabold bg-neoPink text-white border border-black px-2 py-0.5 uppercase';
                 }
             }
 
-            // 2. UI Toggle & Tautan Telegram
             const badge = document.getElementById('tgLinkStatusBadge');
             const tgStateBadge = document.getElementById('tgNotifStateBadge');
             const unlinkedBox = document.getElementById('tgUnlinkedContainer');
@@ -961,7 +1188,7 @@
 
             if (isTgLinked) {
                 badge.innerText = 'TERTAUT';
-                badge.className = 'text-[10px] font-black font-cyber bg-neoCyan text-black border border-black px-2 py-0.5 uppercase';
+                badge.className = 'text-[10px] font-extrabold font-cyber bg-neoCyan text-black border border-black px-2 py-0.5 uppercase';
                 unlinkedBox.classList.add('hidden');
                 linkedBox.classList.remove('hidden');
                 document.getElementById('tgLinkedUsernameDisplay').innerText = user.telegramUsername
@@ -975,16 +1202,16 @@
                     tgBtn.classList.add('active');
                     tgKnob.innerText = 'ON';
                     tgStateBadge.innerText = 'ON';
-                    tgStateBadge.className = 'text-[10px] font-cyber font-black bg-neoGreen border border-black px-2 py-0.5 uppercase';
+                    tgStateBadge.className = 'text-[10px] font-cyber font-extrabold bg-neoGreen border border-black px-2 py-0.5 uppercase';
                 } else {
                     tgBtn.classList.remove('active');
                     tgKnob.innerText = 'OFF';
                     tgStateBadge.innerText = 'OFF';
-                    tgStateBadge.className = 'text-[10px] font-cyber font-black bg-neoPink text-white border border-black px-2 py-0.5 uppercase';
+                    tgStateBadge.className = 'text-[10px] font-cyber font-extrabold bg-neoPink text-white border border-black px-2 py-0.5 uppercase';
                 }
             } else {
                 badge.innerText = 'BELUM TERTAUT';
-                badge.className = 'text-[10px] font-black font-cyber bg-neoYellow text-black border border-black px-2 py-0.5 uppercase';
+                badge.className = 'text-[10px] font-extrabold font-cyber bg-neoYellow text-black border border-black px-2 py-0.5 uppercase';
                 linkedBox.classList.add('hidden');
                 unlinkedBox.classList.remove('hidden');
 
@@ -1106,9 +1333,8 @@
 
                     document.getElementById('infoNama').innerText = usernameVal;
                     document.getElementById('infoEmail').innerText = maskEmail(fullEmail);
-                    
-                    const providerStr = data.user.provider ? data.user.provider.toUpperCase() : 'LOCAL';
-                    document.getElementById('infoLoginMethod').innerText = providerStr === 'LOCAL' ? 'Email & Password' : `${providerStr} OAuth`;
+
+                    renderLoginMethodBadge(data.user.provider);
 
                     const isVerified = data.user.isEmailVerified ?? data.user.isVerified ?? true;
                     const badgeElem = document.getElementById('emailVerifiedBadge');
@@ -1133,7 +1359,7 @@
 
                     if (data.user.avatar) document.getElementById('profileAvatar').src = data.user.avatar;
                     if (data.user.banner) renderBannerMedia(data.user.banner);
-                    
+
                     if (authLabel) authLabel.innerText = 'Profil';
 
                     renderNotificationPreferencesUI(data.user);
@@ -1169,7 +1395,7 @@
                 preConfirm: () => {
                     const fileInput = document.getElementById('swalBannerFile');
                     const urlInput = document.getElementById('swalBannerUrl');
-                    
+
                     const file = fileInput.files[0];
                     const url = urlInput.value.trim();
 
@@ -1206,7 +1432,7 @@
                         body: formData
                     });
                     const result = await res.json();
-                    
+
                     if (result.status) {
                         renderBannerMedia(result.banner);
                         Swal.fire({ icon: 'success', title: 'BERHASIL', text: 'Banner profil berhasil diperbarui!', timer: 1500, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
@@ -1234,7 +1460,7 @@
                     <tr class="hover:bg-neoBg transition">
                         <td class="p-2.5 font-bold text-black">${u.username}</td>
                         <td class="p-2.5 text-slate-600">${maskEmail(u.email)}</td>
-                        <td class="p-2.5 text-right font-black text-black">${joined}</td>
+                        <td class="p-2.5 text-right font-extrabold text-black">${joined}</td>
                     </tr>
                 `;
             }).join('');
@@ -1384,8 +1610,8 @@
                 if (data.status && data.messages) {
                     if (data.messages.length === 0) {
                         container.innerHTML = `
-                            <div class="neo-rect p-3 bg-white text-xs text-black space-y-1">
-                                <p class="font-black font-cyber">Halo! Selamat datang 👋</p>
+                            <div class="neo-subcard p-3 bg-white text-xs text-black space-y-1">
+                                <p class="font-extrabold font-cyber">Halo! Selamat datang 👋</p>
                                 <p class="text-[10px] font-bold text-slate-600">Silakan kirimkan pertanyaan Anda. Customer Service kami siap membantu.</p>
                             </div>
                         `;
@@ -1398,7 +1624,7 @@
                         const bgClass = isUser 
                             ? 'bg-neoYellow text-black font-bold border-2 border-black shadow-[2px_2px_0px_#000]' 
                             : 'bg-white text-black font-bold border-2 border-black shadow-[2px_2px_0px_#000]';
-                        
+
                         const timeStr = new Date(msg.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
                         const displayName = isUser ? (msg.senderName || 'Anda') : 'Owner CS';
 
@@ -1406,7 +1632,7 @@
                             <div class="flex ${alignClass}">
                                 <div class="max-w-[82%] p-2.5 text-[11px] space-y-1 ${bgClass}">
                                     <div class="flex items-center justify-between gap-2 border-b border-black/20 pb-1">
-                                        <span class="font-black font-cyber text-[10px] text-black">${displayName}</span>
+                                        <span class="font-extrabold font-cyber text-[10px] text-black">${displayName}</span>
                                         <span class="text-[8px] opacity-75 font-mono font-bold">${timeStr}</span>
                                     </div>
                                     <p class="leading-relaxed break-words pt-0.5">${msg.message}</p>

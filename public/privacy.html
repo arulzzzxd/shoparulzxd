@@ -3,328 +3,1660 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kebijakan Privasi & Syarat Layanan - ArulzXD STORE</title>
+    <meta name="theme-color" content="#FFDF4F">
+    <title>Kebijakan Privasi & Ketentuan Hukum - ArulzXD Store</title>
+    <meta name="description" content="Pedoman lengkap hukum perlindungan data pribadi (UU PDP & UU ITE), keamanan akun, transaksi QRIS, notifikasi bot, dan ketentuan layanan digital di ArulzXD Store.">
+
+    <!-- Favicon & Icons -->
     <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
+    <link rel="shortcut icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://cdn.larasxd.my.id/files/1wh5do.png">
+
+    <!-- Styles & Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
+
     <script>
         tailwind.config = {
-            theme: { 
+            theme: {
                 extend: {
-                    fontFamily: { 
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        cyber: ['Space Grotesk', 'sans-serif'],
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        cyber: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     },
                     colors: {
-                        neoYellow: '#FFDE59',
-                        neoCyan: '#00E5FF',
-                        neoPink: '#FF79C6',
-                        neoGreen: '#00E676',
-                        neoPurple: '#BD93F9',
-                        neoBg: '#F5F2EB',
+                        neoBg: '#FAF9F2',
+                        neoPaper: '#FAF9F2',
+                        neoYellow: '#FFDF4F',
+                        neoCyan: '#1AE5FF',
+                        neoGreen: '#2CE875',
+                        neoPink: '#FF4D6D',
+                        neoPurple: '#D896FF',
                         neoCard: '#FFFFFF'
                     }
-                } 
+                }
             }
         }
     </script>
     <style>
-        body { 
-            background-color: #F5F2EB; 
-            background-image: radial-gradient(rgba(0, 0, 0, 0.06) 1.2px, transparent 1.2px);
-            background-size: 18px 18px;
-            color: #000000;
+        html {
+            scroll-behavior: smooth;
         }
 
-        .neo-card {
+        body {
+            background-color: #FAF9F2;
+            color: #000000;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            background-image: radial-gradient(#00000014 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+
+        /* Neo-Brutalisme Persegi Panjang Ramping (Shadow Proporsional & Tidak Tebal) */
+        .neo-rect {
             background-color: #FFFFFF;
-            border: 3.5px solid #000000;
-            box-shadow: 6px 6px 0px #000000;
+            border: 2.5px solid #000000;
+            box-shadow: 4px 4px 0px #000000;
+            border-radius: 0px !important;
+            transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.16s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .neo-subcard {
-            border: 2.5px solid #000000;
+            border: 2px solid #000000;
+            box-shadow: 2.5px 2.5px 0px #000000;
+            border-radius: 0px !important;
+            transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.14s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.14s ease;
+        }
+        .neo-subcard:hover {
+            transform: translate(-1px, -1px);
             box-shadow: 3.5px 3.5px 0px #000000;
         }
+        .neo-subcard:active {
+            transform: translate(1.5px, 1.5px);
+            box-shadow: 1px 1px 0px #000000;
+        }
 
-        .neo-btn {
-            border: 3px solid #000000;
-            box-shadow: 4px 4px 0px #000000;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        .neo-btn-rect {
+            border: 2px solid #000000;
+            box-shadow: 2.5px 2.5px 0px #000000;
+            border-radius: 0px !important;
+            transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.12s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.15s ease;
+            cursor: pointer;
+            user-select: none;
         }
-        .neo-btn:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px #000000;
+        .neo-btn-rect:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3.5px 3.5px 0px #000000;
         }
-        .neo-btn:active {
+        .neo-btn-rect:active {
             transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px #000000;
+            box-shadow: 0.5px 0.5px 0px #000000;
+        }
+
+        /* Header Pasal Interaktif */
+        .policy-trigger {
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), filter 0.15s ease;
+        }
+        .policy-trigger:active {
+            transform: translate(1.5px, 1.5px);
+        }
+        .policy-chevron {
+            transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .policy-section.is-collapsed .policy-chevron {
+            transform: rotate(-90deg);
+        }
+
+        /* Animasi Accordion Halus */
+        .policy-body-wrapper {
+            display: grid;
+            grid-template-rows: 1fr;
+            transition: grid-template-rows 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .policy-section.is-collapsed .policy-body-wrapper {
+            grid-template-rows: 0fr;
+        }
+        .policy-body-inner {
+            overflow: hidden;
+            transition: opacity 0.24s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .policy-section.is-collapsed .policy-body-inner {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+
+        /* Animasi Masuk Kartu */
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-card-in {
+            opacity: 0;
+            animation: cardEntrance 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* Efek Highlight saat Lompat Cepat ke Pasal */
+        @keyframes targetPulse {
+            0% { box-shadow: 4px 4px 0px #000000; transform: scale(1); }
+            35% { box-shadow: 6px 6px 0px #FF4D6D; transform: translate(-1.5px, -1.5px); }
+            100% { box-shadow: 4px 4px 0px #000000; transform: scale(1); }
+        }
+        .policy-highlight {
+            animation: targetPulse 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Pop-up Live Chat Animasi */
+        @keyframes chatPopIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .chat-window-open {
+            display: flex !important;
+            animation: chatPopIn 0.24s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
     </style>
 </head>
-<body class="min-h-screen pb-14 antialiased selection:bg-neoYellow selection:text-black">
+<body class="font-sans antialiased text-black min-h-screen pb-14 selection:bg-neoYellow selection:text-black">
 
-    <!-- STICKY TOP NAVIGATION BAR (BERSIH TANPA BORDER SAMPING LAYAR) -->
-    <header class="sticky top-0 z-40 bg-[#F5F2EB]/95 backdrop-blur-md border-b-4 border-black px-4 sm:px-8 py-3.5">
-        <div class="max-w-4xl mx-auto flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <!-- LOGO BULAT PRESISI TANPA EFEK GEPENG -->
-                <div class="w-10 h-10 rounded-full border-2.5 border-black overflow-hidden shrink-0 bg-black flex items-center justify-center">
-                    <img src="https://files.catbox.moe/kdowze.png" alt="Logo ArulzXD" class="w-full h-full object-cover">
+    <!-- LIVE CHAT WIDGET POP-UP (TANPA TOMBOL BULAT MELAYANG) -->
+    <div id="liveChatWidgetContainer">
+        <div id="floatingChatWindow" class="fixed bottom-5 right-4 sm:right-6 z-[99999] hidden w-[calc(100vw-2rem)] max-w-[365px] h-[430px] max-h-[calc(100vh-90px)] bg-white border-[2.5px] border-black rounded-none shadow-[4px_4px_0px_#000] overflow-hidden flex-col">
+            <div class="bg-neoYellow p-3 border-b-[2.5px] border-black flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="relative">
+                        <div class="w-8 h-8 rounded-none bg-white text-black border-2 border-black flex items-center justify-center shadow-[1.5px_1.5px_0px_#000]">
+                            <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square">
+                                <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+                                <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+                            </svg>
+                        </div>
+                        <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-neoGreen border border-black"></span>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-extrabold font-cyber text-black uppercase">Customer Support</h3>
+                        <p class="text-[9px] text-black font-mono font-bold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 bg-neoGreen border border-black animate-pulse"></span> Online 24/7
+                        </p>
+                    </div>
                 </div>
-                <div>
-                    <span class="font-black font-cyber text-base sm:text-lg tracking-tight block leading-none">ArulzXD STORE</span>
-                    <span class="text-[10px] font-mono font-extrabold text-slate-700 tracking-wider uppercase mt-0.5 block">LEGAL &amp; PRIVACY POLICY</span>
-                </div>
+                <button type="button" onclick="toggleChatWidget()" aria-label="Tutup Live Chat" class="neo-btn-rect w-7 h-7 bg-white text-black font-black text-xs flex items-center justify-center hover:bg-neoPink">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
             </div>
 
-            <!-- TOMBOL KEMBALI DENGAN ICON SVG -->
-            <a href="/login" class="neo-btn bg-neoYellow text-black font-black font-cyber text-xs px-4 py-2 rounded-xl uppercase flex items-center gap-2 shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                </svg>
-                <span>Kembali</span>
+            <div id="widgetChatMessages" class="flex-1 p-3 overflow-y-auto space-y-3 bg-neoBg scroll-smooth">
+                <div class="text-center text-[11px] text-slate-600 font-mono my-2 animate-pulse font-bold">Memuat pesan...</div>
+            </div>
+
+            <form id="widgetChatForm" onsubmit="sendWidgetMessage(event)" class="p-2.5 bg-white border-t-[2.5px] border-black flex items-center gap-2 shrink-0">
+                <input type="text" id="widgetChatInput" required placeholder="Tanyakan seputar privasi / hukum..."
+                       class="flex-1 bg-neoBg border-2 border-black rounded-none px-3 py-2 text-xs text-black font-bold placeholder-slate-500 focus:outline-none focus:bg-white">
+                <button type="submit" aria-label="Kirim Pesan" class="neo-btn-rect w-9 h-9 bg-neoYellow text-black flex items-center justify-center shrink-0 font-black">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                        <path d="M22 2L11 13"/>
+                        <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOP NAVBAR NEO-BRUTALISME -->
+    <header class="sticky top-0 z-40 bg-neoYellow border-b-[2.5px] border-black shadow-[0_3px_0_#000]">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-2.5">
+            <a href="/" class="flex items-center gap-2.5 shrink-0">
+                <div class="w-8 h-8 bg-white border-2 border-black shadow-[2px_2px_0px_#000] flex items-center justify-center">
+                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/>
+                    </svg>
+                </div>
+                <span class="font-cyber font-extrabold text-xl tracking-tight text-black">
+                    Arulz <span class="bg-black text-white px-2 py-0.5">Store</span>
+                </span>
             </a>
+
+            <div class="flex items-center gap-2">
+                <a href="/store" class="neo-btn-rect bg-white text-black px-3 py-1.5 text-xs font-extrabold font-cyber uppercase flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    <span class="hidden sm:inline">Katalog Toko</span>
+                    <span class="sm:hidden">Toko</span>
+                </a>
+                <a href="/dashboard" class="neo-btn-rect bg-neoCyan text-black px-3 py-1.5 text-xs font-extrabold font-cyber uppercase flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+            </div>
         </div>
     </header>
 
     <!-- KONTEN UTAMA -->
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 pt-7 pb-10 space-y-6">
+    <main class="max-w-6xl mx-auto px-4 py-6 space-y-5">
 
-        <!-- HERO BANNER DOKUMEN -->
-        <div class="neo-card rounded-2xl overflow-hidden bg-white">
-            <!-- STRIP HEADER WARNA NEOBRUTALISM -->
-            <div class="bg-neoCyan border-b-3 border-black px-5 sm:px-8 py-3 flex flex-wrap items-center justify-between gap-2">
-                <div class="inline-flex items-center gap-2 bg-white border-2 border-black text-black text-[10px] sm:text-xs font-black px-3 py-1 rounded-full uppercase font-cyber shadow-[2px_2px_0px_#000]">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971z" />
-                    </svg>
-                    <span>Kepatuhan Hukum &amp; Privasi</span>
-                </div>
-                <span class="text-[10px] sm:text-xs font-mono font-black bg-neoYellow border-2 border-black px-3 py-1 rounded-lg shadow-[2px_2px_0px_#000]">
-                    VERSI 2.4 • NOV 2026
-                </span>
-            </div>
-
-            <div class="p-5 sm:p-8 space-y-3">
-                <h1 class="text-2xl sm:text-4xl font-black font-cyber uppercase tracking-tight leading-tight">
-                    Kebijakan Privasi &amp; Ketentuan Layanan
-                </h1>
-                <p class="text-xs sm:text-sm font-bold text-slate-600 border-b-2 border-dashed border-slate-300 pb-3">
-                    Pedoman Perlindungan Data Pribadi Pengguna &amp; Tata Kelola Transaksi Digital
-                </p>
-                <p class="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed pt-1">
-                    Selamat datang di <strong>ArulzXD STORE</strong> (operasional layanan digital di bawah ekosistem ArulzXD). Dokumen ini menjelaskan secara transparan bagaimana kami mengumpulkan, menyimpan, melindungi, dan memproses data pribadi Anda saat mengakses marketplace <i>source code</i>, layanan REST API, maupun transaksi otomatis pada platform kami.
-                </p>
-            </div>
-        </div>
-
-        <!-- SEKSI 1: DASAR HUKUM -->
-        <section class="neo-card rounded-2xl overflow-hidden bg-white">
-            <div class="bg-neoGreen/25 border-b-3 border-black px-5 sm:px-7 py-3.5 flex items-center gap-3">
-                <span class="w-8 h-8 rounded-xl bg-neoGreen border-2.5 border-black flex items-center justify-center font-black font-cyber text-sm shadow-[2.5px_2.5px_0px_#000] shrink-0">
-                    1
-                </span>
-                <h2 class="text-base sm:text-lg font-black font-cyber uppercase tracking-tight">
-                    Dasar Hukum &amp; Kepatuhan Regulasi RI
-                </h2>
-            </div>
-
-            <div class="p-5 sm:p-7 space-y-4">
-                <p class="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed">
-                    Seluruh pemrosesan informasi dan transaksi elektronik pada sistem ArulzXD STORE tunduk sepenuhnya terhadap peraturan perundang-undangan Republik Indonesia:
-                </p>
-
-                <div class="space-y-3">
-                    <div class="neo-subcard bg-[#FFFDF7] p-4 rounded-xl flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-                            </svg>
-                        </div>
-                        <div class="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed">
-                            <strong class="font-black text-black block mb-0.5">UU No. 27 Tahun 2022 tentang Perlindungan Data Pribadi (UU PDP)</strong>
-                            Menjamin hak pengguna sebagai subjek data pribadi meliputi hak atas informasi pemrosesan, akses, pembaruan data, serta hak penghapusan akun dari basis data sistem.
-                        </div>
-                    </div>
-
-                    <div class="neo-subcard bg-[#FFFDF7] p-4 rounded-xl flex items-start gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-neoCyan border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                            </svg>
-                        </div>
-                        <div class="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed">
-                            <strong class="font-black text-black block mb-0.5">UU No. 1 Tahun 2024 (Perubahan Kedua UU ITE)</strong>
-                            Mengatur keabsahan tanda tangan, bukti transaksi elektronik, serta perlindungan sistem elektronik dari tindakan peretasan maupun penyalahgunaan akses ilegal.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SEKSI 2: PENGUMPULAN DATA -->
-        <section class="neo-card rounded-2xl overflow-hidden bg-white">
-            <div class="bg-neoYellow/35 border-b-3 border-black px-5 sm:px-7 py-3.5 flex items-center gap-3">
-                <span class="w-8 h-8 rounded-xl bg-neoYellow border-2.5 border-black flex items-center justify-center font-black font-cyber text-sm shadow-[2.5px_2.5px_0px_#000] shrink-0">
-                    2
-                </span>
-                <h2 class="text-base sm:text-lg font-black font-cyber uppercase tracking-tight">
-                    Data Pribadi yang Kami Kumpulkan
-                </h2>
-            </div>
-
-            <div class="p-5 sm:p-7 space-y-4">
-                <p class="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed">
-                    Untuk mendukung fitur autentikasi, pengiriman produk instan, dan manajemen saldo akun, kami mengumpulkan kategori informasi berikut:
-                </p>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="neo-subcard p-4 rounded-xl bg-pink-50/60 space-y-1.5">
-                        <div class="flex items-center gap-2 text-xs font-black font-cyber uppercase text-black">
-                            <span class="w-7 h-7 rounded-lg bg-neoPink border-2 border-black flex items-center justify-center shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                                </svg>
-                            </span>
-                            <span>Identitas Akun &amp; Profil</span>
-                        </div>
-                        <p class="text-xs font-semibold text-slate-700 leading-relaxed pt-1">
-                            Username unik, alamat email aktif, foto avatar profil, kode referal undangan, serta token identifikasi OAuth (Google / GitHub).
-                        </p>
-                    </div>
-
-                    <div class="neo-subcard p-4 rounded-xl bg-emerald-50/60 space-y-1.5">
-                        <div class="flex items-center gap-2 text-xs font-black font-cyber uppercase text-black">
-                            <span class="w-7 h-7 rounded-lg bg-neoGreen border-2 border-black flex items-center justify-center shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
-                                </svg>
-                            </span>
-                            <span>Riwayat Transaksi &amp; Saldo</span>
-                        </div>
-                        <p class="text-xs font-semibold text-slate-700 leading-relaxed pt-1">
-                            Nomor referensi invoice (<code class="bg-white px-1 py-0.5 rounded border border-black text-[11px]">TRX-ID</code>), riwayat deposit QRIS, mutasi saldo internal, serta akses tautan produk yang dibeli.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SEKSI 3: KEAMANAN ENKRIPSI -->
-        <section class="neo-card rounded-2xl overflow-hidden bg-white">
-            <div class="bg-neoPink/25 border-b-3 border-black px-5 sm:px-7 py-3.5 flex items-center gap-3">
-                <span class="w-8 h-8 rounded-xl bg-neoPink border-2.5 border-black flex items-center justify-center font-black font-cyber text-sm shadow-[2.5px_2.5px_0px_#000] shrink-0">
-                    3
-                </span>
-                <h2 class="text-base sm:text-lg font-black font-cyber uppercase tracking-tight">
-                    Keamanan Data &amp; Perlindungan Sesi
-                </h2>
-            </div>
-
-            <div class="p-5 sm:p-7 space-y-3">
-                <p class="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed">
-                    Kami menerapkan arsitektur keamanan berlapis untuk melindungi kredensial serta integritas akun pengguna:
-                </p>
-
-                <div class="space-y-2.5 pt-1">
-                    <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border-2 border-black">
-                        <span class="w-7 h-7 rounded-lg bg-neoGreen border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                            </svg>
-                        </span>
-                        <p class="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed">
-                            <strong>Enkripsi Kata Sandi:</strong> Seluruh kata sandi akun lokal diproses menggunakan algoritma <i>hashing</i> satu arah <strong>Bcrypt</strong> sehingga tidak dapat dibaca dalam bentuk teks biasa.
-                        </p>
-                    </div>
-
-                    <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border-2 border-black">
-                        <span class="w-7 h-7 rounded-lg bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
-                            </svg>
-                        </span>
-                        <p class="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed">
-                            <strong>Sesi Terproteksi:</strong> Autentikasi menggunakan <strong>JSON Web Token (JWT)</strong> dalam cookie <code class="bg-white px-1 rounded border border-black text-[11px]">HttpOnly</code> &amp; <code class="bg-white px-1 rounded border border-black text-[11px]">Secure</code> untuk mencegah pencurian sesi XSS.
-                        </p>
-                    </div>
-
-                    <div class="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border-2 border-black">
-                        <span class="w-7 h-7 rounded-lg bg-neoCyan border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
-                            </svg>
-                        </span>
-                        <p class="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed">
-                            <strong>Infrastruktur &amp; Enkripsi Jaringan:</strong> Seluruh pertukaran data dilindungi sertifikat TLS/HTTPS 256-bit serta perlindungan Firewall Cloudflare WAF.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SEKSI 4: KETENTUAN TRANSAKSI & HAK CIPTA -->
-        <section class="neo-card rounded-2xl overflow-hidden bg-white">
-            <div class="bg-neoPurple/25 border-b-3 border-black px-5 sm:px-7 py-3.5 flex items-center gap-3">
-                <span class="w-8 h-8 rounded-xl bg-neoPurple border-2.5 border-black flex items-center justify-center font-black font-cyber text-sm shadow-[2.5px_2.5px_0px_#000] shrink-0">
-                    4
-                </span>
-                <h2 class="text-base sm:text-lg font-black font-cyber uppercase tracking-tight">
-                    Syarat Penggunaan &amp; Kebijakan Transaksi
-                </h2>
-            </div>
-
-            <div class="p-5 sm:p-7 space-y-3 text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed">
-                <div class="flex items-start gap-2.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.8] text-black shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
-                    <p><strong>Lisensi Produk Digital:</strong> Setiap <i>source code</i>, script bot, maupun layanan API yang dibeli hanya berlaku untuk penggunaan pribadi atau proyek pembeli. Dilarang mendistribusikan ulang secara gratis maupun memperjualbelikan tanpa izin resmi pemilik hak cipta.</p>
-                </div>
-                <div class="flex items-start gap-2.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.8] text-black shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
-                    <p><strong>Kebijakan Pengembalian Dana (Non-Refundable):</strong> Produk digital yang sudah terkonfirmasi lunas dan tautan unduhannya telah terbuka tidak dapat dibatalkan atau di-<i>refund</i>, kecuali terjadi kegagalan sistem permanen yang terbukti berasal dari pihak ArulzXD STORE.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- KOTAK KONTAK & BANTUAN LEGAL -->
-        <div class="neo-card p-6 sm:p-8 rounded-2xl bg-neoYellow text-center space-y-3">
-            <div class="w-11 h-11 rounded-2xl bg-white border-3 border-black shadow-[3px_3px_0px_#000] mx-auto flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-[2.4]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+        <!-- HERO BANNER KEBIJAKAN PRIVASI & HUKUM (BERSIH TANPA TUMPUKAN TOMBOL) -->
+        <section class="p-5 sm:p-7 neo-rect bg-neoCyan relative overflow-hidden animate-card-in" style="animation-delay: 0.03s;">
+            <!-- Watermark Perisai Hukum Solid Besar di Pojok Kanan -->
+            <div class="absolute -right-6 -bottom-8 pointer-events-none select-none text-black/[0.09] -rotate-12">
+                <svg class="w-52 h-52 sm:w-60 sm:h-60" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v6h-2V7zm0 8h2v2h-2v-2z"/>
                 </svg>
             </div>
-            <h3 class="font-black font-cyber text-lg sm:text-xl uppercase tracking-tight">
-                Punya Pertanyaan Mengenai Privasi Anda?
-            </h3>
-            <p class="text-xs sm:text-sm font-bold text-slate-900 max-w-lg mx-auto">
-                Untuk permintaan penghapusan data pribadi atau bantuan terkait ketentuan layanan, hubungi tim administrator kami secara langsung.
-            </p>
-            <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
-                <a href="mailto:servicearulzxd@gmail.com" class="neo-btn bg-white text-black font-black font-cyber text-xs px-4 py-2.5 rounded-xl flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+
+            <div class="relative z-10 space-y-3">
+                <div class="flex flex-wrap items-center gap-2">
+                    <span class="inline-flex items-center gap-1.5 bg-black text-neoYellow text-[11px] font-extrabold px-2.5 py-1 uppercase font-cyber tracking-wider">
+                        <svg class="w-3.5 h-3.5 text-neoYellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square">
+                            <path d="M12 3v18M5 7h14M5 7l-3 6h6l-3-6zm14 0l-3 6h6l-3-6zM8 21h8"/>
+                        </svg>
+                        KEPATUHAN HUKUM &amp; PRIVASI DATA
+                    </span>
+                    <span class="inline-flex items-center gap-1.5 bg-neoYellow text-black border-2 border-black text-[11px] font-mono font-extrabold px-2.5 py-0.5 shadow-[2px_2px_0px_#000]">
+                        EDISI LENGKAP • NOV 2026
+                    </span>
+                </div>
+
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-black font-cyber tracking-tight leading-tight flex flex-wrap items-center gap-2">
+                    <span>Kebijakan Privasi &amp;</span>
+                    <span class="bg-white border-2 border-black px-2.5 py-0.5 shadow-[2.5px_2.5px_0px_#000]">Ketentuan Hukum</span>
+                </h1>
+
+                <p class="text-xs sm:text-sm font-bold text-black max-w-3xl leading-relaxed">
+                    Dokumen hukum komprehensif yang mengatur perlindungan data pribadi (UU PDP &amp; UU ITE), hak kekayaan intelektual perangkat lunak, transaksi saldo QRIS otomatis, integrasi bot Telegram, dan keamanan sistem di seluruh ekosistem <strong>ArulzXD Store</strong>.
+                </p>
+            </div>
+        </section>
+
+                <!-- BAR KONTROL INTERAKTIF TERPISAH (CUSTOM NEO-BRUTALISME SELECT) -->
+        <section class="neo-rect bg-white p-3.5 sm:px-5 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-30 animate-card-in" style="animation-delay: 0.05s;">
+            <div class="flex items-center gap-2.5 flex-1 min-w-0">
+                <span class="w-9 h-9 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square">
+                        <line x1="8" y1="6" x2="21" y2="6"/>
+                        <line x1="8" y1="12" x2="21" y2="12"/>
+                        <line x1="8" y1="18" x2="21" y2="18"/>
+                        <line x1="3" y1="6" x2="3.01" y2="6"/>
+                        <line x1="3" y1="12" x2="3.01" y2="12"/>
+                        <line x1="3" y1="18" x2="3.01" y2="18"/>
                     </svg>
-                    <span>servicearulzxd@gmail.com</span>
-                </a>
-                <a href="/login" class="neo-btn bg-black text-white font-black font-cyber text-xs px-5 py-2.5 rounded-xl flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                </span>
+
+                <!-- CUSTOM NEO-BRUTALIST DROPDOWN -->
+                <div class="relative flex-1 min-w-0" id="neoPolicyDropdown">
+                    <button type="button" id="neoPolicyTrigger" onclick="toggleNeoSelect()"
+                            aria-haspopup="listbox" aria-expanded="false"
+                            class="neo-btn-rect w-full bg-neoBg hover:bg-neoYellow/40 px-3 py-2 text-left flex items-center justify-between gap-2 text-black">
+                        <span id="neoPolicySelectedText" class="text-xs font-cyber font-extrabold uppercase truncate">
+                            -- LOMPAT CEPAT KE PASAL (11 PASAL) --
+                        </span>
+                        <span class="w-5 h-5 bg-white border-2 border-black flex items-center justify-center shrink-0">
+                            <svg id="neoPolicyArrow" class="w-3 h-3 transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square">
+                                <path d="M6 9l6 6 6-6"/>
+                            </svg>
+                        </span>
+                    </button>
+
+                    <!-- PANEL MENU OPSI NEO-BRUTALISME -->
+                    <div id="neoPolicyMenu" role="listbox"
+                         class="hidden absolute left-0 right-0 top-[calc(100%+6px)] z-50 bg-white border-[2.5px] border-black shadow-[4px_4px_0px_#000] max-h-64 overflow-y-auto divide-y-2 divide-black">
+                        <button type="button" onclick="selectNeoPolicy('pasal-1', 'PASAL 01 • Dasar Hukum Nasional & Regulasi RI')"
+                                class="w-full text-left px-3 py-2.5 bg-white hover:bg-neoGreen transition-colors flex items-center gap-2 text-xs font-bold text-black">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5 shrink-0">01</span>
+                            <span class="truncate font-cyber font-extrabold uppercase">Dasar Hukum Nasional &amp; Regulasi RI</span>
+                        </button>
+                        <button type="button" onclick="selectNeoPolicy('pasal-2', 'PASAL 02 • Klasifikasi Data Pribadi & Minimalisasi')"
+                                class="w-full text-left px-3 py-2.5 bg-white hover:bg-neoYellow transition-colors flex items-center gap-2 text-xs font-bold text-black">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5 shrink-0">02</span>
+                            <span class="truncate font-cyber font-extrabold uppercase">Klasifikasi Data Pribadi &amp; Minimalisasi</span>
+                        </button>
+                        <button type="button" onclick="selectNeoPolicy('pasal-3', 'PASAL 03 • Autentikasi Multi-Provider & OTP 6 Digit')"
+                                class="w-full text-left px-3 py-2.5 bg-white hover:bg-neoCyan transition-colors flex items-center gap-2 text-xs font-bold text-black">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5 shrink-0">03</span>
+                            <span class="truncate font-cyber font-extrabold uppercase">Autentikasi Multi-Provider &amp; OTP 6 Digit</span>
+                        </button>
+                        <button type="button" onclick="selectNeoPolicy('pasal-4', 'PASAL 04 • Kustomisasi Profil & Moderasi Media')"
+                                class="w-full text-left px-3 py-2.5 bg-white hover:bg-neoPurple transition-colors flex items-center gap-2 text-xs font-bold text-black">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5 shrink-0">04</span>
+                            <span class="truncate font-cyber font-extrabold uppercase">Kustomisasi Profil &amp; Moderasi Media</span>
+                        </button>
+                        <button type="button" onclick="selectNeoPolicy('pasal-5', 'PASAL 05 • Program Referral & Anti-Kecurangan')"
+                                class="w-full text-left px-3 py-2.5 bg-white hover:bg-neoGreen transition-colors flex items-center gap-2 text-xs font-bold text-black">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5 shrink-0">05</span>
+                            <span class="truncate font-cyber font-extrabold uppercase">Program Referral &amp; Anti-Kecurangan</span>
+                        </button>
+                        <button type="button" onclick="selectNeoPolicy('pasal-6', 'PASAL 06 • Deposit Saldo, QRIS V1 & QRIS V2')"
+                                class="w-full text-left px-3 py-2.5 bg-white hover:bg-neoYellow transition-colors flex items-center gap-2 text-xs font-bold text-black">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5 shrink-0">06</span>
+                            <span class="truncate font-cyber font-extrabold uppercase">Deposit Saldo, QRIS V1 &amp; QRIS V2</span>
+                        </button>
+                        <button type="button" onclick="selectNeoPolicy('pasal-7', 'PASAL 07 • Transaksi Produk Digital & Hak Cipta')"
+                                class="w-full text-left px-3 py-2.5 bg-white hover:bg-neoPink transition-colors flex items-center gap-2 text-xs font-bold text-black">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5 shrink-0">07</span>
+                            <span class="truncate font-cyber font-extrabold uppercase">Transaksi Produk Digital &amp; Hak Cipta</span>
+                        </button>
+                        <button type="button" onclick="selectNeoPolicy('pasal-8', 'PASAL 08 • Notifikasi Real-Time & Bot Telegram')"
+                                class="w-full text-left px-3 py-2.5 bg-white hover:bg-neoYellow transition-colors flex items-center gap-2 text-xs font-bold text-black">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5 shrink-0">08</span>
+                            <span class="truncate font-cyber font-extrabold uppercase">Notifikasi Real-Time &amp; Bot Telegram</span>
+                        </button>
+                        <button type="button" onclick="selectNeoPolicy('pasal-9', 'PASAL 09 • Layanan Customer Support Live Chat')"
+                                class="w-full text-left px-3 py-2.5 bg-white hover:bg-neoGreen transition-colors flex items-center gap-2 text-xs font-bold text-black">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5 shrink-0">09</span>
+                            <span class="truncate font-cyber font-extrabold uppercase">Layanan Customer Support Live Chat</span>
+                        </button>
+                        <button type="button" onclick="selectNeoPolicy('pasal-10', 'PASAL 10 • Masa Simpan (Retensi), Cookie & Masking')"
+                                class="w-full text-left px-3 py-2.5 bg-white hover:bg-neoPurple transition-colors flex items-center gap-2 text-xs font-bold text-black">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5 shrink-0">10</span>
+                            <span class="truncate font-cyber font-extrabold uppercase">Masa Simpan (Retensi), Cookie &amp; Masking</span>
+                        </button>
+                        <button type="button" onclick="selectNeoPolicy('pasal-11', 'PASAL 11 • Keamanan Siber & Hak Penghapusan Data')"
+                                class="w-full text-left px-3 py-2.5 bg-white hover:bg-neoCyan transition-colors flex items-center gap-2 text-xs font-bold text-black">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5 shrink-0">11</span>
+                            <span class="truncate font-cyber font-extrabold uppercase">Keamanan Siber &amp; Hak Penghapusan Data</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <button type="button" onclick="toggleAllPolicies(true)" class="neo-btn-rect flex-1 sm:flex-initial bg-neoGreen text-black px-3.5 py-2 text-[11px] font-cyber font-extrabold uppercase flex items-center justify-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square">
+                        <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+                    </svg>
+                    <span>Buka Semua</span>
+                </button>
+                <button type="button" onclick="toggleAllPolicies(false)" class="neo-btn-rect flex-1 sm:flex-initial bg-neoBg hover:bg-neoYellow text-black px-3.5 py-2 text-[11px] font-cyber font-extrabold uppercase flex items-center justify-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square">
+                        <path d="M17 11l-5-5-5 5M17 18l-5-5-5 5"/>
+                    </svg>
+                    <span>Ringkas</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- PASAL 1: DASAR HUKUM NASIONAL & KEPATUHAN REGULASI RI -->
+        <section id="pasal-1" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.07s;">
+            <button type="button" onclick="togglePolicySection('pasal-1')" class="policy-trigger bg-neoGreen border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <!-- LOGO SVG PASAL 1: TIMBANGAN HUKUM -->
+                    <span class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                            <path d="M12 3v18M5 7h14M5 7l-3 6h6l-3-6zm14 0l-3 6h6l-3-6zM8 21h8"/>
+                        </svg>
+                    </span>
+                    <div class="text-left">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5">PASAL 01</span>
+                            <h2 class="text-sm sm:text-base font-extrabold font-cyber uppercase tracking-tight text-black">
+                                Dasar Hukum Nasional &amp; Kepatuhan Regulasi RI
+                            </h2>
+                        </div>
+                        <p class="text-[11px] font-bold text-black/80">Landasan perundang-undangan perlindungan data pribadi, ITE, hak cipta, dan sistem pembayaran</p>
+                    </div>
+                </div>
+                <span class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                    <svg class="w-4 h-4 policy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </span>
+            </button>
+
+            <div class="policy-body-wrapper">
+                <div class="policy-body-inner">
+                    <div class="p-5 sm:p-6 space-y-4">
+                        <p class="text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                            Seluruh operasional sistem elektronik, pengelolaan basis data pengguna, pencatatan transaksi keuangan, serta distribusi produk digital di <strong>ArulzXD Store</strong> tunduk secara sah dan mengikat pada hukum positif Negara Kesatuan Republik Indonesia:
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                            <!-- Hukum 1: UU PDP -->
+                            <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                                <div class="w-9 h-9 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                        <path d="M9 12l2 2 4-4"/>
+                                    </svg>
+                                </div>
+                                <div class="text-xs font-bold text-slate-800 leading-relaxed">
+                                    <strong class="font-cyber font-extrabold text-black block mb-1 uppercase">UU No. 27 Tahun 2022 (UU PDP)</strong>
+                                    Mengatur pemrosesan data pribadi berdasarkan persetujuan eksplisit (Pasal 20), hak informasi (Pasal 5), hak perbaikan data (Pasal 6), hak penghapusan data (Pasal 8), serta kewajiban keamanan pengendali data (Pasal 35).
+                                </div>
+                            </div>
+
+                            <!-- Hukum 2: UU ITE -->
+                            <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                                <div class="w-9 h-9 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                        <rect x="2" y="3" width="20" height="14" rx="0"/>
+                                        <path d="M8 21h8M12 17v4"/>
+                                    </svg>
+                                </div>
+                                <div class="text-xs font-bold text-slate-800 leading-relaxed">
+                                    <strong class="font-cyber font-extrabold text-black block mb-1 uppercase">UU No. 1 Tahun 2024 (UU ITE)</strong>
+                                    Mengakui keabsahan informasi elektronik, log transaksi digital, tanda tangan kriptografi webhook, serta melarang keras akses ilegal (<i>hacking</i>), intersepsi, dan manipulasi sistem elektronik (Pasal 30–35).
+                                </div>
+                            </div>
+
+                            <!-- Hukum 3: PP PSTE -->
+                            <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                                <div class="w-9 h-9 bg-neoPurple border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                        <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                                        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                                        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                                    </svg>
+                                </div>
+                                <div class="text-xs font-bold text-slate-800 leading-relaxed">
+                                    <strong class="font-cyber font-extrabold text-black block mb-1 uppercase">PP No. 71 Tahun 2019 (PP PSTE)</strong>
+                                    Mengatur tata kelola Penyelenggara Sistem dan Transaksi Elektronik, keandalan sistem, rekam jejak audit (<i>audit trail</i>), serta perlindungan kerahasiaan data pengguna dalam ekosistem digital.
+                                </div>
+                            </div>
+
+                            <!-- Hukum 4: UU Hak Cipta -->
+                            <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                                <div class="w-9 h-9 bg-neoPink border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                        <polyline points="16 18 22 12 16 6"/>
+                                        <polyline points="8 6 2 12 8 18"/>
+                                    </svg>
+                                </div>
+                                <div class="text-xs font-bold text-slate-800 leading-relaxed">
+                                    <strong class="font-cyber font-extrabold text-black block mb-1 uppercase">UU No. 28 Tahun 2014 (Hak Cipta)</strong>
+                                    Melindungi program komputer, <i>source code</i>, dan script bot otomatis sebagai ciptaan dilindungi hukum (Pasal 40 ayat 1 huruf s) dari pembajakan dan distribusi ulang ilegal.
+                                </div>
+                            </div>
+
+                            <!-- Hukum 5: UU Perlindungan Konsumen -->
+                            <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                                <div class="w-9 h-9 bg-neoGreen border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="8.5" cy="7" r="4"/>
+                                        <polyline points="17 11 19 13 23 9"/>
+                                    </svg>
+                                </div>
+                                <div class="text-xs font-bold text-slate-800 leading-relaxed">
+                                    <strong class="font-cyber font-extrabold text-black block mb-1 uppercase">UU No. 8 Tahun 1999 (UUPK)</strong>
+                                    Menjamin hak konsumen atas informasi spesifikasi produk digital yang jujur, jelas, dan akurat sebelum transaksi dilakukan, serta kewajiban konsumen beritikad baik dalam setiap pembelian.
+                                </div>
+                            </div>
+
+                            <!-- Hukum 6: Regulasi Sistem Pembayaran BI & APU-PPT -->
+                            <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                                <div class="w-9 h-9 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                        <rect x="3" y="3" width="7" height="7"/>
+                                        <rect x="14" y="3" width="7" height="7"/>
+                                        <rect x="3" y="14" width="7" height="7"/>
+                                        <path d="M14 14h3v3h-3zM18 18h3v3h-3zM14 20h2"/>
+                                    </svg>
+                                </div>
+                                <div class="text-xs font-bold text-slate-800 leading-relaxed">
+                                    <strong class="font-cyber font-extrabold text-black block mb-1 uppercase">Regulasi QRIS BI &amp; APU-PPT</strong>
+                                    Pemrosesan pembayaran QRIS mengikuti standar Bank Indonesia serta prinsip Anti Pencucian Uang dan Pencegahan Pendanaan Terorisme (APU-PPT) untuk mencegah transaksi fiktif atau penipuan.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASAL 2: KLASIFIKASI DATA PRIBADI YANG DIKUMPULKAN -->
+        <section id="pasal-2" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.09s;">
+            <button type="button" onclick="togglePolicySection('pasal-2')" class="policy-trigger bg-neoYellow border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <!-- LOGO SVG PASAL 2: KLASIFIKASI DATA -->
+                    <span class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                    </span>
+                    <div class="text-left">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5">PASAL 02</span>
+                            <h2 class="text-sm sm:text-base font-extrabold font-cyber uppercase tracking-tight text-black">
+                                Klasifikasi Data Pribadi &amp; Prinsip Minimalisasi Data
+                            </h2>
+                        </div>
+                        <p class="text-[11px] font-bold text-black/80">Rincian kategori data yang dikumpulkan secara terbatas sesuai kebutuhan layanan</p>
+                    </div>
+                </div>
+                <span class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                    <svg class="w-4 h-4 policy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </span>
+            </button>
+
+            <div class="policy-body-wrapper">
+                <div class="policy-body-inner">
+                    <div class="p-5 sm:p-6 space-y-4">
+                        <p class="text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                            Sesuai prinsip <strong>Minimalisasi Data</strong> dalam UU PDP Pasal 16, ArulzXD Store hanya mengumpulkan data pribadi yang relevan dan diperlukan secara langsung untuk menjalankan fitur akun dan transaksi Anda:
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                                <div class="w-9 h-9 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                </div>
+                                <div class="text-xs font-bold text-slate-800 leading-relaxed">
+                                    <strong class="font-cyber font-extrabold text-black block mb-1 uppercase">1. Data Identitas &amp; Kontak Akun</strong>
+                                    Mencakup <i>username</i> unik, nama tampilan, alamat email terverifikasi, nomor WhatsApp (saat melakukan deposit/order), serta ID Telegram apabila Anda menghubungkan bot notifikasi.
+                                </div>
+                            </div>
+
+                            <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                                <div class="w-9 h-9 bg-neoGreen border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                        <rect x="2" y="5" width="20" height="14" rx="0"/>
+                                        <line x1="2" y1="10" x2="22" y2="10"/>
+                                    </svg>
+                                </div>
+                                <div class="text-xs font-bold text-slate-800 leading-relaxed">
+                                    <strong class="font-cyber font-extrabold text-black block mb-1 uppercase">2. Data Transaksi &amp; Mutasi Saldo</strong>
+                                    Mencakup riwayat pengisian saldo (<code class="bg-white px-1 border border-black font-mono text-[10px]">Order ID</code>), nominal bersih, biaya layanan gateway, riwayat pembelian produk digital, serta catatan komisi referral. Kami <strong>tidak pernah</strong> menyimpan PIN e-wallet maupun nomor kartu bank Anda.
+                                </div>
+                            </div>
+
+                            <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                                <div class="w-9 h-9 bg-neoPurple border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="2" y1="12" x2="22" y2="12"/>
+                                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                    </svg>
+                                </div>
+                                <div class="text-xs font-bold text-slate-800 leading-relaxed">
+                                    <strong class="font-cyber font-extrabold text-black block mb-1 uppercase">3. Data Teknis &amp; Log Keamanan Sesi</strong>
+                                    Alamat IP publik, <i>User-Agent</i> peramban, stempel waktu (<i>timestamp</i>) masuk/keluar, dan status verifikasi tantangan keamanan Cloudflare Turnstile untuk mendeteksi serangan otomatis atau penyalahgunaan akun.
+                                </div>
+                            </div>
+
+                            <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                                <div class="w-9 h-9 bg-neoPink border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                        <path d="M12 20h9"/>
+                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                    </svg>
+                                </div>
+                                <div class="text-xs font-bold text-slate-800 leading-relaxed">
+                                    <strong class="font-cyber font-extrabold text-black block mb-1 uppercase">4. Data Aktivitas &amp; Ulasan Pengguna</strong>
+                                    Pesan bantuan pada Live Chat CS serta ulasan/rating bintang produk yang Anda berikan secara sukarela setelah transaksi pembelian selesai.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASAL 3: AUTENTIKASI MULTI-PROVIDER & VERIFIKASI OTP -->
+        <section id="pasal-3" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.11s;">
+            <button type="button" onclick="togglePolicySection('pasal-3')" class="policy-trigger bg-neoCyan border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <!-- LOGO SVG PASAL 3: KUNCI & OTENTIKASI -->
+                    <span class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+                        </svg>
+                    </span>
+                    <div class="text-left">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5">PASAL 03</span>
+                            <h2 class="text-sm sm:text-base font-extrabold font-cyber uppercase tracking-tight text-black">
+                                Autentikasi Multi-Provider &amp; Verifikasi OTP 6 Digit
+                            </h2>
+                        </div>
+                        <p class="text-[11px] font-bold text-black/80">Standar keamanan login Lokal, Google, GitHub, dan Telegram OAuth</p>
+                    </div>
+                </div>
+                <span class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                    <svg class="w-4 h-4 policy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </span>
+            </button>
+
+            <div class="policy-body-wrapper">
+                <div class="policy-body-inner">
+                    <div class="p-5 sm:p-6 space-y-4">
+                        <p class="text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                            Sistem autentikasi di halaman <code class="bg-neoBg px-1.5 py-0.5 border border-black font-mono text-[11px]">/login</code> menerapkan verifikasi berlapis guna mencegah pengambilalihan akun (<i>account takeover</i>):
+                        </p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                            <div class="neo-subcard bg-neoBg p-4 space-y-1.5">
+                                <div class="flex items-center gap-2 font-cyber font-extrabold text-xs uppercase">
+                                    <span class="w-7 h-7 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
+                                        <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                            <rect x="3" y="11" width="18" height="11" rx="0"/>
+                                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                        </svg>
+                                    </span>
+                                    <span>Kredensial Lokal &amp; OTP</span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-700 leading-relaxed pt-1">
+                                    Setiap registrasi, masuk akun lokal, dan pemulihan sandi mewajibkan verifikasi <strong>kode OTP 6 digit sekali pakai</strong> melalui email (dibatasi maksimal 5 permintaan per hari untuk mencegah spam).
+                                </p>
+                            </div>
+
+                            <div class="neo-subcard bg-neoBg p-4 space-y-1.5">
+                                <div class="flex items-center gap-2 font-cyber font-extrabold text-xs uppercase">
+                                    <span class="w-7 h-7 bg-neoGreen border-2 border-black flex items-center justify-center shrink-0">
+                                        <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                        </svg>
+                                    </span>
+                                    <span>Google &amp; GitHub OAuth</span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-700 leading-relaxed pt-1">
+                                    Menggunakan protokol standar OAuth 2.0. Kami hanya membaca <i>Provider ID</i>, nama publik, avatar, dan email terverifikasi tanpa akses ke repositori privat maupun kotak masuk email Anda.
+                                </p>
+                            </div>
+
+                            <div class="neo-subcard bg-neoBg p-4 space-y-1.5">
+                                <div class="flex items-center gap-2 font-cyber font-extrabold text-xs uppercase">
+                                    <span class="w-7 h-7 bg-neoPurple border-2 border-black flex items-center justify-center shrink-0">
+                                        <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                            <path d="M22 2L11 13"/>
+                                            <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+                                        </svg>
+                                    </span>
+                                    <span>Telegram Login Widget</span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-700 leading-relaxed pt-1">
+                                    Otentikasi Telegram diverifikasi menggunakan hash kriptografi <strong>HMAC-SHA256</strong> dengan kunci rahasia bot resmi guna menjamin keaslian identitas pengguna.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+                <!-- PASAL 4: KUSTOMISASI PROFIL, MEDIA BANNER & MODERASI KONTEN -->
+        <section id="pasal-4" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.14s;">
+            <button type="button" onclick="togglePolicySection('pasal-4')" class="policy-trigger bg-neoPurple border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <!-- LOGO SVG PASAL 4: GALERI MEDIA & PROFIL -->
+                    <span class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                            <rect x="3" y="3" width="18" height="18" rx="0"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </span>
+                    <div class="text-left">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5">PASAL 04</span>
+                            <h2 class="text-sm sm:text-base font-extrabold font-cyber uppercase tracking-tight text-black">
+                                Kustomisasi Profil, Media Banner &amp; Moderasi Konten
+                            </h2>
+                        </div>
+                        <p class="text-[11px] font-bold text-black/80">Aturan pengunggahan avatar gambar dan banner animasi MP4/GIF</p>
+                    </div>
+                </div>
+                <span class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                    <svg class="w-4 h-4 policy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </span>
+            </button>
+
+            <div class="policy-body-wrapper">
+                <div class="policy-body-inner">
+                    <div class="p-5 sm:p-6 space-y-3 text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                        <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                            <span class="w-8 h-8 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                    <polygon points="23 7 16 12 23 17 23 7"/>
+                                    <rect x="1" y="5" width="15" height="14" rx="0"/>
+                                </svg>
+                            </span>
+                            <p>
+                                <strong>Penyimpanan Berkas Media (<code class="bg-white px-1 border border-black font-mono text-[11px]">/profile</code>):</strong> Gambar avatar (PNG, JPG, WEBP, GIF) dan video banner animasi (MP4) yang Anda unggah akan diproses dan disimpan pada infrastruktur penyimpanan media CDN kami. Saat Anda mengganti atau menghapus media profil, tautan berkas lama akan digantikan secara otomatis.
+                            </p>
+                        </div>
+
+                        <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                            <span class="w-8 h-8 bg-neoPink border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                                </svg>
+                            </span>
+                            <p>
+                                <strong>Larangan Konten Terlarang:</strong> Pengguna dilarang keras mengunggah media profil yang mengandung unsur pornografi/NSFW, ujaran kebencian SARA, perjudian daring, kekerasan ekstrem, maupun penyamaran identitas pihak lain (<i>impersonation</i>). Pelanggaran akan dikenakan penghapusan media secara sepihak hingga penonaktifan akun.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASAL 5: PROGRAM REFERRAL & PENCEGAHAN KECURANGAN (ANTI-FRAUD) -->
+        <section id="pasal-5" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.17s;">
+            <button type="button" onclick="togglePolicySection('pasal-5')" class="policy-trigger bg-neoGreen border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <!-- LOGO SVG PASAL 5: HADIAH & JARINGAN UNDANGAN -->
+                    <span class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                            <polyline points="20 12 20 22 4 22 4 12"/>
+                            <rect x="2" y="7" width="20" height="5"/>
+                            <line x1="12" y1="22" x2="12" y2="7"/>
+                            <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+                            <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+                        </svg>
+                    </span>
+                    <div class="text-left">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5">PASAL 05</span>
+                            <h2 class="text-sm sm:text-base font-extrabold font-cyber uppercase tracking-tight text-black">
+                                Program Referral &amp; Kebijakan Anti-Kecurangan
+                            </h2>
+                        </div>
+                        <p class="text-[11px] font-bold text-black/80">Skema bonus undangan pengguna baru dan sanksi manipulasi akun ganda</p>
+                    </div>
+                </div>
+                <span class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                    <svg class="w-4 h-4 policy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </span>
+            </button>
+
+            <div class="policy-body-wrapper">
+                <div class="policy-body-inner">
+                    <div class="p-5 sm:p-6 space-y-3 text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                        <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                            <span class="w-8 h-8 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                </svg>
+                            </span>
+                            <p>
+                                <strong>Mekanisme Komisi Referral:</strong> Pengguna yang mendaftar menggunakan kode atau tautan referral valid berhak menerima bonus saldo awal <strong>Rp 500</strong>, sedangkan pemilik kode referral memperoleh komisi <strong>Rp 1.000</strong> setelah verifikasi email pengguna baru berhasil diselesaikan.
+                            </p>
+                        </div>
+
+                        <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                            <span class="w-8 h-8 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                    <line x1="12" y1="9" x2="12" y2="13"/>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                                </svg>
+                            </span>
+                            <p>
+                                <strong>Audit Anti-Fraud:</strong> Sistem secara berkala memantau kesamaan alamat IP, pola pendaftaran massal, dan penggunaan email sementara (<i>disposable email</i>). Praktik <i>self-referral</i> (mengundang diri sendiri menggunakan akun kloning) merupakan pelanggaran berat yang berakibat pada hangusnya seluruh saldo bonus serta pemblokiran permanen.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASAL 6: DEPOSIT SALDO, GATEWAY QRIS V1 & QRIS V2 -->
+        <section id="pasal-6" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.2s;">
+            <button type="button" onclick="togglePolicySection('pasal-6')" class="policy-trigger bg-neoYellow border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <!-- LOGO SVG PASAL 6: DOMPET & QRIS PAYMENT -->
+                    <span class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
+                            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
+                            <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
+                        </svg>
+                    </span>
+                    <div class="text-left">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5">PASAL 06</span>
+                            <h2 class="text-sm sm:text-base font-extrabold font-cyber uppercase tracking-tight text-black">
+                                Deposit Saldo, Gateway QRIS V1 &amp; QRIS V2
+                            </h2>
+                        </div>
+                        <p class="text-[11px] font-bold text-black/80">Prosedur top-up saldo, verifikasi bukti transfer, biaya layanan, dan sifat saldo</p>
+                    </div>
+                </div>
+                <span class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                    <svg class="w-4 h-4 policy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </span>
+            </button>
+
+            <div class="policy-body-wrapper">
+                <div class="policy-body-inner">
+                    <div class="p-5 sm:p-6 space-y-3.5 text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                        <p>
+                            Layanan isi ulang saldo pada halaman <code class="bg-neoBg px-1.5 py-0.5 border border-black font-mono text-[11px]">/deposit</code> mencatat nomor WhatsApp aktif Anda sebagai kontak konfirmasi transaksi serta menghasilkan nomor invoice unik:
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            <div class="neo-subcard bg-neoBg p-4 space-y-1.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="inline-flex items-center gap-1.5 font-cyber font-extrabold text-xs uppercase bg-neoCyan border border-black px-2 py-0.5">
+                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square">
+                                            <path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/>
+                                        </svg>
+                                        QRIS V1 • OTOMATIS
+                                    </span>
+                                    <span class="font-mono text-[10px] font-extrabold text-slate-600">WEBHOOK HMAC</span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-700 leading-relaxed pt-1">
+                                    Saldo masuk otomatis dalam hitungan detik setelah pembayaran berhasil dipindai. Biaya layanan sebesar <strong>0.7% + Rp 290</strong> (nominal &lt; Rp 150.000) atau <strong>0.95% flat</strong> (nominal &ge; Rp 150.000).
+                                </p>
+                            </div>
+
+                            <div class="neo-subcard bg-neoBg p-4 space-y-1.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="inline-flex items-center gap-1.5 font-cyber font-extrabold text-xs uppercase bg-neoGreen border border-black px-2 py-0.5">
+                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="17 8 12 3 7 8"/>
+                                            <line x1="12" y1="3" x2="12" y2="15"/>
+                                        </svg>
+                                        QRIS V2 • UPLOAD BUKTI
+                                    </span>
+                                    <span class="font-mono text-[10px] font-extrabold text-slate-600">AUDIT ADMIN</span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-700 leading-relaxed pt-1">
+                                    Gambar bukti transfer yang Anda unggah hanya diakses oleh Administrator untuk verifikasi mutasi rekening. Biaya layanan sebesar <strong>0.7% + Rp 250</strong> (&lt; Rp 150.000) atau <strong>0.95% flat</strong> (&ge; Rp 150.000).
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="bg-neoYellow/40 border-2 border-black p-3.5 flex items-start gap-2.5 text-xs font-bold text-black">
+                            <svg class="w-4 h-4 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            <span>
+                                <strong>Sifat Saldo Akun:</strong> Saldo yang telah berhasil masuk ke akun ArulzXD Store merupakan kredit belanja internal yang hanya dapat digunakan untuk membeli produk/layanan di dalam platform dan tidak dapat dicairkan kembali menjadi uang tunai/transfer bank (<i>non-withdrawable</i>).
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASAL 7: TRANSAKSI PRODUK DIGITAL, LISENSI HAKI & NON-REFUNDABLE -->
+        <section id="pasal-7" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.23s;">
+            <button type="button" onclick="togglePolicySection('pasal-7')" class="policy-trigger bg-neoPink border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <!-- LOGO SVG PASAL 7: KERANJANG BELANJA & LISENSI -->
+                    <span class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <path d="M16 10a4 4 0 0 1-8 0"/>
+                        </svg>
+                    </span>
+                    <div class="text-left">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5">PASAL 07</span>
+                            <h2 class="text-sm sm:text-base font-extrabold font-cyber uppercase tracking-tight text-black">
+                                Transaksi Produk Digital, Lisensi HAKI &amp; Non-Refundable
+                            </h2>
+                        </div>
+                        <p class="text-[11px] font-bold text-black/80">Ketentuan pengiriman instan, lisensi source code, dan kebijakan pengembalian dana</p>
+                    </div>
+                </div>
+                <span class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                    <svg class="w-4 h-4 policy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </span>
+            </button>
+
+            <div class="policy-body-wrapper">
+                <div class="policy-body-inner">
+                    <div class="p-5 sm:p-6 space-y-3 text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                        <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                            <span class="w-8 h-8 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                    <polyline points="16 18 22 12 16 6"/>
+                                    <polyline points="8 6 2 12 8 18"/>
+                                </svg>
+                            </span>
+                            <p>
+                                <strong>Hak Kekayaan Intelektual &amp; Lisensi Penggunaan:</strong> Pembelian produk di <code class="bg-white px-1 border border-black font-mono text-[11px]">/store</code> memberikan hak lisensi non-eksklusif untuk penggunaan pribadi atau proyek komersial internal Anda. Dilarang keras menyebarluaskan secara gratis, membocorkan <i>source code</i> ke repositori publik, maupun memperjualbelikan ulang tanpa persetujuan tertulis dari ArulzXD Store.
+                            </p>
+                        </div>
+
+                        <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                            <span class="w-8 h-8 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="7 10 12 15 17 10"/>
+                                    <line x1="12" y1="15" x2="12" y2="3"/>
+                                </svg>
+                            </span>
+                            <p>
+                                <strong>Akses Unduhan Satu Kali &amp; Finalitas Transaksi (Non-Refundable):</strong> Produk digital dikirimkan secara instan melalui tautan unduhan langsung atau pengiriman via WhatsApp/Telegram setelah pembayaran terkonfirmasi. Demi mencegah penyalahgunaan berkas digital, seluruh transaksi bersifat final dan tidak dapat di-<i>refund</i>, kecuali terbukti terjadi kerusakan berkas asli dari server kami yang gagal diperbaiki oleh tim teknis.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASAL 8: NOTIFIKASI REAL-TIME & INTEGRASI BOT TELEGRAM -->
+        <section id="pasal-8" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.26s;">
+            <button type="button" onclick="togglePolicySection('pasal-8')" class="policy-trigger bg-neoYellow border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <!-- LOGO SVG PASAL 8: LONCENG NOTIFIKASI & BOT TELEGRAM -->
+                    <span class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                    </span>
+                    <div class="text-left">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5">PASAL 08</span>
+                            <h2 class="text-sm sm:text-base font-extrabold font-cyber uppercase tracking-tight text-black">
+                                Notifikasi Real-Time &amp; Integrasi Bot Telegram
+                            </h2>
+                        </div>
+                        <p class="text-[11px] font-bold text-black/80">Kontrol sakelar notifikasi Email, Private Chat Bot Telegram, dan pusat notifikasi</p>
+                    </div>
+                </div>
+                <span class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                    <svg class="w-4 h-4 policy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </span>
+            </button>
+
+            <div class="policy-body-wrapper">
+                <div class="policy-body-inner">
+                    <div class="p-5 sm:p-6 space-y-3 text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                        <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                            <span class="w-8 h-8 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                    <path d="M22 2L11 13"/>
+                                    <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+                                </svg>
+                            </span>
+                            <p>
+                                <strong>Penautan Bot Telegram (<code class="bg-white px-1 border border-black font-mono text-[10px]">Chat ID</code>):</strong> Ketika Anda menautkan akun ke Bot Telegram resmi melalui <code class="bg-white px-1 border border-black font-mono text-[11px]">/notifikasi</code> atau <code class="bg-white px-1 border border-black font-mono text-[11px]">/profile</code>, sistem menyimpan <i>Telegram Chat ID</i> Anda untuk mengirimkan alert status deposit, pesanan sukses, dan info sistem secara instan. Anda memiliki hak penuh untuk memutuskan tautan kapan saja melalui tombol <strong>Putuskan Tautan</strong>.
+                            </p>
+                        </div>
+
+                        <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                            <span class="w-8 h-8 bg-neoGreen border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                    <rect x="1" y="5" width="22" height="14" rx="0"/>
+                                    <circle cx="16" cy="12" r="3"/>
+                                </svg>
+                            </span>
+                            <p>
+                                <strong>Kontrol Sakelar Preferensi (Opt-In / Opt-Out):</strong> Anda dapat mengatur sakelar penerimaan notifikasi siaran ke Email maupun Bot Telegram secara mandiri. Notifikasi keamanan wajib (seperti kode OTP login dan peringatan perubahan sandi) tetap dikirimkan demi melindungi keamanan akun Anda.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+                <!-- PASAL 9: LAYANAN CUSTOMER SUPPORT LIVE CHAT -->
+        <section id="pasal-9" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.29s;">
+            <button type="button" onclick="togglePolicySection('pasal-9')" class="policy-trigger bg-neoGreen border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <!-- LOGO SVG PASAL 9: HEADSET CUSTOMER SUPPORT -->
+                    <span class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                            <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+                            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+                        </svg>
+                    </span>
+                    <div class="text-left">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5">PASAL 09</span>
+                            <h2 class="text-sm sm:text-base font-extrabold font-cyber uppercase tracking-tight text-black">
+                                Layanan Customer Support Live Chat
+                            </h2>
+                        </div>
+                        <p class="text-[11px] font-bold text-black/80">Kerahasiaan riwayat percakapan bantuan dan tata tertib komunikasi</p>
+                    </div>
+                </div>
+                <span class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                    <svg class="w-4 h-4 policy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </span>
+            </button>
+
+            <div class="policy-body-wrapper">
+                <div class="policy-body-inner">
+                    <div class="p-5 sm:p-6 space-y-3 text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                        <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                            <span class="w-8 h-8 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                            </span>
+                            <p>
+                                <strong>Kerahasiaan Sesi Bantuan:</strong> Seluruh percakapan bantuan pelanggan pada fitur Live Chat CS bersifat privat antara Anda dan Administrator/Owner CS. Riwayat pesan hanya digunakan untuk penyelesaian kendala transaksi, teknis produk, serta pemrosesan permintaan hak privasi data Anda.
+                            </p>
+                        </div>
+
+                        <div class="neo-subcard bg-neoBg p-4 flex items-start gap-3">
+                            <span class="w-8 h-8 bg-neoPink border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
+                                <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                            </span>
+                            <p>
+                                <strong>Etika &amp; Keamanan Komunikasi:</strong> Pengguna dilarang mengirimkan tautan <i>phishing</i>, file berbahaya, spam pesan berulang, maupun kata-kata kasar/pelecehan kepada petugas CS.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASAL 10: RETENSI DATA, COOKIE SESI & PENYAMARAN DATA PUBLIK -->
+        <section id="pasal-10" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.32s;">
+            <button type="button" onclick="togglePolicySection('pasal-10')" class="policy-trigger bg-neoPurple border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <!-- LOGO SVG PASAL 10: JAM RETENSI & COOKIE PRIVASI -->
+                    <span class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </span>
+                    <div class="text-left">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5">PASAL 10</span>
+                            <h2 class="text-sm sm:text-base font-extrabold font-cyber uppercase tracking-tight text-black">
+                                Masa Simpan (Retensi Data), Cookie &amp; Masking Publik
+                            </h2>
+                        </div>
+                        <p class="text-[11px] font-bold text-black/80">Durasi penyimpanan log, penggunaan cookie autentikasi, dan penyamaran ID di dashboard</p>
+                    </div>
+                </div>
+                <span class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                    <svg class="w-4 h-4 policy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </span>
+            </button>
+
+            <div class="policy-body-wrapper">
+                <div class="policy-body-inner">
+                    <div class="p-5 sm:p-6 space-y-3 text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                            <div class="neo-subcard bg-neoBg p-4 space-y-1.5">
+                                <div class="flex items-center gap-2 font-cyber font-extrabold text-xs uppercase">
+                                    <span class="w-7 h-7 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
+                                        <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <polyline points="12 6 12 12 16 14"/>
+                                        </svg>
+                                    </span>
+                                    <span>Retensi Data</span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-700 pt-1">
+                                    Data akun disimpan selama akun berstatus aktif. Log transaksi keuangan disimpan sesuai kewajiban pembukuan dan audit hukum RI, sedangkan kode OTP kedaluwarsa dihapus otomatis oleh sistem.
+                                </p>
+                            </div>
+
+                            <div class="neo-subcard bg-neoBg p-4 space-y-1.5">
+                                <div class="flex items-center gap-2 font-cyber font-extrabold text-xs uppercase">
+                                    <span class="w-7 h-7 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0">
+                                        <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                            <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"/>
+                                            <circle cx="8.5" cy="10.5" r="1"/>
+                                            <circle cx="11.5" cy="15.5" r="1"/>
+                                            <circle cx="15.5" cy="12.5" r="1"/>
+                                        </svg>
+                                    </span>
+                                    <span>Cookie Esensial</span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-700 pt-1">
+                                    Kami hanya menggunakan cookie esensial (<code class="bg-white px-1 border border-black font-mono text-[10px]">HttpOnly</code> &amp; <code class="bg-white px-1 border border-black font-mono text-[10px]">Secure</code>) untuk menjaga sesi login tetap aman dan tidak menjual data pelacakan iklan pihak ketiga.
+                                </p>
+                            </div>
+
+                            <div class="neo-subcard bg-neoBg p-4 space-y-1.5">
+                                <div class="flex items-center gap-2 font-cyber font-extrabold text-xs uppercase">
+                                    <span class="w-7 h-7 bg-neoGreen border-2 border-black flex items-center justify-center shrink-0">
+                                        <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                                            <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                                            <line x1="1" y1="1" x2="23" y2="23"/>
+                                        </svg>
+                                    </span>
+                                    <span>Masking Data Publik</span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-700 pt-1">
+                                    Pada halaman <code class="bg-white px-1 border border-black font-mono text-[10px]">/dashboard</code>, seluruh ID transaksi disamarkan (<code class="bg-white px-1 border border-black font-mono text-[10px]">TRX123•••89AB</code>) tanpa pernah menampilkan email maupun nomor WhatsApp pengguna.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PASAL 11: ARSITEKTUR KEAMANAN SIBER & HAK SUBJEK DATA -->
+        <section id="pasal-11" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.35s;">
+            <button type="button" onclick="togglePolicySection('pasal-11')" class="policy-trigger bg-neoCyan border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <!-- LOGO SVG PASAL 11: PERISAI ENKRIPSI SIBER -->
+                    <span class="w-10 h-10 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="square">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <rect x="9" y="10" width="6" height="5"/>
+                            <path d="M10 10V8a2 2 0 1 1 4 0v2"/>
+                        </svg>
+                    </span>
+                    <div class="text-left">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-black text-neoYellow font-mono font-extrabold text-[10px] px-1.5 py-0.5">PASAL 11</span>
+                            <h2 class="text-sm sm:text-base font-extrabold font-cyber uppercase tracking-tight text-black">
+                                Arsitektur Keamanan Siber &amp; Pelaksanaan Hak Pengguna
+                            </h2>
+                        </div>
+                        <p class="text-[11px] font-bold text-black/80">Enkripsi Bcrypt, HMAC-SHA256, TLS 256-Bit, Cloudflare WAF, dan prosedur penghapusan data</p>
+                    </div>
+                </div>
+                <span class="w-8 h-8 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000] shrink-0">
+                    <svg class="w-4 h-4 policy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="square">
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </span>
+            </button>
+
+            <div class="policy-body-wrapper">
+                <div class="policy-body-inner">
+                    <div class="p-5 sm:p-6 space-y-3.5 text-xs sm:text-sm font-bold text-slate-800 leading-relaxed">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                            <div class="neo-subcard bg-neoBg p-3.5 space-y-1">
+                                <span class="inline-flex items-center gap-1.5 bg-neoGreen border border-black px-2 py-0.5 font-cyber font-extrabold text-[10px] uppercase">
+                                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                                        <rect x="3" y="11" width="18" height="11"/>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    </svg>
+                                    BCRYPT SALT HASHING
+                                </span>
+                                <p class="text-xs font-bold text-slate-700 pt-1">
+                                    Kata sandi di-hash satu arah menggunakan algoritma kriptografi <strong>Bcrypt</strong> dengan salt acak sehingga tidak dapat dibaca oleh siapa pun, termasuk pengelola server.
+                                </p>
+                            </div>
+
+                            <div class="neo-subcard bg-neoBg p-3.5 space-y-1">
+                                <span class="inline-flex items-center gap-1.5 bg-neoYellow border border-black px-2 py-0.5 font-cyber font-extrabold text-[10px] uppercase">
+                                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                    </svg>
+                                    HTTPS/TLS &amp; CLOUDFLARE WAF
+                                </span>
+                                <p class="text-xs font-bold text-slate-700 pt-1">
+                                    Seluruh komunikasi klien-server terenkripsi <strong>TLS 256-bit</strong> dan dilindungi mitigasi DDoS serta Web Application Firewall <strong>Cloudflare</strong>.
+                                </p>
+                            </div>
+
+                            <div class="neo-subcard bg-neoBg p-3.5 space-y-1">
+                                <span class="inline-flex items-center gap-1.5 bg-neoPink text-white border border-black px-2 py-0.5 font-cyber font-extrabold text-[10px] uppercase">
+                                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                                        <polyline points="3 6 5 6 21 6"/>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                    </svg>
+                                    HAK AKSES &amp; HAPUS AKUN
+                                </span>
+                                <p class="text-xs font-bold text-slate-700 pt-1">
+                                    Sesuai UU PDP, Anda berhak meminta salinan data pribadi, pembaruan data, atau penghapusan permanen akun kapan saja melalui Live Chat CS.
+                                </p>
+                            </div>
+                        </div>
+
+                        <p class="text-xs font-bold text-slate-700 pt-1">
+                            <strong>Perubahan Kebijakan Privasi:</strong> ArulzXD Store berhak menyempurnakan isi Kebijakan Privasi &amp; Ketentuan Hukum ini dari waktu ke waktu mengikuti pembaruan fitur maupun regulasi terbaru di Indonesia. Dengan terus menggunakan layanan kami, Anda menyetujui ketentuan yang berlaku.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KOTAK BANTUAN & PERTANYAAN MENGGUNAKAN LIVE CHAT (TANPA EMAIL & TANPA TOMBOL MELAYANG) -->
+        <section class="neo-rect p-6 sm:p-8 bg-neoYellow text-center space-y-3.5 relative overflow-hidden animate-card-in" style="animation-delay: 0.38s;">
+            <div class="w-12 h-12 bg-white border-2 border-black shadow-[2.5px_2.5px_0px_#000] mx-auto flex items-center justify-center">
+                <svg class="w-6 h-6 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square">
+                    <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+                </svg>
+            </div>
+
+            <div class="space-y-1.5">
+                <span class="inline-block bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2.5 py-0.5 uppercase tracking-wider">
+                    CUSTOMER SUPPORT • LIVE CHAT
+                </span>
+                <h3 class="font-extrabold font-cyber text-xl sm:text-2xl uppercase tracking-tight text-black">
+                    Punya Pertanyaan Mengenai Privasi &amp; Hukum?
+                </h3>
+                <p class="text-xs sm:text-sm font-bold text-black/85 max-w-xl mx-auto leading-relaxed">
+                    Untuk pertanyaan seputar perlindungan data pribadi, hak cipta produk, kendala akun, atau permohonan penghapusan data, silakan hubungi tim Admin kami secara langsung melalui <strong>Live Chat</strong>.
+                </p>
+            </div>
+
+            <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
+                <button type="button" onclick="openLiveChatFromPrivacy()" class="neo-btn-rect bg-neoGreen text-black font-extrabold font-cyber text-xs sm:text-sm px-5 py-3 uppercase flex items-center gap-2">
+                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span>Chat Admin Sekarang (Live Chat)</span>
+                </button>
+                <a href="/login" class="neo-btn-rect bg-black text-white font-extrabold font-cyber text-xs sm:text-sm px-5 py-3 uppercase flex items-center gap-2">
+                    <svg class="w-4 h-4 text-neoYellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                        <polyline points="10 17 15 12 10 7"/>
+                        <line x1="15" y1="12" x2="3" y2="12"/>
                     </svg>
                     <span>Masuk Ke Akun</span>
                 </a>
             </div>
-        </div>
+        </section>
 
     </main>
 
-    <footer class="text-center text-[11px] font-black font-cyber text-slate-700 pt-2">
-        &copy; 2026 ArulzXD STORE. All Rights Reserved.
+    <!-- FOOTER NEO-BRUTALISME -->
+    <footer class="max-w-6xl mx-auto px-4 mt-2 mb-4">
+        <div class="neo-rect bg-white overflow-hidden">
+            <!-- Bagian Atas: Brand, Deskripsi & 5 Tombol Kotak Media Sosial SVG -->
+            <div class="p-5 sm:p-7 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-neoYellow border-2 border-black shadow-[2.5px_2.5px_0px_#000] flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter">
+                            <path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" fill="#000000"/>
+                        </svg>
+                    </div>
+                    <span class="font-cyber font-extrabold text-xl sm:text-2xl tracking-tight text-black">
+                        ArulzXD <span class="bg-black text-neoYellow px-2 py-0.5">Store</span>
+                    </span>
+                </div>
+
+                <p class="text-xs sm:text-sm font-bold text-slate-800 max-w-xl leading-relaxed">
+                    Platform belanja Source Code, Script Bot, dan Layanan Digital otomatis 24 jam. Cepat, aman, dan langsung diproses setelah pembayaran.
+                </p>
+
+                <!-- 5 Kotak Ikon Media Sosial dengan SVG Masing-Masing -->
+                <div class="flex flex-wrap items-center gap-2.5 pt-1">
+                    <!-- TikTok -->
+                    <a href="https://www.tiktok.com/@arulzxd8" target="_blank" rel="noopener noreferrer" aria-label="TikTok ArulzXD" title="TikTok"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoYellow flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                        </svg>
+                    </a>
+
+                    <!-- Instagram -->
+                    <a href="https://www.instagram.com/arulzz.xd" target="_blank" rel="noopener noreferrer" aria-label="Instagram ArulzXD" title="Instagram"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoPink flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                    </a>
+
+                    <!-- Telegram -->
+                    <a href="https://t.me/arulzxd" target="_blank" rel="noopener noreferrer" aria-label="Telegram ArulzXD" title="Telegram"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoCyan flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 2L11 13"></path>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                        </svg>
+                    </a>
+
+                    <!-- YouTube -->
+                    <a href="https://www.youtube.com/@arulzxd" target="_blank" rel="noopener noreferrer" aria-label="YouTube ArulzXD" title="YouTube"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoPink flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/6285122629940" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ArulzXD" title="WhatsApp Admin"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoGreen flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.459 3.473 1.331 4.985L2 22l5.188-1.361a9.93 9.93 0 0 0 4.843 1.258h.004c5.515 0 9.969-4.454 9.969-9.969A9.936 9.936 0 0 0 19.08 4.92 9.91 9.91 0 0 0 12.031 2zm5.811 14.234c-.246.693-1.43 1.326-1.979 1.409-.506.076-1.147.108-1.852-.116-.428-.136-.977-.318-1.681-.622-2.956-1.276-4.887-4.253-5.035-4.45-.147-.197-1.202-1.599-1.202-3.051 0-1.452.761-2.165 1.031-2.46.27-.295.59-.369.787-.369.197 0 .393.002.565.01.181.009.424-.069.663.506.246.591.836 2.041.909 2.189.074.148.123.32.025.517-.098.197-.148.32-.295.492-.148.172-.31.385-.443.517-.148.147-.302.307-.13.602.172.295.764 1.261 1.641 2.043 1.128 1.006 2.079 1.318 2.374 1.466.295.147.467.123.639-.074.172-.197.738-.861.935-1.156.197-.295.393-.246.663-.148.271.099 1.721.812 2.016.959.295.148.492.222.565.345.074.123.074.713-.172 1.406z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bagian Tengah: 2 Kolom (Saluran & Legal/Menu) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 border-t-[2.5px] border-black bg-neoBg divide-y-[2.5px] sm:divide-y-0 sm:divide-x-[2.5px] divide-black">
+                <!-- Kolom 1: Saluran Resmi -->
+                <div class="p-5 sm:px-7 sm:py-6 space-y-3.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="inline-block bg-neoGreen border-2 border-black px-2.5 py-0.5 font-cyber font-extrabold text-[11px] uppercase tracking-wider text-black shadow-[2px_2px_0px_#000]">
+                            SALURAN &amp; KOMUNITAS
+                        </span>
+                        <span class="text-[10px] font-mono font-extrabold text-slate-600 uppercase">
+                            UPDATE &amp; PROMO
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <!-- Channel WhatsApp -->
+                        <a href="https://whatsapp.com/channel/0029Vb94zQcJUM2hE0pYz40U" target="_blank" rel="noopener noreferrer"
+                            class="neo-btn-rect flex items-center justify-between gap-2 bg-white hover:bg-neoGreen p-2.5 text-black">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-8 h-8 bg-neoGreen border-2 border-black flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.459 3.473 1.331 4.985L2 22l5.188-1.361a9.93 9.93 0 0 0 4.843 1.258h.004c5.515 0 9.969-4.454 9.969-9.969A9.936 9.936 0 0 0 19.08 4.92 9.91 9.91 0 0 0 12.031 2zm5.811 14.234c-.246.693-1.43 1.326-1.979 1.409-.506.076-1.147.108-1.852-.116-.428-.136-.977-.318-1.681-.622-2.956-1.276-4.887-4.253-5.035-4.45-.147-.197-1.202-1.599-1.202-3.051 0-1.452.761-2.165 1.031-2.46.27-.295.59-.369.787-.369.197 0 .393.002.565.01.181.009.424-.069.663.506.246.591.836 2.041.909 2.189.074.148.123.32.025.517-.098.197-.148.32-.295.492-.148.172-.31.385-.443.517-.148.147-.302.307-.13.602.172.295.764 1.261 1.641 2.043 1.128 1.006 2.079 1.318 2.374 1.466.295.147.467.123.639-.074.172-.197.738-.861.935-1.156.197-.295.393-.246.663-.148.271.099 1.721.812 2.016.959.295.148.492.222.565.345.074.123.074.713-.172 1.406z"/>
+                                    </svg>
+                                </span>
+                                <div class="min-w-0 leading-tight">
+                                    <div class="text-[11px] sm:text-xs font-extrabold truncate">Channel WhatsApp</div>
+                                    <div class="text-[9.5px] font-mono font-bold text-slate-600 truncate">Channel Informasi WhatsApp</div>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 shrink-0 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square">
+                                <path d="M7 17L17 7M17 7H8M17 7V16"/>
+                            </svg>
+                        </a>
+
+                        <!-- Channel Telegram -->
+                        <a href="https://t.me/information_arulz" target="_blank" rel="noopener noreferrer"
+                            class="neo-btn-rect flex items-center justify-between gap-2 bg-white hover:bg-neoCyan p-2.5 text-black">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span class="w-8 h-8 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 2L11 13"></path>
+                                        <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                                    </svg>
+                                </span>
+                                <div class="min-w-0 leading-tight">
+                                    <div class="text-[11px] sm:text-xs font-extrabold truncate">Channel Telegram</div>
+                                    <div class="text-[9.5px] font-mono font-bold text-slate-600 truncate">Channel Informasi Telegram</div>
+                                </div>
+                            </div>
+                            <svg class="w-3.5 h-3.5 shrink-0 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square">
+                                <path d="M7 17L17 7M17 7H8M17 7V16"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Kolom 2: Navigasi & Legal -->
+                <div class="p-5 sm:px-7 sm:py-6 space-y-3.5">
+                    <div class="inline-block bg-neoCyan border-2 border-black px-2.5 py-0.5 font-cyber font-extrabold text-[11px] uppercase tracking-wider text-black shadow-[2px_2px_0px_#000]">
+                        NAVIGASI &amp; LEGAL
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5 text-xs sm:text-sm font-extrabold">
+                        <a href="/store" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Katalog Toko
+                        </a>
+                        <a href="/deposit" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Isi Saldo
+                        </a>
+                        <a href="/riwayat" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Riwayat Pesanan
+                        </a>
+                        <a href="/login" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Masuk &amp; Daftar
+                        </a>
+                        <a href="/privacy" class="hover:underline flex items-center gap-1.5 col-span-2">
+                            <span class="w-2 h-2 bg-neoPink border border-black inline-block"></span> Kebijakan Privasi &amp; Hukum
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian Bawah: Bar Hak Cipta Hitam Tegas -->
+            <div class="bg-black text-white border-t-[2.5px] border-black px-5 sm:px-7 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono font-bold">
+                <span class="text-neoYellow">© 2026 ArulzXD Store. Hak cipta dilindungi.</span>
+                <span class="text-white/80 text-center sm:text-right">Layanan Digital Otomatis 24 Jam • WIB</span>
+            </div>
+        </div>
     </footer>
 
+    <script>
+        let widgetChatInterval = null;
+
+        /* =========================================================
+           ANIMASI ACCORDION & NAVIGASI CEPAT KEBIJAKAN PRIVASI
+           ========================================================= */
+        function togglePolicySection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (!section) return;
+            section.classList.toggle('is-collapsed');
+        }
+
+        function toggleAllPolicies(expand) {
+            document.querySelectorAll('.policy-section').forEach((sec) => {
+                if (expand) {
+                    sec.classList.remove('is-collapsed');
+                } else {
+                    sec.classList.add('is-collapsed');
+                }
+            });
+        }
+        
+                /* =========================================================
+           CUSTOM NEO-BRUTALIST SELECT DROPDOWN
+           ========================================================= */
+        function toggleNeoSelect(forceClose = false) {
+            const menu = document.getElementById('neoPolicyMenu');
+            const arrow = document.getElementById('neoPolicyArrow');
+            const trigger = document.getElementById('neoPolicyTrigger');
+            if (!menu || !arrow || !trigger) return;
+
+            const shouldOpen = !forceClose && menu.classList.contains('hidden');
+            if (shouldOpen) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+                trigger.setAttribute('aria-expanded', 'true');
+                trigger.classList.add('bg-neoYellow');
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+                trigger.setAttribute('aria-expanded', 'false');
+                trigger.classList.remove('bg-neoYellow');
+            }
+        }
+
+        function selectNeoPolicy(sectionId, label) {
+            const labelEl = document.getElementById('neoPolicySelectedText');
+            if (labelEl) labelEl.textContent = label;
+            toggleNeoSelect(true);
+            jumpToPolicy(sectionId);
+        }
+
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('neoPolicyDropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                toggleNeoSelect(true);
+            }
+        });
+
+        function jumpToPolicy(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (!section) return;
+
+            section.classList.remove('is-collapsed');
+            const yOffset = -76;
+            const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+
+            section.classList.remove('policy-highlight');
+            void section.offsetWidth;
+            section.classList.add('policy-highlight');
+        }
+
+        /* =========================================================
+           LIVE CHAT WIDGET CUSTOMER SUPPORT (DIPICU DARI TOMBOL CTA)
+           ========================================================= */
+        function openLiveChatFromPrivacy() {
+            const windowEl = document.getElementById('floatingChatWindow');
+            if (windowEl.classList.contains('hidden')) {
+                toggleChatWidget();
+            }
+            setTimeout(() => {
+                const input = document.getElementById('widgetChatInput');
+                if (input) input.focus();
+            }, 180);
+        }
+
+        function toggleChatWidget() {
+            const windowEl = document.getElementById('floatingChatWindow');
+            const isHidden = windowEl.classList.contains('hidden');
+
+            if (isHidden) {
+                windowEl.classList.remove('hidden');
+                windowEl.classList.add('chat-window-open');
+                loadWidgetMessages();
+                if (!widgetChatInterval) widgetChatInterval = setInterval(loadWidgetMessages, 3000);
+            } else {
+                windowEl.classList.add('hidden');
+                windowEl.classList.remove('chat-window-open');
+                if (widgetChatInterval) {
+                    clearInterval(widgetChatInterval);
+                    widgetChatInterval = null;
+                }
+            }
+        }
+
+        function escapeHtml(text) {
+            return String(text || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        async function loadWidgetMessages() {
+            try {
+                const res = await fetch('/api/bantuan/messages');
+                const data = await res.json();
+                const container = document.getElementById('widgetChatMessages');
+
+                if (data.status && Array.isArray(data.messages)) {
+                    if (data.messages.length === 0) {
+                        container.innerHTML = `
+                            <div class="neo-subcard p-3 bg-white text-xs text-black space-y-1">
+                                <p class="font-extrabold font-cyber">Halo! Ada pertanyaan soal Privasi &amp; Hukum?</p>
+                                <p class="text-[11px] font-bold text-slate-600 leading-relaxed">Tuliskan pertanyaan Anda terkait perlindungan data pribadi, akun, atau ketentuan hukum layanan kami. Admin CS siap membantu 24/7.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    container.innerHTML = data.messages.map(msg => {
+                        const isUser = msg.sender === 'user';
+                        const alignClass = isUser ? 'justify-end' : 'justify-start';
+                        const bgClass = isUser
+                            ? 'bg-neoYellow text-black font-bold border-2 border-black shadow-[2px_2px_0px_#000]'
+                            : 'bg-white text-black font-bold border-2 border-black shadow-[2px_2px_0px_#000]';
+
+                        const timeStr = new Date(msg.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                        const displayName = isUser ? escapeHtml(msg.senderName || 'Anda') : 'Owner CS';
+
+                        return `
+                            <div class="flex ${alignClass}">
+                                <div class="max-w-[82%] p-2.5 text-[11px] space-y-1 ${bgClass}">
+                                    <div class="flex items-center justify-between gap-2 border-b border-black/20 pb-1">
+                                        <span class="font-extrabold font-cyber text-[10px] text-black">${displayName}</span>
+                                        <span class="text-[8px] opacity-75 font-mono font-bold">${timeStr}</span>
+                                    </div>
+                                    <p class="leading-relaxed break-words pt-0.5">${escapeHtml(msg.message)}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    container.scrollTop = container.scrollHeight;
+                } else {
+                    container.innerHTML = `
+                        <div class="neo-subcard p-3 bg-white text-xs text-black space-y-2">
+                            <p class="font-extrabold font-cyber">Masuk untuk Memulai Live Chat</p>
+                            <p class="text-[11px] font-bold text-slate-600 leading-relaxed">Silakan masuk ke akun ArulzXD Store terlebih dahulu agar riwayat chat bantuan Anda tersimpan aman.</p>
+                            <a href="/login" class="neo-btn-rect inline-flex items-center gap-1.5 bg-neoYellow px-3 py-1.5 text-[11px] font-cyber font-extrabold uppercase">
+                                Masuk / Daftar
+                            </a>
+                        </div>
+                    `;
+                }
+            } catch (e) {}
+        }
+
+        async function sendWidgetMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('widgetChatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            input.value = '';
+
+            try {
+                const res = await fetch('/api/bantuan/send-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                const json = await res.json();
+                if (json.status === false && json.message) {
+                    const container = document.getElementById('widgetChatMessages');
+                    container.innerHTML = `
+                        <div class="neo-subcard p-3 bg-neoPink/20 text-xs text-black space-y-2">
+                            <p class="font-extrabold font-cyber">${escapeHtml(json.message)}</p>
+                            <a href="/login" class="neo-btn-rect inline-flex items-center gap-1.5 bg-neoYellow px-3 py-1.5 text-[11px] font-cyber font-extrabold uppercase">
+                                Masuk Ke Akun
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+                loadWidgetMessages();
+            } catch (e) {}
+        }
+    </script>
 </body>
 </html>
