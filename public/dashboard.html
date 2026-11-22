@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#FFDE59">
+    <meta name="theme-color" content="#FFDF4F">
     <title>ArulzXD Store - Katalog Source Code &amp; Produk Digital</title>
     <meta name="description" content="ArulzXD Store: Tempat belanja Source Code, Script, dan Layanan Digital otomatis 24 jam.">
 
@@ -36,7 +36,7 @@
 
     <!-- Styles & Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Plus+Jakarta+Sans:wght@500;700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/id.min.js"></script>
@@ -47,17 +47,18 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        cyber: ['Space Grotesk', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        cyber: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     },
                     colors: {
-                        neoYellow: '#FFDE59',
-                        neoCyan: '#00E5FF',
-                        neoPink: '#FF79C6',
-                        neoGreen: '#00E676',
-                        neoBg: '#F4F0EA',
-                        neoPaper: '#FFFDF7',
+                        neoBg: '#FAF9F2',
+                        neoPaper: '#FAF9F2',
+                        neoYellow: '#FFDF4F',
+                        neoCyan: '#1AE5FF',
+                        neoGreen: '#2CE875',
+                        neoPink: '#FF4D6D',
+                        neoPurple: '#D896FF',
                         neoCard: '#FFFFFF'
                     }
                 }
@@ -65,72 +66,88 @@
         }
     </script>
     <style>
-        body { background-color: #F4F0EA; color: #000000; overflow-x: hidden; }
-
-        .neo-box {
-            background-color: #FFFFFF;
-            border: 3px solid #000000;
-            box-shadow: 5px 5px 0px #000000;
+        body {
+            background-color: #FAF9F2;
+            color: #000000;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            background-image: radial-gradient(#00000018 1px, transparent 1px);
+            background-size: 16px 16px;
         }
 
-        .neo-btn {
+        /* Neo-Brutalisme Persegi Panjang Tegas (Identik dengan deposit.html) */
+        .neo-rect {
+            border: 3px solid #000000;
+            box-shadow: 6px 6px 0px #000000;
+            border-radius: 0px;
+            transition: transform 0.14s ease, box-shadow 0.14s ease;
+        }
+
+        .neo-btn-rect {
             border: 3px solid #000000;
             box-shadow: 4px 4px 0px #000000;
-            transition: transform 0.12s ease, box-shadow 0.12s ease;
+            border-radius: 0px;
+            transition: all 0.12s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
         }
-        .neo-btn:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0px #000000;
+        .neo-btn-rect:hover {
+            transform: translate(-1.5px, -1.5px);
+            box-shadow: 5.5px 5.5px 0px #000000;
         }
-        .neo-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px #000000;
+        .neo-btn-rect:active {
+            transform: translate(3px, 3px);
+            box-shadow: 1px 1px 0px #000000;
         }
 
-        /* Segmented Tab Timeframe */
+        /* Segmented Tab Timeframe Persegi Tegas */
         .tf-group {
             display: inline-flex;
             background: #FFFFFF;
-            border: 2.5px solid #000000;
-            border-radius: 12px;
-            box-shadow: 3px 3px 0px #000000;
+            border: 3px solid #000000;
+            border-radius: 0px;
+            box-shadow: 4px 4px 0px #000000;
             overflow: hidden;
         }
         .tf-tab {
-            padding: 7px 12px;
+            padding: 8px 13px;
             font-family: 'Space Grotesk', sans-serif;
             font-size: 11px;
-            font-weight: 900;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.03em;
             color: #000000;
             background: #FFFFFF;
-            border-right: 2.5px solid #000000;
+            border-right: 3px solid #000000;
             transition: background-color 0.15s ease;
             cursor: pointer;
         }
         .tf-tab:last-child {
             border-right: none;
         }
+        .tf-tab:hover:not(.active) {
+            background: #FAF9F2;
+        }
         .tf-tab.active {
-            background: #00E5FF;
+            background: #1AE5FF;
         }
 
         /* Tombol Slide Pagination Neo-Brutalism */
         .slide-btn {
             border: 2.5px solid #000000;
-            box-shadow: 2.5px 2.5px 0px #000000;
+            box-shadow: 3px 3px 0px #000000;
+            border-radius: 0px;
             font-family: 'Space Grotesk', sans-serif;
-            font-weight: 900;
+            font-weight: 800;
             font-size: 11px;
             transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+            cursor: pointer;
         }
         .slide-btn:hover:not(:disabled) {
             transform: translate(-1px, -1px);
-            box-shadow: 3.5px 3.5px 0px #000000;
+            box-shadow: 4px 4px 0px #000000;
         }
         .slide-btn:active:not(:disabled) {
-            transform: translate(1.5px, 1.5px);
+            transform: translate(2px, 2px);
             box-shadow: 1px 1px 0px #000000;
         }
         .slide-btn:disabled {
@@ -188,13 +205,13 @@
             height: 8px;
         }
         .neo-scroll::-webkit-scrollbar-track {
-            background: #F4F0EA;
+            background: #FAF9F2;
             border-top: 2.5px solid #000000;
         }
         .neo-scroll::-webkit-scrollbar-thumb {
-            background: #FFDE59;
+            background: #FFDF4F;
             border: 2px solid #000000;
-            border-radius: 99px;
+            border-radius: 0px;
         }
 
         /* =========================================================
@@ -320,18 +337,23 @@
         }
     </style>
 </head>
-<body class="font-sans antialiased text-black min-h-screen pb-32">
+<body class="font-sans antialiased text-black min-h-screen pb-36 selection:bg-neoYellow selection:text-black">
 
     <!-- TOP NAVBAR -->
     <header class="sticky top-0 z-40 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="/" class="text-2xl font-black font-cyber tracking-tight text-black">
-                Arulz<span class="bg-black text-white px-2 py-0.5 ml-1 rounded-md">Store</span>
+            <a href="/" class="flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-black text-xl"></i>
+                <span class="font-cyber font-extrabold text-xl tracking-tight text-black">
+                    Arulz <span class="bg-black text-white px-2 py-0.5 rounded-md">Store</span>
+                </span>
             </a>
-            <span class="text-xs font-cyber font-black bg-white text-black px-3 py-1 rounded-lg border-2 border-black shadow-[2px_2px_0px_#000] flex items-center gap-1.5">
-                <span class="w-2.5 h-2.5 rounded-full bg-neoGreen border border-black animate-pulse"></span>
-                <span>Layanan Aktif</span>
-            </span>
+            <div class="flex items-center gap-2">
+                <span class="bg-white border-2 border-black px-2.5 py-1 rounded-none text-[11px] font-extrabold shadow-[2px_2px_0px_#000] flex items-center gap-1.5 uppercase font-cyber">
+                    <span class="w-2.5 h-2.5 bg-neoGreen border border-black animate-pulse"></span>
+                    <span>LAYANAN AKTIF</span>
+                </span>
+            </div>
         </div>
     </header>
 
@@ -339,86 +361,103 @@
     <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
 
         <!-- WELCOME BANNER -->
-        <section class="p-6 sm:p-8 neo-box rounded-2xl bg-neoCyan relative overflow-hidden">
+        <section class="p-6 sm:p-7 neo-rect bg-neoCyan relative overflow-hidden">
+            <div class="absolute right-0 top-0 bottom-0 w-24 bg-white/15 border-l-2 border-black/15 pointer-events-none"></div>
             <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
-                    <span class="inline-flex items-center gap-1.5 bg-white border-2 border-black text-black text-xs font-black px-3 py-1 rounded-md uppercase font-cyber shadow-[2px_2px_0px_#000] mb-3">
-                        <i class="fa-solid fa-store"></i> Beranda Toko
+                    <span class="inline-flex items-center gap-1.5 bg-black text-neoYellow text-[11px] font-extrabold px-2.5 py-1 uppercase font-cyber tracking-wider mb-3">
+                        <i class="fa-solid fa-store"></i> BERANDA TOKO • 24 JAM
                     </span>
-                    <h1 class="text-2xl sm:text-4xl font-black text-black font-cyber tracking-tight">
-                        Halo, <span id="dashUsername" class="underline decoration-wavy decoration-black">Pengunjung</span>!
+                    <h1 class="text-2xl sm:text-4xl font-extrabold text-black font-cyber tracking-tight">
+                        Halo, <span id="dashUsername" class="bg-white border-2 border-black px-2 py-0.5 shadow-[3px_3px_0px_#000]">Pengunjung</span>!
                     </h1>
-                    <p class="text-xs sm:text-sm font-bold text-black mt-2 max-w-xl">
+                    <p class="text-xs sm:text-sm font-bold text-black mt-3 max-w-xl leading-relaxed">
                         Lihat perkembangan penjualan, pergerakan transaksi harian, dan pesanan terbaru di ArulzXD Store.
                     </p>
                 </div>
-                <a href="/store" class="neo-btn bg-neoYellow text-black font-cyber font-black px-5 py-3 rounded-xl text-xs uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-bag-shopping"></i> Lihat Katalog
+                <a href="/store" class="neo-btn-rect bg-neoYellow text-black font-cyber font-extrabold px-5 py-3.5 text-xs uppercase tracking-wider flex items-center gap-2 shrink-0">
+                    <i class="fa-solid fa-bag-shopping text-sm"></i> LIHAT KATALOG
                 </a>
             </div>
         </section>
 
         <!-- STATS CARDS -->
-        <section aria-label="Ringkasan Toko" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
-            <div class="neo-box p-4 rounded-xl">
-                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
+        <section aria-label="Ringkasan Toko" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3.5 sm:gap-4">
+            <div class="neo-rect bg-white p-4">
+                <div class="flex items-center justify-between font-extrabold text-xs uppercase font-cyber mb-2">
                     <span>Member</span>
-                    <i class="fa-solid fa-users text-lg"></i>
+                    <span class="w-7 h-7 bg-neoYellow border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000]">
+                        <i class="fa-solid fa-users text-xs"></i>
+                    </span>
                 </div>
-                <h2 id="statTotalUsers" class="text-2xl font-black font-cyber">0</h2>
+                <h2 id="statTotalUsers" class="text-2xl font-extrabold font-cyber">0</h2>
             </div>
-            <div class="neo-box p-4 rounded-xl bg-neoPink">
-                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
+
+            <div class="neo-rect bg-neoPink p-4">
+                <div class="flex items-center justify-between font-extrabold text-xs uppercase font-cyber mb-2 text-black">
                     <span>Produk</span>
-                    <i class="fa-solid fa-box-open text-lg"></i>
+                    <span class="w-7 h-7 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000]">
+                        <i class="fa-solid fa-box-open text-xs"></i>
+                    </span>
                 </div>
-                <h2 id="statTotalProducts" class="text-2xl font-black font-cyber">0</h2>
+                <h2 id="statTotalProducts" class="text-2xl font-extrabold font-cyber text-black">0</h2>
             </div>
-            <div class="neo-box p-4 rounded-xl bg-neoYellow">
-                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
+
+            <div class="neo-rect bg-neoYellow p-4">
+                <div class="flex items-center justify-between font-extrabold text-xs uppercase font-cyber mb-2">
                     <span>Total Order</span>
-                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                    <span class="w-7 h-7 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000]">
+                        <i class="fa-solid fa-cart-shopping text-xs"></i>
+                    </span>
                 </div>
-                <h2 id="statTotalTrx" class="text-2xl font-black font-cyber">0</h2>
+                <h2 id="statTotalTrx" class="text-2xl font-extrabold font-cyber">0</h2>
             </div>
-            <div class="neo-box p-4 rounded-xl bg-neoGreen">
-                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
+
+            <div class="neo-rect bg-neoGreen p-4">
+                <div class="flex items-center justify-between font-extrabold text-xs uppercase font-cyber mb-2">
                     <span>Berhasil</span>
-                    <i class="fa-solid fa-circle-check text-lg"></i>
+                    <span class="w-7 h-7 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000]">
+                        <i class="fa-solid fa-circle-check text-xs"></i>
+                    </span>
                 </div>
-                <h2 id="statSuccessTrx" class="text-2xl font-black font-cyber">0</h2>
+                <h2 id="statSuccessTrx" class="text-2xl font-extrabold font-cyber">0</h2>
             </div>
-            <div class="neo-box p-4 rounded-xl bg-neoCyan">
-                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
+
+            <div class="neo-rect bg-neoCyan p-4">
+                <div class="flex items-center justify-between font-extrabold text-xs uppercase font-cyber mb-2">
                     <span>Hari Ini</span>
-                    <i class="fa-solid fa-calendar-day text-lg"></i>
+                    <span class="w-7 h-7 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000]">
+                        <i class="fa-solid fa-calendar-day text-xs"></i>
+                    </span>
                 </div>
-                <h2 id="statTrxToday" class="text-2xl font-black font-cyber">0</h2>
+                <h2 id="statTrxToday" class="text-2xl font-extrabold font-cyber">0</h2>
             </div>
-            <div class="neo-box p-4 rounded-xl">
-                <div class="flex items-center justify-between font-bold text-xs uppercase font-cyber mb-2">
+
+            <div class="neo-rect bg-neoPurple p-4">
+                <div class="flex items-center justify-between font-extrabold text-xs uppercase font-cyber mb-2">
                     <span>Kemarin</span>
-                    <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+                    <span class="w-7 h-7 bg-white border-2 border-black flex items-center justify-center shadow-[2px_2px_0px_#000]">
+                        <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+                    </span>
                 </div>
-                <h2 id="statTrxYesterday" class="text-2xl font-black font-cyber">0</h2>
+                <h2 id="statTrxYesterday" class="text-2xl font-extrabold font-cyber">0</h2>
             </div>
         </section>
 
-        <!-- ANALITIK PASAR LIGHT NEO-BRUTALISM (TRADING SAHAM STYLE) -->
-        <section class="neo-box rounded-2xl overflow-hidden bg-white text-black">
-            <!-- Top Header: Pair & Tombol 1 Hari / 7 Hari / 1 Bulan / Semua -->
+        <!-- ANALITIK PASAR NEO-BRUTALISM -->
+        <section class="neo-rect overflow-hidden bg-white text-black">
             <div class="bg-neoYellow border-b-[3px] border-black px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
                 <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-white text-black border-[3px] border-black flex items-center justify-center font-black text-lg shadow-[3px_3px_0_#000] shrink-0">
+                    <div class="w-11 h-11 bg-white text-black border-[3px] border-black flex items-center justify-center font-black text-lg shadow-[3px_3px_0_#000] shrink-0">
                         <i class="fa-solid fa-chart-line"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h3 class="text-base sm:text-lg font-black font-cyber tracking-tight text-black">
+                            <h3 class="text-base sm:text-lg font-extrabold font-cyber tracking-tight text-black">
                                 ARULZ / IDR
                             </h3>
-                            <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-extrabold bg-neoGreen text-black border-2 border-black px-2 py-0.5 rounded-md">
-                                <span class="w-2 h-2 rounded-full bg-black animate-ping"></span>
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-mono font-extrabold bg-neoGreen text-black border-2 border-black px-2 py-0.5">
+                                <span class="w-2 h-2 bg-black animate-ping"></span>
                                 LIVE WIB
                             </span>
                         </div>
@@ -440,34 +479,34 @@
             <!-- Strip Statistik Terpadu -->
             <div class="grid grid-cols-2 lg:grid-cols-4 border-b-[3px] border-black bg-white divide-y-[2.5px] lg:divide-y-0 divide-x-0 lg:divide-x-[2.5px] divide-black font-mono">
                 <div class="p-3.5 sm:px-5 border-r-[2.5px] lg:border-r-0 border-black">
-                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Indeks Nilai</div>
+                    <div class="text-[10px] font-extrabold text-slate-600 uppercase">Indeks Nilai</div>
                     <div class="flex items-center gap-2 mt-1 flex-wrap">
-                        <span id="tdCloseMain" class="text-base sm:text-lg font-black text-black">Rp 0</span>
-                        <span id="tdChangeBadge" class="text-[10px] font-black px-1.5 py-0.5 rounded border-2 border-black bg-neoGreen text-black">
+                        <span id="tdCloseMain" class="text-base sm:text-lg font-extrabold text-black">Rp 0</span>
+                        <span id="tdChangeBadge" class="text-[10px] font-extrabold px-1.5 py-0.5 border-2 border-black bg-neoGreen text-black">
                             +0.0%
                         </span>
                     </div>
                 </div>
 
                 <div class="p-3.5 sm:px-5">
-                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Omzet Periode</div>
-                    <div id="tdOmzetVal" class="text-base sm:text-lg font-black text-black mt-1 truncate">
+                    <div class="text-[10px] font-extrabold text-slate-600 uppercase">Omzet Periode</div>
+                    <div id="tdOmzetVal" class="text-base sm:text-lg font-extrabold text-black mt-1 truncate">
                         Rp 0
                     </div>
                 </div>
 
                 <div class="p-3.5 sm:px-5 border-r-[2.5px] lg:border-r-0 border-black">
-                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Puncak / Lembah</div>
-                    <div class="flex items-center gap-2 mt-1 text-xs sm:text-sm font-black">
+                    <div class="text-[10px] font-extrabold text-slate-600 uppercase">Puncak / Lembah</div>
+                    <div class="flex items-center gap-2 mt-1 text-xs sm:text-sm font-extrabold">
                         <span class="text-emerald-700" id="tdHighVal">H: 0</span>
-                        <span class="text-gray-400">/</span>
+                        <span class="text-slate-400">/</span>
                         <span class="text-rose-600" id="tdLowVal">L: 0</span>
                     </div>
                 </div>
 
                 <div class="p-3.5 sm:px-5">
-                    <div class="text-[10px] font-extrabold text-gray-500 uppercase">Order Lunas</div>
-                    <div id="tdLunasCount" class="text-base sm:text-lg font-black text-black mt-1">
+                    <div class="text-[10px] font-extrabold text-slate-600 uppercase">Order Lunas</div>
+                    <div id="tdLunasCount" class="text-base sm:text-lg font-extrabold text-black mt-1">
                         0 Order
                     </div>
                 </div>
@@ -477,11 +516,11 @@
             <div class="bg-neoBg border-b-[3px] border-black px-4 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono font-bold">
                 <div class="flex items-center gap-4">
                     <span class="flex items-center gap-1.5 text-black">
-                        <span class="w-3 h-3 rounded-sm bg-[#00C076] border border-black inline-block"></span>
+                        <span class="w-3 h-3 bg-[#00C076] border-2 border-black inline-block"></span>
                         <span>Naik (Bullish)</span>
                     </span>
                     <span class="flex items-center gap-1.5 text-black">
-                        <span class="w-3 h-3 rounded-sm bg-[#F23645] border border-black inline-block"></span>
+                        <span class="w-3 h-3 bg-[#F23645] border-2 border-black inline-block"></span>
                         <span>Turun (Bearish)</span>
                     </span>
                 </div>
@@ -491,27 +530,27 @@
             </div>
 
             <!-- Canvas Grafik Candlestick Saham -->
-            <div id="tradingChartWrapper" class="relative w-full bg-[#FFFDF7]">
+            <div id="tradingChartWrapper" class="relative w-full bg-[#FAF9F2]">
                 <canvas id="tradingCanvas" class="w-full h-[320px] sm:h-[380px] block cursor-crosshair"></canvas>
             </div>
         </section>
 
-        <!-- STATUS TRANSAKSI NEO-BRUTALISME DENGAN GARIS PEMBATAS TEGAS & SLIDE BUTTONS -->
-        <section class="neo-box rounded-2xl overflow-hidden bg-white">
+        <!-- STATUS TRANSAKSI NEO-BRUTALISME -->
+        <section class="neo-rect overflow-hidden bg-white">
             <div class="bg-neoCyan border-b-[3px] border-black px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-white border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0_#000] shrink-0">
+                    <div class="w-11 h-11 bg-white border-[3px] border-black flex items-center justify-center shadow-[3px_3px_0_#000] shrink-0">
                         <i class="fa-solid fa-receipt text-lg"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
-                            <h3 class="text-base sm:text-lg font-black font-cyber tracking-tight text-black">
+                            <h3 class="text-base sm:text-lg font-extrabold font-cyber tracking-tight text-black uppercase">
                                 Status Transaksi Terbaru
                             </h3>
-                            <span id="trxCountBadge" class="text-[10px] font-mono font-extrabold bg-black text-neoYellow px-2 py-0.5 rounded-md">
+                            <span id="trxCountBadge" class="text-[10px] font-mono font-extrabold bg-black text-neoYellow px-2 py-0.5">
                                 0 ORDER
                             </span>
-                            <span id="trxSlideBadge" class="hidden text-[10px] font-mono font-extrabold bg-neoYellow text-black border-2 border-black px-2 py-0.5 rounded-md">
+                            <span id="trxSlideBadge" class="hidden text-[10px] font-mono font-extrabold bg-neoYellow text-black border-2 border-black px-2 py-0.5">
                                 SLIDE 1
                             </span>
                         </div>
@@ -521,15 +560,15 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2 self-start sm:self-auto">
-                    <span id="trxLastSync" class="inline-flex items-center gap-1.5 text-[11px] font-mono font-extrabold bg-white border-2 border-black px-3 py-1.5 rounded-lg shadow-[2px_2px_0_#000]">
-                        <span class="w-2 h-2 rounded-full bg-neoGreen border border-black"></span>
+                    <span id="trxLastSync" class="inline-flex items-center gap-1.5 text-[11px] font-mono font-extrabold bg-white border-2 border-black px-3 py-1.5 shadow-[2px_2px_0_#000]">
+                        <span class="w-2 h-2 bg-neoGreen border border-black"></span>
                         <span>Baru diperbarui</span>
                     </span>
                 </div>
             </div>
 
-            <div class="p-4 sm:p-5 bg-neoPaper">
-                <div id="trxTableScrollWrapper" class="overflow-x-auto neo-scroll rounded-xl border-[3px] border-black shadow-[4px_4px_0_#000] bg-white">
+            <div class="p-4 sm:p-5 bg-neoBg">
+                <div id="trxTableScrollWrapper" class="overflow-x-auto neo-scroll border-[3px] border-black shadow-[4px_4px_0_#000] bg-white">
                     <table class="neo-table text-left text-xs font-bold min-w-[720px]">
                         <thead>
                             <tr class="bg-neoYellow font-cyber uppercase tracking-wider text-[11px] text-black">
@@ -542,7 +581,7 @@
                         </thead>
                         <tbody id="transactionTableBody" class="bg-white">
                             <tr>
-                                <td colspan="5" class="py-10 text-center font-mono font-bold text-gray-700">
+                                <td colspan="5" class="py-10 text-center font-mono font-bold text-slate-700">
                                     Memuat daftar transaksi...
                                 </td>
                             </tr>
@@ -551,7 +590,7 @@
                 </div>
 
                 <div id="trxPaginationContainer" class="hidden mt-4 pt-4 border-t-[2.5px] border-dashed border-black flex-col sm:flex-row items-center justify-between gap-3">
-                    <div id="trxPaginationInfo" class="text-xs font-mono font-extrabold text-black bg-white border-2 border-black px-3 py-1.5 rounded-lg shadow-[2px_2px_0_#000]">
+                    <div id="trxPaginationInfo" class="text-xs font-mono font-extrabold text-black bg-white border-2 border-black px-3 py-1.5 shadow-[2px_2px_0_#000]">
                         Menampilkan 1-10 dari 0 transaksi
                     </div>
                     <div id="trxPaginationButtons" class="flex flex-wrap items-center justify-center gap-1.5">
@@ -562,21 +601,136 @@
 
     </main>
 
-    <!-- FOOTER SITELINKS -->
-    <footer class="max-w-6xl mx-auto px-4 mt-4 mb-4 text-center">
-        <div class="neo-box p-4 rounded-2xl bg-white flex flex-wrap items-center justify-center gap-4 text-xs font-black font-cyber">
-            <a href="/store" class="hover:underline">Katalog Toko</a>
-            <span>•</span>
-            <a href="/login" class="hover:underline">Masuk &amp; Daftar</a>
-            <span>•</span>
-            <a href="/deposit" class="hover:underline">Isi Saldo</a>
-            <span>•</span>
-            <a href="/riwayat" class="hover:underline">Riwayat Pesanan</a>
-            <span>•</span>
-            <a href="/privacy" class="hover:underline">Kebijakan Privasi</a>
+        <!-- FOOTER NEO-BRUTALISME (SOSMED + CHANNEL WHATSAPP & CHANNEL TELEGRAM DENGAN LOGO SVG) -->
+    <footer class="max-w-6xl mx-auto px-4 mt-2 mb-4">
+        <div class="neo-rect bg-white overflow-hidden">
+            <!-- Bagian Atas: Brand, Deskripsi & 5 Tombol Kotak Media Sosial SVG -->
+            <div class="p-5 sm:p-7 space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-neoYellow border-[3px] border-black shadow-[3px_3px_0px_#000] flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter">
+                            <path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" fill="#000000"/>
+                        </svg>
+                    </div>
+                    <span class="font-cyber font-extrabold text-xl sm:text-2xl tracking-tight text-black">
+                        ArulzXD <span class="bg-black text-neoYellow px-2 py-0.5">Store</span>
+                    </span>
+                </div>
+
+                <p class="text-xs sm:text-sm font-bold text-slate-800 max-w-xl leading-relaxed">
+                    Platform belanja Source Code, Script Bot, Rest API, dan Layanan Digital otomatis 24 jam. Cepat, aman, dan langsung diproses setelah pembayaran.
+                </p>
+
+                <!-- 5 Kotak Ikon Media Sosial dengan SVG Masing-Masing -->
+                <div class="flex flex-wrap items-center gap-2.5 pt-1">
+                    <!-- TikTok -->
+                    <a href="https://www.tiktok.com/@arulzxd" target="_blank" rel="noopener noreferrer" aria-label="TikTok ArulzXD" title="TikTok"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoYellow flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                        </svg>
+                    </a>
+
+                    <!-- Instagram -->
+                    <a href="https://www.instagram.com/arulzxd" target="_blank" rel="noopener noreferrer" aria-label="Instagram ArulzXD" title="Instagram"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoPink flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                    </a>
+
+                    <!-- Telegram -->
+                    <a href="https://t.me/arulzxd" target="_blank" rel="noopener noreferrer" aria-label="Telegram ArulzXD" title="Telegram"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoCyan flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 2L11 13"></path>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                        </svg>
+                    </a>
+
+                    <!-- YouTube -->
+                    <a href="https://www.youtube.com/@arulzxd" target="_blank" rel="noopener noreferrer" aria-label="YouTube ArulzXD" title="YouTube"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoPink flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+
+                    <!-- WhatsApp -->
+                    <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ArulzXD" title="WhatsApp Admin"
+                        class="neo-btn-rect w-11 h-11 bg-neoBg hover:bg-neoGreen flex items-center justify-center text-black">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.459 3.473 1.331 4.985L2 22l5.188-1.361a9.93 9.93 0 0 0 4.843 1.258h.004c5.515 0 9.969-4.454 9.969-9.969A9.936 9.936 0 0 0 19.08 4.92 9.91 9.91 0 0 0 12.031 2zm5.811 14.234c-.246.693-1.43 1.326-1.979 1.409-.506.076-1.147.108-1.852-.116-.428-.136-.977-.318-1.681-.622-2.956-1.276-4.887-4.253-5.035-4.45-.147-.197-1.202-1.599-1.202-3.051 0-1.452.761-2.165 1.031-2.46.27-.295.59-.369.787-.369.197 0 .393.002.565.01.181.009.424-.069.663.506.246.591.836 2.041.909 2.189.074.148.123.32.025.517-.098.197-.148.32-.295.492-.148.172-.31.385-.443.517-.148.147-.302.307-.13.602.172.295.764 1.261 1.641 2.043 1.128 1.006 2.079 1.318 2.374 1.466.295.147.467.123.639-.074.172-.197.738-.861.935-1.156.197-.295.393-.246.663-.148.271.099 1.721.812 2.016.959.295.148.492.222.565.345.074.123.074.713-.172 1.406z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bagian Tengah: 2 Kolom (Saluran & Legal/Menu) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 border-t-[3px] border-black bg-neoBg divide-y-[3px] sm:divide-y-0 sm:divide-x-[3px] divide-black">
+                <!-- Kolom 1: Saluran Resmi (Channel WhatsApp & Channel Telegram berlogo SVG) -->
+                <div class="p-5 sm:px-7 sm:py-6 space-y-3.5">
+                    <div class="inline-block bg-neoGreen border-2 border-black px-2.5 py-0.5 font-cyber font-extrabold text-[11px] uppercase tracking-wider text-black shadow-[2px_2px_0px_#000]">
+                        SALURAN &amp; KOMUNITAS
+                    </div>
+                    <ul class="space-y-2.5 text-xs sm:text-sm font-extrabold">
+                        <li>
+                            <a href="https://whatsapp.com/channel/0029VaArulzXDStore" target="_blank" rel="noopener noreferrer"
+                                class="inline-flex items-center gap-2.5 bg-white border-2 border-black px-3 py-2 shadow-[3px_3px_0px_#000] hover:bg-neoGreen transition-colors">
+                                <svg class="w-4 h-4 shrink-0 text-black" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12.031 2c-5.516 0-9.969 4.453-9.969 9.969 0 1.758.459 3.473 1.331 4.985L2 22l5.188-1.361a9.93 9.93 0 0 0 4.843 1.258h.004c5.515 0 9.969-4.454 9.969-9.969A9.936 9.936 0 0 0 19.08 4.92 9.91 9.91 0 0 0 12.031 2zm5.811 14.234c-.246.693-1.43 1.326-1.979 1.409-.506.076-1.147.108-1.852-.116-.428-.136-.977-.318-1.681-.622-2.956-1.276-4.887-4.253-5.035-4.45-.147-.197-1.202-1.599-1.202-3.051 0-1.452.761-2.165 1.031-2.46.27-.295.59-.369.787-.369.197 0 .393.002.565.01.181.009.424-.069.663.506.246.591.836 2.041.909 2.189.074.148.123.32.025.517-.098.197-.148.32-.295.492-.148.172-.31.385-.443.517-.148.147-.302.307-.13.602.172.295.764 1.261 1.641 2.043 1.128 1.006 2.079 1.318 2.374 1.466.295.147.467.123.639-.074.172-.197.738-.861.935-1.156.197-.295.393-.246.663-.148.271.099 1.721.812 2.016.959.295.148.492.222.565.345.074.123.074.713-.172 1.406z"/>
+                                </svg>
+                                <span>Channel WhatsApp</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://t.me/arulzxdchannel" target="_blank" rel="noopener noreferrer"
+                                class="inline-flex items-center gap-2.5 bg-white border-2 border-black px-3 py-2 shadow-[3px_3px_0px_#000] hover:bg-neoCyan transition-colors">
+                                <svg class="w-4 h-4 shrink-0 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 2L11 13"></path>
+                                    <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                                </svg>
+                                <span>Channel Telegram</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Kolom 2: Navigasi & Legal -->
+                <div class="p-5 sm:px-7 sm:py-6 space-y-3.5">
+                    <div class="inline-block bg-neoCyan border-2 border-black px-2.5 py-0.5 font-cyber font-extrabold text-[11px] uppercase tracking-wider text-black shadow-[2px_2px_0px_#000]">
+                        NAVIGASI &amp; LEGAL
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5 text-xs sm:text-sm font-extrabold">
+                        <a href="/store" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Katalog Toko
+                        </a>
+                        <a href="/deposit" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Isi Saldo
+                        </a>
+                        <a href="/riwayat" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Riwayat Pesanan
+                        </a>
+                        <a href="/login" class="hover:underline flex items-center gap-1.5">
+                            <span class="w-2 h-2 bg-black inline-block"></span> Masuk &amp; Daftar
+                        </a>
+                        <a href="/privacy" class="hover:underline flex items-center gap-1.5 col-span-2">
+                            <span class="w-2 h-2 bg-neoPink border border-black inline-block"></span> Kebijakan Privasi &amp; Layanan
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian Bawah: Bar Hak Cipta Hitam Tegas -->
+            <div class="bg-black text-white border-t-[3px] border-black px-5 sm:px-7 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono font-bold">
+                <span class="text-neoYellow">© 2026 ArulzXD Store. Hak cipta dilindungi.</span>
+                <span class="text-white/80 text-center sm:text-right">Layanan Digital Otomatis 24 Jam • WIB</span>
+            </div>
         </div>
     </footer>
-    
+
     <!-- BOTTOM NAVIGATION 6-MENU DENGAN LEKUKAN BERSIH -->
     <nav class="liquid-nav-wrapper" id="liquidBottomNav" aria-label="Navigasi Utama">
         <div class="liquid-nav-bg">
@@ -978,8 +1132,8 @@
             const closeEl = document.getElementById('tdCloseMain');
             closeEl.innerText = formatSignedRupiah(endVal);
             closeEl.className = endVal < 0
-                ? 'text-base sm:text-lg font-black text-rose-600'
-                : 'text-base sm:text-lg font-black text-black';
+                ? 'text-base sm:text-lg font-extrabold text-rose-600'
+                : 'text-base sm:text-lg font-extrabold text-black';
 
             document.getElementById('tdOmzetVal').innerText = `Rp ${totalOmzet.toLocaleString('id-ID')}`;
             document.getElementById('tdHighVal').innerText = `H: ${formatCompactAxisVal(maxH)}`;
@@ -989,27 +1143,12 @@
             const badge = document.getElementById('tdChangeBadge');
             if (diff < 0 || endVal < 0) {
                 const displayPct = Number(pct) > 0 ? `-${pct}` : pct;
-                badge.className = 'text-[10px] font-black px-1.5 py-0.5 rounded border-2 border-black bg-neoPink text-black';
+                badge.className = 'text-[10px] font-extrabold px-1.5 py-0.5 border-2 border-black bg-neoPink text-black';
                 badge.innerHTML = `<i class="fa-solid fa-caret-down mr-0.5"></i>${displayPct}%`;
             } else {
-                badge.className = 'text-[10px] font-black px-1.5 py-0.5 rounded border-2 border-black bg-neoGreen text-black';
+                badge.className = 'text-[10px] font-extrabold px-1.5 py-0.5 border-2 border-black bg-neoGreen text-black';
                 badge.innerHTML = `<i class="fa-solid fa-caret-up mr-0.5"></i>+${pct}%`;
             }
-        }
-
-        function drawRoundRect(ctx, x, y, w, h, r) {
-            const radius = Math.min(r, w / 2, h / 2);
-            ctx.beginPath();
-            ctx.moveTo(x + radius, y);
-            ctx.lineTo(x + w - radius, y);
-            ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
-            ctx.lineTo(x + w, y + h - radius);
-            ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
-            ctx.lineTo(x + radius, y + h);
-            ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
-            ctx.lineTo(x, y + radius);
-            ctx.quadraticCurveTo(x, y, x + radius, y);
-            ctx.closePath();
         }
 
         function getVisibleCandles() {
@@ -1040,7 +1179,7 @@
             const plotW = W - padLeft - padRight;
             const plotH = H - padTop - padBottom;
 
-            ctx.fillStyle = '#FFFDF7';
+            ctx.fillStyle = '#FAF9F2';
             ctx.fillRect(0, 0, W, H);
 
             const series = getVisibleCandles();
@@ -1062,7 +1201,6 @@
                 rawMax = rawMax + 5000;
             }
 
-            // Pastikan rentang Y selalu mencakup nilai minus di bawah & puncak di atas dengan margin lega
             const rangeSpan = Math.max(1000, rawMax - rawMin);
             const yMin = rawMin < 0
                 ? rawMin - rangeSpan * 0.16
@@ -1073,7 +1211,7 @@
             const toY = (val) => padTop + plotH - ((val - yMin) / ySpan) * plotH;
             const stepW = plotW / series.length;
 
-            // 1. Grid Horizontal & Label Sumbu Y (termasuk angka minus di bawah nol)
+            // 1. Grid Horizontal & Label Sumbu Y
             ctx.save();
             ctx.setLineDash([3, 3]);
             ctx.lineWidth = 1;
@@ -1094,14 +1232,12 @@
                 ctx.lineTo(W - padRight, y);
                 ctx.stroke();
 
-                // Hindari tumpang tindih teks jika tick grid terlalu dekat dengan garis 0
                 if (!hasZeroLine || Math.abs(y - yZero) > 13) {
                     ctx.fillStyle = val < -1 ? '#E11D48' : '#1F2937';
                     ctx.fillText(formatCompactAxisVal(val), W - padRight + 8, y + 3.5);
                 }
             }
 
-            // Garis acuan 0 Rupiah (jika grafik memiliki area positif & negatif)
             if (hasZeroLine) {
                 const yZeroRounded = Math.round(yZero) + 0.5;
                 ctx.save();
@@ -1118,7 +1254,7 @@
                 ctx.restore();
             }
 
-            // 2. Label Sumbu X & Grid Vertikal (anti-tabrakan & tidak keluar batas)
+            // 2. Label Sumbu X & Grid Vertikal
             ctx.font = '800 9.5px "JetBrains Mono", monospace';
             const sampleTextW = ctx.measureText(series[series.length - 1].label || '00/00 00:00').width;
             const minCenterDist = sampleTextW + 18;
@@ -1143,7 +1279,6 @@
                 const leftBound = clampedX - halfW;
                 const rightBound = clampedX + halfW;
 
-                // Jika label terakhir terlalu mepet dengan label sebelumnya, lewati yang sebelumnya
                 const isLastCandidate = posIdx === candidateIndices.length - 1;
                 if (!isLastCandidate && posIdx === candidateIndices.length - 2) {
                     const lastD = series[series.length - 1];
@@ -1166,7 +1301,7 @@
             });
             ctx.restore();
 
-            // 3. Clip Area Plot agar candle/wick tidak pernah tembus ke luar kotak grafik
+            // 3. Clip Area Plot
             ctx.save();
             ctx.beginPath();
             ctx.rect(padLeft, padTop, plotW, plotH);
@@ -1224,21 +1359,20 @@
                         ? (Math.min(yOpen, yClose) - (5 - rawBodyH) / 2)
                         : Math.min(yOpen, yClose);
                     ctx.fillStyle = color;
-                    drawRoundRect(ctx, leftBody, topBody, candleW, visibleBodyH, Math.min(2.5, candleW / 2));
-                    ctx.fill();
+                    ctx.fillRect(leftBody, topBody, candleW, visibleBodyH);
                 }
             });
-            ctx.restore(); // Selesai clip area plot
+            ctx.restore();
 
             // 4. Garis & Pill Nilai Live Terkini
             const lastCandle = series[series.length - 1];
             const lastClose = Number(lastCandle.c || 0);
             const yLive = Math.round(toY(lastClose)) + 0.5;
-            const liveLineColor = lastClose < 0 ? '#F23645' : '#3B5BDB';
+            const liveLineColor = lastClose < 0 ? '#F23645' : '#000000';
 
             ctx.save();
             ctx.strokeStyle = liveLineColor;
-            ctx.lineWidth = 1.2;
+            ctx.lineWidth = 1.4;
             ctx.beginPath();
             ctx.moveTo(padLeft, yLive);
             ctx.lineTo(W - padRight, yLive);
@@ -1249,11 +1383,13 @@
             const pillH = 20;
             const pillY = Math.max(padTop, Math.min(H - padBottom - pillH, yLive - pillH / 2));
 
-            ctx.fillStyle = liveLineColor;
-            drawRoundRect(ctx, pillX, pillY, pillW, pillH, 10);
-            ctx.fill();
+            ctx.fillStyle = lastClose < 0 ? '#FF4D6D' : '#FFDF4F';
+            ctx.fillRect(pillX, pillY, pillW, pillH);
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(pillX, pillY, pillW, pillH);
 
-            ctx.fillStyle = '#FFFFFF';
+            ctx.fillStyle = '#000000';
             ctx.font = '800 10px "JetBrains Mono", monospace';
             ctx.textAlign = 'center';
             ctx.fillText(formatCompactAxisVal(lastClose), pillX + pillW / 2, pillY + 13.5);
@@ -1289,10 +1425,9 @@
                 const lblW = 82;
                 const lblX = Math.max(padLeft, Math.min(W - padRight - lblW, hx - lblW / 2));
                 ctx.fillStyle = '#000000';
-                drawRoundRect(ctx, lblX, H - padBottom + 4, lblW, 18, 4);
-                ctx.fill();
+                ctx.fillRect(lblX, H - padBottom + 4, lblW, 18);
 
-                ctx.fillStyle = '#FFDE59';
+                ctx.fillStyle = '#FFDF4F';
                 ctx.font = '800 9.5px "JetBrains Mono", monospace';
                 ctx.textAlign = 'center';
                 ctx.fillText(target.label, lblX + lblW / 2, H - padBottom + 16);
@@ -1359,8 +1494,8 @@
             if (avatarUrl) {
                 return `
                     <div class="flex items-center gap-2.5">
-                        <img src="${escapeHtml(avatarUrl)}" alt="${safeName}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" class="w-8 h-8 rounded-lg object-cover border-2 border-black shadow-[2px_2px_0_#000] shrink-0">
-                        <div style="display:none;" class="w-8 h-8 rounded-lg ${colorClass} border-2 border-black shadow-[2px_2px_0_#000] items-center justify-center font-cyber font-black text-xs shrink-0">${initial}</div>
+                        <img src="${escapeHtml(avatarUrl)}" alt="${safeName}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" class="w-8 h-8 object-cover border-2 border-black shadow-[2px_2px_0_#000] shrink-0">
+                        <div style="display:none;" class="w-8 h-8 ${colorClass} border-2 border-black shadow-[2px_2px_0_#000] items-center justify-center font-cyber font-extrabold text-xs shrink-0">${initial}</div>
                         <span class="font-extrabold text-black truncate max-w-[125px]">${safeName}</span>
                     </div>
                 `;
@@ -1368,7 +1503,7 @@
 
             return `
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg ${colorClass} border-2 border-black shadow-[2px_2px_0_#000] flex items-center justify-center font-cyber font-black text-xs shrink-0">
+                    <div class="w-8 h-8 ${colorClass} border-2 border-black shadow-[2px_2px_0_#000] flex items-center justify-center font-cyber font-extrabold text-xs shrink-0">
                         ${initial}
                     </div>
                     <span class="font-extrabold text-black truncate max-w-[125px]">${safeName}</span>
@@ -1380,27 +1515,27 @@
             const metode = (metodeRaw || 'QRIS').toUpperCase();
             if (metode === 'SALDO') {
                 return `
-                    <span class="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold bg-neoCyan text-black border-2 border-black px-2 py-0.5 rounded-md">
+                    <span class="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold bg-neoCyan text-black border-2 border-black px-2 py-0.5">
                         <i class="fa-solid fa-wallet"></i> SALDO
                     </span>
                 `;
             }
             if (metode === 'TELEGRAM') {
                 return `
-                    <span class="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold bg-neoCyan text-black border-2 border-black px-2 py-0.5 rounded-md">
+                    <span class="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold bg-neoCyan text-black border-2 border-black px-2 py-0.5">
                         <i class="fa-brands fa-telegram"></i> TELEGRAM
                     </span>
                 `;
             }
             if (metode === 'WHATSAPP') {
                 return `
-                    <span class="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold bg-neoGreen text-black border-2 border-black px-2 py-0.5 rounded-md">
+                    <span class="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold bg-neoGreen text-black border-2 border-black px-2 py-0.5">
                         <i class="fa-brands fa-whatsapp"></i> WHATSAPP
                     </span>
                 `;
             }
             return `
-                <span class="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold bg-neoYellow text-black border-2 border-black px-2 py-0.5 rounded-md">
+                <span class="inline-flex items-center gap-1 text-[10px] font-mono font-extrabold bg-neoYellow text-black border-2 border-black px-2 py-0.5">
                     <i class="fa-solid fa-qrcode"></i> ${escapeHtml(metode)}
                 </span>
             `;
@@ -1439,7 +1574,7 @@
                 }
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="py-10 text-center font-mono text-gray-700">
+                        <td colspan="5" class="py-10 text-center font-mono text-slate-700">
                             Belum ada transaksi masuk.
                         </td>
                     </tr>`;
@@ -1461,7 +1596,7 @@
                     statusText = 'Berhasil';
                     icon = 'fa-circle-check';
                 } else if (['cancelled', 'failed', 'expire', 'expired', 'batal'].includes(status)) {
-                    badgeClass = 'bg-neoPink text-black';
+                    badgeClass = 'bg-neoPink text-white';
                     statusText = 'Dibatalkan';
                     icon = 'fa-circle-xmark';
                 }
@@ -1471,15 +1606,15 @@
                 const safeProduk = escapeHtml(trx.produk || 'Produk Digital');
 
                 return `
-                    <tr class="hover:bg-neoBg/75 transition-colors ${withAnim ? 'trx-slide-anim' : ''}">
+                    <tr class="hover:bg-neoBg/80 transition-colors ${withAnim ? 'trx-slide-anim' : ''}">
                         <td class="p-3.5 align-middle whitespace-nowrap">
-                            <span class="inline-block font-mono text-[11px] font-black bg-neoBg border-2 border-black px-2 py-0.5 rounded-md shadow-[2px_2px_0_#000] text-black">
+                            <span class="inline-block font-mono text-[11px] font-extrabold bg-neoBg border-2 border-black px-2 py-0.5 shadow-[2px_2px_0_#000] text-black">
                                 ${maskOrderId(trx.orderId)}
                             </span>
-                            <div class="flex items-center gap-1.5 text-[11px] font-bold text-gray-600 mt-1.5">
+                            <div class="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 mt-1.5">
                                 <i class="fa-regular fa-clock text-[10px] text-black"></i>
                                 <span>${timeAgo}</span>
-                                ${clockStr ? `<span class="text-gray-400">•</span><span class="font-mono text-[10px]">${clockStr}</span>` : ''}
+                                ${clockStr ? `<span class="text-slate-400">•</span><span class="font-mono text-[10px]">${clockStr}</span>` : ''}
                             </div>
                         </td>
 
@@ -1497,13 +1632,13 @@
                         </td>
 
                         <td class="p-3.5 align-middle whitespace-nowrap">
-                            <span class="inline-block font-mono font-black text-xs sm:text-sm bg-neoPaper border-2 border-black px-2.5 py-1 rounded-lg shadow-[2px_2px_0_#000] text-black">
+                            <span class="inline-block font-mono font-extrabold text-xs sm:text-sm bg-neoBg border-2 border-black px-2.5 py-1 shadow-[2px_2px_0_#000] text-black">
                                 Rp ${Number(trx.amount || 0).toLocaleString('id-ID')}
                             </span>
                         </td>
 
                         <td class="p-3.5 text-center align-middle whitespace-nowrap">
-                            <span class="inline-flex items-center gap-1.5 text-[11px] font-black font-cyber uppercase px-3 py-1.5 rounded-lg border-2 border-black shadow-[3px_3px_0_#000] ${badgeClass}">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] font-extrabold font-cyber uppercase px-3 py-1.5 border-2 border-black shadow-[3px_3px_0_#000] ${badgeClass}">
                                 <i class="fa-solid ${icon}"></i> ${statusText}
                             </span>
                         </td>
@@ -1542,14 +1677,14 @@
                         onclick="goToTrxSlide(${currentTrxSlide - 1}, true)"
                         ${currentTrxSlide <= 1 ? 'disabled' : ''}
                         aria-label="Slide Sebelumnya"
-                        class="slide-btn bg-white text-black px-2.5 py-1.5 rounded-lg">
+                        class="slide-btn bg-white text-black px-2.5 py-1.5">
                         <i class="fa-solid fa-chevron-left"></i>
                     </button>
                 `;
 
                 slidesToRender.forEach(item => {
                     if (item === '...') {
-                        btnsHtml += `<span class="px-1.5 py-1 font-mono font-black text-xs text-black">...</span>`;
+                        btnsHtml += `<span class="px-1.5 py-1 font-mono font-extrabold text-xs text-black">...</span>`;
                     } else {
                         const isActive = item === currentTrxSlide;
                         const activeCls = isActive
@@ -1558,7 +1693,7 @@
                         btnsHtml += `
                             <button type="button"
                                 onclick="goToTrxSlide(${item}, true)"
-                                class="slide-btn ${activeCls} px-3 py-1.5 rounded-lg">
+                                class="slide-btn ${activeCls} px-3 py-1.5">
                                 Slide ${item}
                             </button>
                         `;
@@ -1570,7 +1705,7 @@
                         onclick="goToTrxSlide(${currentTrxSlide + 1}, true)"
                         ${currentTrxSlide >= totalSlides ? 'disabled' : ''}
                         aria-label="Slide Berikutnya"
-                        class="slide-btn bg-white text-black px-2.5 py-1.5 rounded-lg">
+                        class="slide-btn bg-white text-black px-2.5 py-1.5">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
                 `;
@@ -1632,7 +1767,7 @@
 
                 const syncEl = document.getElementById('trxLastSync');
                 if (syncEl) {
-                    syncEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-neoGreen border border-black"></span><span>Update ${nowStr} WIB</span>`;
+                    syncEl.innerHTML = `<span class="w-2 h-2 bg-neoGreen border border-black"></span><span>Update ${nowStr} WIB</span>`;
                 }
 
                 isInitialLoad = false;
