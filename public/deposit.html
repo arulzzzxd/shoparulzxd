@@ -1614,7 +1614,7 @@
         async function loadUserProfileAndBalance() {
             const balanceEl = document.getElementById('currentBalanceDisplay');
             try {
-                const res = await fetch('/api/user-status');
+                const res = await fetch('/api/user-status', { cache: 'no-store' });
                 const data = await res.json();
                 if (!data.loggedIn || !data.user) {
                     window.location.href = '/login';
@@ -1901,12 +1901,14 @@
             }, 5000);
         }
 
-        async function checkSingleDepositStatus(showAlertIfPending = false) {
+                async function checkSingleDepositStatus(showAlertIfPending = false) {
             if (!activeDepositOrder || !activeDepositOrder.orderId) return;
             const currentCheckingOrderId = activeDepositOrder.orderId;
 
             try {
-                const res = await fetch(`/transactions/${encodeURIComponent(currentCheckingOrderId)}?refresh=1`);
+                const res = await fetch(`/transactions/${encodeURIComponent(currentCheckingOrderId)}?refresh=1`, {
+                    cache: 'no-store'
+                });
                 const json = await res.json();
                 if (!json.data) return;
 
@@ -1924,13 +1926,13 @@
                     activeDepositOrder = null;
 
                     document.getElementById('qrisDepositModal').classList.add('hidden');
-                    loadUserProfileAndBalance();
-                    loadDepositHistory();
+                    await loadUserProfileAndBalance();
+                    await loadDepositHistory();
 
                     Swal.fire({
                         icon: 'success',
                         title: 'DEPOSIT BERHASIL!',
-                        text: 'Saldo telah berhasil ditambahkan ke akun Anda.',
+                        text: 'Pembayaran QRIS V1 Saldo telah otomatis ditambahkan ke akun Anda.',
                         confirmButtonText: 'MANTAP',
                         customClass: { popup: 'cyber-swal' }
                     });
