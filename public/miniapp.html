@@ -2,12 +2,12 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Pusat Notifikasi Bot - ArulzXD Store</title>
     <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png" />
     <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Tailwind, SweetAlert2, FontAwesome & Fonts (Identik deposit.html & profile.html) -->
+    <!-- Tailwind, SweetAlert2, FontAwesome & Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -36,6 +36,11 @@
     </script>
 
     <style>
+        :root {
+            --tg-top-inset: env(safe-area-inset-top, 0px);
+            --tg-content-top-inset: 0px;
+        }
+
         body {
             background-color: #FAF9F2;
             color: #000000;
@@ -45,7 +50,12 @@
             background-size: 16px 16px;
         }
 
-        /* Neo-Brutalisme Persegi Panjang Tegas (Identik deposit.html & profile.html) */
+        /* Header Aman dari Status Bar HP & Tombol Tutup Telegram */
+        .miniapp-safe-header {
+            padding-top: calc(var(--tg-top-inset, 0px) + var(--tg-content-top-inset, 0px));
+        }
+
+        /* Neo-Brutalisme Persegi Panjang Tegas */
         .neo-rect {
             border: 3px solid #000000;
             box-shadow: 6px 6px 0px #000000;
@@ -91,7 +101,7 @@
             color: #000000 !important;
         }
 
-        /* Neo-Brutalist Square Toggle Switch (Identik profile.html) */
+        /* Neo-Brutalist Square Toggle Switch */
         .neo-switch-btn {
             position: relative;
             width: 64px;
@@ -132,9 +142,7 @@
             cursor: not-allowed;
         }
 
-        /* =========================================================
-           ANIMASI GPU ULTRA-HALUS (60FPS, IDENTIK DEPOSIT.HTML)
-           ========================================================= */
+        /* Animasi GPU */
         .gpu-layer {
             will-change: transform, opacity;
             backface-visibility: hidden;
@@ -194,9 +202,7 @@
             animation: slideInLeftSmooth 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
-        /* =========================================================
-           TUTORIAL LANGSUNG (INTERACTIVE SPOTLIGHT TOUR)
-           ========================================================= */
+        /* Tutorial Langsung Spotlight */
         .tour-highlight-target {
             position: relative !important;
             z-index: 65 !important;
@@ -209,20 +215,26 @@
 </head>
 <body class="pb-14 antialiased selection:bg-neoYellow selection:text-black min-h-screen">
 
-    <!-- TOP STICKY HEADER (TETAP DI DALAM MINI APP, TANPA KELUAR KE ROOT BROWSER) -->
-    <header class="sticky top-0 z-40 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
-        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
-            <button type="button" onclick="scrollToTopMiniApp()" class="flex items-center gap-2 text-left">
-                <i class="fa-solid fa-bolt text-black text-xl"></i>
-                <span class="font-cyber font-extrabold text-lg sm:text-xl tracking-tight text-black">
-                    Arulz <span class="bg-black text-white px-2 py-0.5">Bot</span>
+    <!-- TOP STICKY HEADER (AMAN DARI NOTCH / STATUS BAR & TOMBOL TUTUP TELEGRAM) -->
+    <header class="miniapp-safe-header sticky top-0 z-40 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
+        <div class="max-w-5xl mx-auto px-3 sm:px-4 py-2.5 flex items-center justify-between gap-2">
+            <button type="button" onclick="scrollToTopMiniApp()" class="flex items-center gap-1.5 sm:gap-2 text-left min-w-0 shrink">
+                <i class="fa-solid fa-bolt text-black text-lg sm:text-xl shrink-0"></i>
+                <span class="font-cyber font-extrabold text-base sm:text-xl tracking-tight text-black truncate">
+                    Arulz <span class="bg-black text-white px-1.5 sm:px-2 py-0.5">Bot</span>
                 </span>
             </button>
 
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <!-- Tombol Refresh Sinkronisasi -->
+                <button type="button" id="btnSyncRefresh" onclick="manualSyncStatus()" title="Sinkronkan Ulang"
+                    class="neo-btn-rect bg-white text-black px-2 py-1 text-[11px] font-cyber font-extrabold flex items-center justify-center uppercase">
+                    <i id="syncRefreshIcon" class="fa-solid fa-arrows-rotate"></i>
+                </button>
+
                 <!-- Tombol Pemicu Tutorial Langsung -->
                 <button type="button" onclick="startLiveTutorial()"
-                    class="neo-btn-rect bg-neoCyan text-black px-2.5 py-1 text-[11px] font-cyber font-extrabold flex items-center gap-1.5 uppercase">
+                    class="neo-btn-rect bg-neoCyan text-black px-2.5 py-1 text-[11px] font-cyber font-extrabold flex items-center gap-1 uppercase">
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
                     <span class="hidden sm:inline">Tutorial Langsung</span>
                     <span class="sm:hidden">Tutorial</span>
@@ -230,7 +242,7 @@
 
                 <!-- Tombol Keluar / Ganti Akun (Muncul Saat Login) -->
                 <button type="button" id="btnHeaderLogout" onclick="handleMiniAppLogout()" style="display: none;"
-                    class="neo-btn-rect bg-neoPink text-white px-2.5 py-1 text-[11px] font-cyber font-extrabold flex items-center gap-1.5 uppercase">
+                    class="neo-btn-rect bg-neoPink text-white px-2.5 py-1 text-[11px] font-cyber font-extrabold flex items-center gap-1 uppercase">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span>Keluar</span>
                 </button>
@@ -291,7 +303,7 @@
                 </div>
             </section>
 
-            <!-- 2. PANDUAN ANIMASI INTERAKTIF (IDENTIK DEPOSIT.HTML) -->
+            <!-- 2. PANDUAN ANIMASI INTERAKTIF -->
             <section id="tour-card-carousel" class="lg:col-span-7 neo-rect bg-neoYellow p-4 sm:p-5 select-none flex flex-col justify-between">
                 <div class="flex items-center justify-between gap-2 mb-3">
                     <div class="flex items-center gap-2">
@@ -449,7 +461,7 @@
                     </button>
                 </div>
 
-                <!-- STEP 2: PENGATURAN NOTIFIKASI REAL-TIME (TELEGRAM & EMAIL NEO-BRUTALISME IDENTIK PROFILE.HTML) -->
+                <!-- STEP 2: PENGATURAN NOTIFIKASI REAL-TIME (TELEGRAM & EMAIL) -->
                 <div id="tour-card-toggle" class="pt-5 border-t-[2.5px] border-dashed border-black/25 space-y-3.5">
                     <div class="flex items-center justify-between">
                         <label class="text-xs font-black uppercase tracking-wider flex items-center gap-2">
@@ -459,7 +471,7 @@
                         <span class="text-[10px] font-extrabold bg-neoGreen border-2 border-black px-2 py-0.5 shadow-[1px_1px_0px_#000]">TG &amp; EMAIL</span>
                     </div>
 
-                    <!-- 2A. NOTIFIKASI EMAIL (ON / OFF NEO-BRUTALISME IDENTIK PROFILE.HTML) -->
+                    <!-- 2A. NOTIFIKASI EMAIL -->
                     <div class="neo-subcard bg-neoBg p-4 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-10 h-10 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
@@ -481,7 +493,7 @@
                         </button>
                     </div>
 
-                    <!-- 2B. NOTIFIKASI TELEGRAM BOT (ON / OFF NEO-BRUTALISME IDENTIK PROFILE.HTML) -->
+                    <!-- 2B. NOTIFIKASI TELEGRAM BOT -->
                     <div class="neo-subcard bg-neoBg p-4 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-10 h-10 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
@@ -520,7 +532,7 @@
                 </p>
 
                 <div class="space-y-3">
-                    <!-- Channel WhatsApp (Tetap Terbuka Rapi via Telegram SDK) -->
+                    <!-- Channel WhatsApp -->
                     <button type="button" onclick="openExternalInMiniApp('https://whatsapp.com/channel/0029Vb94zQcJUM2hE0pYz40U', false)"
                         class="w-full text-left neo-btn-rect bg-neoGreen/25 hover:bg-neoGreen/45 p-4 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
@@ -540,7 +552,7 @@
                         </span>
                     </button>
 
-                    <!-- Channel Telegram (Tetap di dalam Telegram App) -->
+                    <!-- Channel Telegram -->
                     <button type="button" onclick="openExternalInMiniApp('https://t.me/information_arulz', true)"
                         class="w-full text-left neo-btn-rect bg-neoCyan/25 hover:bg-neoCyan/45 p-4 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
@@ -623,14 +635,37 @@
             isTelegramOnlyAccount: false
         };
 
-        // Inisialisasi Telegram WebApp agar tetap fullscreen & nyaman di dalam Telegram
+        // Sinkronisasi Safe Area Inset Telegram agar Header Tidak Bertabrakan dengan Status Bar / Tombol Tutup
+        function applyTelegramSafeArea() {
+            if (!tg) return;
+            try {
+                const topInset = Number(tg.safeAreaInset?.top || 0);
+                const contentTopInset = Number(tg.contentSafeAreaInset?.top || 0);
+                document.documentElement.style.setProperty('--tg-top-inset', `${topInset}px`);
+                document.documentElement.style.setProperty('--tg-content-top-inset', `${contentTopInset}px`);
+            } catch (_) {}
+        }
+
+        // Inisialisasi Telegram WebApp
         if (tg) {
             tg.ready();
             tg.expand();
             try {
+                // Pastikan tidak masuk mode fullscreen tanpa bar navigasi Telegram agar tombol Tutup rapi
+                if (tg.isFullscreen && tg.exitFullscreen) {
+                    tg.exitFullscreen();
+                }
                 tg.setHeaderColor('#FFDF4F');
                 tg.setBackgroundColor('#FAF9F2');
                 if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
+                applyTelegramSafeArea();
+                tg.onEvent?.('safeAreaChanged', applyTelegramSafeArea);
+                tg.onEvent?.('contentSafeAreaChanged', applyTelegramSafeArea);
+                tg.onEvent?.('viewportChanged', applyTelegramSafeArea);
+                tg.onEvent?.('activated', () => {
+                    applyTelegramSafeArea();
+                    loadUserStatus();
+                });
             } catch (_) {}
         }
 
@@ -663,13 +698,37 @@
         }
 
         function getActiveTelegramUser() {
-            return tg?.initDataUnsafe?.user || null;
+            if (tg?.initDataUnsafe?.user) {
+                return tg.initDataUnsafe.user;
+            }
+            // Fallback parsing dari URL hash tgWebAppData jika initDataUnsafe belum terisi
+            try {
+                const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+                const rawWebAppData = hashParams.get('tgWebAppData');
+                if (rawWebAppData) {
+                    const dataParams = new URLSearchParams(rawWebAppData);
+                    const userJson = dataParams.get('user');
+                    if (userJson) return JSON.parse(userJson);
+                }
+            } catch (_) {}
+            return null;
+        }
+
+        function getRawTelegramInitData() {
+            if (tg?.initData) return tg.initData;
+            try {
+                const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+                return hashParams.get('tgWebAppData') || '';
+            } catch (_) {
+                return '';
+            }
         }
 
         function getApiHeaders() {
             const headers = { 'Content-Type': 'application/json' };
-            if (tg?.initData) {
-                headers['X-Telegram-Init-Data'] = tg.initData;
+            const initData = getRawTelegramInitData();
+            if (initData) {
+                headers['X-Telegram-Init-Data'] = initData;
             }
             const activeTg = getActiveTelegramUser();
             if (activeTg?.id) {
@@ -947,7 +1006,6 @@
 
         function startMiniAppOAuth(provider) {
             triggerHaptic('medium');
-            // Navigasi langsung di WebView Mini App dengan parameter returnTo=/miniapp
             window.location.href = `/auth/${encodeURIComponent(provider)}?returnTo=${encodeURIComponent('/miniapp')}`;
         }
 
@@ -969,6 +1027,7 @@
                 const res = await fetch('/api/miniapp/login', {
                     method: 'POST',
                     headers: getApiHeaders(),
+                    credentials: 'include',
                     body: JSON.stringify({ username: identity, password })
                 });
                 const data = await res.json();
@@ -1028,7 +1087,8 @@
             try {
                 await fetch('/api/miniapp/logout', {
                     method: 'POST',
-                    headers: getApiHeaders()
+                    headers: getApiHeaders(),
+                    credentials: 'include'
                 });
                 triggerHaptic('success');
                 await loadUserStatus();
@@ -1246,6 +1306,7 @@
             try {
                 const res = await fetch('/api/user-status', {
                     headers: getApiHeaders(),
+                    credentials: 'include',
                     cache: 'no-store'
                 });
                 const data = await res.json();
@@ -1255,7 +1316,15 @@
             }
         }
 
-        // Toggle Notifikasi Email atau Telegram (Identik profile.html)
+        async function manualSyncStatus() {
+            triggerHaptic('light');
+            const icon = document.getElementById('syncRefreshIcon');
+            icon?.classList.add('fa-spin');
+            await loadUserStatus();
+            setTimeout(() => icon?.classList.remove('fa-spin'), 450);
+        }
+
+        // Toggle Notifikasi Email atau Telegram
         async function toggleNotificationPref(channel) {
             triggerHaptic('light');
 
@@ -1292,6 +1361,7 @@
                 const res = await fetch('/api/user/notif-preferences', {
                     method: 'POST',
                     headers: getApiHeaders(),
+                    credentials: 'include',
                     body: JSON.stringify(payload)
                 });
                 const data = await res.json();
@@ -1351,7 +1421,8 @@
             try {
                 const res = await fetch('/api/telegram/ticket', {
                     method: 'POST',
-                    headers: getApiHeaders()
+                    headers: getApiHeaders(),
+                    credentials: 'include'
                 });
                 const data = await res.json();
                 Swal.close();
@@ -1385,7 +1456,10 @@
                 clearInterval(pollTimer);
                 pollTimer = setInterval(async () => {
                     try {
-                        const check = await fetch(`/api/telegram/ticket/${data.token}`, { headers: getApiHeaders() });
+                        const check = await fetch(`/api/telegram/ticket/${data.token}`, {
+                            headers: getApiHeaders(),
+                            credentials: 'include'
+                        });
                         const st = await check.json();
                         if (st.completed) {
                             clearInterval(pollTimer);
@@ -1437,7 +1511,8 @@
             try {
                 const res = await fetch('/api/user/unlink-telegram', {
                     method: 'POST',
-                    headers: getApiHeaders()
+                    headers: getApiHeaders(),
+                    credentials: 'include'
                 });
                 const data = await res.json();
 
@@ -1472,10 +1547,19 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            applyTelegramSafeArea();
             renderTutorialSlide('right');
             startTutorialAutoSlide();
             initTutorialTouchSwipe();
             loadUserStatus();
+
+            // Sinkronisasi otomatis saat tab/webview kembali aktif
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    applyTelegramSafeArea();
+                    loadUserStatus();
+                }
+            });
 
             try {
                 if (!localStorage.getItem('arulz_miniapp_tour_done')) {
