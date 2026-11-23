@@ -155,7 +155,8 @@
             100% { box-shadow: 4px 4px 0px #000000; transform: scale(1); }
         }
         .policy-highlight {
-            animation: targetPulse 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            opacity: 1 !important;
+            animation: targetPulse 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
 
         /* Pop-up Live Chat Animasi */
@@ -292,8 +293,8 @@
             </div>
         </section>
 
-                <!-- BAR KONTROL INTERAKTIF TERPISAH (CUSTOM NEO-BRUTALISME SELECT) -->
-        <section class="neo-rect bg-white p-3.5 sm:px-5 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-30 animate-card-in" style="animation-delay: 0.05s;">
+        <!-- BAR KONTROL INTERAKTIF TERPISAH (CUSTOM NEO-BRUTALISME SELECT) -->
+        <section class="neo-rect bg-white p-3.5 sm:px-5 sm:py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-[45] animate-card-in" style="animation-delay: 0.05s;">
             <div class="flex items-center gap-2.5 flex-1 min-w-0">
                 <span class="w-9 h-9 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
                     <svg class="w-4 h-4 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square">
@@ -400,7 +401,7 @@
         </section>
 
         <!-- PASAL 1: DASAR HUKUM NASIONAL & KEPATUHAN REGULASI RI -->
-        <section id="pasal-1" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.07s;">
+        <section id="pasal-1" class="policy-section is-collapsed neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.07s;">
             <button type="button" onclick="togglePolicySection('pasal-1')" class="policy-trigger bg-neoGreen border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <!-- LOGO SVG PASAL 1: TIMBANGAN HUKUM -->
@@ -528,7 +529,7 @@
         </section>
 
         <!-- PASAL 2: KLASIFIKASI DATA PRIBADI YANG DIKUMPULKAN -->
-        <section id="pasal-2" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.09s;">
+        <section id="pasal-2" class="policy-section is-collapsed neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.09s;">
             <button type="button" onclick="togglePolicySection('pasal-2')" class="policy-trigger bg-neoYellow border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <!-- LOGO SVG PASAL 2: KLASIFIKASI DATA -->
@@ -624,7 +625,7 @@
         </section>
 
         <!-- PASAL 3: AUTENTIKASI MULTI-PROVIDER & VERIFIKASI OTP -->
-        <section id="pasal-3" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.11s;">
+        <section id="pasal-3" class="policy-section is-collapsed neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.11s;">
             <button type="button" onclick="togglePolicySection('pasal-3')" class="policy-trigger bg-neoCyan border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <!-- LOGO SVG PASAL 3: KUNCI & OTENTIKASI -->
@@ -709,7 +710,7 @@
         </section>
         
                 <!-- PASAL 4: KUSTOMISASI PROFIL, MEDIA BANNER & MODERASI KONTEN -->
-        <section id="pasal-4" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.14s;">
+        <section id="pasal-4" class="policy-section is-collapsed neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.14s;">
             <button type="button" onclick="togglePolicySection('pasal-4')" class="policy-trigger bg-neoPurple border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <!-- LOGO SVG PASAL 4: GALERI MEDIA & PROFIL -->
@@ -769,7 +770,7 @@
         </section>
 
         <!-- PASAL 5: PROGRAM REFERRAL & PENCEGAHAN KECURANGAN (ANTI-FRAUD) -->
-        <section id="pasal-5" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.17s;">
+        <section id="pasal-5" class="policy-section is-collapsed neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.17s;">
             <button type="button" onclick="togglePolicySection('pasal-5')" class="policy-trigger bg-neoGreen border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <!-- LOGO SVG PASAL 5: HADIAH & JARINGAN UNDANGAN -->
@@ -834,7 +835,7 @@
         </section>
 
         <!-- PASAL 6: DEPOSIT SALDO, GATEWAY QRIS V1 & QRIS V2 -->
-        <section id="pasal-6" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.2s;">
+        <section id="pasal-6" class="policy-section is-collapsed neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.2s;">
             <button type="button" onclick="togglePolicySection('pasal-6')" class="policy-trigger bg-neoYellow border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <!-- LOGO SVG PASAL 6: DOMPET & QRIS PAYMENT -->
@@ -919,7 +920,7 @@
         </section>
 
         <!-- PASAL 7: TRANSAKSI PRODUK DIGITAL, LISENSI HAKI & NON-REFUNDABLE -->
-        <section id="pasal-7" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.23s;">
+        <section id="pasal-7" class="policy-section is-collapsed neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.23s;">
             <button type="button" onclick="togglePolicySection('pasal-7')" class="policy-trigger bg-neoPink border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <!-- LOGO SVG PASAL 7: KERANJANG BELANJA & LISENSI -->
@@ -980,7 +981,7 @@
         </section>
 
         <!-- PASAL 8: NOTIFIKASI REAL-TIME & INTEGRASI BOT TELEGRAM -->
-        <section id="pasal-8" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.26s;">
+        <section id="pasal-8" class="policy-section is-collapsed neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.26s;">
             <button type="button" onclick="togglePolicySection('pasal-8')" class="policy-trigger bg-neoYellow border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <!-- LOGO SVG PASAL 8: LONCENG NOTIFIKASI & BOT TELEGRAM -->
@@ -1039,7 +1040,7 @@
         </section>
         
                 <!-- PASAL 9: LAYANAN CUSTOMER SUPPORT LIVE CHAT -->
-        <section id="pasal-9" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.29s;">
+        <section id="pasal-9" class="policy-section is-collapsed neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.29s;">
             <button type="button" onclick="togglePolicySection('pasal-9')" class="policy-trigger bg-neoGreen border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <!-- LOGO SVG PASAL 9: HEADSET CUSTOMER SUPPORT -->
@@ -1098,7 +1099,7 @@
         </section>
 
         <!-- PASAL 10: RETENSI DATA, COOKIE SESI & PENYAMARAN DATA PUBLIK -->
-        <section id="pasal-10" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.32s;">
+        <section id="pasal-10" class="policy-section is-collapsed neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.32s;">
             <button type="button" onclick="togglePolicySection('pasal-10')" class="policy-trigger bg-neoPurple border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <!-- LOGO SVG PASAL 10: JAM RETENSI & COOKIE PRIVASI -->
@@ -1183,7 +1184,7 @@
         </section>
 
         <!-- PASAL 11: ARSITEKTUR KEAMANAN SIBER & HAK SUBJEK DATA -->
-        <section id="pasal-11" class="policy-section neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.35s;">
+        <section id="pasal-11" class="policy-section is-collapsed neo-rect bg-white overflow-hidden animate-card-in" style="animation-delay: 0.35s;">
             <button type="button" onclick="togglePolicySection('pasal-11')" class="policy-trigger bg-neoCyan border-b-[2.5px] border-black px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <!-- LOGO SVG PASAL 11: PERISAI ENKRIPSI SIBER -->
@@ -1458,8 +1459,18 @@
         </div>
     </footer>
 
-    <script>
+        <script>
         let widgetChatInterval = null;
+
+        /* =========================================================
+           INISIALISASI ANIMASI & RINGKAS OTOMATIS SAAT HALAMAN DIBUKA
+           ========================================================= */
+        document.querySelectorAll('.animate-card-in').forEach((el) => {
+            el.addEventListener('animationend', () => {
+                el.classList.remove('animate-card-in');
+                el.style.opacity = '1';
+            }, { once: true });
+        });
 
         /* =========================================================
            ANIMASI ACCORDION & NAVIGASI CEPAT KEBIJAKAN PRIVASI
@@ -1467,11 +1478,15 @@
         function togglePolicySection(sectionId) {
             const section = document.getElementById(sectionId);
             if (!section) return;
+            section.classList.remove('animate-card-in');
+            section.style.opacity = '1';
             section.classList.toggle('is-collapsed');
         }
 
         function toggleAllPolicies(expand) {
             document.querySelectorAll('.policy-section').forEach((sec) => {
+                sec.classList.remove('animate-card-in');
+                sec.style.opacity = '1';
                 if (expand) {
                     sec.classList.remove('is-collapsed');
                 } else {
@@ -1479,8 +1494,8 @@
                 }
             });
         }
-        
-                /* =========================================================
+
+        /* =========================================================
            CUSTOM NEO-BRUTALIST SELECT DROPDOWN
            ========================================================= */
         function toggleNeoSelect(forceClose = false) {
@@ -1521,7 +1536,9 @@
             const section = document.getElementById(sectionId);
             if (!section) return;
 
-            section.classList.remove('is-collapsed');
+            section.classList.remove('is-collapsed', 'animate-card-in');
+            section.style.opacity = '1';
+
             const yOffset = -76;
             const y = section.getBoundingClientRect().top + window.pageYOffset + yOffset;
             window.scrollTo({ top: y, behavior: 'smooth' });
