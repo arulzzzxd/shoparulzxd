@@ -7,11 +7,11 @@
     <link rel="icon" href="https://cdn.larasxd.my.id/files/1wh5do.png" type="image/png" />
     <!-- Telegram Mini App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Tailwind, SweetAlert2, FontAwesome & Fonts (Identik deposit.html) -->
+    <!-- Tailwind, SweetAlert2, FontAwesome & Fonts (Identik deposit.html & profile.html) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Space+Grotesk:wght@700;800&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet" />
 
     <script>
         tailwind.config = {
@@ -20,6 +20,7 @@
                     fontFamily: {
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                         cyber: ['"Space Grotesk"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
                     },
                     colors: {
                         neoBg: '#FAF9F2',
@@ -44,10 +45,17 @@
             background-size: 16px 16px;
         }
 
-        /* Neo-Brutalisme Persegi Panjang Tegas (Identik deposit.html) */
+        /* Neo-Brutalisme Persegi Panjang Tegas (Identik deposit.html & profile.html) */
         .neo-rect {
             border: 3px solid #000000;
             box-shadow: 6px 6px 0px #000000;
+            border-radius: 0px;
+            transition: transform 0.14s ease, box-shadow 0.14s ease;
+        }
+
+        .neo-subcard {
+            border: 2.5px solid #000000;
+            box-shadow: 3.5px 3.5px 0px #000000;
             border-radius: 0px;
             transition: transform 0.14s ease, box-shadow 0.14s ease;
         }
@@ -83,46 +91,44 @@
             color: #000000 !important;
         }
 
-        /* Neo-Brutalist Square Toggle Switch */
-        .neo-switch {
+        /* Neo-Brutalist Square Toggle Switch (Identik profile.html) */
+        .neo-switch-btn {
             position: relative;
             width: 64px;
-            height: 34px;
+            height: 32px;
+            background-color: #E2E8F0;
+            border: 2.5px solid #000000;
+            box-shadow: 2.5px 2.5px 0px #000000;
+            cursor: pointer;
+            transition: background-color 0.18s ease;
             flex-shrink: 0;
         }
-        .neo-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
+        .neo-switch-btn.active {
+            background-color: #2CE875;
         }
-        .neo-slider {
+        .neo-switch-knob {
             position: absolute;
-            inset: 0;
-            background: #E2E8F0;
-            border: 3px solid #000000;
-            box-shadow: 3px 3px 0px #000000;
-            cursor: pointer;
-            transition: background 0.16s ease;
-        }
-        .neo-slider::before {
-            content: "";
-            position: absolute;
-            width: 22px;
-            height: 22px;
-            left: 3px;
-            top: 3px;
-            background: #FFFFFF;
-            border: 2.5px solid #000000;
+            top: 2px;
+            left: 2px;
+            width: 23px;
+            height: 23px;
+            background-color: #FFFFFF;
+            border: 2px solid #000000;
             transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 9px;
+            font-weight: 900;
+            color: #000000;
         }
-        .neo-switch input:checked + .neo-slider {
-            background: #2CE875;
+        .neo-switch-btn.active .neo-switch-knob {
+            transform: translateX(31px);
+            background-color: #FFDF4F;
         }
-        .neo-switch input:checked + .neo-slider::before {
-            transform: translateX(30px);
-        }
-        .neo-switch input:disabled + .neo-slider {
-            opacity: 0.45;
+        .neo-switch-btn:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
@@ -203,22 +209,30 @@
 </head>
 <body class="pb-14 antialiased selection:bg-neoYellow selection:text-black min-h-screen">
 
-    <!-- TOP STICKY HEADER (IDENTIK DEPOSIT.HTML) -->
+    <!-- TOP STICKY HEADER (TETAP DI DALAM MINI APP, TANPA KELUAR KE ROOT BROWSER) -->
     <header class="sticky top-0 z-40 bg-neoYellow border-b-[3px] border-black shadow-[0_4px_0_#000]">
         <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
-            <a href="/" class="flex items-center gap-2">
+            <button type="button" onclick="scrollToTopMiniApp()" class="flex items-center gap-2 text-left">
                 <i class="fa-solid fa-bolt text-black text-xl"></i>
                 <span class="font-cyber font-extrabold text-lg sm:text-xl tracking-tight text-black">
                     Arulz <span class="bg-black text-white px-2 py-0.5">Bot</span>
                 </span>
-            </a>
+            </button>
 
             <div class="flex items-center gap-2">
                 <!-- Tombol Pemicu Tutorial Langsung -->
                 <button type="button" onclick="startLiveTutorial()"
                     class="neo-btn-rect bg-neoCyan text-black px-2.5 py-1 text-[11px] font-cyber font-extrabold flex items-center gap-1.5 uppercase">
                     <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    <span>Tutorial Langsung</span>
+                    <span class="hidden sm:inline">Tutorial Langsung</span>
+                    <span class="sm:hidden">Tutorial</span>
+                </button>
+
+                <!-- Tombol Keluar / Ganti Akun (Muncul Saat Login) -->
+                <button type="button" id="btnHeaderLogout" onclick="handleMiniAppLogout()" style="display: none;"
+                    class="neo-btn-rect bg-neoPink text-white px-2.5 py-1 text-[11px] font-cyber font-extrabold flex items-center gap-1.5 uppercase">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Keluar</span>
                 </button>
             </div>
         </div>
@@ -230,36 +244,49 @@
         <!-- BARIS ATAS: IDENTITAS AKUN & PANDUAN ANIMASI SEJAJAR -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
 
-            <!-- 1. BANNER PROFIL & STATUS KONEKSI -->
+            <!-- 1. BANNER PROFIL & STATUS KONEKSI (TERISOLASI PER AKUN TELEGRAM) -->
             <section id="tour-card-profile" class="lg:col-span-5 neo-rect bg-neoCyan p-4 sm:p-5 relative overflow-hidden flex flex-col justify-between">
                 <div class="absolute right-0 top-0 bottom-0 w-20 bg-white/15 border-l-2 border-black/15 pointer-events-none"></div>
-                <div class="relative z-10 h-full flex flex-col justify-between">
-                    <div class="flex items-center justify-between gap-2 mb-2">
+                <div class="relative z-10 h-full flex flex-col justify-between space-y-3">
+                    <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2">
                             <span class="w-7 h-7 bg-black text-neoYellow border-2 border-black flex items-center justify-center text-xs shadow-[2px_2px_0px_#fff]">
                                 <i class="fa-brands fa-telegram"></i>
                             </span>
                             <h1 class="font-cyber font-extrabold text-base sm:text-lg text-black tracking-tight uppercase">Mini App Notifikasi</h1>
                         </div>
-                        <span id="headerStatusTag" class="bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase tracking-wider">SYNC</span>
+                        <span id="tgSessionPill" class="bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase tracking-wider">TG SYNC</span>
                     </div>
 
-                    <div class="mt-2 bg-white border-[3px] border-black p-3.5 shadow-[4px_4px_0px_#000] flex items-center gap-3.5">
+                    <!-- Kartu Akun Terhubung -->
+                    <div class="bg-white border-[3px] border-black p-3.5 shadow-[4px_4px_0px_#000] flex items-center gap-3.5">
                         <img id="userAvatar" src="https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png" alt="Avatar"
                             class="w-14 h-14 bg-neoYellow border-[2.5px] border-black object-cover shrink-0 shadow-[3px_3px_0px_#000]" />
                         <div class="min-w-0 flex-1">
-                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">AKUN TERHUBUNG</p>
+                            <div class="flex items-center justify-between gap-1">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">AKUN TERHUBUNG</p>
+                                <span id="loginMethodBadge" class="text-[9px] font-cyber font-black bg-neoBg border border-black px-1.5 py-0.5 uppercase">GUEST</span>
+                            </div>
                             <p id="userName" class="font-cyber font-extrabold text-lg text-black truncate">Memuat Akun...</p>
                             <p id="userEmail" class="text-[11px] font-mono font-bold text-slate-600 truncate">ID: -</p>
                             <div class="flex flex-wrap items-center gap-1.5 mt-2">
                                 <span id="statusBadge" class="bg-neoPink text-white border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase">
-                                    BELUM TERTAUT
+                                    BELUM LOGIN
                                 </span>
                                 <span id="notifBadge" class="bg-neoYellow text-black border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase">
-                                    NOTIF: -
+                                    TG: - | EMAIL: -
                                 </span>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Info Sesi Telegram Aktif -->
+                    <div class="bg-neoBg border-2 border-black px-3 py-2 flex items-center justify-between gap-2 text-[11px] font-mono font-bold">
+                        <span class="text-slate-700 truncate" id="activeTgViewerLabel">Sesi Telegram: Memeriksa...</span>
+                        <button type="button" onclick="openMiniAppAuthModal()" id="btnQuickSwitchAccount"
+                            class="bg-neoYellow border-2 border-black px-2 py-0.5 font-cyber font-black text-[10px] uppercase shrink-0 hover:bg-neoGreen">
+                            Login / Ganti Akun
+                        </button>
                     </div>
                 </div>
             </section>
@@ -317,10 +344,74 @@
             </section>
         </div>
 
-        <!-- BARIS BAWAH: KONTROL TAUTAN & CHANNEL INFORMASI -->
+        <!-- PANEL LOGIN DI DALAM MINI APP (MUNCUL JIKA BELUM LOGIN) -->
+        <section id="miniAppLoginBanner" class="hidden neo-rect bg-white p-5 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-[2.5px] border-black pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 bg-neoPink text-white border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                    </span>
+                    <h2 class="font-cyber font-extrabold text-base text-black uppercase">Masuk Akun ArulzXD Store</h2>
+                </div>
+                <span class="bg-neoYellow border-2 border-black text-[10px] font-cyber font-black px-2.5 py-0.5 uppercase">TETAP DI MINI APP</span>
+            </div>
+
+            <p class="text-xs font-bold text-slate-700">
+                Silakan masuk menggunakan Email &amp; Password atau akun OAuth (Google, GitHub, Telegram) untuk menghubungkan notifikasi ke akun Telegram ini.
+            </p>
+
+            <!-- Form Login Email + Password Langsung di Mini App -->
+            <form onsubmit="handleMiniAppEmailLogin(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                <div class="sm:col-span-5">
+                    <input type="text" id="miniLoginIdentity" required placeholder="Email atau Username..."
+                        class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold text-black placeholder-slate-500 focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]" />
+                </div>
+                <div class="sm:col-span-4 relative">
+                    <input type="password" id="miniLoginPassword" required placeholder="Kata sandi..."
+                        class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 pr-9 text-xs font-bold text-black placeholder-slate-500 focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]" />
+                    <button type="button" onclick="toggleMiniPassword()" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-black text-xs">
+                        <i id="miniPassEyeIcon" class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+                <div class="sm:col-span-3">
+                    <button type="submit" id="btnMiniEmailLogin"
+                        class="w-full h-full neo-btn-rect bg-neoGreen text-black font-cyber font-extrabold text-xs py-2.5 px-3 uppercase flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-right-to-bracket"></i> Masuk
+                    </button>
+                </div>
+            </form>
+
+            <!-- Tombol OAuth Tetap di Mini App -->
+            <div class="pt-2 border-t-2 border-dashed border-black/25 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <button type="button" onclick="startMiniAppOAuth('google')"
+                    class="neo-btn-rect bg-white text-black font-cyber font-extrabold text-xs py-2.5 px-3 flex items-center justify-center gap-2 uppercase">
+                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/>
+                        <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/>
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
+                    </svg>
+                    <span>Google OAuth</span>
+                </button>
+
+                <button type="button" onclick="startMiniAppOAuth('github')"
+                    class="neo-btn-rect bg-black text-white font-cyber font-extrabold text-xs py-2.5 px-3 flex items-center justify-center gap-2 uppercase">
+                    <i class="fa-brands fa-github text-base"></i>
+                    <span>GitHub OAuth</span>
+                </button>
+
+                <button type="button" onclick="startMiniAppOAuth('telegram')"
+                    class="neo-btn-rect bg-neoCyan text-black font-cyber font-extrabold text-xs py-2.5 px-3 flex items-center justify-center gap-2 uppercase">
+                    <i class="fa-brands fa-telegram text-base"></i>
+                    <span>Telegram OAuth</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- BARIS BAWAH: KONTROL TAUTAN, PENGATURAN NOTIFIKASI & CHANNEL INFORMASI -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
-            <!-- 3. PANEL KONTROL TAUTAN & NOTIFIKASI -->
+            <!-- 3. PANEL KONTROL TAUTAN & PENGATURAN NOTIFIKASI (TELEGRAM & EMAIL) -->
             <section class="lg:col-span-7 neo-rect bg-white p-5 space-y-5">
 
                 <!-- STEP 1: TAUTKAN / PUTUSKAN TAUTAN TELEGRAM -->
@@ -358,29 +449,58 @@
                     </button>
                 </div>
 
-                <!-- STEP 2: AKTIFKAN / NONAKTIFKAN NOTIFIKASI -->
-                <div id="tour-card-toggle" class="pt-5 border-t-[2.5px] border-dashed border-black/25">
-                    <div class="flex items-center justify-between mb-3">
+                <!-- STEP 2: PENGATURAN NOTIFIKASI REAL-TIME (TELEGRAM & EMAIL NEO-BRUTALISME IDENTIK PROFILE.HTML) -->
+                <div id="tour-card-toggle" class="pt-5 border-t-[2.5px] border-dashed border-black/25 space-y-3.5">
+                    <div class="flex items-center justify-between">
                         <label class="text-xs font-black uppercase tracking-wider flex items-center gap-2">
                             <span class="w-6 h-6 bg-neoPurple border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">2</span>
                             PENGATURAN NOTIFIKASI REAL-TIME
                         </label>
-                        <span class="text-[10px] font-extrabold bg-neoGreen border-2 border-black px-2 py-0.5 shadow-[1px_1px_0px_#000]">INSTAN</span>
+                        <span class="text-[10px] font-extrabold bg-neoGreen border-2 border-black px-2 py-0.5 shadow-[1px_1px_0px_#000]">TG &amp; EMAIL</span>
                     </div>
 
-                    <div class="bg-neoBg border-[2.5px] border-black p-4 shadow-[4px_4px_0px_#000] flex items-center justify-between gap-4">
-                        <div class="space-y-1">
-                            <h3 id="toggleTitle" class="font-cyber font-extrabold text-sm sm:text-base text-black">
-                                Kirim Notifikasi ke Bot Telegram
-                            </h3>
-                            <p id="toggleDesc" class="text-xs font-bold text-slate-700 leading-relaxed">
-                                Aktifkan untuk menerima info deposit, status pesanan, promo & pengumuman penting di private chat bot.
-                            </p>
+                    <!-- 2A. NOTIFIKASI EMAIL (ON / OFF NEO-BRUTALISME IDENTIK PROFILE.HTML) -->
+                    <div class="neo-subcard bg-neoBg p-4 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                <i class="fa-solid fa-envelope text-black text-base"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h3 class="font-cyber font-extrabold text-xs sm:text-sm text-black uppercase">Notifikasi Email</h3>
+                                    <span id="emailNotifStateBadge" class="text-[10px] font-cyber font-extrabold bg-slate-200 border border-black px-2 py-0.5 uppercase">OFF</span>
+                                </div>
+                                <p id="emailNotifDesc" class="text-[11px] font-bold text-slate-700 mt-0.5 leading-snug">
+                                    Kirim pemberitahuan promo, transaksi, dan pengumuman resmi ke alamat Email Anda.
+                                </p>
+                            </div>
                         </div>
-                        <label class="neo-switch" aria-label="Aktifkan atau Nonaktifkan Notifikasi">
-                            <input type="checkbox" id="notifToggle" disabled onchange="handleToggleNotification(this.checked)" />
-                            <span class="neo-slider"></span>
-                        </label>
+
+                        <button type="button" id="toggleEmailNotifBtn" onclick="toggleNotificationPref('email')" disabled aria-label="Toggle Notifikasi Email" class="neo-switch-btn">
+                            <span class="neo-switch-knob" id="toggleEmailNotifKnob">OFF</span>
+                        </button>
+                    </div>
+
+                    <!-- 2B. NOTIFIKASI TELEGRAM BOT (ON / OFF NEO-BRUTALISME IDENTIK PROFILE.HTML) -->
+                    <div class="neo-subcard bg-neoBg p-4 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 bg-neoCyan border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]">
+                                <i class="fa-brands fa-telegram text-black text-lg"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h3 class="font-cyber font-extrabold text-xs sm:text-sm text-black uppercase">Notifikasi Telegram Bot</h3>
+                                    <span id="tgNotifStateBadge" class="text-[10px] font-cyber font-extrabold bg-slate-200 border border-black px-2 py-0.5 uppercase">OFF</span>
+                                </div>
+                                <p id="tgNotifDesc" class="text-[11px] font-bold text-slate-700 mt-0.5 leading-snug">
+                                    Terima info deposit, status pesanan, promo &amp; pengumuman penting di private chat bot.
+                                </p>
+                            </div>
+                        </div>
+
+                        <button type="button" id="toggleTelegramNotifBtn" onclick="toggleNotificationPref('telegram')" disabled aria-label="Toggle Notifikasi Telegram" class="neo-switch-btn">
+                            <span class="neo-switch-knob" id="toggleTelegramNotifKnob">OFF</span>
+                        </button>
                     </div>
                 </div>
             </section>
@@ -392,7 +512,7 @@
                         <span class="w-6 h-6 bg-neoGreen border-2 border-black inline-flex items-center justify-center text-xs font-black shadow-[2px_2px_0px_#000]">3</span>
                         CHANNEL INFORMASI RESMI
                     </h2>
-                    <span class="bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase">WA & TG</span>
+                    <span class="bg-black text-neoYellow font-cyber font-extrabold text-[10px] px-2 py-0.5 uppercase">WA &amp; TG</span>
                 </div>
 
                 <p class="text-xs font-bold text-slate-700">
@@ -400,9 +520,9 @@
                 </p>
 
                 <div class="space-y-3">
-                    <!-- Channel WhatsApp -->
-                    <a href="https://whatsapp.com/channel/0029Vb94zQcJUM2hE0pYz40U" target="_blank" rel="noopener" onclick="triggerHaptic('light')"
-                        class="neo-btn-rect bg-neoGreen/25 hover:bg-neoGreen/45 p-4 flex items-center justify-between gap-3 block">
+                    <!-- Channel WhatsApp (Tetap Terbuka Rapi via Telegram SDK) -->
+                    <button type="button" onclick="openExternalInMiniApp('https://whatsapp.com/channel/0029Vb94zQcJUM2hE0pYz40U', false)"
+                        class="w-full text-left neo-btn-rect bg-neoGreen/25 hover:bg-neoGreen/45 p-4 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-11 h-11 bg-neoGreen border-[2.5px] border-black flex items-center justify-center shrink-0 shadow-[3px_3px_0px_#000]">
                                 <i class="fa-brands fa-whatsapp text-xl text-black"></i>
@@ -412,17 +532,17 @@
                                     <span class="font-cyber font-extrabold text-sm text-black uppercase">Channel WhatsApp</span>
                                     <span class="bg-neoYellow border border-black text-[9px] font-black px-1.5 py-0.5">RESMI</span>
                                 </div>
-                                <p class="text-[11px] font-bold text-slate-700 mt-0.5 truncate">Info stok, promo kilat & status maintenance</p>
+                                <p class="text-[11px] font-bold text-slate-700 mt-0.5 truncate">Info stok, promo kilat &amp; status maintenance</p>
                             </div>
                         </div>
                         <span class="bg-white border-2 border-black px-2.5 py-1.5 font-cyber font-black text-xs shrink-0 shadow-[2px_2px_0px_#000]">
                             IKUTI <i class="fa-solid fa-arrow-up-right-from-square ml-0.5"></i>
                         </span>
-                    </a>
+                    </button>
 
-                    <!-- Channel Telegram -->
-                    <a href="https://t.me/information_arulz" target="_blank" rel="noopener" onclick="triggerHaptic('light')"
-                        class="neo-btn-rect bg-neoCyan/25 hover:bg-neoCyan/45 p-4 flex items-center justify-between gap-3 block">
+                    <!-- Channel Telegram (Tetap di dalam Telegram App) -->
+                    <button type="button" onclick="openExternalInMiniApp('https://t.me/information_arulz', true)"
+                        class="w-full text-left neo-btn-rect bg-neoCyan/25 hover:bg-neoCyan/45 p-4 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3 min-w-0">
                             <div class="w-11 h-11 bg-neoCyan border-[2.5px] border-black flex items-center justify-center shrink-0 shadow-[3px_3px_0px_#000]">
                                 <i class="fa-brands fa-telegram text-xl text-black"></i>
@@ -432,13 +552,13 @@
                                     <span class="font-cyber font-extrabold text-sm text-black uppercase">Channel Telegram</span>
                                     <span class="bg-neoPurple border border-black text-[9px] font-black px-1.5 py-0.5">UPDATE</span>
                                 </div>
-                                <p class="text-[11px] font-bold text-slate-700 mt-0.5 truncate">Update bot otomatis, giveaway & pengumuman</p>
+                                <p class="text-[11px] font-bold text-slate-700 mt-0.5 truncate">Update bot otomatis, giveaway &amp; pengumuman</p>
                             </div>
                         </div>
                         <span class="bg-white border-2 border-black px-2.5 py-1.5 font-cyber font-black text-xs shrink-0 shadow-[2px_2px_0px_#000]">
                             JOIN <i class="fa-solid fa-arrow-up-right-from-square ml-0.5"></i>
                         </span>
-                    </a>
+                    </button>
                 </div>
 
                 <!-- Tombol Ulangi Tutorial Langsung -->
@@ -471,7 +591,7 @@
 
         <div class="p-4 space-y-3">
             <div>
-                <h3 id="liveTourTitle" class="font-cyber font-extrabold text-base text-black">1. Cek Identitas & Status Akun</h3>
+                <h3 id="liveTourTitle" class="font-cyber font-extrabold text-base text-black">1. Cek Identitas &amp; Status Akun</h3>
                 <p id="liveTourDesc" class="text-xs font-bold text-slate-700 mt-1 leading-relaxed">
                     Di kartu ini Anda dapat melihat akun ArulzXD Store yang terhubung beserta status tautan Telegram saat ini.
                 </p>
@@ -494,13 +614,24 @@
     <script>
         const tg = window.Telegram?.WebApp;
         let pollTimer = null;
+        let currentMiniState = {
+            loggedIn: false,
+            user: null,
+            telegramLinked: false,
+            telegramNotifEnabled: true,
+            emailNotifEnabled: true,
+            isTelegramOnlyAccount: false
+        };
 
-        // Inisialisasi Telegram WebApp
+        // Inisialisasi Telegram WebApp agar tetap fullscreen & nyaman di dalam Telegram
         if (tg) {
             tg.ready();
             tg.expand();
-            tg.setHeaderColor('#FFDF4F');
-            tg.setBackgroundColor('#FAF9F2');
+            try {
+                tg.setHeaderColor('#FFDF4F');
+                tg.setBackgroundColor('#FAF9F2');
+                if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
+            } catch (_) {}
         }
 
         function triggerHaptic(type = 'medium') {
@@ -515,16 +646,40 @@
             } catch (_) {}
         }
 
+        function scrollToTopMiniApp() {
+            triggerHaptic('light');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openExternalInMiniApp(url, isTelegramUrl = false) {
+            triggerHaptic('light');
+            if (isTelegramUrl && tg?.openTelegramLink) {
+                tg.openTelegramLink(url);
+            } else if (tg?.openLink) {
+                tg.openLink(url, { try_instant_view: false });
+            } else {
+                window.open(url, '_blank', 'noopener');
+            }
+        }
+
+        function getActiveTelegramUser() {
+            return tg?.initDataUnsafe?.user || null;
+        }
+
         function getApiHeaders() {
             const headers = { 'Content-Type': 'application/json' };
             if (tg?.initData) {
                 headers['X-Telegram-Init-Data'] = tg.initData;
             }
+            const activeTg = getActiveTelegramUser();
+            if (activeTg?.id) {
+                headers['X-Telegram-User-Id'] = String(activeTg.id);
+            }
             return headers;
         }
 
         /* =========================================================
-           1. DATA & RENDER ANIMASI CAROUSEL PANDUAN (IDENTIK DEPOSIT.HTML)
+           1. DATA & RENDER ANIMASI CAROUSEL PANDUAN
            ========================================================= */
         let currentTutorialStep = 0;
         let tutorialTimer = null;
@@ -533,7 +688,7 @@
         const MINIAPP_TUTORIAL_STEPS = [
             {
                 title: 'Tautkan Bot Telegram',
-                desc: 'Tekan tombol Tautkan Notifikasi Telegram, lalu tekan tombol START di ruang obrolan bot.',
+                desc: 'Login ke akun Store lalu tekan Tautkan Notifikasi Telegram & klik START di chat bot.',
                 renderAnim: () => `
                     <div class="gpu-layer anim-link-pulse relative flex items-center justify-center">
                         <svg class="w-16 h-16" viewBox="0 0 64 64" fill="none">
@@ -547,8 +702,8 @@
                 `
             },
             {
-                title: 'Atur Switch Notifikasi',
-                desc: 'Nyalakan atau matikan pengiriman notifikasi real-time kapan saja lewat sakelar di bawah.',
+                title: 'Atur Switch Email & Telegram',
+                desc: 'Nyalakan atau matikan notifikasi Email dan Bot Telegram secara terpisah lewat sakelar di bawah.',
                 renderAnim: () => `
                     <div class="gpu-layer anim-smooth-float relative flex items-center justify-center">
                         <svg class="w-16 h-16" viewBox="0 0 64 64" fill="none">
@@ -561,8 +716,8 @@
                 `
             },
             {
-                title: 'Terima Alert Instan di Bot',
-                desc: 'Info deposit masuk, status transaksi, hingga pengumuman admin otomatis dikirim ke chat Anda.',
+                title: 'Terima Alert Instan di Bot & Email',
+                desc: 'Info deposit masuk, status transaksi, hingga pengumuman admin otomatis dikirim ke chat & email.',
                 renderAnim: () => `
                     <div class="relative flex items-center justify-center">
                         <span class="gpu-layer anim-soft-halo absolute w-14 h-14 bg-neoYellow border-2 border-black"></span>
@@ -671,18 +826,18 @@
         const LIVE_TOUR_STEPS = [
             {
                 targetId: 'tour-card-profile',
-                title: '1. Identitas & Status Sinkronisasi',
-                desc: 'Kartu ini menampilkan profil akun ArulzXD Store Anda serta badge apakah bot Telegram sudah tertaut dan aktif.'
+                title: '1. Identitas & Sesi Telegram Terisolasi',
+                desc: 'Kartu ini otomatis mendeteksi akun Telegram yang sedang aktif agar tidak tertukar dengan akun Telegram lain.'
             },
             {
                 targetId: 'tour-card-link',
                 title: '2. Tautkan / Putuskan Tautan Bot',
-                desc: 'Klik tombol Tautkan Notifikasi Telegram untuk membuka bot & tekan START. Jika ingin melepas koneksi, klik Putuskan Tautan.'
+                desc: 'Klik tombol Tautkan Notifikasi Telegram untuk membuka bot & tekan START. Anda juga dapat melepas tautan kapan saja.'
             },
             {
                 targetId: 'tour-card-toggle',
-                title: '3. Sakelar Aktif / Nonaktif Notifikasi',
-                desc: 'Gunakan sakelar ini untuk mengaktifkan atau menjeda seluruh notifikasi otomatis yang dikirim bot ke chat Anda.'
+                title: '3. Sakelar Notifikasi Email & Telegram',
+                desc: 'Atur pengiriman notifikasi Email dan Bot Telegram secara terpisah sesuai kebutuhan Anda.'
             },
             {
                 targetId: 'tour-card-channels',
@@ -746,7 +901,7 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'Tutorial Selesai!',
-                    text: 'Anda siap menautkan dan mengelola notifikasi Bot Telegram.',
+                    text: 'Anda siap mengelola notifikasi Bot Telegram & Email.',
                     confirmButtonText: 'MANTAP',
                     customClass: { popup: 'cyber-swal' }
                 });
@@ -768,65 +923,304 @@
         }
 
         /* =========================================================
-           3. LOGIKA SINKRONISASI BACKEND (TAUTKAN, PUTUSKAN, TOGGLE)
+           3. LOGIN OAUTH, EMAIL+PASSWORD & LOGOUT DI DALAM MINI APP
            ========================================================= */
-        function renderUserState({ loggedIn, user }) {
-            const tgUser = tg?.initDataUnsafe?.user;
+        function toggleMiniPassword() {
+            const input = document.getElementById('miniLoginPassword');
+            const icon = document.getElementById('miniPassEyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        }
+
+        function openMiniAppAuthModal() {
+            triggerHaptic('light');
+            const loginBanner = document.getElementById('miniAppLoginBanner');
+            loginBanner.classList.remove('hidden');
+            loginBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            document.getElementById('miniLoginIdentity')?.focus();
+        }
+
+        function startMiniAppOAuth(provider) {
+            triggerHaptic('medium');
+            // Navigasi langsung di WebView Mini App dengan parameter returnTo=/miniapp
+            window.location.href = `/auth/${encodeURIComponent(provider)}?returnTo=${encodeURIComponent('/miniapp')}`;
+        }
+
+        async function handleMiniAppEmailLogin(e) {
+            e.preventDefault();
+            triggerHaptic('medium');
+
+            const identity = document.getElementById('miniLoginIdentity').value.trim();
+            const password = document.getElementById('miniLoginPassword').value;
+            const btn = document.getElementById('btnMiniEmailLogin');
+
+            if (!identity || !password) return;
+
+            btn.disabled = true;
+            const oldHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Masuk...';
+
+            try {
+                const res = await fetch('/api/miniapp/login', {
+                    method: 'POST',
+                    headers: getApiHeaders(),
+                    body: JSON.stringify({ username: identity, password })
+                });
+                const data = await res.json();
+
+                if (!data.status) {
+                    triggerHaptic('error');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal Masuk',
+                        text: data.message || 'Username/Email atau kata sandi salah.',
+                        customClass: { popup: 'cyber-swal' }
+                    });
+                    return;
+                }
+
+                triggerHaptic('success');
+                document.getElementById('miniLoginPassword').value = '';
+                await loadUserStatus();
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Berhasil masuk ke akun!',
+                    showConfirmButton: false,
+                    timer: 1800,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } catch (_) {
+                triggerHaptic('error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Koneksi Gagal',
+                    text: 'Tidak dapat menghubungi server.',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = oldHtml;
+            }
+        }
+
+        async function handleMiniAppLogout() {
+            triggerHaptic('medium');
+            const confirmRes = await Swal.fire({
+                icon: 'question',
+                title: 'Keluar dari Akun?',
+                text: 'Sesi akun Store di Mini App ini akan ditutup agar Anda bisa masuk ke akun lain.',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Keluar',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#FF4D6D',
+                customClass: { popup: 'cyber-swal' }
+            });
+
+            if (!confirmRes.isConfirmed) return;
+
+            try {
+                await fetch('/api/miniapp/logout', {
+                    method: 'POST',
+                    headers: getApiHeaders()
+                });
+                triggerHaptic('success');
+                await loadUserStatus();
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Berhasil keluar dari akun.',
+                    showConfirmButton: false,
+                    timer: 1600,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } catch (_) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal Keluar',
+                    text: 'Terjadi kesalahan jaringan.',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
+        }
+
+        /* =========================================================
+           4. RENDER STATUS AKUN & PREFERENSI NOTIFIKASI (TG + EMAIL)
+           ========================================================= */
+        function renderNotificationSwitches(user) {
+            const emailBtn = document.getElementById('toggleEmailNotifBtn');
+            const emailKnob = document.getElementById('toggleEmailNotifKnob');
+            const emailBadge = document.getElementById('emailNotifStateBadge');
+            const emailDesc = document.getElementById('emailNotifDesc');
+
+            const tgBtn = document.getElementById('toggleTelegramNotifBtn');
+            const tgKnob = document.getElementById('toggleTelegramNotifKnob');
+            const tgBadge = document.getElementById('tgNotifStateBadge');
+            const tgDesc = document.getElementById('tgNotifDesc');
+
+            if (!user) {
+                emailBtn.disabled = true;
+                emailBtn.classList.remove('active');
+                emailKnob.innerText = 'OFF';
+                emailBadge.innerText = 'OFF';
+                emailBadge.className = 'text-[10px] font-cyber font-extrabold bg-slate-200 border border-black px-2 py-0.5 uppercase';
+
+                tgBtn.disabled = true;
+                tgBtn.classList.remove('active');
+                tgKnob.innerText = 'OFF';
+                tgBadge.innerText = 'OFF';
+                tgBadge.className = 'text-[10px] font-cyber font-extrabold bg-slate-200 border border-black px-2 py-0.5 uppercase';
+                return;
+            }
+
+            const isTgPseudoEmail = !user.email || user.email.endsWith('@telegram.user');
+            const emailEnabled = !isTgPseudoEmail && (user.emailNotifEnabled !== false);
+            const isTgLinked = Boolean(user.telegramLinked && user.telegramChatId);
+            const tgEnabled = isTgLinked && (user.telegramNotifEnabled !== false);
+
+            currentMiniState.telegramLinked = isTgLinked;
+            currentMiniState.telegramNotifEnabled = user.telegramNotifEnabled !== false;
+            currentMiniState.emailNotifEnabled = emailEnabled;
+            currentMiniState.isTelegramOnlyAccount = isTgPseudoEmail;
+
+            // Email Toggle UI
+            if (isTgPseudoEmail) {
+                emailBtn.disabled = true;
+                emailBtn.classList.remove('active');
+                emailKnob.innerText = 'OFF';
+                emailBadge.innerText = 'TIDAK TERSEDIA';
+                emailBadge.className = 'text-[10px] font-cyber font-extrabold bg-slate-200 border border-black px-2 py-0.5 uppercase';
+                emailDesc.innerText = 'Akun login via Telegram tidak memiliki alamat email aktif.';
+            } else {
+                emailBtn.disabled = false;
+                emailDesc.innerText = 'Kirim pemberitahuan promo, transaksi, dan pengumuman resmi ke alamat Email Anda.';
+                if (emailEnabled) {
+                    emailBtn.classList.add('active');
+                    emailKnob.innerText = 'ON';
+                    emailBadge.innerText = 'ON';
+                    emailBadge.className = 'text-[10px] font-cyber font-extrabold bg-neoGreen border border-black px-2 py-0.5 uppercase';
+                } else {
+                    emailBtn.classList.remove('active');
+                    emailKnob.innerText = 'OFF';
+                    emailBadge.innerText = 'OFF';
+                    emailBadge.className = 'text-[10px] font-cyber font-extrabold bg-neoPink text-white border border-black px-2 py-0.5 uppercase';
+                }
+            }
+
+            // Telegram Toggle UI
+            if (!isTgLinked) {
+                tgBtn.disabled = true;
+                tgBtn.classList.remove('active');
+                tgKnob.innerText = 'OFF';
+                tgBadge.innerText = 'BELUM TERTAUT';
+                tgBadge.className = 'text-[10px] font-cyber font-extrabold bg-neoYellow border border-black px-2 py-0.5 uppercase';
+                tgDesc.innerText = 'Tautkan akun Telegram terlebih dahulu di langkah 1 untuk mengaktifkan notifikasi bot.';
+            } else {
+                tgBtn.disabled = false;
+                tgDesc.innerText = 'Terima info deposit, status pesanan, promo & pengumuman penting di private chat bot.';
+                if (tgEnabled) {
+                    tgBtn.classList.add('active');
+                    tgKnob.innerText = 'ON';
+                    tgBadge.innerText = 'ON';
+                    tgBadge.className = 'text-[10px] font-cyber font-extrabold bg-neoGreen border border-black px-2 py-0.5 uppercase';
+                } else {
+                    tgBtn.classList.remove('active');
+                    tgKnob.innerText = 'OFF';
+                    tgBadge.innerText = 'OFF';
+                    tgBadge.className = 'text-[10px] font-cyber font-extrabold bg-neoPink text-white border border-black px-2 py-0.5 uppercase';
+                }
+            }
+        }
+
+        function renderUserState({ loggedIn, user, telegramViewer }) {
+            const tgUser = telegramViewer || getActiveTelegramUser();
             const avatarEl = document.getElementById('userAvatar');
             const nameEl = document.getElementById('userName');
             const emailEl = document.getElementById('userEmail');
             const statusBadge = document.getElementById('statusBadge');
             const notifBadge = document.getElementById('notifBadge');
+            const methodBadge = document.getElementById('loginMethodBadge');
+            const activeViewerLabel = document.getElementById('activeTgViewerLabel');
             const linkHeadline = document.getElementById('linkHeadline');
             const linkSubtext = document.getElementById('linkSubtext');
             const linkIconBox = document.getElementById('linkStatusIconBox');
             const btnLink = document.getElementById('btnLinkTg');
             const btnUnlink = document.getElementById('btnUnlinkTg');
-            const toggleInput = document.getElementById('notifToggle');
+            const btnLogout = document.getElementById('btnHeaderLogout');
+            const loginBanner = document.getElementById('miniAppLoginBanner');
+
+            currentMiniState.loggedIn = Boolean(loggedIn && user);
+            currentMiniState.user = user || null;
+
+            if (tgUser?.id) {
+                const tgHandle = tgUser.username ? `@${tgUser.username}` : (tgUser.first_name || 'User');
+                activeViewerLabel.innerText = `Sesi TG: ${tgHandle} (${tgUser.id})`;
+            } else {
+                activeViewerLabel.innerText = 'Sesi TG: Mode Web Browser';
+            }
 
             if (!loggedIn || !user) {
                 nameEl.innerText = tgUser ? (tgUser.first_name || 'Pengguna Telegram') : 'Belum Login';
-                emailEl.innerText = tgUser?.username ? `@${tgUser.username}` : 'Login di ArulzXD Store untuk menautkan';
+                emailEl.innerText = tgUser?.username ? `@${tgUser.username} (ID: ${tgUser.id})` : 'Masuk akun Store di bawah untuk menautkan';
                 if (tgUser?.photo_url) avatarEl.src = tgUser.photo_url;
+                else avatarEl.src = 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png';
 
+                methodBadge.innerText = 'GUEST';
                 statusBadge.className = 'bg-neoPink text-white border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase';
                 statusBadge.innerText = 'BELUM LOGIN';
-                notifBadge.innerText = 'NOTIF: MATI';
+                notifBadge.className = 'bg-neoYellow text-black border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase';
+                notifBadge.innerText = 'TG: OFF | EMAIL: OFF';
 
                 linkHeadline.innerText = 'Akun Store Belum Terhubung';
-                linkSubtext.innerText = 'Login akun web lalu tautkan ke Bot Telegram';
+                linkSubtext.innerText = 'Login akun Store dulu lalu tautkan ke Bot Telegram';
                 linkIconBox.className = 'w-11 h-11 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]';
                 linkIconBox.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-lg text-black"></i>';
 
                 btnLink.style.display = 'flex';
                 btnUnlink.style.display = 'none';
-                toggleInput.checked = false;
-                toggleInput.disabled = true;
+                btnLogout.style.display = 'none';
+                loginBanner.classList.remove('hidden');
+
+                renderNotificationSwitches(null);
                 return;
             }
+
+            // User sudah login & tervalidasi cocok dengan sesi Telegram aktif
+            loginBanner.classList.add('hidden');
+            btnLogout.style.display = 'flex';
 
             nameEl.innerText = user.username || user.name || 'Member Store';
             emailEl.innerText = user.email;
             if (user.avatar) avatarEl.src = user.avatar;
 
-            const isLinked = Boolean(user.telegramLinked);
-            const isNotifOn = isLinked && user.telegramNotifEnabled !== false;
+            const providerUpper = String(user.provider || 'local').toUpperCase();
+            methodBadge.innerText = providerUpper === 'LOCAL' ? 'EMAIL' : providerUpper;
+
+            const isLinked = Boolean(user.telegramLinked && user.telegramChatId);
+            const isTgNotifOn = isLinked && user.telegramNotifEnabled !== false;
+            const isTgPseudoEmail = !user.email || user.email.endsWith('@telegram.user');
+            const isEmailNotifOn = !isTgPseudoEmail && user.emailNotifEnabled !== false;
 
             if (isLinked) {
                 statusBadge.className = 'bg-neoGreen text-black border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase';
                 statusBadge.innerText = 'TERTAUT ✓';
 
                 linkHeadline.innerText = user.telegramUsername
-                    ? `Terhubung ke @${user.telegramUsername}`
+                    ? `Terhubung ke @${String(user.telegramUsername).replace(/^@/, '')}`
                     : 'Terhubung ke Bot Telegram';
-                linkSubtext.innerText = `Chat ID: ${user.telegramChatId || '-'}`;
+                linkSubtext.innerText = `Chat ID: ${user.telegramChatId}`;
                 linkIconBox.className = 'w-11 h-11 bg-neoGreen border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_#000]';
                 linkIconBox.innerHTML = '<i class="fa-solid fa-check text-lg text-black"></i>';
 
                 btnLink.style.display = 'none';
                 btnUnlink.style.display = 'flex';
-                toggleInput.disabled = false;
-                toggleInput.checked = isNotifOn;
             } else {
                 statusBadge.className = 'bg-neoPink text-white border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase';
                 statusBadge.innerText = 'BELUM TERTAUT';
@@ -838,19 +1232,22 @@
 
                 btnLink.style.display = 'flex';
                 btnUnlink.style.display = 'none';
-                toggleInput.checked = false;
-                toggleInput.disabled = true;
             }
 
-            notifBadge.innerText = isNotifOn ? 'NOTIF: AKTIF' : 'NOTIF: MATI';
-            notifBadge.className = isNotifOn
+            notifBadge.innerText = `TG: ${isTgNotifOn ? 'ON' : 'OFF'} | EMAIL: ${isEmailNotifOn ? 'ON' : 'OFF'}`;
+            notifBadge.className = (isTgNotifOn || isEmailNotifOn)
                 ? 'bg-neoCyan text-black border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase'
                 : 'bg-neoYellow text-black border-2 border-black text-[10px] font-cyber font-black px-2 py-0.5 uppercase';
+
+            renderNotificationSwitches(user);
         }
 
         async function loadUserStatus() {
             try {
-                const res = await fetch('/api/user-status', { headers: getApiHeaders() });
+                const res = await fetch('/api/user-status', {
+                    headers: getApiHeaders(),
+                    cache: 'no-store'
+                });
                 const data = await res.json();
                 renderUserState(data);
             } catch (_) {
@@ -858,9 +1255,89 @@
             }
         }
 
+        // Toggle Notifikasi Email atau Telegram (Identik profile.html)
+        async function toggleNotificationPref(channel) {
+            triggerHaptic('light');
+
+            if (!currentMiniState.loggedIn) {
+                openMiniAppAuthModal();
+                return;
+            }
+
+            if (channel === 'telegram' && !currentMiniState.telegramLinked) {
+                return Swal.fire({
+                    icon: 'info',
+                    title: 'BELUM TERTAUT',
+                    text: 'Tautkan akun Telegram Anda terlebih dahulu di langkah 1.',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
+
+            if (channel === 'email' && currentMiniState.isTelegramOnlyAccount) {
+                return;
+            }
+
+            const targetBtn = document.getElementById(channel === 'telegram' ? 'toggleTelegramNotifBtn' : 'toggleEmailNotifBtn');
+            const nextState = channel === 'telegram'
+                ? !currentMiniState.telegramNotifEnabled
+                : !currentMiniState.emailNotifEnabled;
+
+            targetBtn.disabled = true;
+
+            try {
+                const payload = channel === 'telegram'
+                    ? { telegramNotifEnabled: nextState }
+                    : { emailNotifEnabled: nextState };
+
+                const res = await fetch('/api/user/notif-preferences', {
+                    method: 'POST',
+                    headers: getApiHeaders(),
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (!data.status) {
+                    throw new Error(data.message || 'Gagal memperbarui pengaturan notifikasi.');
+                }
+
+                triggerHaptic('success');
+                await loadUserStatus();
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: data.message,
+                    showConfirmButton: false,
+                    timer: 1800,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } catch (err) {
+                triggerHaptic('error');
+                targetBtn.disabled = false;
+                Swal.fire({
+                    icon: 'error',
+                    title: 'GAGAL',
+                    text: err.message || 'Terjadi kesalahan saat menyimpan pengaturan.',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
+        }
+
         // Tautkan Bot Telegram
         async function handleLinkTelegram() {
             triggerHaptic('medium');
+            if (!currentMiniState.loggedIn) {
+                openMiniAppAuthModal();
+                return Swal.fire({
+                    icon: 'warning',
+                    title: 'Perlu Login Akun',
+                    text: 'Silakan masuk menggunakan Email & Password atau OAuth di formulir atas terlebih dahulu.',
+                    confirmButtonText: 'MENGERTI',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
+
             const btn = document.getElementById('btnLinkTg');
             btn.disabled = true;
 
@@ -881,16 +1358,13 @@
 
                 if (!data.status) {
                     triggerHaptic('error');
+                    if (res.status === 401) openMiniAppAuthModal();
                     return Swal.fire({
                         icon: 'warning',
                         title: 'Perlu Login Akun',
                         text: data.message || 'Silakan login ke ArulzXD Store terlebih dahulu.',
-                        confirmButtonText: 'LOGIN SEKARANG',
+                        confirmButtonText: 'OK',
                         customClass: { popup: 'cyber-swal' }
-                    }).then((r) => {
-                        if (r.isConfirmed && res.status === 401) {
-                            window.location.href = '/login';
-                        }
                     });
                 }
 
@@ -903,7 +1377,7 @@
                 Swal.fire({
                     icon: 'info',
                     title: 'Tekan START di Bot!',
-                    text: 'Bot Telegram telah dibuka. Tekan tombol START di ruang obrolan bot untuk menyelesaikan penautan.',
+                    text: 'Bot Telegram telah dibuka di dalam Telegram. Tekan tombol START untuk menyelesaikan penautan.',
                     confirmButtonText: 'SAYA SUDAH START',
                     customClass: { popup: 'cyber-swal' }
                 });
@@ -997,56 +1471,12 @@
             }
         }
 
-        // Aktifkan / Nonaktifkan Notifikasi
-        async function handleToggleNotification(enabled) {
-            triggerHaptic('light');
-            const toggle = document.getElementById('notifToggle');
-            toggle.disabled = true;
-
-            try {
-                const res = await fetch('/api/user/telegram-notif-toggle', {
-                    method: 'POST',
-                    headers: getApiHeaders(),
-                    body: JSON.stringify({ enabled })
-                });
-                const data = await res.json();
-
-                if (data.status) {
-                    triggerHaptic('success');
-                    await loadUserStatus();
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'success',
-                        title: enabled ? 'Notifikasi Diaktifkan!' : 'Notifikasi Dinonaktifkan!',
-                        showConfirmButton: false,
-                        timer: 1800,
-                        customClass: { popup: 'cyber-swal' }
-                    });
-                } else {
-                    toggle.checked = !enabled;
-                    triggerHaptic('error');
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal',
-                        text: data.message || 'Gagal mengubah pengaturan notifikasi.',
-                        customClass: { popup: 'cyber-swal' }
-                    });
-                }
-            } catch (_) {
-                toggle.checked = !enabled;
-            } finally {
-                toggle.disabled = false;
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             renderTutorialSlide('right');
             startTutorialAutoSlide();
             initTutorialTouchSwipe();
             loadUserStatus();
 
-            // Otomatis jalankan Tutorial Langsung saat pengguna pertama kali membuka Mini App
             try {
                 if (!localStorage.getItem('arulz_miniapp_tour_done')) {
                     setTimeout(() => startLiveTutorial(), 650);
