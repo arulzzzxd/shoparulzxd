@@ -973,23 +973,50 @@ Pilih tindakan di bawah ini atau cek melalui Web Admin:
 }
 
 // Helper verifikasi initData dari Telegram WebApp
-function verifyTelegramWebAppUser(initData) {
-    if (!initData || !TELEGRAM_BOT_TOKEN) return null;
+function verifyTelegramWebAppUser(rawInitData) {
     try {
-        const params = new URLSearchParams(initData);
+        if (!rawInitData || typeof rawInitData !== 'string') return null;
+        const botToken = process.env.TELEGRAM_BOT_TOKEN;
+        if (!botToken) return null;
+
+        const params = new URLSearchParams(rawInitData);
         const hash = params.get('hash');
-        params.delete('hash');
-        const dataCheckString = Array.from(params.entries())
-            .sort(([a], [b]) => a.localeCompare(b))
-            .map(([k, v]) => `${k}=${v}`)
-            .join('\n');
-        const secretKey = crypto.createHmac('sha256', 'WebAppData').update(TELEGRAM_BOT_TOKEN).digest();
-        const computedHash = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
+        if (!hash) return null;
+
+        const dataCheckArr = [];
+        for (const [key, val] of params.entries()) {
+            if (key !== 'hash') {
+                dataCheckArr.push(`${key}=${val}`);
+            }
+        }
+        dataCheckArr.sort();
+        const dataCheckString = dataCheckArr.join('\n');
+
+        const secretKey = crypto
+            .createHmac('sha256', 'WebAppData')
+            .update(botToken)
+            .digest();
+
+        const computedHash = crypto
+            .createHmac('sha256', secretKey)
+            .update(dataCheckString)
+            .digest('hex');
+
         if (computedHash !== hash) return null;
-        return JSON.parse(params.get('user') || 'null');
+
+        const userStr = params.get('user');
+        if (!userStr) return null;
+        return JSON.parse(userStr);
     } catch {
         return null;
     }
+}
+
+function sanitizeReturnTo(rawUrl, fallback = '/dashboard') {
+    if (!rawUrl || typeof rawUrl !== 'string') return fallback;
+    const trimmed = rawUrl.trim();
+    if (!trimmed.startsWith('/') || trimmed.startsWith('//')) return fallback;
+    return trimmed;
 }
 
 async function approveDepositQrisV2(orderId, adminSource = 'Web Admin') {
@@ -1844,21 +1871,75 @@ app.use(session({
     cookie: { maxAge: 24 * 60 * 60 * 1000 } 
 }));
 
-const checkAuthSession = (req, res, next) => {
-    const token = req.cookies.auth_session;
-    if (!token) {
-        req.user = null;
-        return next();
+const checkAuthSession = async (req, res, next) => {
+    const rawInitData = req.headers['x-telegram-init-data'];
+    const verifiedTgUser = rawInitData ? verifyTelegramWebAppUser(rawInitData) : null;
+    req.telegramUser = verifiedTgUser;
+
+    const token = req.cookies?.auth_session;
+    let decodedUser = null;
+
+    if (token) {
+        try {
+            decodedUser = jwt.verify(token, JWT_SECRET);
+        } catch {
+            res.clearCookie('auth_session');
+        }
     }
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        req.user = decoded; 
-        next();
-    } catch (err) {
-        res.clearCookie('auth_session');
-        req.user = null;
-        next();
+
+    // Jika diakses dari dalam Telegram Mini App dengan initData valid:
+    if (verifiedTgUser?.id) {
+        const activeTgId = String(verifiedTgUser.id);
+        await connectDB();
+
+        // 1. Jika cookie saat ini milik akun Store yang tertaut ke ID Telegram BERBEDA,
+        //    hapus sesi lama agar akun Telegram berbeda tidak pernah berbagi akun Store yang sama.
+        if (decodedUser?.id) {
+            const cookieDbUser = await UserV2.findById(decodedUser.id)
+                .select('telegramChatId provider providerId')
+                .lean();
+
+            const boundTgId = cookieDbUser?.telegramChatId
+                || (cookieDbUser?.provider === 'telegram' ? cookieDbUser?.providerId : null);
+
+            if (boundTgId && String(boundTgId) !== activeTgId) {
+                res.clearCookie('auth_session');
+                decodedUser = null;
+            }
+        }
+
+        // 2. Jika belum ada sesi aktif di WebView ini, otomatis login jika akun Telegram aktif
+        //    sudah tertaut ke salah satu akun Store di database.
+        if (!decodedUser) {
+            const linkedUser = await UserV2.findOne({
+                $or: [
+                    { telegramChatId: activeTgId },
+                    { provider: 'telegram', providerId: activeTgId }
+                ]
+            }).lean();
+
+            if (linkedUser) {
+                decodedUser = {
+                    id: linkedUser._id,
+                    username: linkedUser.username,
+                    email: linkedUser.email,
+                    name: linkedUser.username,
+                    avatar: linkedUser.avatar,
+                    createdAt: linkedUser.createdAt
+                };
+                const freshToken = jwt.sign(decodedUser, JWT_SECRET, { expiresIn: '7d' });
+                res.cookie('auth_session', freshToken, {
+                    maxAge: 7 * 24 * 60 * 60 * 1000,
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: 'lax'
+                });
+            }
+        }
     }
+
+    req.user = decodedUser;
+    next();
 };
 
 app.use(checkAuthSession);
@@ -3832,6 +3913,16 @@ app.get('/auth/telegram', (req, res) => {
         });
     }
 
+    const returnTo = sanitizeReturnTo(req.query.returnTo, '');
+    if (returnTo) {
+        res.cookie('oauth_return_to', returnTo, {
+            maxAge: 10 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax'
+        });
+    }
+
     const state = crypto.randomBytes(32).toString('hex');
     const nonce = crypto.randomBytes(32).toString('hex');
     const verifier = crypto.randomBytes(48).toString('base64url');
@@ -3861,9 +3952,11 @@ app.get('/auth/telegram/callback', async (req, res) => {
     const nonce = req.cookies?.tg_oidc_nonce || '';
     const verifier = req.cookies?.tg_oidc_verifier || '';
     const refCodeFromCookie = req.cookies?.pending_ref || null;
+    const returnTo = sanitizeReturnTo(req.cookies?.oauth_return_to, '');
     res.clearCookie('tg_oidc_state', clearOptions);
     res.clearCookie('tg_oidc_nonce', clearOptions);
     res.clearCookie('tg_oidc_verifier', clearOptions);
+    res.clearCookie('oauth_return_to');
     try {
         if (!TELEGRAM_CLIENT_ID || !TELEGRAM_CLIENT_SECRET) throw new Error('Telegram Login belum dikonfigurasi.');
         if (!state || !savedState || !crypto.timingSafeEqual(Buffer.from(state), Buffer.from(savedState)) || !nonce || !verifier) {
@@ -3934,14 +4027,27 @@ app.get('/auth/telegram/callback', async (req, res) => {
                 email: `tg_${telegramId}@telegram.user`,
                 provider: 'telegram',
                 providerId: telegramId,
+                telegramChatId: telegramId,
+                telegramUsername: claims.preferred_username || null,
+                telegramLinkedAt: new Date(),
+                telegramNotifEnabled: true,
                 avatar: claims.picture || undefined,
                 saldo: initialSaldo,
                 referralCode: generateReferralCode(),
                 referredBy: inviterUser ? inviterUser.referralCode : null,
                 hasCompletedOnboarding: false
             });
-        } else if (!user.hasCompletedOnboarding) {
-            isFirstTimeLogin = true;
+        } else {
+            let dirty = false;
+            if (!user.hasCompletedOnboarding) {
+                isFirstTimeLogin = true;
+            }
+            if (!user.telegramChatId) {
+                user.telegramChatId = telegramId;
+                user.telegramLinkedAt = new Date();
+                dirty = true;
+            }
+            if (dirty) await user.save();
         }
 
         res.clearCookie('pending_ref');
@@ -3955,10 +4061,12 @@ app.get('/auth/telegram/callback', async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true,
             secure: true, sameSite: 'lax'
         });
+
+        if (returnTo) return res.redirect(returnTo);
         return res.redirect(isFirstTimeLogin ? '/store?onboarding=1' : '/dashboard');
     } catch (err) {
         console.error('Telegram OIDC login error:', err.response?.data || err.message);
-        return res.redirect('/login?error=telegram_login_failed');
+        return res.redirect(returnTo || '/login?error=telegram_login_failed');
     }
 });
 
@@ -3996,14 +4104,17 @@ app.post('/api/user/unlink-telegram', checkAuthSession, async (req, res) => {
         if (!req.user) {
             return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
         }
+
+        await connectDB();
         const userId = req.user.id || req.user._id;
         await UserV2.findByIdAndUpdate(userId, {
             $set: {
                 telegramChatId: null,
                 telegramUsername: null,
-                telegramLinkedAt: null
+                telegramNotifEnabled: false
             }
         });
+
         return res.json({ status: true, message: 'Tautan Telegram berhasil diputuskan.' });
     } catch (err) {
         return res.status(500).json({ status: false, message: 'Gagal memutuskan tautan Telegram.' });
@@ -4157,6 +4268,68 @@ app.post('/api/telegram/webhook', async (req, res) => {
     }
 });
 
+app.post('/api/miniapp/login', async (req, res) => {
+    try {
+        await connectDB();
+        const { username, password } = req.body || {};
+        if (!username || !password) {
+            return res.status(400).json({ status: false, message: 'Email/Username dan kata sandi wajib diisi!' });
+        }
+
+        const cleanInput = String(username).trim();
+        const user = await UserV2.findOne({
+            $or: [
+                { username: cleanInput },
+                { email: cleanInput.toLowerCase() }
+            ]
+        });
+
+        if (!user) {
+            return res.status(404).json({ status: false, message: 'Username atau Email tidak ditemukan.' });
+        }
+
+        if (!user.password || user.provider !== 'local') {
+            return res.status(400).json({
+                status: false,
+                message: `Akun ini terdaftar via ${String(user.provider || 'OAuth').toUpperCase()}. Gunakan tombol ${String(user.provider || 'OAuth').toUpperCase()} di bawah.`
+            });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ status: false, message: 'Kata sandi salah.' });
+        }
+
+        const userPayload = {
+            id: user._id,
+            username: user.username,
+            email: user.email,
+            name: user.username,
+            avatar: user.avatar || 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png',
+            createdAt: user.createdAt
+        };
+
+        const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '7d' });
+        res.cookie('auth_session', token, {
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax'
+        });
+
+        return res.json({ status: true, message: 'Login berhasil!' });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal memproses login.' });
+    }
+});
+
+app.post('/api/miniapp/logout', (req, res) => {
+    res.clearCookie('auth_session');
+    if (req.logout) {
+        req.logout(() => {});
+    }
+    return res.json({ status: true, message: 'Berhasil keluar dari akun.' });
+});
 
 // ============================================================
 // 9. AUTHENTICATION (PASSPORT, OTP, LOGIN, REGISTER, OAUTH)
@@ -4546,7 +4719,19 @@ app.get('/auth/logout', (req, res, next) => {
 /* OAuth GitHub */
 app.get('/auth/github', (req, res) => {
     const ref = req.query.ref ? encodeURIComponent(req.query.ref) : '';
-    const state = ref ? JSON.stringify({ ref }) : '';
+    const returnTo = sanitizeReturnTo(req.query.returnTo, '');
+    if (returnTo) {
+        res.cookie('oauth_return_to', returnTo, {
+            maxAge: 10 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax'
+        });
+    }
+    const stateObj = {};
+    if (ref) stateObj.ref = ref;
+    if (returnTo) stateObj.returnTo = returnTo;
+    const state = Object.keys(stateObj).length ? JSON.stringify(stateObj) : '';
     const url = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${GITHUB_CALLBACK_URL}&scope=user:email${state ? '&state=' + encodeURIComponent(state) : ''}`;
     res.redirect(url);
 });
@@ -4556,10 +4741,14 @@ app.get('/auth/github/callback', async (req, res) => {
     if (!code) return res.send('Authentication failed: No code provided');
 
     let refCodeFromState = req.cookies?.pending_ref || null;
+    let returnTo = sanitizeReturnTo(req.cookies?.oauth_return_to, '');
+    res.clearCookie('oauth_return_to');
+
     if (state) {
         try {
             const parsedState = JSON.parse(decodeURIComponent(state));
             if (parsedState.ref) refCodeFromState = parsedState.ref;
+            if (parsedState.returnTo) returnTo = sanitizeReturnTo(parsedState.returnTo, returnTo);
         } catch (e) {}
     }
 
@@ -4658,6 +4847,7 @@ app.get('/auth/github/callback', async (req, res) => {
             sameSite: 'lax'
         });
 
+        if (returnTo) return res.redirect(returnTo);
         return res.redirect(isFirstTimeLogin ? '/store?onboarding=1' : '/dashboard');
     } catch (error) {
         console.error(error);
@@ -4668,7 +4858,19 @@ app.get('/auth/github/callback', async (req, res) => {
 /* OAuth Google */
 app.get('/auth/google', (req, res) => {
     const ref = req.query.ref ? encodeURIComponent(req.query.ref) : '';
-    const state = ref ? JSON.stringify({ ref }) : '';
+    const returnTo = sanitizeReturnTo(req.query.returnTo, '');
+    if (returnTo) {
+        res.cookie('oauth_return_to', returnTo, {
+            maxAge: 10 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax'
+        });
+    }
+    const stateObj = {};
+    if (ref) stateObj.ref = ref;
+    if (returnTo) stateObj.returnTo = returnTo;
+    const state = Object.keys(stateObj).length ? JSON.stringify(stateObj) : '';
     const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_CALLBACK_URL}&response_type=code&scope=profile email${state ? '&state=' + encodeURIComponent(state) : ''}`;
     res.redirect(url);
 });
@@ -4678,10 +4880,14 @@ app.get('/auth/google/callback', async (req, res) => {
     if (!code) return res.send('Authentication failed: No code provided');
 
     let refCodeFromState = req.cookies?.pending_ref || null;
+    let returnTo = sanitizeReturnTo(req.cookies?.oauth_return_to, '');
+    res.clearCookie('oauth_return_to');
+
     if (state) {
         try {
             const parsedState = JSON.parse(decodeURIComponent(state));
             if (parsedState.ref) refCodeFromState = parsedState.ref;
+            if (parsedState.returnTo) returnTo = sanitizeReturnTo(parsedState.returnTo, returnTo);
         } catch (e) {}
     }
 
@@ -4774,6 +4980,7 @@ app.get('/auth/google/callback', async (req, res) => {
             sameSite: 'lax'
         });
 
+        if (returnTo) return res.redirect(returnTo);
         return res.redirect(isFirstTimeLogin ? '/store?onboarding=1' : '/dashboard');
     } catch (error) {
         console.error('Google Auth Callback Error:', error.response?.data || error.message);
@@ -5435,48 +5642,61 @@ app.post('/api/user/notif-preferences', checkAuthSession, async (req, res) => {
             return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
         }
 
-        const userDoc = await UserV2.findById(req.user.id || req.user._id);
-        if (!userDoc) {
+        await connectDB();
+        const userId = req.user.id || req.user._id;
+        const user = await UserV2.findById(userId);
+        if (!user) {
             return res.status(404).json({ status: false, message: 'Akun tidak ditemukan.' });
         }
 
-        const messages = [];
+        const updates = {};
+        let msg = 'Pengaturan notifikasi diperbarui!';
 
         if (typeof req.body.telegramNotifEnabled === 'boolean') {
-            if (req.body.telegramNotifEnabled && !userDoc.telegramChatId) {
+            if (!user.telegramChatId) {
                 return res.status(400).json({ status: false, message: 'Tautkan akun Telegram terlebih dahulu.' });
             }
-            userDoc.telegramNotifEnabled = req.body.telegramNotifEnabled;
-            messages.push(`Notifikasi Telegram ${userDoc.telegramNotifEnabled ? 'diaktifkan (ON)' : 'dinonaktifkan (OFF)'}.`);
+            updates.telegramNotifEnabled = req.body.telegramNotifEnabled;
+            msg = req.body.telegramNotifEnabled
+                ? 'Notifikasi Telegram diaktifkan!'
+                : 'Notifikasi Telegram dinonaktifkan!';
         }
 
         if (typeof req.body.emailNotifEnabled === 'boolean') {
-            if (req.body.emailNotifEnabled && (!userDoc.email || userDoc.email.endsWith('@telegram.user'))) {
-                return res.status(400).json({ status: false, message: 'Akun ini tidak memiliki email aktif.' });
-            }
-            userDoc.emailNotifEnabled = req.body.emailNotifEnabled;
-            messages.push(`Notifikasi Email ${userDoc.emailNotifEnabled ? 'diaktifkan (ON)' : 'dinonaktifkan (OFF)'}.`);
+            updates.emailNotifEnabled = req.body.emailNotifEnabled;
+            msg = req.body.emailNotifEnabled
+                ? 'Notifikasi Email diaktifkan!'
+                : 'Notifikasi Email dinonaktifkan!';
         }
 
-        await userDoc.save();
+        const updated = await UserV2.findByIdAndUpdate(
+            userId,
+            { $set: updates },
+            { returnDocument: 'after' }
+        ).lean();
 
         return res.json({
             status: true,
-            telegramNotifEnabled: userDoc.telegramNotifEnabled !== false,
-            emailNotifEnabled: userDoc.emailNotifEnabled !== false,
-            message: messages.join(' ') || 'Pengaturan notifikasi diperbarui.'
+            message: msg,
+            telegramNotifEnabled: updated.telegramNotifEnabled !== false,
+            emailNotifEnabled: updated.emailNotifEnabled !== false
         });
     } catch (err) {
-        return res.status(500).json({ status: false, message: 'Gagal memperbarui pengaturan notifikasi.' });
+        return res.status(500).json({ status: false, message: 'Gagal menyimpan preferensi notifikasi.' });
     }
 });
+app.get('/api/user-status', checkAuthSession, async (req, res) => {
+    const telegramViewer = req.telegramUser || null;
 
-app.get('/api/user-status', async (req, res) => {
     if (req.user) {
         try {
+            await connectDB();
             const activeUser = await UserV2.findById(req.user.id || req.user._id);
 
-            if (!activeUser) return res.json({ loggedIn: false });
+            if (!activeUser) {
+                res.clearCookie('auth_session');
+                return res.json({ loggedIn: false, user: null, telegramViewer });
+            }
 
             if (!activeUser.referralCode) {
                 activeUser.referralCode = generateReferralCode();
@@ -5525,8 +5745,9 @@ app.get('/api/user-status', async (req, res) => {
             const totalDeposit = deposits.length > 0 ? deposits[0].total : 0;
             const totalBelanja = purchases.length > 0 ? purchases[0].total : 0;
 
-            res.json({
+            return res.json({
                 loggedIn: true,
+                telegramViewer,
                 user: {
                     id: activeUser._id,
                     name: activeUser.username,
@@ -5551,10 +5772,10 @@ app.get('/api/user-status', async (req, res) => {
                 }
             });
         } catch (err) {
-            res.json({ loggedIn: true, user: req.user });
+            return res.json({ loggedIn: true, telegramViewer, user: req.user });
         }
     } else {
-        res.json({ loggedIn: false });
+        return res.json({ loggedIn: false, user: null, telegramViewer });
     }
 });
 
