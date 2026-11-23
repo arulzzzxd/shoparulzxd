@@ -972,46 +972,6 @@ Pilih tindakan di bawah ini atau cek melalui Web Admin:
     }
 }
 
-// Helper verifikasi initData dari Telegram WebApp
-function verifyTelegramWebAppUser(rawInitData) {
-    try {
-        if (!rawInitData || typeof rawInitData !== 'string') return null;
-        const botToken = process.env.TELEGRAM_BOT_TOKEN;
-        if (!botToken) return null;
-
-        const params = new URLSearchParams(rawInitData);
-        const hash = params.get('hash');
-        if (!hash) return null;
-
-        const dataCheckArr = [];
-        for (const [key, val] of params.entries()) {
-            if (key !== 'hash') {
-                dataCheckArr.push(`${key}=${val}`);
-            }
-        }
-        dataCheckArr.sort();
-        const dataCheckString = dataCheckArr.join('\n');
-
-        const secretKey = crypto
-            .createHmac('sha256', 'WebAppData')
-            .update(botToken)
-            .digest();
-
-        const computedHash = crypto
-            .createHmac('sha256', secretKey)
-            .update(dataCheckString)
-            .digest('hex');
-
-        if (computedHash !== hash) return null;
-
-        const userStr = params.get('user');
-        if (!userStr) return null;
-        return JSON.parse(userStr);
-    } catch {
-        return null;
-    }
-}
-
 function sanitizeReturnTo(rawUrl, fallback = '/dashboard') {
     if (!rawUrl || typeof rawUrl !== 'string') return fallback;
     const trimmed = rawUrl.trim();
@@ -1872,10 +1832,6 @@ app.use(session({
 }));
 
 const checkAuthSession = async (req, res, next) => {
-    const rawInitData = req.headers['x-telegram-init-data'];
-    const verifiedTgUser = rawInitData ? verifyTelegramWebAppUser(rawInitData) : null;
-    req.telegramUser = verifiedTgUser;
-
     const token = req.cookies?.auth_session;
     let decodedUser = null;
 
@@ -1884,57 +1840,6 @@ const checkAuthSession = async (req, res, next) => {
             decodedUser = jwt.verify(token, JWT_SECRET);
         } catch {
             res.clearCookie('auth_session');
-        }
-    }
-
-    // Jika diakses dari dalam Telegram Mini App dengan initData valid:
-    if (verifiedTgUser?.id) {
-        const activeTgId = String(verifiedTgUser.id);
-        await connectDB();
-
-        // 1. Jika cookie saat ini milik akun Store yang tertaut ke ID Telegram BERBEDA,
-        //    hapus sesi lama agar akun Telegram berbeda tidak pernah berbagi akun Store yang sama.
-        if (decodedUser?.id) {
-            const cookieDbUser = await UserV2.findById(decodedUser.id)
-                .select('telegramChatId provider providerId')
-                .lean();
-
-            const boundTgId = cookieDbUser?.telegramChatId
-                || (cookieDbUser?.provider === 'telegram' ? cookieDbUser?.providerId : null);
-
-            if (boundTgId && String(boundTgId) !== activeTgId) {
-                res.clearCookie('auth_session');
-                decodedUser = null;
-            }
-        }
-
-        // 2. Jika belum ada sesi aktif di WebView ini, otomatis login jika akun Telegram aktif
-        //    sudah tertaut ke salah satu akun Store di database.
-        if (!decodedUser) {
-            const linkedUser = await UserV2.findOne({
-                $or: [
-                    { telegramChatId: activeTgId },
-                    { provider: 'telegram', providerId: activeTgId }
-                ]
-            }).lean();
-
-            if (linkedUser) {
-                decodedUser = {
-                    id: linkedUser._id,
-                    username: linkedUser.username,
-                    email: linkedUser.email,
-                    name: linkedUser.username,
-                    avatar: linkedUser.avatar,
-                    createdAt: linkedUser.createdAt
-                };
-                const freshToken = jwt.sign(decodedUser, JWT_SECRET, { expiresIn: '7d' });
-                res.cookie('auth_session', freshToken, {
-                    maxAge: 7 * 24 * 60 * 60 * 1000,
-                    httpOnly: true,
-                    secure: true,
-                    sameSite: 'lax'
-                });
-            }
         }
     }
 
@@ -3902,17 +3807,6 @@ app.get('/auth/telegram', (req, res) => {
         return res.status(503).send('Telegram Login belum dikonfigurasi. Atur TELEGRAM_CLIENT_ID dan TELEGRAM_CLIENT_SECRET.');
     }
 
-    const rawRef = req.query.ref || req.cookies?.pending_ref || '';
-    const cleanRef = String(rawRef).trim().toUpperCase();
-    if (cleanRef) {
-        res.cookie('pending_ref', cleanRef, {
-            maxAge: 24 * 60 * 60 * 1000,
-            httpOnly: true,
-            secure: true,
-            sameSite: 'lax'
-        });
-    }
-
     const returnTo = sanitizeReturnTo(req.query.returnTo, '');
     if (returnTo) {
         res.cookie('oauth_return_to', returnTo, {
@@ -4266,69 +4160,6 @@ app.post('/api/telegram/webhook', async (req, res) => {
         console.error('Telegram Webhook Error:', error.message);
         return res.sendStatus(200);
     }
-});
-
-app.post('/api/miniapp/login', async (req, res) => {
-    try {
-        await connectDB();
-        const { username, password } = req.body || {};
-        if (!username || !password) {
-            return res.status(400).json({ status: false, message: 'Email/Username dan kata sandi wajib diisi!' });
-        }
-
-        const cleanInput = String(username).trim();
-        const user = await UserV2.findOne({
-            $or: [
-                { username: cleanInput },
-                { email: cleanInput.toLowerCase() }
-            ]
-        });
-
-        if (!user) {
-            return res.status(404).json({ status: false, message: 'Username atau Email tidak ditemukan.' });
-        }
-
-        if (!user.password || user.provider !== 'local') {
-            return res.status(400).json({
-                status: false,
-                message: `Akun ini terdaftar via ${String(user.provider || 'OAuth').toUpperCase()}. Gunakan tombol ${String(user.provider || 'OAuth').toUpperCase()} di bawah.`
-            });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ status: false, message: 'Kata sandi salah.' });
-        }
-
-        const userPayload = {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            name: user.username,
-            avatar: user.avatar || 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png',
-            createdAt: user.createdAt
-        };
-
-        const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '7d' });
-        res.cookie('auth_session', token, {
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-            httpOnly: true,
-            secure: true,
-            sameSite: 'lax'
-        });
-
-        return res.json({ status: true, message: 'Login berhasil!' });
-    } catch (err) {
-        return res.status(500).json({ status: false, message: 'Gagal memproses login.' });
-    }
-});
-
-app.post('/api/miniapp/logout', (req, res) => {
-    res.clearCookie('auth_session');
-    if (req.logout) {
-        req.logout(() => {});
-    }
-    return res.json({ status: true, message: 'Berhasil keluar dari akun.' });
 });
 
 // ============================================================
@@ -5038,10 +4869,6 @@ app.get('/privacy', (req, res) => res.sendFile(path.join(__dirname, 'public', 'p
 app.get('/notifikasi', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'notifikasi.html'));
 });
-app.get('/miniapp', (req, res) => {
-    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
-    res.sendFile(path.join(__dirname, 'public', 'miniapp.html'));
-});
 app.get('/profile', checkAuthSession, (req, res) => {
     if (!req.user) {
         return res.redirect('/login');
@@ -5604,20 +5431,13 @@ app.delete('/api/admin/notifications/:id', checkAuthSession, checkAdminRole, asy
 
 app.post('/api/user/telegram-notif-toggle', checkAuthSession, async (req, res) => {
     try {
-        let userDoc = null;
-        if (req.user) {
-            userDoc = await UserV2.findById(req.user.id || req.user._id);
-        } else {
-            const tgUser = verifyTelegramWebAppUser(req.headers['x-telegram-init-data']);
-            if (tgUser?.id) {
-                userDoc = await UserV2.findOne({
-                    $or: [{ telegramChatId: String(tgUser.id) }, { provider: 'telegram', providerId: String(tgUser.id) }]
-                });
-            }
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
         }
 
+        const userDoc = await UserV2.findById(req.user.id || req.user._id);
         if (!userDoc) {
-            return res.status(401).json({ status: false, message: 'Akun tidak ditemukan atau belum tertaut.' });
+            return res.status(404).json({ status: false, message: 'Akun tidak ditemukan.' });
         }
         if (!userDoc.telegramChatId) {
             return res.status(400).json({ status: false, message: 'Tautkan akun Telegram terlebih dahulu.' });
@@ -5686,8 +5506,6 @@ app.post('/api/user/notif-preferences', checkAuthSession, async (req, res) => {
     }
 });
 app.get('/api/user-status', checkAuthSession, async (req, res) => {
-    const telegramViewer = req.telegramUser || null;
-
     if (req.user) {
         try {
             await connectDB();
@@ -5695,7 +5513,7 @@ app.get('/api/user-status', checkAuthSession, async (req, res) => {
 
             if (!activeUser) {
                 res.clearCookie('auth_session');
-                return res.json({ loggedIn: false, user: null, telegramViewer });
+                return res.json({ loggedIn: false, user: null });
             }
 
             if (!activeUser.referralCode) {
@@ -5747,7 +5565,6 @@ app.get('/api/user-status', checkAuthSession, async (req, res) => {
 
             return res.json({
                 loggedIn: true,
-                telegramViewer,
                 user: {
                     id: activeUser._id,
                     name: activeUser.username,
@@ -5772,10 +5589,10 @@ app.get('/api/user-status', checkAuthSession, async (req, res) => {
                 }
             });
         } catch (err) {
-            return res.json({ loggedIn: true, telegramViewer, user: req.user });
+            return res.json({ loggedIn: true, user: req.user });
         }
     } else {
-        return res.json({ loggedIn: false, user: null, telegramViewer });
+        return res.json({ loggedIn: false, user: null });
     }
 });
 
