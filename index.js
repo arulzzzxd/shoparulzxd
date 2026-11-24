@@ -3919,69 +3919,72 @@ app.post('/api/admin/deposits-qrisv2/:orderId/cancel', checkAuthSession, checkAd
     }
 });
 
-app.delete('/api/admin/deposits-qrisv2/:orderId', isAuthenticated, isAdmin, async (req, res) => {
+app.delete('/api/admin/deposits-qrisv2/:orderId', checkAuthSession, checkAdminRole, async (req, res) => {
     try {
         const { orderId } = req.params;
         if (!orderId) {
-            return res.status(400).json({ success: false, message: 'Order ID tidak valid.' });
+            return res.status(400).json({ status: false, success: false, message: 'Order ID tidak valid.' });
         }
 
-        const deleted = await Transaction.findOneAndDelete({
+        const deleted = await TransactionV2.findOneAndDelete({
             orderId: orderId,
             $or: [
-                { type: 'deposit' },
+                { type: 'DEPOSIT' },
                 { paymentMethod: { $regex: /qris/i } },
-                { orderId: { $regex: /^DEP-/i } }
+                { orderId: { $regex: /^(DEP-|QRV2-|TRX-)/i } }
             ]
         });
 
-        const finalDeleted = deleted || await Transaction.findOneAndDelete({ orderId: orderId });
+        const finalDeleted = deleted || await TransactionV2.findOneAndDelete({ orderId: orderId });
 
         if (!finalDeleted) {
             return res.status(404).json({
+                status: false,
                 success: false,
                 message: `Data deposit dengan Order ID ${orderId} tidak ditemukan.`
             });
         }
 
+        await deleteCache(`trx_${orderId}`);
+
         return res.json({
+            status: true,
             success: true,
             message: `Riwayat deposit ${orderId} berhasil dihapus permanen.`
         });
     } catch (error) {
         console.error('Error DELETE /api/admin/deposits-qrisv2/:orderId:', error);
         return res.status(500).json({
+            status: false,
             success: false,
             message: 'Terjadi kesalahan server saat menghapus riwayat deposit.'
         });
     }
 });
 
-app.post('/api/admin/deposits-qrisv2/bulk-delete', isAuthenticated, isAdmin, async (req, res) => {
+app.post('/api/admin/deposits-qrisv2/bulk-delete', checkAuthSession, checkAdminRole, async (req, res) => {
     try {
         const { status } = req.body;
         const allowedStatuses = ['cancelled', 'pending', 'success', 'all'];
 
         if (!status || !allowedStatuses.includes(status)) {
             return res.status(400).json({
+                status: false,
                 success: false,
                 message: 'Kategori status penghapusan tidak valid.'
             });
         }
 
         const baseDepositFilter = {
-            $or: [
-                { type: 'deposit' },
-                { paymentMethod: { $regex: /qris/i } },
-                { orderId: { $regex: /^DEP-/i } }
-            ]
+            type: 'DEPOSIT',
+            $or: [{ qrisVersion: 'v2' }, { paymentMethod: 'QRIS V2' }]
         };
 
         const queryFilter = status === 'all'
             ? baseDepositFilter
             : { ...baseDepositFilter, status: status };
 
-        const result = await Transaction.deleteMany(queryFilter);
+        const result = await TransactionV2.deleteMany(queryFilter);
 
         const labelMap = {
             cancelled: 'Dibatalkan',
@@ -3991,6 +3994,7 @@ app.post('/api/admin/deposits-qrisv2/bulk-delete', isAuthenticated, isAdmin, asy
         };
 
         return res.json({
+            status: true,
             success: true,
             deletedCount: result.deletedCount || 0,
             message: `Berhasil menghapus ${result.deletedCount || 0} data deposit (${labelMap[status]}).`
@@ -3998,6 +4002,7 @@ app.post('/api/admin/deposits-qrisv2/bulk-delete', isAuthenticated, isAdmin, asy
     } catch (error) {
         console.error('Error POST /api/admin/deposits-qrisv2/bulk-delete:', error);
         return res.status(500).json({
+            status: false,
             success: false,
             message: 'Terjadi kesalahan server saat membersihkan riwayat deposit.'
         });
@@ -6359,7 +6364,7 @@ app.delete('/api/admin/products/:id', checkAuthSession, checkAdminRole, async (r
     }
 });
 
-app.post('/api/admin/generate-notif-ai', isAuthenticated, isAdmin, async (req, res) => {
+app.post('/api/admin/generate-notif-ai', checkAuthSession, checkAdminRole, async (req, res) => {
     try {
         const { entityType, data } = req.body || {};
         if (!entityType || !data) {
