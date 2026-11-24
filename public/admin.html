@@ -547,6 +547,11 @@
                         <textarea id="prodDescInput" required rows="3" placeholder="Jelaskan detail produk, garansi, fitur, dan cara order..." class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]"></textarea>
                     </div>
 
+                    <div>
+                        <label for="prodDownloadUrlInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Link Download / WA / TG Produk *</label>
+                        <input type="text" id="prodDownloadUrlInput" required placeholder="https://wa.me/6285122629940 atau link download file" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                    </div>
+
                     <!-- TOGGLE MODE VARIAN ALA SHOPEE -->
                     <div class="neo-box p-4 bg-neoBg space-y-3">
                         <div class="flex flex-wrap items-center justify-between gap-2">
@@ -560,7 +565,7 @@
                         </div>
 
                         <!-- FIELD PRODUK TUNGGAL (JIKA VARIAN NONAKTIF) -->
-                        <div id="singleProductPriceBlock" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t-2 border-black">
+                        <div id="singleProductPriceBlock" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t-2 border-black">
                             <div>
                                 <label for="prodPriceInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Harga Normal (Rp) *</label>
                                 <input type="number" id="prodPriceInput" min="0" placeholder="15000" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
@@ -572,10 +577,6 @@
                             <div>
                                 <label for="prodStockInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Stok Tersedia *</label>
                                 <input type="number" id="prodStockInput" min="0" value="10" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
-                            </div>
-                            <div>
-                                <label for="prodDownloadUrlInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Link Download / WA / TG</label>
-                                <input type="text" id="prodDownloadUrlInput" placeholder="https://wa.me/6285122629940" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
                             </div>
                         </div>
 
@@ -659,7 +660,7 @@
                             <label for="voucherTypeInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Tipe Diskon *</label>
                             <select id="voucherTypeInput" onchange="toggleVoucherTypeFields()" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                                 <option value="fixed">Potongan Nominal (Rp)</option>
-                                <option value="percent">Persentase (%)</option>
+                                <option value="percentage">Persentase (%)</option>
                             </select>
                         </div>
 
@@ -669,20 +670,15 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label for="voucherMinOrderInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Minimal Belanja (Rp)</label>
-                            <input type="number" id="voucherMinOrderInput" min="0" value="0" placeholder="0" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
-                        </div>
-
-                        <div id="voucherMaxDiscountGroup" class="hidden">
-                            <label for="voucherMaxDiscountInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Maksimal Potongan (Rp)</label>
-                            <input type="number" id="voucherMaxDiscountInput" min="0" value="0" placeholder="10000" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                            <label for="voucherQuotaInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kuota Pemakaian *</label>
+                            <input type="number" id="voucherQuotaInput" required min="1" value="50" placeholder="50" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                         </div>
 
                         <div>
-                            <label for="voucherQuotaInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kuota Pemakaian (0 = Unlimited)</label>
-                            <input type="number" id="voucherQuotaInput" min="0" value="50" placeholder="50" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                            <label for="voucherExpiredInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Masa Berlaku Hingga (WIB) *</label>
+                            <input type="datetime-local" id="voucherExpiredInput" required class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                         </div>
                     </div>
 
@@ -709,7 +705,7 @@
     </main>
 
     <!-- ======================================================= -->
-    <!-- BOTTOM TAB SWITCHER (5 MENU TANPA KATA-KATA V1/V2)      -->
+    <!-- BOTTOM TAB SWITCHER (5 MENU)                            -->
     <!-- ======================================================= -->
     <div class="fixed bottom-0 left-0 right-0 z-40 bg-neoBg border-t-[3px] border-black shadow-[0_-4px_0_rgba(0,0,0,0.08)]">
         <div class="max-w-6xl mx-auto px-2 sm:px-3 py-2">
@@ -752,158 +748,125 @@
         </div>
     </div>
     
-        <script>
+        <!-- ======================================================= -->
+    <!-- SCRIPT ADMIN PANEL (QRIS, CHAT, NOTIF, PRODUK, VOUCHER) -->
+    <!-- ======================================================= -->
+    <script>
         let allDepositsData = [];
-        let allNotificationsData = [];
-        let allAdminProductsData = [];
-        let allAdminVouchersData = [];
         let currentDepositFilter = 'all';
-        let selectedUserId = null;
-        let selectedUsername = '';
-        let selectedUserEmail = '';
-        let adminPollInterval = null;
-        let selectedDeliveryMode = 'broadcast';
-        let productVariantRows = [];
+        let selectedUserEmail = null;
+        let selectedUserName = '';
+        let chatPollingInterval = null;
+        let cachedUsers = [];
+        let allAdminNotifications = [];
+        let allAdminProducts = [];
+        let allAdminVouchers = [];
 
-        function setTextSafe(id, text) {
-            const el = document.getElementById(id);
-            if (el) el.innerText = text;
-            return el;
+        function formatRupiah(num) {
+            return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
         }
 
-        function formatRupiah(angka) {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka || 0);
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
-        function escapeHtml(text) {
-            if (!text) return '';
-            return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-        }
-
-        function selectDeliveryMode(mode) {
-            selectedDeliveryMode = mode === 'web_only' ? 'web_only' : 'broadcast';
-            const broadcastCard = document.getElementById('modeCardBroadcast');
-            const webOnlyCard = document.getElementById('modeCardWebOnly');
-            const headerBadge = document.getElementById('addNotifHeaderBadge');
-            const submitBtn = document.getElementById('btnSubmitAddNotif');
-
-            const radioBroadcast = document.querySelector('input[name="addNotifDeliveryMode"][value="broadcast"]');
-            const radioWebOnly = document.querySelector('input[name="addNotifDeliveryMode"][value="web_only"]');
-
-            if (selectedDeliveryMode === 'broadcast') {
-                if (radioBroadcast) radioBroadcast.checked = true;
-                if (broadcastCard) broadcastCard.classList.add('selected-broadcast');
-                if (webOnlyCard) webOnlyCard.classList.remove('selected-webonly');
-                if (headerBadge) {
-                    headerBadge.innerText = 'BROADCAST EMAIL + TELEGRAM';
-                    headerBadge.className = 'text-[10px] font-mono font-extrabold bg-neoGreen border-2 border-black px-2.5 py-0.5 uppercase shadow-[2px_2px_0px_#000]';
-                }
-                if (submitBtn) {
-                    submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span id="btnSubmitAddNotifText">Kirim Notifikasi ke Semua Email &amp; Telegram</span>';
-                }
-            } else {
-                if (radioWebOnly) radioWebOnly.checked = true;
-                if (webOnlyCard) webOnlyCard.classList.add('selected-webonly');
-                if (broadcastCard) broadcastCard.classList.remove('selected-broadcast');
-                if (headerBadge) {
-                    headerBadge.innerText = 'NOTIFIKASI WEB SAJA';
-                    headerBadge.className = 'text-[10px] font-mono font-extrabold bg-neoYellow border-2 border-black px-2.5 py-0.5 uppercase shadow-[2px_2px_0px_#000]';
-                }
-                if (submitBtn) {
-                    submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span id="btnSubmitAddNotifText">Simpan &amp; Tampilkan Notifikasi Saja</span>';
-                }
-            }
-        }
-
-        function getNotifTypeStyle(type) {
-            const t = (type || 'info').toLowerCase();
+        function getCategoryBadgeStyle(type) {
+            const t = String(type || 'info').toLowerCase();
             if (t === 'promo') return { bg: 'bg-neoYellow', icon: 'fa-tags', label: 'PROMO' };
-            if (t === 'sistem') return { bg: 'bg-neoPink', icon: 'fa-server', label: 'SISTEM' };
             if (t === 'transaksi') return { bg: 'bg-neoGreen', icon: 'fa-receipt', label: 'TRANSAKSI' };
+            if (t === 'sistem') return { bg: 'bg-neoPink text-white', icon: 'fa-gear', label: 'SISTEM' };
             return { bg: 'bg-neoCyan', icon: 'fa-circle-info', label: 'INFO' };
         }
 
-        function switchAdminTab(tab) {
-            const secDep = document.getElementById('sectionDeposits');
-            const secChat = document.getElementById('sectionChat');
-            const secNotif = document.getElementById('sectionNotifications');
-            const secProd = document.getElementById('sectionProducts');
-            const secVoucher = document.getElementById('sectionVouchers');
+        // ============================================================
+        // NAVIGASI TAB UTAMA ADMIN (5 TAB)
+        // ============================================================
+        function switchAdminTab(tabName) {
+            const sections = {
+                deposits: document.getElementById('sectionDeposits'),
+                chat: document.getElementById('sectionChat'),
+                notifications: document.getElementById('sectionNotifications'),
+                products: document.getElementById('sectionProducts'),
+                vouchers: document.getElementById('sectionVouchers')
+            };
 
-            if (secDep) secDep.classList.toggle('hidden', tab !== 'deposits');
-            if (secChat) secChat.classList.toggle('hidden', tab !== 'chat');
-            if (secNotif) secNotif.classList.toggle('hidden', tab !== 'notifications');
-            if (secProd) secProd.classList.toggle('hidden', tab !== 'products');
-            if (secVoucher) secVoucher.classList.toggle('hidden', tab !== 'vouchers');
+            const buttons = {
+                deposits: document.getElementById('tabBtnDeposits'),
+                chat: document.getElementById('tabBtnChat'),
+                notifications: document.getElementById('tabBtnNotifications'),
+                products: document.getElementById('tabBtnProducts'),
+                vouchers: document.getElementById('tabBtnVouchers')
+            };
 
-            const btnDep = document.getElementById('tabBtnDeposits');
-            const btnChat = document.getElementById('tabBtnChat');
-            const btnNotif = document.getElementById('tabBtnNotifications');
-            const btnProd = document.getElementById('tabBtnProducts');
-            const btnVoucher = document.getElementById('tabBtnVouchers');
+            Object.keys(sections).forEach(key => {
+                if (sections[key]) sections[key].classList.toggle('hidden', key !== tabName);
+                if (buttons[key]) buttons[key].classList.toggle('active', key === tabName);
+            });
 
-            if (btnDep) btnDep.classList.toggle('active', tab === 'deposits');
-            if (btnChat) btnChat.classList.toggle('active', tab === 'chat');
-            if (btnNotif) btnNotif.classList.toggle('active', tab === 'notifications');
-            if (btnProd) btnProd.classList.toggle('active', tab === 'products');
-            if (btnVoucher) btnVoucher.classList.toggle('active', tab === 'vouchers');
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            if (tab === 'notifications') {
-                loadAdminNotifications();
-            } else if (tab === 'chat') {
+            if (tabName === 'deposits') {
+                loadDepositsQris();
+            } else if (tabName === 'chat') {
                 loadUserList();
-            } else if (tab === 'products') {
+            } else if (tabName === 'notifications') {
+                loadAdminNotifications();
+            } else if (tabName === 'products') {
                 loadAdminProducts();
-            } else if (tab === 'vouchers') {
+            } else if (tabName === 'vouchers') {
                 loadAdminVouchers();
             }
         }
 
-        function switchNotifSubTab(sub) {
-            const pAdd = document.getElementById('notifPanelAdd');
-            const pEdit = document.getElementById('notifPanelEdit');
-            const pManage = document.getElementById('notifPanelManage');
-
-            if (pAdd) pAdd.classList.toggle('hidden', sub !== 'add');
-            if (pEdit) pEdit.classList.toggle('hidden', sub !== 'edit');
-            if (pManage) pManage.classList.toggle('hidden', sub !== 'manage');
-
-            const bAdd = document.getElementById('notifSubBtnAdd');
-            const bEdit = document.getElementById('notifSubBtnEdit');
-            const bManage = document.getElementById('notifSubBtnManage');
-
-            if (bAdd) bAdd.classList.toggle('active', sub === 'add');
-            if (bEdit) bEdit.classList.toggle('active', sub === 'edit');
-            if (bManage) bManage.classList.toggle('active', sub === 'manage');
-            closeCustomNotifDropdown();
-        }
-
-        function setDepositFilter(filter) {
-            currentDepositFilter = filter;
-            ['all', 'waiting_verification', 'pending', 'success', 'cancelled'].forEach(f => {
-                const mapId = { all: 'filterAll', waiting_verification: 'filterWaiting', pending: 'filterPending', success: 'filterSuccess', cancelled: 'filterCancelled' };
-                const el = document.getElementById(mapId[f]);
+        // ============================================================
+        // BAGIAN 1: VERIFIKASI DEPOSIT QRIS V2
+        // ============================================================
+        function setDepositFilter(status) {
+            currentDepositFilter = status;
+            const filterMap = {
+                all: 'filterAll',
+                waiting_verification: 'filterWaiting',
+                pending: 'filterPending',
+                success: 'filterSuccess',
+                cancelled: 'filterCancelled'
+            };
+            Object.entries(filterMap).forEach(([key, id]) => {
+                const el = document.getElementById(id);
                 if (el) {
-                    el.classList.toggle('bg-neoYellow', f === filter);
-                    el.classList.toggle('bg-white', f !== filter);
+                    el.classList.toggle('bg-neoYellow', key === status);
+                    el.classList.toggle('bg-white', key !== status);
                 }
             });
             renderDepositsGrid();
         }
 
         async function loadDepositsQris() {
+            const grid = document.getElementById('adminDepositsGrid');
             try {
-                const res = await fetch('/api/admin/deposits-qris');
-                const data = await res.json();
-                if (data.status && Array.isArray(data.deposits)) {
-                    allDepositsData = data.deposits;
-                    const waitingCount = allDepositsData.filter(d => d.status === 'waiting_verification').length;
-                    setTextSafe('pendingDepositBadge', waitingCount);
-                    renderDepositsGrid();
+                const res = await fetch('/api/admin/deposits-qrisv2');
+                if (res.status === 401 || res.status === 403) {
+                    window.location.href = '/login';
+                    return;
                 }
-            } catch (e) {}
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal memuat deposit QRIS');
+
+                allDepositsData = Array.isArray(data) ? data : (data.deposits || data.transactions || []);
+                const waitingCount = allDepositsData.filter(d => d.status === 'waiting_verification').length;
+                const badgeEl = document.getElementById('pendingDepositBadge');
+                if (badgeEl) badgeEl.textContent = waitingCount;
+
+                renderDepositsGrid();
+            } catch (err) {
+                console.error('loadDepositsQris Error:', err);
+                if (grid) {
+                    grid.innerHTML = `<div class="neo-box p-6 text-center text-xs font-mono font-bold text-red-600 col-span-full">Gagal memuat data deposit: ${escapeHtml(err.message)}</div>`;
+                }
+            }
         }
 
         function renderDepositsGrid() {
@@ -912,162 +875,438 @@
 
             const filtered = currentDepositFilter === 'all'
                 ? allDepositsData
-                : allDepositsData.filter(d => (d.status || '').toLowerCase() === currentDepositFilter);
+                : allDepositsData.filter(d => d.status === currentDepositFilter);
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="neo-box p-6 text-center text-xs font-mono font-bold col-span-full bg-white">Tidak ada transaksi deposit QRIS pada kategori ini.</div>`;
+                grid.innerHTML = `
+                    <div class="neo-box p-8 text-center col-span-full space-y-2 bg-white">
+                        <i class="fa-solid fa-inbox text-3xl text-black"></i>
+                        <p class="text-xs font-cyber font-extrabold uppercase">Tidak ada data deposit pada filter ini.</p>
+                    </div>`;
                 return;
             }
 
             grid.innerHTML = filtered.map(dep => {
-                const st = (dep.status || 'pending').toLowerCase();
-                let badgeHtml = `<span class="bg-neoYellow border-2 border-black px-2 py-0.5 text-[10px] font-black font-cyber">PENDING</span>`;
-                if (st === 'waiting_verification') {
-                    badgeHtml = `<span class="bg-neoCyan border-2 border-black px-2 py-0.5 text-[10px] font-black font-cyber animate-pulse">PERLU VERIFIKASI</span>`;
-                } else if (['success', 'paid', 'settlement'].includes(st)) {
-                    badgeHtml = `<span class="bg-neoGreen border-2 border-black px-2 py-0.5 text-[10px] font-black font-cyber">SUKSES</span>`;
-                } else if (st === 'cancelled') {
-                    badgeHtml = `<span class="bg-neoPink text-white border-2 border-black px-2 py-0.5 text-[10px] font-black font-cyber">DIBATALKAN</span>`;
+                const orderId = escapeHtml(dep.orderId || '-');
+                const userName = escapeHtml(dep.userName || dep.name || 'User');
+                const userEmail = escapeHtml(dep.userEmail || dep.email || '-');
+                const amount = Number(dep.amount || 0);
+                const fee = Number(dep.fee || 0);
+                const totalPay = Number(dep.totalPay || dep.totalAmount || (amount + fee));
+                const status = dep.status || 'pending';
+                const proofUrl = dep.proofUrl || dep.proofImage || '';
+                const createdStr = dep.createdAt ? new Date(dep.createdAt).toLocaleString('id-ID') : '-';
+
+                let statusBadge = `<span class="bg-neoYellow border-2 border-black px-2 py-0.5 text-[10px] font-mono font-black uppercase">BELUM UPLOAD</span>`;
+                if (status === 'waiting_verification') {
+                    statusBadge = `<span class="bg-neoCyan border-2 border-black px-2 py-0.5 text-[10px] font-mono font-black uppercase animate-pulse">PERLU DICEK</span>`;
+                } else if (status === 'success') {
+                    statusBadge = `<span class="bg-neoGreen border-2 border-black px-2 py-0.5 text-[10px] font-mono font-black uppercase">SUKSES</span>`;
+                } else if (status === 'cancelled') {
+                    statusBadge = `<span class="bg-neoPink text-white border-2 border-black px-2 py-0.5 text-[10px] font-mono font-black uppercase">DIBATALKAN</span>`;
                 }
 
-                const dateStr = new Date(dep.createdAt).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-
-                const proofHtml = dep.proofImage
-                    ? `<div class="border-2 border-black bg-neoBg p-2 text-center">
-                           <img src="${dep.proofImage}" onclick="viewFullProof('${dep.orderId}')" title="Klik untuk memperbesar"
-                                class="max-h-44 mx-auto object-contain border-2 border-black cursor-zoom-in">
-                           <button type="button" onclick="viewFullProof('${dep.orderId}')" class="mt-1.5 text-[10px] font-cyber font-black underline text-black">
-                               <i class="fa-solid fa-magnifying-glass-plus"></i> Perbesar Bukti Pembayaran
-                           </button>
+                const proofBlock = proofUrl
+                    ? `<div class="border-2 border-black bg-neoBg p-2 space-y-2">
+                            <a href="${escapeHtml(proofUrl)}" target="_blank" rel="noopener" class="block overflow-hidden border-2 border-black bg-white">
+                                <img src="${escapeHtml(proofUrl)}" alt="Bukti Transfer ${orderId}" class="w-full h-44 object-contain bg-white hover:scale-105 transition-transform">
+                            </a>
+                            <a href="${escapeHtml(proofUrl)}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-[11px] font-cyber font-extrabold underline">
+                                <i class="fa-solid fa-up-right-from-square"></i> Buka Gambar Ukuran Penuh
+                            </a>
                        </div>`
-                    : `<div class="border-2 border-dashed border-black p-4 text-center text-[11px] font-bold text-slate-600 bg-neoBg">
-                           <i class="fa-regular fa-image text-lg block mb-1"></i> User belum mengunggah bukti pembayaran
+                    : `<div class="border-2 border-dashed border-black bg-neoBg p-3 text-center text-[11px] font-mono font-bold text-slate-600">
+                            User belum mengunggah bukti transfer QRIS.
                        </div>`;
 
-                const canAction = ['pending', 'waiting_verification'].includes(st);
-                const actionButtons = canAction
-                    ? `<div class="grid grid-cols-2 gap-2.5 pt-1">
-                           <button onclick="adminApproveDeposit('${escapeHtml(dep.orderId)}')" class="neo-btn bg-neoGreen text-black font-cyber font-extrabold py-2.5 text-xs uppercase flex items-center justify-center gap-1.5">
-                               <i class="fa-solid fa-check"></i> Konfirmasi
-                           </button>
-                           <button onclick="adminCancelDeposit('${escapeHtml(dep.orderId)}')" class="neo-btn bg-neoPink text-white font-cyber font-extrabold py-2.5 text-xs uppercase flex items-center justify-center gap-1.5">
-                               <i class="fa-solid fa-xmark"></i> Batalkan
-                           </button>
+                const canAct = status === 'waiting_verification' || status === 'pending';
+                const actionButtons = canAct
+                    ? `<div class="grid grid-cols-2 gap-2.5 pt-2 border-t-2 border-black">
+                            <button onclick="approveDepositQris('${orderId}')" class="neo-btn bg-neoGreen text-black font-cyber font-extrabold py-2.5 px-3 text-xs uppercase flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-check"></i> Terima &amp; Isi Saldo
+                            </button>
+                            <button onclick="cancelDepositQris('${orderId}')" class="neo-btn bg-neoPink text-white font-cyber font-extrabold py-2.5 px-3 text-xs uppercase flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-xmark"></i> Tolak / Batal
+                            </button>
                        </div>`
-                    : `<div class="text-center text-[10px] font-mono font-bold text-slate-600 pt-1">Tindakan selesai (${st.toUpperCase()})</div>`;
+                    : `<div class="pt-2 border-t-2 border-black text-[11px] font-mono font-bold text-slate-600 flex items-center justify-between">
+                            <span>Status Final: ${escapeHtml(status.toUpperCase())}</span>
+                            <span>${createdStr}</span>
+                       </div>`;
 
                 return `
-                    <div class="neo-box p-4 bg-white space-y-3 flex flex-col justify-between">
-                        <div class="space-y-2.5">
-                            <div class="flex items-center justify-between gap-2 border-b-2 border-black pb-2">
-                                <span class="text-[11px] font-mono font-black text-black">${escapeHtml(dep.orderId)}</span>
-                                ${badgeHtml}
+                    <div class="neo-box bg-white p-4 space-y-3 flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="flex items-start justify-between gap-2 border-b-2 border-black pb-2.5">
+                                <div class="min-w-0">
+                                    <div class="font-mono font-black text-xs text-black truncate">${orderId}</div>
+                                    <div class="text-xs font-extrabold text-black mt-0.5 truncate">${userName}</div>
+                                    <div class="text-[11px] font-mono text-slate-700 truncate">${userEmail}</div>
+                                </div>
+                                <div class="shrink-0">${statusBadge}</div>
                             </div>
 
-                            <div class="flex items-center justify-between text-xs">
+                            <div class="grid grid-cols-3 gap-2 bg-neoBg border-2 border-black p-2.5 text-center">
                                 <div>
-                                    <div class="font-extrabold font-cyber text-black">${escapeHtml(dep.username)}</div>
-                                    <div class="text-[11px] font-mono text-slate-600">${escapeHtml(dep.userEmail || '-')}</div>
-                                    <div class="text-[10px] font-bold text-slate-500 mt-0.5">${dateStr}</div>
+                                    <div class="text-[10px] font-mono font-bold text-slate-600">SALDO MASUK</div>
+                                    <div class="text-xs font-mono font-black text-black">${formatRupiah(amount)}</div>
                                 </div>
-                                <div class="text-right">
-                                    <span class="text-[9px] font-black uppercase text-slate-500 block">Nominal</span>
-                                    <span class="text-base font-extrabold font-cyber bg-neoYellow border-2 border-black px-2.5 py-0.5 inline-block shadow-[2px_2px_0px_#000]">
-                                        ${formatRupiah(dep.amount)}
-                                    </span>
+                                <div>
+                                    <div class="text-[10px] font-mono font-bold text-slate-600">BIAYA ADMIN</div>
+                                    <div class="text-xs font-mono font-black text-black">${formatRupiah(fee)}</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] font-mono font-bold text-slate-600">TOTAL BAYAR</div>
+                                    <div class="text-xs font-mono font-black text-emerald-700">${formatRupiah(totalPay)}</div>
                                 </div>
                             </div>
 
-                            ${proofHtml}
+                            ${proofBlock}
                         </div>
+
                         ${actionButtons}
-                    </div>
-                `;
+                    </div>`;
             }).join('');
         }
 
-        function viewFullProof(orderId) {
-            const dep = allDepositsData.find(d => d.orderId === orderId);
-            if (!dep || !dep.proofImage) return;
-            Swal.fire({
-                title: `BUKTI // ${dep.orderId}`,
-                html: `<img src="${dep.proofImage}" class="max-h-[70vh] mx-auto border-2 border-black">`,
-                width: 600,
-                confirmButtonText: 'Tutup',
-                customClass: { popup: 'cyber-swal' }
-            });
-        }
-
-        async function adminApproveDeposit(orderId) {
-            const conf = await Swal.fire({
-                title: 'KONFIRMASI DEPOSIT?',
-                text: `Saldo user untuk ${orderId} akan langsung ditambahkan.`,
+        async function approveDepositQris(orderId) {
+            const confirmRes = await Swal.fire({
+                title: 'Konfirmasi Deposit?',
+                text: `Setujui deposit ${orderId} dan tambahkan saldo ke akun user?`,
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: 'Ya, Konfirmasi',
+                confirmButtonText: 'Ya, Terima',
                 cancelButtonText: 'Batal',
                 customClass: { popup: 'cyber-swal' }
             });
-            if (!conf.isConfirmed) return;
+            if (!confirmRes.isConfirmed) return;
 
             try {
-                const res = await fetch(`/api/admin/deposits-qris/${encodeURIComponent(orderId)}/approve`, { method: 'POST' });
-                const result = await res.json();
-                if (result.status) {
-                    Swal.fire({ icon: 'success', title: 'BERHASIL', text: result.message, timer: 1600, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
-                    loadDepositsQris();
-                } else {
-                    throw new Error(result.message);
-                }
+                const res = await fetch(`/api/admin/deposits-qrisv2/${encodeURIComponent(orderId)}/approve`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal menyetujui deposit');
+
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: data.message || 'Deposit berhasil dikonfirmasi.',
+                    icon: 'success',
+                    timer: 1800,
+                    showConfirmButton: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+                loadDepositsQris();
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+                Swal.fire({
+                    title: 'Error',
+                    text: err.message,
+                    icon: 'error',
+                    customClass: { popup: 'cyber-swal' }
+                });
             }
         }
 
-        async function adminCancelDeposit(orderId) {
-            const conf = await Swal.fire({
-                title: 'BATALKAN DEPOSIT?',
-                text: `Yakin ingin menolak & membatalkan ${orderId}?`,
+        async function cancelDepositQris(orderId) {
+            const confirmRes = await Swal.fire({
+                title: 'Batalkan Deposit?',
+                text: `Tolak dan batalkan transaksi deposit ${orderId}?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Ya, Batalkan',
                 cancelButtonText: 'Kembali',
                 customClass: { popup: 'cyber-swal' }
             });
-            if (!conf.isConfirmed) return;
+            if (!confirmRes.isConfirmed) return;
 
             try {
-                const res = await fetch(`/api/admin/deposits-qris/${encodeURIComponent(orderId)}/cancel`, { method: 'POST' });
-                const result = await res.json();
-                if (result.status) {
-                    Swal.fire({ icon: 'info', title: 'DIBATALKAN', text: result.message, timer: 1600, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
-                    loadDepositsQris();
-                } else {
-                    throw new Error(result.message);
-                }
+                const res = await fetch(`/api/admin/deposits-qrisv2/${encodeURIComponent(orderId)}/cancel`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal membatalkan deposit');
+
+                Swal.fire({
+                    title: 'Dibatalkan',
+                    text: data.message || 'Deposit telah dibatalkan.',
+                    icon: 'info',
+                    timer: 1800,
+                    showConfirmButton: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+                loadDepositsQris();
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+                Swal.fire({
+                    title: 'Error',
+                    text: err.message,
+                    icon: 'error',
+                    customClass: { popup: 'cyber-swal' }
+                });
             }
         }
 
-        // =======================================================
-        // NOTIFIKASI ADMIN FUNCTIONS (TAMBAH, EDIT, KELOLA)
-        // =======================================================
+        // ============================================================
+        // BAGIAN 2: PANEL LIVE CHAT PENGGUNA
+        // ============================================================
+        function scrollUserCarousel(dir) {
+            const container = document.getElementById('adminUserList');
+            if (!container) return;
+            container.scrollBy({ left: dir === 'left' ? -240 : 240, behavior: 'smooth' });
+        }
+
+        async function loadUserList() {
+            const listEl = document.getElementById('adminUserList');
+            try {
+                const res = await fetch('/api/admin/chats/users');
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal memuat daftar chat user');
+
+                cachedUsers = Array.isArray(data) ? data : (data.users || []);
+                const totalUnread = cachedUsers.reduce((acc, u) => acc + Number(u.unreadCount || 0), 0);
+
+                const countText = document.getElementById('userCountText');
+                const unreadBadge = document.getElementById('unreadChatBadge');
+                if (countText) countText.textContent = cachedUsers.length;
+                if (unreadBadge) unreadBadge.textContent = totalUnread;
+
+                if (!listEl) return;
+                if (cachedUsers.length === 0) {
+                    listEl.innerHTML = `<span class="text-xs font-mono font-bold text-black px-2 py-1">Belum ada percakapan dari pengguna.</span>`;
+                    return;
+                }
+
+                listEl.innerHTML = cachedUsers.map(u => {
+                    const email = u.userEmail || u.email || '';
+                    const name = u.userName || u.name || email.split('@')[0] || 'User';
+                    const unread = Number(u.unreadCount || 0);
+                    const isActive = selectedUserEmail === email;
+                    return `
+                        <button type="button" onclick="selectChatUser('${escapeHtml(email)}', '${escapeHtml(name)}')" class="user-pill ${isActive ? 'active' : 'bg-white'} px-3.5 py-2 flex items-center gap-2 shrink-0">
+                            <span class="w-6 h-6 bg-black text-neoYellow flex items-center justify-center text-[10px] font-black uppercase">${escapeHtml(name.charAt(0))}</span>
+                            <div class="text-left">
+                                <div class="text-xs font-cyber font-extrabold leading-tight">${escapeHtml(name)}</div>
+                                <div class="text-[10px] font-mono text-slate-700 leading-tight">${escapeHtml(email)}</div>
+                            </div>
+                            ${unread > 0 ? `<span class="bg-neoPink text-white border border-black px-1.5 py-0.5 text-[10px] font-mono font-black">${unread}</span>` : ''}
+                        </button>`;
+                }).join('');
+            } catch (err) {
+                console.error('loadUserList Error:', err);
+            }
+        }
+
+        async function selectChatUser(email, name) {
+            selectedUserEmail = email;
+            selectedUserName = name || email;
+
+            const form = document.getElementById('adminChatForm');
+            if (form) {
+                form.classList.remove('opacity-50', 'pointer-events-none');
+            }
+
+            loadUserList();
+            await loadSelectedUserMessages();
+
+            if (chatPollingInterval) clearInterval(chatPollingInterval);
+            chatPollingInterval = setInterval(() => {
+                const chatSection = document.getElementById('sectionChat');
+                if (selectedUserEmail && chatSection && !chatSection.classList.contains('hidden')) {
+                    loadSelectedUserMessages(true);
+                }
+            }, 5000);
+        }
+
+        async function loadSelectedUserMessages(silent = false) {
+            if (!selectedUserEmail) return;
+            const box = document.getElementById('adminChatMessages');
+            if (!box) return;
+
+            try {
+                const res = await fetch(`/api/admin/chats/${encodeURIComponent(selectedUserEmail)}`);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal memuat pesan');
+
+                const messages = Array.isArray(data) ? data : (data.messages || []);
+                if (messages.length === 0) {
+                    box.innerHTML = `<div class="text-center text-xs font-mono font-bold text-slate-600 py-10">Belum ada pesan dengan ${escapeHtml(selectedUserName)}.</div>`;
+                    return;
+                }
+
+                box.innerHTML = messages.map(m => {
+                    const isAdmin = m.sender === 'admin' || m.role === 'admin' || m.isAdmin === true;
+                    const text = escapeHtml(m.message || m.text || '');
+                    const time = m.createdAt ? new Date(m.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '';
+
+                    return `
+                        <div class="flex ${isAdmin ? 'justify-end' : 'justify-start'}">
+                            <div class="max-w-[80%] border-2 border-black p-3 shadow-[3px_3px_0px_#000] ${isAdmin ? 'bg-neoYellow' : 'bg-white'}">
+                                <div class="text-[10px] font-mono font-black uppercase mb-1 flex items-center justify-between gap-3">
+                                    <span>${isAdmin ? 'ADMIN / OWNER' : escapeHtml(selectedUserName)}</span>
+                                    <span class="text-slate-600">${time}</span>
+                                </div>
+                                <div class="text-xs font-bold whitespace-pre-wrap break-words">${text}</div>
+                            </div>
+                        </div>`;
+                }).join('');
+
+                if (!silent) {
+                    box.scrollTop = box.scrollHeight;
+                }
+            } catch (err) {
+                console.error('loadSelectedUserMessages Error:', err);
+            }
+        }
+
+        async function sendAdminReply(event) {
+            event.preventDefault();
+            if (!selectedUserEmail) return;
+
+            const input = document.getElementById('adminChatInput');
+            const message = input ? input.value.trim() : '';
+            if (!message) return;
+
+            try {
+                const res = await fetch(`/api/admin/chats/${encodeURIComponent(selectedUserEmail)}/reply`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal mengirim balasan');
+
+                if (input) input.value = '';
+                await loadSelectedUserMessages();
+                loadUserList();
+            } catch (err) {
+                Swal.fire({
+                    title: 'Gagal Mengirim',
+                    text: err.message,
+                    icon: 'error',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
+        }
+
+        // ============================================================
+        // BAGIAN 3: PUSAT NOTIFIKASI & BROADCAST
+        // ============================================================
+        function switchNotifSubTab(sub) {
+            const panels = {
+                add: document.getElementById('notifPanelAdd'),
+                edit: document.getElementById('notifPanelEdit'),
+                manage: document.getElementById('notifPanelManage')
+            };
+            const btns = {
+                add: document.getElementById('notifSubBtnAdd'),
+                edit: document.getElementById('notifSubBtnEdit'),
+                manage: document.getElementById('notifSubBtnManage')
+            };
+            Object.keys(panels).forEach(k => {
+                if (panels[k]) panels[k].classList.toggle('hidden', k !== sub);
+                if (btns[k]) btns[k].classList.toggle('active', k === sub);
+            });
+        }
+
+        function selectDeliveryMode(mode) {
+            const cardBroadcast = document.getElementById('modeCardBroadcast');
+            const cardWebOnly = document.getElementById('modeCardWebOnly');
+            const headerBadge = document.getElementById('addNotifHeaderBadge');
+            const btnText = document.getElementById('btnSubmitAddNotifText');
+
+            if (mode === 'web_only') {
+                if (cardBroadcast) cardBroadcast.classList.remove('selected-broadcast');
+                if (cardWebOnly) cardWebOnly.classList.add('selected-webonly');
+                if (headerBadge) {
+                    headerBadge.textContent = 'WEB NOTIFIKASI SAJA';
+                    headerBadge.className = 'text-[10px] font-mono font-extrabold bg-neoYellow border-2 border-black px-2.5 py-0.5 uppercase shadow-[2px_2px_0px_#000]';
+                }
+                if (btnText) btnText.textContent = 'Simpan ke Halaman Notifikasi Web';
+            } else {
+                if (cardBroadcast) cardBroadcast.classList.add('selected-broadcast');
+                if (cardWebOnly) cardWebOnly.classList.remove('selected-webonly');
+                if (headerBadge) {
+                    headerBadge.textContent = 'BROADCAST EMAIL + TELEGRAM';
+                    headerBadge.className = 'text-[10px] font-mono font-extrabold bg-neoGreen border-2 border-black px-2.5 py-0.5 uppercase shadow-[2px_2px_0px_#000]';
+                }
+                if (btnText) btnText.textContent = 'Kirim Notifikasi ke Semua Email & Telegram';
+            }
+        }
+
         async function loadAdminNotifications() {
             try {
                 const res = await fetch('/api/admin/notifications');
                 const data = await res.json();
-                if (data.status && Array.isArray(data.notifications)) {
-                    allNotificationsData = data.notifications;
-                    const count = allNotificationsData.length;
-                    setTextSafe('totalNotifBadge', count);
-                    setTextSafe('notifManageCountTab', count);
-                    setTextSafe('manageNotifTotalText', count);
-                    setTextSafe('editSelectAvailableBadge', `${count} Tersedia`);
-                    populateEditNotifDropdown();
-                    renderManageNotifList();
-                }
-            } catch (e) {}
+                if (!res.ok) throw new Error(data.message || 'Gagal memuat notifikasi');
+
+                allAdminNotifications = Array.isArray(data) ? data : (data.notifications || []);
+                const total = allAdminNotifications.length;
+
+                const totalBadge = document.getElementById('totalNotifBadge');
+                const manageCountTab = document.getElementById('notifManageCountTab');
+                const manageTotalText = document.getElementById('manageNotifTotalText');
+                const editAvailBadge = document.getElementById('editSelectAvailableBadge');
+
+                if (totalBadge) totalBadge.textContent = total;
+                if (manageCountTab) manageCountTab.textContent = total;
+                if (manageTotalText) manageTotalText.textContent = total;
+                if (editAvailBadge) editAvailBadge.textContent = `${total} Tersedia`;
+
+                renderManageNotifList();
+                renderCustomNotifDropdownItems();
+            } catch (err) {
+                console.error('loadAdminNotifications Error:', err);
+            }
+        }
+
+        async function submitCreateNotification(event) {
+            event.preventDefault();
+            const modeRadio = document.querySelector('input[name="addNotifDeliveryMode"]:checked');
+            const deliveryMode = modeRadio ? modeRadio.value : 'broadcast';
+
+            const payload = {
+                title: document.getElementById('addNotifTitle').value.trim(),
+                type: document.getElementById('addNotifType').value,
+                targetEmail: document.getElementById('addNotifTargetEmail').value.trim(),
+                link: document.getElementById('addNotifLink').value.trim(),
+                message: document.getElementById('addNotifMessage').value.trim(),
+                sendExternal: deliveryMode === 'broadcast',
+                deliveryMode
+            };
+
+            const btn = document.getElementById('btnSubmitAddNotif');
+            if (btn) btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/admin/notifications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal mengirim notifikasi');
+
+                document.getElementById('createNotifForm').reset();
+                selectDeliveryMode('broadcast');
+
+                Swal.fire({
+                    title: 'Notifikasi Terkirim!',
+                    text: data.message || 'Notifikasi berhasil dipublikasikan.',
+                    icon: 'success',
+                    customClass: { popup: 'cyber-swal' }
+                });
+                loadAdminNotifications();
+            } catch (err) {
+                Swal.fire({
+                    title: 'Gagal',
+                    text: err.message,
+                    icon: 'error',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } finally {
+                if (btn) btn.disabled = false;
+            }
         }
 
         function toggleCustomNotifDropdown() {
@@ -1075,38 +1314,25 @@
             const chevron = document.getElementById('customNotifChevron');
             if (!menu) return;
             const isHidden = menu.classList.contains('hidden');
-            if (isHidden) {
-                menu.classList.remove('hidden');
-                if (chevron) chevron.style.transform = 'rotate(180deg)';
-                renderCustomNotifDropdownItems();
-                const searchInput = document.getElementById('customNotifDropdownSearch');
-                if (searchInput) setTimeout(() => searchInput.focus(), 50);
-            } else {
-                closeCustomNotifDropdown();
-            }
-        }
-
-        function closeCustomNotifDropdown() {
-            const menu = document.getElementById('customNotifDropdownMenu');
-            const chevron = document.getElementById('customNotifChevron');
-            if (menu) menu.classList.add('hidden');
-            if (chevron) chevron.style.transform = 'rotate(0deg)';
+            menu.classList.toggle('hidden', !isHidden);
+            if (chevron) chevron.classList.toggle('rotate-180', isHidden);
+            if (isHidden) renderCustomNotifDropdownItems();
         }
 
         function renderCustomNotifDropdownItems() {
             const listEl = document.getElementById('customNotifDropdownList');
+            const searchEl = document.getElementById('customNotifDropdownSearch');
             if (!listEl) return;
 
-            const q = (document.getElementById('customNotifDropdownSearch')?.value || '').toLowerCase().trim();
-            const currentSelectedId = document.getElementById('editNotifId')?.value || '';
-
-            const filtered = q
-                ? allNotificationsData.filter(n =>
+            const q = (searchEl ? searchEl.value : '').toLowerCase().trim();
+            const filtered = allAdminNotifications.filter(n => {
+                if (!q) return true;
+                return (
                     String(n.title || '').toLowerCase().includes(q) ||
                     String(n.type || '').toLowerCase().includes(q) ||
-                    String(n.targetEmail || 'broadcast semua user').toLowerCase().includes(q)
-                )
-                : allNotificationsData;
+                    String(n.targetEmail || 'semua user').toLowerCase().includes(q)
+                );
+            });
 
             if (filtered.length === 0) {
                 listEl.innerHTML = `<div class="p-4 text-center text-xs font-mono font-bold text-slate-600">Tidak ada notifikasi yang cocok.</div>`;
@@ -1114,272 +1340,115 @@
             }
 
             listEl.innerHTML = filtered.map(n => {
-                const nid = String(n._id);
-                const isSelected = nid === String(currentSelectedId);
-                const style = getNotifTypeStyle(n.type);
-                const target = n.targetEmail ? n.targetEmail : 'Broadcast Semua User';
-                const dateStr = n.createdAt
-                    ? new Date(n.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
-                    : '-';
-
+                const id = escapeHtml(n._id || n.id || '');
+                const badge = getCategoryBadgeStyle(n.type);
+                const target = n.targetEmail ? escapeHtml(n.targetEmail) : 'Broadcast Semua User';
                 return `
-                    <button type="button" onclick="chooseCustomNotifOption('${escapeHtml(nid)}')" class="w-full text-left p-3.5 transition flex items-start justify-between gap-3 ${isSelected ? 'bg-neoCyan/35' : 'bg-white hover:bg-neoBg'}">
-                        <div class="flex items-start gap-2.5 min-w-0 flex-1">
-                            <span class="w-8 h-8 ${style.bg} border-2 border-black flex items-center justify-center shrink-0 mt-0.5">
-                                <i class="fa-solid ${style.icon} text-xs"></i>
-                            </span>
-                            <div class="min-w-0 flex-1 space-y-1">
-                                <div class="flex flex-wrap items-center gap-1.5">
-                                    <span class="${style.bg} border border-black px-1.5 py-0.2 text-[9px] font-black font-cyber">${style.label}</span>
-                                    <span class="bg-neoBg border border-black px-1.5 py-0.2 text-[9px] font-mono font-bold truncate max-w-[170px]">${escapeHtml(target)}</span>
-                                    <span class="text-[9px] font-mono font-bold text-slate-500">${dateStr}</span>
-                                </div>
-                                <div class="text-xs font-extrabold font-cyber text-black truncate">${escapeHtml(n.title)}</div>
-                            </div>
+                    <button type="button" onclick="pickNotificationToEdit('${id}')" class="w-full text-left p-3 hover:bg-neoCyan/40 transition-colors flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <div class="text-xs font-cyber font-extrabold text-black truncate">${escapeHtml(n.title || 'Tanpa Judul')}</div>
+                            <div class="text-[10px] font-mono text-slate-700 truncate mt-0.5">Target: ${target}</div>
                         </div>
-                        <span class="shrink-0 mt-1">
-                            ${isSelected
-                                ? `<span class="w-6 h-6 bg-neoGreen border-2 border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-check"></i></span>`
-                                : `<span class="w-6 h-6 bg-white border-2 border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-arrow-right"></i></span>`
-                            }
-                        </span>
-                    </button>
-                `;
+                        <span class="${badge.bg} border border-black px-1.5 py-0.5 text-[9px] font-mono font-black shrink-0">${badge.label}</span>
+                    </button>`;
             }).join('');
         }
 
-        function updateCustomNotifTriggerUI(notif) {
-            const triggerContent = document.getElementById('customNotifTriggerContent');
-            if (!triggerContent) return;
+        function pickNotificationToEdit(id) {
+            const notif = allAdminNotifications.find(n => String(n._id || n.id) === String(id));
+            if (!notif) return;
 
-            if (!notif) {
+            document.getElementById('editNotifId').value = notif._id || notif.id || '';
+            document.getElementById('editNotifTitle').value = notif.title || '';
+            document.getElementById('editNotifType').value = notif.type || 'info';
+            document.getElementById('editNotifTargetEmail').value = notif.targetEmail || '';
+            document.getElementById('editNotifLink').value = notif.link || '';
+            document.getElementById('editNotifMessage').value = notif.message || '';
+
+            const badge = document.getElementById('editNotifBadge');
+            if (badge) badge.textContent = 'SEDANG MENGEDIT';
+
+            const triggerContent = document.getElementById('customNotifTriggerContent');
+            if (triggerContent) {
                 triggerContent.innerHTML = `
-                    <span class="w-8 h-8 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
-                        <i class="fa-solid fa-bell text-xs"></i>
+                    <span class="w-8 h-8 bg-neoGreen border-2 border-black flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-check text-xs"></i>
                     </span>
                     <div class="min-w-0">
-                        <div class="text-xs font-extrabold font-cyber text-black truncate">Pilih Notifikasi (${allNotificationsData.length} tersedia)...</div>
-                        <div class="text-[10px] font-mono font-bold text-slate-600 truncate">Klik untuk membuka daftar notifikasi</div>
-                    </div>
-                `;
-                return;
+                        <div class="text-xs font-extrabold font-cyber text-black truncate">${escapeHtml(notif.title || '')}</div>
+                        <div class="text-[10px] font-mono font-bold text-slate-600 truncate">${escapeHtml(notif.targetEmail || 'Broadcast Semua User')}</div>
+                    </div>`;
             }
 
-            const style = getNotifTypeStyle(notif.type);
-            const target = notif.targetEmail ? notif.targetEmail : 'Broadcast Semua User';
-            triggerContent.innerHTML = `
-                <span class="w-8 h-8 ${style.bg} border-2 border-black flex items-center justify-center shrink-0">
-                    <i class="fa-solid ${style.icon} text-xs"></i>
-                </span>
-                <div class="min-w-0 flex-1">
-                    <div class="flex items-center gap-1.5">
-                        <span class="${style.bg} border border-black px-1.5 text-[9px] font-black font-cyber">${style.label}</span>
-                        <span class="text-[10px] font-mono font-bold text-slate-600 truncate">${escapeHtml(target)}</span>
-                    </div>
-                    <div class="text-xs font-extrabold font-cyber text-black truncate mt-0.5">${escapeHtml(notif.title)}</div>
-                </div>
-            `;
+            const menu = document.getElementById('customNotifDropdownMenu');
+            const chevron = document.getElementById('customNotifChevron');
+            if (menu) menu.classList.add('hidden');
+            if (chevron) chevron.classList.remove('rotate-180');
         }
 
-        function chooseCustomNotifOption(notifId) {
-            const selector = document.getElementById('editNotifSelector');
-            if (selector) selector.value = notifId;
-            onSelectEditNotification(notifId);
-            closeCustomNotifDropdown();
-        }
-
-        function populateEditNotifDropdown() {
-            const selector = document.getElementById('editNotifSelector');
-            if (!selector) return;
-            const currentVal = selector.value || document.getElementById('editNotifId')?.value || '';
-            selector.innerHTML = `<option value="">-- Pilih Notifikasi (${allNotificationsData.length} tersedia) --</option>` +
-                allNotificationsData.map(n => {
-                    const target = n.targetEmail ? n.targetEmail : 'Broadcast Semua User';
-                    return `<option value="${escapeHtml(n._id)}">[${escapeHtml((n.type || 'info').toUpperCase())}] ${escapeHtml(n.title)} (${escapeHtml(target)})</option>`;
-                }).join('');
-
-            const matched = allNotificationsData.find(n => String(n._id) === String(currentVal));
-            if (matched) {
-                selector.value = String(matched._id);
-                updateCustomNotifTriggerUI(matched);
-            } else {
-                updateCustomNotifTriggerUI(null);
-            }
-            renderCustomNotifDropdownItems();
-        }
-
-        function onSelectEditNotification(notifId) {
-            const notif = allNotificationsData.find(n => String(n._id) === String(notifId));
-            const badge = document.getElementById('editNotifBadge');
-            if (!notif) {
-                const editIdEl = document.getElementById('editNotifId');
-                const editFormEl = document.getElementById('editNotifForm');
-                if (editIdEl) editIdEl.value = '';
-                if (editFormEl) editFormEl.reset();
-                if (badge) badge.innerText = 'PILIH NOTIFIKASI';
-                updateCustomNotifTriggerUI(null);
-                return;
-            }
-            const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
-            const setChk = (id, val) => { const el = document.getElementById(id); if (el) el.checked = val; };
-
-            setVal('editNotifId', notif._id);
-            setVal('editNotifTitle', notif.title || '');
-            setVal('editNotifType', notif.type || 'info');
-            setVal('editNotifTargetEmail', notif.targetEmail || '');
-            setVal('editNotifLink', notif.link || '');
-            setVal('editNotifMessage', notif.message || '');
-            setChk('editNotifResetRead', false);
-            setChk('editNotifResendBroadcast', false);
-            if (badge) badge.innerText = `ID: ${String(notif._id).slice(-6).toUpperCase()}`;
-            updateCustomNotifTriggerUI(notif);
-        }
-
-        function jumpToEditNotif(notifId) {
-            switchNotifSubTab('edit');
-            const selector = document.getElementById('editNotifSelector');
-            if (selector) {
-                selector.value = notifId;
-                onSelectEditNotification(notifId);
-            }
-        }
-
-        async function submitCreateNotification(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btnSubmitAddNotif');
-            const isWebOnly = selectedDeliveryMode === 'web_only';
-
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = isWebOnly
-                    ? `<i class="fa-solid fa-spinner fa-spin"></i> <span>Menyimpan Notifikasi Web...</span>`
-                    : `<i class="fa-solid fa-spinner fa-spin"></i> <span>Mengirim ke Email &amp; Telegram...</span>`;
-            }
-
-            try {
-                const titleEl = document.getElementById('addNotifTitle');
-                const typeEl = document.getElementById('addNotifType');
-                const targetEmailEl = document.getElementById('addNotifTargetEmail');
-                const linkEl = document.getElementById('addNotifLink');
-                const messageEl = document.getElementById('addNotifMessage');
-
-                const payload = {
-                    title: (titleEl?.value || '').trim(),
-                    type: typeEl?.value || 'info',
-                    targetEmail: (targetEmailEl?.value || '').trim() || null,
-                    link: (linkEl?.value || '').trim() || null,
-                    message: (messageEl?.value || '').trim(),
-                    deliveryMode: selectedDeliveryMode
-                };
-
-                const res = await fetch('/api/admin/notifications', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await res.json();
-
-                if (!res.ok || !result.status) {
-                    throw new Error(result.message || 'Gagal mengirim notifikasi.');
-                }
-
-                const formEl = document.getElementById('createNotifForm');
-                if (formEl) formEl.reset();
-                selectDeliveryMode('broadcast');
-                await loadAdminNotifications();
-
+        async function submitEditNotification(event) {
+            event.preventDefault();
+            const id = document.getElementById('editNotifId').value.trim();
+            if (!id) {
                 Swal.fire({
-                    icon: 'success',
-                    title: isWebOnly ? 'NOTIFIKASI DISIMPAN!' : 'NOTIFIKASI TERKIRIM!',
-                    text: result.message,
+                    title: 'Pilih Notifikasi',
+                    text: 'Silakan pilih notifikasi yang akan diedit terlebih dahulu.',
+                    icon: 'warning',
                     customClass: { popup: 'cyber-swal' }
                 });
-            } catch (err) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'GAGAL',
-                    text: err.message,
-                    customClass: { popup: 'cyber-swal' }
-                });
-            } finally {
-                if (btn) btn.disabled = false;
-                selectDeliveryMode(selectedDeliveryMode);
-            }
-        }
-
-        async function submitEditNotification(e) {
-            e.preventDefault();
-            const notifId = (document.getElementById('editNotifId')?.value || '').trim();
-            if (!notifId) {
-                Swal.fire({ icon: 'warning', title: 'PILIH NOTIFIKASI', text: 'Pilih notifikasi yang ingin diedit terlebih dahulu!', customClass: { popup: 'cyber-swal' } });
                 return;
             }
 
-            const btn = document.getElementById('btnSubmitEditNotif');
-            const originalHtml = btn ? btn.innerHTML : '';
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Menyimpan...</span>`;
-            }
+            const payload = {
+                title: document.getElementById('editNotifTitle').value.trim(),
+                type: document.getElementById('editNotifType').value,
+                targetEmail: document.getElementById('editNotifTargetEmail').value.trim(),
+                link: document.getElementById('editNotifLink').value.trim(),
+                message: document.getElementById('editNotifMessage').value.trim(),
+                resetRead: document.getElementById('editNotifResetRead').checked,
+                resendBroadcast: document.getElementById('editNotifResendBroadcast').checked
+            };
 
             try {
-                const payload = {
-                    title: (document.getElementById('editNotifTitle')?.value || '').trim(),
-                    type: document.getElementById('editNotifType')?.value || 'info',
-                    targetEmail: (document.getElementById('editNotifTargetEmail')?.value || '').trim() || null,
-                    link: (document.getElementById('editNotifLink')?.value || '').trim() || null,
-                    message: (document.getElementById('editNotifMessage')?.value || '').trim(),
-                    resetReadBy: Boolean(document.getElementById('editNotifResetRead')?.checked),
-                    resendBroadcast: Boolean(document.getElementById('editNotifResendBroadcast')?.checked)
-                };
-
-                const res = await fetch(`/api/admin/notifications/${encodeURIComponent(notifId)}`, {
+                const res = await fetch(`/api/admin/notifications/${encodeURIComponent(id)}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                const result = await res.json();
-
-                if (!res.ok || !result.status) {
-                    throw new Error(result.message || 'Gagal memperbarui notifikasi.');
-                }
-
-                await loadAdminNotifications();
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal memperbarui notifikasi');
 
                 Swal.fire({
+                    title: 'Berhasil Diperbarui!',
+                    text: data.message || 'Perubahan notifikasi telah disimpan.',
                     icon: 'success',
-                    title: 'DIPERBARUI!',
-                    text: result.message,
                     customClass: { popup: 'cyber-swal' }
                 });
+                loadAdminNotifications();
             } catch (err) {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'GAGAL',
+                    title: 'Error',
                     text: err.message,
+                    icon: 'error',
                     customClass: { popup: 'cyber-swal' }
                 });
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = originalHtml;
-                }
             }
         }
 
         function renderManageNotifList() {
             const container = document.getElementById('manageNotifListContainer');
+            const searchEl = document.getElementById('searchNotifInput');
             if (!container) return;
 
-            const q = (document.getElementById('searchNotifInput')?.value || '').toLowerCase().trim();
-            const filtered = q
-                ? allNotificationsData.filter(n =>
+            const q = (searchEl ? searchEl.value : '').toLowerCase().trim();
+            const filtered = allAdminNotifications.filter(n => {
+                if (!q) return true;
+                return (
                     String(n.title || '').toLowerCase().includes(q) ||
                     String(n.message || '').toLowerCase().includes(q) ||
-                    String(n.type || '').toLowerCase().includes(q) ||
-                    String(n.targetEmail || '').toLowerCase().includes(q)
-                )
-                : allNotificationsData;
+                    String(n.targetEmail || 'semua user').toLowerCase().includes(q)
+                );
+            });
 
             if (filtered.length === 0) {
                 container.innerHTML = `<div class="p-6 text-center text-xs font-mono font-bold text-slate-600">Tidak ada notifikasi ditemukan.</div>`;
@@ -1387,202 +1456,170 @@
             }
 
             container.innerHTML = filtered.map(n => {
-                const nid = escapeHtml(n._id);
-                const title = escapeHtml(n.title);
-                const message = escapeHtml(n.message);
-                const type = escapeHtml((n.type || 'info').toUpperCase());
+                const id = escapeHtml(n._id || n.id || '');
+                const badge = getCategoryBadgeStyle(n.type);
+                const dateStr = n.createdAt ? new Date(n.createdAt).toLocaleString('id-ID') : '-';
                 const target = n.targetEmail ? escapeHtml(n.targetEmail) : 'Broadcast Semua User';
-                const readCount = Array.isArray(n.readBy) ? n.readBy.length : 0;
-                const dateStr = new Date(n.createdAt).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
                 return `
-                    <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neoBg/70">
+                    <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neoBg/60">
                         <div class="space-y-1 min-w-0">
-                            <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="bg-neoCyan border border-black px-2 py-0.5 text-[10px] font-black font-cyber">${type}</span>
-                                <span class="bg-neoYellow border border-black px-2 py-0.5 text-[10px] font-black font-mono">${target}</span>
-                                <span class="text-[10px] font-mono font-bold text-slate-600">Dibaca: ${readCount} • ${dateStr}</span>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="${badge.bg} border-2 border-black px-2 py-0.5 text-[10px] font-mono font-black">${badge.label}</span>
+                                <span class="text-xs font-cyber font-extrabold text-black">${escapeHtml(n.title || 'Tanpa Judul')}</span>
                             </div>
-                            <h4 class="font-cyber font-extrabold text-sm text-black truncate">${title}</h4>
-                            <p class="text-xs font-bold text-slate-700 whitespace-pre-line break-words">${message}</p>
-                            ${n.link ? `<div class="text-[11px] font-mono text-blue-700 truncate"><i class="fa-solid fa-link"></i> ${escapeHtml(n.link)}</div>` : ''}
+                            <p class="text-xs font-medium text-slate-800 line-clamp-2">${escapeHtml(n.message || '')}</p>
+                            <div class="text-[10px] font-mono font-bold text-slate-600 flex flex-wrap gap-3">
+                                <span><i class="fa-solid fa-user"></i> ${target}</span>
+                                <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
+                            </div>
                         </div>
+
                         <div class="flex items-center gap-2 shrink-0">
-                            <button type="button" onclick="jumpToEditNotif('${nid}')" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-3 py-2 text-xs uppercase flex items-center gap-1">
+                            <button type="button" onclick="switchNotifSubTab('edit'); pickNotificationToEdit('${id}')" class="neo-btn bg-neoYellow text-black font-cyber font-extrabold px-3 py-1.5 text-[11px] uppercase">
                                 <i class="fa-solid fa-pen"></i> Edit
                             </button>
-                            <button type="button" onclick="deleteAdminNotification('${nid}', '${title}')" class="neo-btn bg-neoPink text-white font-cyber font-extrabold px-3 py-2 text-xs uppercase flex items-center gap-1">
+                            <button type="button" onclick="deleteAdminNotification('${id}')" class="neo-btn bg-neoPink text-white font-cyber font-extrabold px-3 py-1.5 text-[11px] uppercase">
                                 <i class="fa-solid fa-trash"></i> Hapus
                             </button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
         }
 
-        async function deleteAdminNotification(notifId, title) {
-            const conf = await Swal.fire({
-                title: 'HAPUS NOTIFIKASI?',
-                text: `Yakin ingin menghapus permanen notifikasi "${title}"?`,
+        async function deleteAdminNotification(id) {
+            const confirmRes = await Swal.fire({
+                title: 'Hapus Notifikasi?',
+                text: 'Notifikasi ini akan dihapus permanen dari sistem.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Ya, Hapus',
                 cancelButtonText: 'Batal',
                 customClass: { popup: 'cyber-swal' }
             });
-            if (!conf.isConfirmed) return;
+            if (!confirmRes.isConfirmed) return;
 
             try {
-                const res = await fetch(`/api/admin/notifications/${encodeURIComponent(notifId)}`, { method: 'DELETE' });
-                const result = await res.json();
-                if (!res.ok || !result.status) {
-                    throw new Error(result.message || 'Gagal menghapus notifikasi.');
-                }
-                const editIdEl = document.getElementById('editNotifId');
-                if (editIdEl && editIdEl.value === notifId) {
-                    onSelectEditNotification('');
-                }
-                await loadAdminNotifications();
-                Swal.fire({ icon: 'success', title: 'TERHAPUS', text: result.message, timer: 1500, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+                const res = await fetch(`/api/admin/notifications/${encodeURIComponent(id)}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal menghapus notifikasi');
+
+                Swal.fire({
+                    title: 'Terhapus!',
+                    text: data.message || 'Notifikasi berhasil dihapus.',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+                loadAdminNotifications();
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+                Swal.fire({
+                    title: 'Error',
+                    text: err.message,
+                    icon: 'error',
+                    customClass: { popup: 'cyber-swal' }
+                });
             }
         }
 
-        // =======================================================
-        // GENERATOR & KELOLA PRODUK + MULTI-VARIAN SHOPEE-STYLE
-        // =======================================================
+        // ============================================================
+        // BAGIAN 4: GENERATOR & KELOLA PRODUK (/api/admin/products)
+        // ============================================================
         function switchProductSubTab(sub) {
-            const pForm = document.getElementById('prodPanelForm');
-            const pManage = document.getElementById('prodPanelManage');
-            const bForm = document.getElementById('prodSubBtnForm');
-            const bManage = document.getElementById('prodSubBtnManage');
+            const panelForm = document.getElementById('prodPanelForm');
+            const panelManage = document.getElementById('prodPanelManage');
+            const btnForm = document.getElementById('prodSubBtnForm');
+            const btnManage = document.getElementById('prodSubBtnManage');
 
-            if (pForm) pForm.classList.toggle('hidden', sub !== 'form');
-            if (pManage) pManage.classList.toggle('hidden', sub !== 'manage');
-            if (bForm) bForm.classList.toggle('active', sub === 'form');
-            if (bManage) bManage.classList.toggle('active', sub === 'manage');
+            if (panelForm) panelForm.classList.toggle('hidden', sub !== 'form');
+            if (panelManage) panelManage.classList.toggle('hidden', sub !== 'manage');
+            if (btnForm) btnForm.classList.toggle('active', sub === 'form');
+            if (btnManage) btnManage.classList.toggle('active', sub === 'manage');
         }
 
         function toggleProductVariantsMode() {
-            const enabled = Boolean(document.getElementById('prodEnableVariants')?.checked);
+            const enabled = document.getElementById('prodEnableVariants').checked;
             const singleBlock = document.getElementById('singleProductPriceBlock');
             const multiBlock = document.getElementById('multiVariantBuilderBlock');
-            const badge = document.getElementById('variantModeStatusBadge');
+            const statusBadge = document.getElementById('variantModeStatusBadge');
+
+            if (singleBlock) singleBlock.classList.toggle('hidden', enabled);
+            if (multiBlock) multiBlock.classList.toggle('hidden', !enabled);
+
+            if (statusBadge) {
+                statusBadge.textContent = enabled ? 'MULTI-VARIAN AKTIF' : 'PRODUK TUNGGAL';
+                statusBadge.className = enabled
+                    ? 'text-[10px] font-mono font-extrabold bg-neoGreen border-2 border-black px-2 py-0.5 uppercase'
+                    : 'text-[10px] font-mono font-extrabold bg-white border-2 border-black px-2 py-0.5 uppercase';
+            }
 
             if (enabled) {
-                singleBlock.classList.add('hidden');
-                multiBlock.classList.remove('hidden');
-                badge.innerText = 'MULTI-VARIAN SHOPEE';
-                badge.className = 'text-[10px] font-mono font-extrabold bg-neoCyan border-2 border-black px-2 py-0.5 uppercase';
-                if (productVariantRows.length === 0) {
-                    addVariantRow({ name: 'Indonesia', price: 5000, discountPrice: 0, stock: 25, image: '', downloadUrl: 'https://wa.me/6285122629940' });
-                    addVariantRow({ name: 'Jepang', price: 18000, discountPrice: 15000, stock: 10, image: '', downloadUrl: 'https://wa.me/6285122629940' });
+                const container = document.getElementById('variantRowsContainer');
+                if (container && container.children.length === 0) {
+                    addVariantRow();
                 }
-            } else {
-                singleBlock.classList.remove('hidden');
-                multiBlock.classList.add('hidden');
-                badge.innerText = 'PRODUK TUNGGAL';
-                badge.className = 'text-[10px] font-mono font-extrabold bg-white border-2 border-black px-2 py-0.5 uppercase';
             }
         }
 
-        function addVariantRow(preset = null) {
-            syncVariantRowsFromDom();
-            productVariantRows.push({
-                name: preset?.name || '',
-                price: preset?.price ?? 10000,
-                discountPrice: preset?.discountPrice ?? 0,
-                stock: preset?.stock ?? 10,
-                image: preset?.image || '',
-                downloadUrl: preset?.downloadUrl || ''
-            });
-            renderVariantRows();
-        }
-
-        function removeVariantRow(idx) {
-            syncVariantRowsFromDom();
-            productVariantRows.splice(idx, 1);
-            renderVariantRows();
-        }
-
-        function syncVariantRowsFromDom() {
-            const rows = document.querySelectorAll('.variant-builder-row');
-            if (!rows.length) return;
-            productVariantRows = Array.from(rows).map(row => ({
-                name: row.querySelector('.var-name')?.value || '',
-                price: Number(row.querySelector('.var-price')?.value || 0),
-                discountPrice: Number(row.querySelector('.var-discount')?.value || 0),
-                stock: Number(row.querySelector('.var-stock')?.value || 0),
-                image: row.querySelector('.var-image')?.value || '',
-                downloadUrl: row.querySelector('.var-url')?.value || ''
-            }));
-        }
-
-        function renderVariantRows() {
+        function addVariantRow(preset = {}) {
             const container = document.getElementById('variantRowsContainer');
             if (!container) return;
 
-            if (productVariantRows.length === 0) {
-                container.innerHTML = `<div class="p-3 bg-white border-2 border-dashed border-black text-center text-xs font-bold text-slate-600">Belum ada opsi varian. Klik "+ Tambah Opsi Varian".</div>`;
-                return;
-            }
-
-            container.innerHTML = productVariantRows.map((v, idx) => `
-                <div class="variant-builder-row bg-white border-[2.5px] border-black p-3 space-y-2.5 shadow-[3px_3px_0px_#000]">
-                    <div class="flex items-center justify-between border-b-2 border-black pb-1.5">
-                        <span class="text-[11px] font-cyber font-extrabold uppercase bg-neoYellow border border-black px-2 py-0.5">Opsi Varian #${idx + 1}</span>
-                        <button type="button" onclick="removeVariantRow(${idx})" class="bg-neoPink text-white border-2 border-black px-2 py-0.5 text-[10px] font-cyber font-extrabold uppercase">
-                            <i class="fa-solid fa-trash"></i> Hapus
-                        </button>
+            const row = document.createElement('div');
+            row.className = 'variant-item-row bg-white border-2 border-black p-3 shadow-[3px_3px_0px_#000] space-y-2.5';
+            row.innerHTML = `
+                <div class="flex items-center justify-between border-b border-black pb-1.5">
+                    <span class="font-cyber font-extrabold text-[11px] uppercase"><i class="fa-solid fa-layer-group"></i> Opsi Varian</span>
+                    <button type="button" onclick="this.closest('.variant-item-row').remove()" class="bg-neoPink text-white border border-black px-2 py-0.5 text-[10px] font-cyber font-extrabold uppercase">
+                        <i class="fa-solid fa-trash"></i> Hapus
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+                    <div>
+                        <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Nama Varian *</label>
+                        <input type="text" class="var-name w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-bold" placeholder="Contoh: Indonesia (+62)" value="${escapeHtml(preset.name || '')}">
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
-                        <div>
-                            <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Nama Opsi (Negara/Paket) *</label>
-                            <input type="text" value="${escapeHtml(v.name)}" placeholder="Contoh: Indonesia" class="var-name w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-bold">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Harga Normal (Rp) *</label>
-                            <input type="number" min="0" value="${Number(v.price || 0)}" class="var-price w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Harga Diskon (Rp)</label>
-                            <input type="number" min="0" value="${Number(v.discountPrice || 0)}" class="var-discount w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Stok Opsi *</label>
-                            <input type="number" min="0" value="${Number(v.stock || 0)}" class="var-stock w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold">
-                        </div>
+                    <div>
+                        <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Harga Normal (Rp) *</label>
+                        <input type="number" min="0" class="var-price w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold" placeholder="10000" value="${preset.harga ?? preset.price ?? ''}">
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        <div>
-                            <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">URL Gambar Khusus Opsi (Opsional)</label>
-                            <input type="text" value="${escapeHtml(v.image)}" placeholder="https://..." class="var-image w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Link Download / WA / TG Khusus Opsi</label>
-                            <input type="text" value="${escapeHtml(v.downloadUrl)}" placeholder="https://wa.me/6285122629940" class="var-url w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold">
-                        </div>
+                    <div>
+                        <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Harga Diskon</label>
+                        <input type="number" min="0" class="var-discount w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold" placeholder="0" value="${preset.harga_diskon ?? preset.discountPrice ?? 0}">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Stok *</label>
+                        <input type="number" min="0" class="var-stock w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold" placeholder="20" value="${preset.stok ?? preset.stock ?? 10}">
                     </div>
                 </div>
-            `).join('');
+                <div>
+                    <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">URL Gambar Khusus Varian (Opsional)</label>
+                    <input type="text" class="var-image w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono" placeholder="https://..." value="${escapeHtml(preset.gambar || preset.image || '')}">
+                </div>`;
+            container.appendChild(row);
         }
 
         function fillNokosPreset() {
             resetProductForm();
-            document.getElementById('prodNameInput').value = 'Jual Nokos WhatsApp Fresh';
+            document.getElementById('prodNameInput').value = 'Nokos WhatsApp Fresh Multi Negara';
             document.getElementById('prodCategoryInput').value = 'Nomor Virtual';
             document.getElementById('prodBadgeInput').value = 'BEST SELLER';
             document.getElementById('prodImageInput').value = 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png';
-            document.getElementById('prodDescInput').value = 'Nomor kosong (Nokos) WhatsApp siap pakai, anti banned, garansi kode OTP masuk 1x pakai. Pilih negara sesuai kebutuhan Anda!';
+            document.getElementById('prodDescInput').value = 'Nomor virtual WhatsApp fresh, proses OTP cepat, bergaransi sesuai syarat & ketentuan toko.';
+            document.getElementById('prodDownloadUrlInput').value = 'https://wa.me/6285122629940';
+
             document.getElementById('prodEnableVariants').checked = true;
-            document.getElementById('prodVariantGroupName').value = 'Negara';
-            productVariantRows = [
-                { name: 'Indonesia', price: 5000, discountPrice: 0, stock: 30, image: '', downloadUrl: 'https://wa.me/6285122629940' },
-                { name: 'Jepang', price: 18000, discountPrice: 15000, stock: 12, image: '', downloadUrl: 'https://wa.me/6285122629940' }
-            ];
             toggleProductVariantsMode();
-            renderVariantRows();
+            const container = document.getElementById('variantRowsContainer');
+            if (container) container.innerHTML = '';
+
+            document.getElementById('prodVariantGroupName').value = 'Negara';
+            addVariantRow({ name: 'Indonesia (+62)', harga: 5000, harga_diskon: 0, stok: 50 });
+            addVariantRow({ name: 'Malaysia (+60)', harga: 12000, harga_diskon: 10000, stok: 25 });
+            addVariantRow({ name: 'Jepang (+81)', harga: 25000, harga_diskon: 0, stok: 15 });
         }
 
         function resetProductForm() {
@@ -1590,231 +1627,286 @@
             if (form) form.reset();
             document.getElementById('prodIdInput').value = '';
             document.getElementById('prodEnableVariants').checked = false;
-            productVariantRows = [];
+            const container = document.getElementById('variantRowsContainer');
+            if (container) container.innerHTML = '';
             toggleProductVariantsMode();
-            setTextSafe('prodFormTabLabel', 'Tambah Produk Baru');
-            document.getElementById('prodFormHeaderTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Generator Produk Baru';
-            setTextSafe('btnSubmitProductText', 'Simpan & Terbitkan Produk');
-            document.getElementById('btnCancelProductEdit').classList.add('hidden');
+
+            const headerTitle = document.getElementById('prodFormHeaderTitle');
+            const tabLabel = document.getElementById('prodFormTabLabel');
+            const btnText = document.getElementById('btnSubmitProductText');
+            const btnCancel = document.getElementById('btnCancelProductEdit');
+
+            if (headerTitle) headerTitle.innerHTML = '<i class="fa-solid fa-plus-circle"></i> Generator Produk Baru';
+            if (tabLabel) tabLabel.textContent = 'Tambah Produk Baru';
+            if (btnText) btnText.textContent = 'Simpan & Terbitkan Produk';
+            if (btnCancel) btnCancel.classList.add('hidden');
         }
 
         async function loadAdminProducts() {
             try {
-                const res = await fetch('/api/products');
+                const res = await fetch('/api/admin/products');
                 const data = await res.json();
-                if (data.success && Array.isArray(data.products)) {
-                    allAdminProductsData = data.products;
-                    const count = allAdminProductsData.length;
-                    setTextSafe('totalProdBadge', count);
-                    setTextSafe('prodManageCountTab', count);
-                    setTextSafe('manageProdTotalText', count);
-                    renderAdminProductsList();
-                }
-            } catch (e) {}
-        }
+                if (!res.ok) throw new Error(data.message || 'Gagal memuat daftar produk');
 
-        function renderAdminProductsList() {
-            const container = document.getElementById('adminProductsListContainer');
-            if (!container) return;
+                allAdminProducts = Array.isArray(data) ? data : (data.products || []);
+                const total = allAdminProducts.length;
 
-            const q = (document.getElementById('searchProdAdminInput')?.value || '').toLowerCase().trim();
-            const filtered = q
-                ? allAdminProductsData.filter(p =>
-                    String(p.name || '').toLowerCase().includes(q) ||
-                    String(p.category || '').toLowerCase().includes(q)
-                )
-                : allAdminProductsData;
+                const badge = document.getElementById('totalProdBadge');
+                const countTab = document.getElementById('prodManageCountTab');
+                const totalText = document.getElementById('manageProdTotalText');
 
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="p-6 text-center text-xs font-mono font-bold text-slate-600">Belum ada produk ditemukan.</div>`;
-                return;
+                if (badge) badge.textContent = total;
+                if (countTab) countTab.textContent = total;
+                if (totalText) totalText.textContent = total;
+
+                renderAdminProductsList();
+            } catch (err) {
+                console.error('loadAdminProducts Error:', err);
             }
-
-            container.innerHTML = filtered.map(p => {
-                const variants = Array.isArray(p.variants) ? p.variants : [];
-                const hasVars = variants.length > 0;
-                const totalStock = hasVars
-                    ? variants.reduce((s, v) => s + Number(v.stock || 0), 0)
-                    : Number(p.stock || 0);
-                const priceSummary = hasVars
-                    ? variants.map(v => `${escapeHtml(v.name)}: ${formatRupiah(v.discountPrice > 0 ? v.discountPrice : v.price)} (${v.stock})`).join(' • ')
-                    : formatRupiah(p.discountPrice > 0 ? p.discountPrice : p.price);
-
-                return `
-                    <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neoBg/70">
-                        <div class="flex items-start gap-3 min-w-0">
-                            <img src="${escapeHtml(p.image || '')}" class="w-14 h-14 object-contain bg-white border-2 border-black shrink-0">
-                            <div class="min-w-0 space-y-1">
-                                <div class="flex flex-wrap items-center gap-1.5">
-                                    <span class="bg-neoCyan border border-black px-2 py-0.5 text-[10px] font-black font-cyber">${escapeHtml(p.category || 'Umum')}</span>
-                                    ${hasVars ? `<span class="bg-neoYellow border border-black px-2 py-0.5 text-[10px] font-black font-mono">${variants.length} ${escapeHtml(p.variantGroupName || 'Varian')}</span>` : ''}
-                                    <span class="text-[10px] font-mono font-bold text-slate-600">Total Stok: ${totalStock} • Terjual: ${p.soldCount || 0}</span>
-                                </div>
-                                <h4 class="font-cyber font-extrabold text-sm text-black truncate">${escapeHtml(p.name)}</h4>
-                                <p class="text-[11px] font-mono font-bold text-slate-700 break-words">${priceSummary}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2 shrink-0">
-                            <button type="button" onclick="editAdminProduct('${escapeHtml(p.id)}')" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-3 py-2 text-xs uppercase flex items-center gap-1">
-                                <i class="fa-solid fa-pen"></i> Edit
-                            </button>
-                            <button type="button" onclick="deleteAdminProduct('${escapeHtml(p.id)}', '${escapeHtml(p.name)}')" class="neo-btn bg-neoPink text-white font-cyber font-extrabold px-3 py-2 text-xs uppercase flex items-center gap-1">
-                                <i class="fa-solid fa-trash"></i> Hapus
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
         }
 
-        function editAdminProduct(prodId) {
-            const p = allAdminProductsData.find(item => String(item.id) === String(prodId));
-            if (!p) return;
-
-            switchProductSubTab('form');
-            document.getElementById('prodIdInput').value = p.id;
-            document.getElementById('prodNameInput').value = p.name || '';
-            document.getElementById('prodCategoryInput').value = p.category || '';
-            document.getElementById('prodBadgeInput').value = p.badge || '';
-            document.getElementById('prodImageInput').value = p.image || '';
-            const extraImgs = Array.isArray(p.images) ? p.images.filter(u => u !== p.image) : [];
-            document.getElementById('prodGalleryInput').value = extraImgs.join(', ');
-            document.getElementById('prodDescInput').value = p.description || '';
-
-            const variants = Array.isArray(p.variants) ? p.variants : [];
-            if (variants.length > 0) {
-                document.getElementById('prodEnableVariants').checked = true;
-                document.getElementById('prodVariantGroupName').value = p.variantGroupName || 'Varian';
-                productVariantRows = variants.map(v => ({
-                    name: v.name || v.label || '',
-                    price: Number(v.price || 0),
-                    discountPrice: Number(v.discountPrice || 0),
-                    stock: Number(v.stock || 0),
-                    image: v.image || '',
-                    downloadUrl: v.downloadUrl || ''
-                }));
-                toggleProductVariantsMode();
-                renderVariantRows();
-            } else {
-                document.getElementById('prodEnableVariants').checked = false;
-                productVariantRows = [];
-                toggleProductVariantsMode();
-                document.getElementById('prodPriceInput').value = Number(p.price || 0);
-                document.getElementById('prodDiscountPriceInput').value = Number(p.discountPrice || 0);
-                document.getElementById('prodStockInput').value = Number(p.stock || 0);
-                document.getElementById('prodDownloadUrlInput').value = p.downloadUrl || '';
-            }
-
-            setTextSafe('prodFormTabLabel', 'Edit Produk');
-            document.getElementById('prodFormHeaderTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Produk: ${escapeHtml(p.name)}`;
-            setTextSafe('btnSubmitProductText', 'Simpan Perubahan Produk');
-            document.getElementById('btnCancelProductEdit').classList.remove('hidden');
-        }
-
-        async function submitProductGenerator(e) {
-            e.preventDefault();
-            const prodId = (document.getElementById('prodIdInput').value || '').trim();
-            const isEdit = Boolean(prodId);
-            const enableVariants = Boolean(document.getElementById('prodEnableVariants').checked);
+        async function submitProductGenerator(event) {
+            event.preventDefault();
+            const editId = document.getElementById('prodIdInput').value.trim();
+            const hasVariants = document.getElementById('prodEnableVariants').checked;
 
             const mainImage = document.getElementById('prodImageInput').value.trim();
-            const galleryRaw = document.getElementById('prodGalleryInput').value || '';
-            const extraImages = galleryRaw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
-            const images = [...new Set([mainImage, ...extraImages])];
+            const galleryRaw = document.getElementById('prodGalleryInput').value;
+            const extraImages = galleryRaw
+                .split(/[\n,]+/)
+                .map(s => s.trim())
+                .filter(Boolean);
+            const gambarArray = [mainImage, ...extraImages.filter(u => u !== mainImage)].filter(Boolean);
 
-            let variants = [];
-            let price = Number(document.getElementById('prodPriceInput').value || 0);
-            let discountPrice = Number(document.getElementById('prodDiscountPriceInput').value || 0);
-            let stock = Number(document.getElementById('prodStockInput').value || 0);
-            let downloadUrl = document.getElementById('prodDownloadUrlInput').value.trim();
+            let variantsPayload = [];
+            let harga = Number(document.getElementById('prodPriceInput').value || 0);
+            let harga_diskon = Number(document.getElementById('prodDiscountPriceInput').value || 0);
+            let stok = Number(document.getElementById('prodStockInput').value || 0);
 
-            if (enableVariants) {
-                syncVariantRowsFromDom();
-                variants = productVariantRows.filter(v => v.name.trim() !== '');
-                if (variants.length === 0) {
-                    Swal.fire({ icon: 'warning', title: 'VARIAN KOSONG', text: 'Tambahkan minimal 1 opsi varian (misal: Indonesia).', customClass: { popup: 'cyber-swal' } });
+            if (hasVariants) {
+                const rows = Array.from(document.querySelectorAll('#variantRowsContainer .variant-item-row'));
+                variantsPayload = rows.map(r => ({
+                    name: r.querySelector('.var-name').value.trim(),
+                    harga: Number(r.querySelector('.var-price').value || 0),
+                    harga_diskon: Number(r.querySelector('.var-discount').value || 0),
+                    stok: Number(r.querySelector('.var-stock').value || 0),
+                    gambar: r.querySelector('.var-image').value.trim()
+                })).filter(v => v.name);
+
+                if (variantsPayload.length === 0) {
+                    Swal.fire({
+                        title: 'Varian Kosong',
+                        text: 'Tambahkan minimal 1 opsi varian jika mode multi-varian diaktifkan.',
+                        icon: 'warning',
+                        customClass: { popup: 'cyber-swal' }
+                    });
                     return;
                 }
-                price = Math.min(...variants.map(v => Number(v.price || 0)));
-                discountPrice = 0;
-                stock = variants.reduce((sum, v) => sum + Math.max(0, Number(v.stock || 0)), 0);
-                if (!downloadUrl && variants[0]?.downloadUrl) downloadUrl = variants[0].downloadUrl;
+
+                harga = variantsPayload[0].harga;
+                harga_diskon = variantsPayload[0].harga_diskon;
+                stok = variantsPayload.reduce((sum, v) => sum + Number(v.stok || 0), 0);
             }
 
             const payload = {
-                name: document.getElementById('prodNameInput').value.trim(),
-                category: document.getElementById('prodCategoryInput').value.trim(),
+                nama: document.getElementById('prodNameInput').value.trim(),
+                kategori: document.getElementById('prodCategoryInput').value.trim(),
                 badge: document.getElementById('prodBadgeInput').value.trim(),
-                image: mainImage,
-                images,
-                description: document.getElementById('prodDescInput').value.trim(),
-                price,
-                discountPrice,
-                stock,
-                downloadUrl,
-                variantGroupName: enableVariants ? (document.getElementById('prodVariantGroupName').value.trim() || 'Varian') : '',
-                variants
+                gambar: gambarArray,
+                deskripsi: document.getElementById('prodDescInput').value.trim(),
+                link: document.getElementById('prodDownloadUrlInput').value.trim(),
+                harga,
+                harga_diskon,
+                stok,
+                variantGroup: hasVariants ? (document.getElementById('prodVariantGroupName').value.trim() || 'Varian') : '',
+                variants: hasVariants ? variantsPayload : []
             };
 
+            const url = editId
+                ? `/api/admin/products/${encodeURIComponent(editId)}`
+                : '/api/admin/products';
+            const method = editId ? 'PUT' : 'POST';
+
             const btn = document.getElementById('btnSubmitProduct');
-            btn.disabled = true;
+            if (btn) btn.disabled = true;
 
             try {
-                const url = isEdit ? `/api/admin/products/${encodeURIComponent(prodId)}` : '/api/admin/products';
-                const method = isEdit ? 'PUT' : 'POST';
                 const res = await fetch(url, {
                     method,
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                const result = await res.json();
-                if (!res.ok || !result.status) {
-                    throw new Error(result.message || 'Gagal menyimpan produk.');
-                }
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal menyimpan produk');
 
-                resetProductForm();
-                await loadAdminProducts();
                 Swal.fire({
+                    title: editId ? 'Produk Diperbarui!' : 'Produk Diterbitkan!',
+                    text: data.message || 'Data produk berhasil disimpan ke katalog.',
                     icon: 'success',
-                    title: isEdit ? 'PRODUK DIPERBARUI!' : 'PRODUK DITAMBAHKAN!',
-                    text: result.message,
                     customClass: { popup: 'cyber-swal' }
                 });
+                resetProductForm();
+                loadAdminProducts();
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+                Swal.fire({
+                    title: 'Error',
+                    text: err.message,
+                    icon: 'error',
+                    customClass: { popup: 'cyber-swal' }
+                });
             } finally {
-                btn.disabled = false;
+                if (btn) btn.disabled = false;
             }
         }
 
-        async function deleteAdminProduct(prodId, name) {
-            const conf = await Swal.fire({
-                title: 'HAPUS PRODUK?',
-                text: `Yakin ingin menghapus produk "${name}" dari toko?`,
+        function startEditAdminProduct(prodId) {
+            const p = allAdminProducts.find(item => String(item.Id || item._id || item.id) === String(prodId));
+            if (!p) return;
+
+            switchProductSubTab('form');
+
+            const resolvedId = p.Id || p._id || p.id || '';
+            const imagesArr = Array.isArray(p.gambar) ? p.gambar : (p.gambar ? [p.gambar] : (p.image ? [p.image] : []));
+            const variantsArr = Array.isArray(p.variants) ? p.variants : [];
+
+            document.getElementById('prodIdInput').value = resolvedId;
+            document.getElementById('prodNameInput').value = p.nama || p.name || '';
+            document.getElementById('prodCategoryInput').value = p.kategori || p.category || '';
+            document.getElementById('prodBadgeInput').value = p.badge || '';
+            document.getElementById('prodImageInput').value = imagesArr[0] || '';
+            document.getElementById('prodGalleryInput').value = imagesArr.slice(1).join('\n');
+            document.getElementById('prodDescInput').value = p.deskripsi || p.description || '';
+            document.getElementById('prodDownloadUrlInput').value = p.link || p.downloadUrl || '';
+
+            const hasVariants = variantsArr.length > 0;
+            document.getElementById('prodEnableVariants').checked = hasVariants;
+            toggleProductVariantsMode();
+
+            const container = document.getElementById('variantRowsContainer');
+            if (container) container.innerHTML = '';
+
+            if (hasVariants) {
+                document.getElementById('prodVariantGroupName').value = p.variantGroup || p.variantGroupName || 'Varian';
+                variantsArr.forEach(v => addVariantRow(v));
+            } else {
+                document.getElementById('prodPriceInput').value = p.harga ?? p.price ?? 0;
+                document.getElementById('prodDiscountPriceInput').value = p.harga_diskon ?? p.discountPrice ?? 0;
+                document.getElementById('prodStockInput').value = p.stok ?? p.stock ?? 0;
+            }
+
+            const headerTitle = document.getElementById('prodFormHeaderTitle');
+            const tabLabel = document.getElementById('prodFormTabLabel');
+            const btnText = document.getElementById('btnSubmitProductText');
+            const btnCancel = document.getElementById('btnCancelProductEdit');
+
+            if (headerTitle) headerTitle.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Produk (${escapeHtml(resolvedId)})`;
+            if (tabLabel) tabLabel.textContent = 'Sedang Edit Produk';
+            if (btnText) btnText.textContent = 'Simpan Perubahan Produk';
+            if (btnCancel) btnCancel.classList.remove('hidden');
+        }
+
+        function renderAdminProductsList() {
+            const container = document.getElementById('adminProductsListContainer');
+            const searchEl = document.getElementById('searchProdAdminInput');
+            if (!container) return;
+
+            const q = (searchEl ? searchEl.value : '').toLowerCase().trim();
+            const filtered = allAdminProducts.filter(p => {
+                if (!q) return true;
+                return (
+                    String(p.nama || p.name || '').toLowerCase().includes(q) ||
+                    String(p.kategori || p.category || '').toLowerCase().includes(q) ||
+                    String(p.Id || '').toLowerCase().includes(q)
+                );
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-xs font-mono font-bold text-slate-600">Tidak ada produk ditemukan.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(p => {
+                const pid = escapeHtml(p.Id || p._id || p.id || '');
+                const name = escapeHtml(p.nama || p.name || 'Produk');
+                const cat = escapeHtml(p.kategori || p.category || 'Umum');
+                const imagesArr = Array.isArray(p.gambar) ? p.gambar : (p.gambar ? [p.gambar] : []);
+                const thumb = escapeHtml(imagesArr[0] || p.image || 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png');
+                const variantsArr = Array.isArray(p.variants) ? p.variants : [];
+                const price = Number(p.harga ?? p.price ?? 0);
+                const disc = Number(p.harga_diskon ?? p.discountPrice ?? 0);
+                const stock = Number(p.stok ?? p.stock ?? 0);
+
+                return `
+                    <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neoBg/60">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <img src="${thumb}" alt="${name}" class="w-14 h-14 object-cover border-2 border-black bg-white shrink-0">
+                            <div class="min-w-0 space-y-1">
+                                <div class="flex flex-wrap items-center gap-1.5">
+                                    <span class="bg-neoYellow border border-black px-1.5 py-0.5 text-[9px] font-mono font-black">${pid}</span>
+                                    <span class="bg-neoCyan border border-black px-1.5 py-0.5 text-[9px] font-mono font-black uppercase">${cat}</span>
+                                    ${variantsArr.length > 0 ? `<span class="bg-neoPurple border border-black px-1.5 py-0.5 text-[9px] font-mono font-black uppercase">${variantsArr.length} VARIAN</span>` : ''}
+                                </div>
+                                <div class="text-xs font-cyber font-extrabold text-black truncate">${name}</div>
+                                <div class="text-[11px] font-mono font-bold text-slate-700">
+                                    Harga: ${disc > 0 ? `<span class="line-through text-slate-400">${formatRupiah(price)}</span> <span class="text-emerald-700">${formatRupiah(disc)}</span>` : formatRupiah(price)}
+                                    &bull; Stok: ${stock}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button type="button" onclick="startEditAdminProduct('${pid}')" class="neo-btn bg-neoYellow text-black font-cyber font-extrabold px-3 py-1.5 text-[11px] uppercase">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </button>
+                            <button type="button" onclick="deleteAdminProduct('${pid}')" class="neo-btn bg-neoPink text-white font-cyber font-extrabold px-3 py-1.5 text-[11px] uppercase">
+                                <i class="fa-solid fa-trash"></i> Hapus
+                            </button>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        async function deleteAdminProduct(prodId) {
+            const confirmRes = await Swal.fire({
+                title: 'Hapus Produk?',
+                text: `Produk ${prodId} akan dihapus permanen dari toko.`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Ya, Hapus',
                 cancelButtonText: 'Batal',
                 customClass: { popup: 'cyber-swal' }
             });
-            if (!conf.isConfirmed) return;
+            if (!confirmRes.isConfirmed) return;
 
             try {
-                const res = await fetch(`/api/admin/products/${encodeURIComponent(prodId)}`, { method: 'DELETE' });
-                const result = await res.json();
-                if (!res.ok || !result.status) {
-                    throw new Error(result.message || 'Gagal menghapus produk.');
-                }
-                await loadAdminProducts();
-                Swal.fire({ icon: 'success', title: 'TERHAPUS', text: result.message, timer: 1500, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+                const res = await fetch(`/api/admin/products/${encodeURIComponent(prodId)}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal menghapus produk');
+
+                Swal.fire({
+                    title: 'Produk Dihapus!',
+                    text: data.message || 'Produk telah dihapus.',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+                loadAdminProducts();
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+                Swal.fire({
+                    title: 'Error',
+                    text: err.message,
+                    icon: 'error',
+                    customClass: { popup: 'cyber-swal' }
+                });
             }
         }
 
-        // =======================================================
-        // GENERATOR & KELOLA VOUCHER DISKON
-        // =======================================================
+        // ============================================================
+        // BAGIAN 5: GENERATOR & KELOLA VOUCHER (/api/admin/vouchers)
+        // ============================================================
         function generateRandomVoucherCode() {
             const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
             let code = 'ARULZ-';
@@ -1826,243 +1918,193 @@
         }
 
         function toggleVoucherTypeFields() {
-            const type = document.getElementById('voucherTypeInput')?.value || 'fixed';
+            const type = document.getElementById('voucherTypeInput').value;
             const label = document.getElementById('voucherValueLabel');
-            const maxGroup = document.getElementById('voucherMaxDiscountGroup');
-            const valInput = document.getElementById('voucherValueInput');
-
-            if (type === 'percent') {
-                if (label) label.innerText = 'Persentase Diskon (%) *';
-                if (valInput) valInput.placeholder = '20';
-                if (maxGroup) maxGroup.classList.remove('hidden');
+            const input = document.getElementById('voucherValueInput');
+            if (type === 'percentage') {
+                if (label) label.textContent = 'Persentase Diskon (%) *';
+                if (input) {
+                    input.max = '100';
+                    input.placeholder = '15';
+                }
             } else {
-                if (label) label.innerText = 'Nominal Diskon (Rp) *';
-                if (valInput) valInput.placeholder = '5000';
-                if (maxGroup) maxGroup.classList.add('hidden');
+                if (label) label.textContent = 'Nominal Diskon (Rp) *';
+                if (input) {
+                    input.removeAttribute('max');
+                    input.placeholder = '5000';
+                }
             }
+        }
+
+        function setDefaultVoucherExpiry() {
+            const expInput = document.getElementById('voucherExpiredInput');
+            if (!expInput || expInput.value) return;
+            const d = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+            const pad = n => String(n).padStart(2, '0');
+            expInput.value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
         }
 
         async function loadAdminVouchers() {
             try {
                 const res = await fetch('/api/admin/vouchers');
                 const data = await res.json();
-                if (data.status && Array.isArray(data.vouchers)) {
-                    allAdminVouchersData = data.vouchers;
-                    const count = allAdminVouchersData.length;
-                    setTextSafe('totalVoucherBadge', count);
-                    setTextSafe('manageVoucherTotalText', count);
-                    renderAdminVouchersList();
-                }
-            } catch (e) {}
+                if (!res.ok) throw new Error(data.message || 'Gagal memuat daftar voucher');
+
+                allAdminVouchers = Array.isArray(data) ? data : (data.vouchers || []);
+                const total = allAdminVouchers.length;
+
+                const badge = document.getElementById('totalVoucherBadge');
+                const totalText = document.getElementById('manageVoucherTotalText');
+                if (badge) badge.textContent = total;
+                if (totalText) totalText.textContent = total;
+
+                renderAdminVouchersList();
+            } catch (err) {
+                console.error('loadAdminVouchers Error:', err);
+            }
+        }
+
+        async function submitVoucherGenerator(event) {
+            event.preventDefault();
+            const payload = {
+                code: document.getElementById('voucherCodeInput').value.trim().toUpperCase(),
+                type: document.getElementById('voucherTypeInput').value,
+                discount: Number(document.getElementById('voucherValueInput').value || 0),
+                usageLimit: Number(document.getElementById('voucherQuotaInput').value || 1),
+                expiredAt: document.getElementById('voucherExpiredInput').value
+            };
+
+            const btn = document.getElementById('btnSubmitVoucher');
+            if (btn) btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/admin/vouchers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal membuat voucher');
+
+                document.getElementById('voucherGeneratorForm').reset();
+                toggleVoucherTypeFields();
+                setDefaultVoucherExpiry();
+
+                Swal.fire({
+                    title: 'Voucher Aktif!',
+                    text: data.message || `Kode voucher ${payload.code} berhasil dibuat.`,
+                    icon: 'success',
+                    customClass: { popup: 'cyber-swal' }
+                });
+                loadAdminVouchers();
+            } catch (err) {
+                Swal.fire({
+                    title: 'Error',
+                    text: err.message,
+                    icon: 'error',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } finally {
+                if (btn) btn.disabled = false;
+            }
         }
 
         function renderAdminVouchersList() {
             const container = document.getElementById('adminVouchersListContainer');
             if (!container) return;
 
-            if (allAdminVouchersData.length === 0) {
-                container.innerHTML = `<div class="p-6 text-center text-xs font-mono font-bold text-slate-600">Belum ada voucher dibuat.</div>`;
+            if (allAdminVouchers.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-xs font-mono font-bold text-slate-600">Belum ada kode voucher tersimpan.</div>`;
                 return;
             }
 
-            container.innerHTML = allAdminVouchersData.map(v => {
-                const discText = v.type === 'percent'
-                    ? `Diskon ${v.value}%${v.maxDiscount > 0 ? ` (Maks ${formatRupiah(v.maxDiscount)})` : ''}`
-                    : `Potongan ${formatRupiah(v.value)}`;
-                const quotaText = v.quota > 0 ? `${v.usedCount || 0}/${v.quota} Terpakai` : `${v.usedCount || 0} Terpakai (Unlimited)`;
+            container.innerHTML = allAdminVouchers.map(v => {
+                const id = escapeHtml(v._id || v.id || v.code || '');
+                const code = escapeHtml(v.code || '-');
+                const isPercent = v.type === 'percentage' || v.type === 'percent';
+                const discountVal = Number(v.discount ?? v.value ?? 0);
+                const discountLabel = isPercent ? `${discountVal}%` : formatRupiah(discountVal);
+                const used = Number(v.usedCount || 0);
+                const limit = Number(v.usageLimit ?? v.quota ?? 0);
+                const expStr = v.expiredAt ? new Date(v.expiredAt).toLocaleString('id-ID') : 'Tanpa batas';
 
                 return `
-                    <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neoBg/70">
+                    <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neoBg/60">
                         <div class="space-y-1">
-                            <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="bg-neoYellow border-2 border-black px-2.5 py-0.5 text-xs font-mono font-black">${escapeHtml(v.code)}</span>
-                                <span class="bg-neoGreen border border-black px-2 py-0.5 text-[10px] font-cyber font-extrabold">${discText}</span>
-                                <span class="text-[10px] font-mono font-bold text-slate-600">Min. Belanja: ${formatRupiah(v.minOrder || 0)} • Kuota: ${quotaText}</span>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="bg-neoYellow border-2 border-black px-2.5 py-0.5 text-xs font-mono font-black">${code}</span>
+                                <span class="bg-neoGreen border-2 border-black px-2 py-0.5 text-[10px] font-mono font-black">DISKON ${discountLabel}</span>
+                            </div>
+                            <div class="text-[11px] font-mono font-bold text-slate-700">
+                                Terpakai: ${used} / ${limit} &bull; Berlaku s/d: ${expStr}
                             </div>
                         </div>
-                        <button type="button" onclick="deleteAdminVoucher('${escapeHtml(v._id)}', '${escapeHtml(v.code)}')" class="neo-btn bg-neoPink text-white font-cyber font-extrabold px-3 py-2 text-xs uppercase flex items-center gap-1 shrink-0">
+
+                        <button type="button" onclick="deleteAdminVoucher('${id}', '${code}')" class="neo-btn bg-neoPink text-white font-cyber font-extrabold px-3 py-1.5 text-[11px] uppercase shrink-0">
                             <i class="fa-solid fa-trash"></i> Hapus
                         </button>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
         }
 
-        async function submitVoucherGenerator(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btnSubmitVoucher');
-            btn.disabled = true;
-
-            try {
-                const payload = {
-                    code: document.getElementById('voucherCodeInput').value.trim().toUpperCase(),
-                    type: document.getElementById('voucherTypeInput').value,
-                    value: Number(document.getElementById('voucherValueInput').value || 0),
-                    minOrder: Number(document.getElementById('voucherMinOrderInput').value || 0),
-                    maxDiscount: Number(document.getElementById('voucherMaxDiscountInput').value || 0),
-                    quota: Number(document.getElementById('voucherQuotaInput').value || 0)
-                };
-
-                const res = await fetch('/api/admin/vouchers', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await res.json();
-                if (!res.ok || !result.status) {
-                    throw new Error(result.message || 'Gagal membuat voucher.');
-                }
-
-                document.getElementById('voucherGeneratorForm').reset();
-                toggleVoucherTypeFields();
-                await loadAdminVouchers();
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'VOUCHER AKTIF!',
-                    text: result.message,
-                    customClass: { popup: 'cyber-swal' }
-                });
-            } catch (err) {
-                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
-            } finally {
-                btn.disabled = false;
-            }
-        }
-
-        async function deleteAdminVoucher(voucherId, code) {
-            const conf = await Swal.fire({
-                title: 'HAPUS VOUCHER?',
-                text: `Hapus permanen kode voucher "${code}"?`,
+        async function deleteAdminVoucher(id, code) {
+            const confirmRes = await Swal.fire({
+                title: 'Hapus Voucher?',
+                text: `Voucher ${code} akan dihapus permanen.`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Ya, Hapus',
                 cancelButtonText: 'Batal',
                 customClass: { popup: 'cyber-swal' }
             });
-            if (!conf.isConfirmed) return;
+            if (!confirmRes.isConfirmed) return;
 
             try {
-                const res = await fetch(`/api/admin/vouchers/${encodeURIComponent(voucherId)}`, { method: 'DELETE' });
-                const result = await res.json();
-                if (!res.ok || !result.status) {
-                    throw new Error(result.message || 'Gagal menghapus voucher.');
-                }
-                await loadAdminVouchers();
-                Swal.fire({ icon: 'success', title: 'TERHAPUS', text: result.message, timer: 1400, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+                const res = await fetch(`/api/admin/vouchers/${encodeURIComponent(id)}`, {
+                    method: 'DELETE'
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal menghapus voucher');
+
+                Swal.fire({
+                    title: 'Terhapus!',
+                    text: data.message || 'Voucher berhasil dihapus.',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+                loadAdminVouchers();
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+                Swal.fire({
+                    title: 'Error',
+                    text: err.message,
+                    icon: 'error',
+                    customClass: { popup: 'cyber-swal' }
+                });
             }
         }
 
-        // LIVE CHAT FUNCTIONS + PENANDA UNREAD BADGE
-        function scrollUserCarousel(direction) {
-            const container = document.getElementById('adminUserList');
-            if (container) container.scrollBy({ left: direction === 'left' ? -240 : 240, behavior: 'smooth' });
-        }
-
-        async function loadUserList() {
-            try {
-                const res = await fetch('/api/bantuan/admin/users');
-                const data = await res.json();
-                const listEl = document.getElementById('adminUserList');
-                const users = (data.status && Array.isArray(data.users)) ? data.users : [];
-
-                setTextSafe('userCountText', users.length);
-
-                const totalUnreadChats = users.reduce((sum, u) => sum + (Number(u.unreadCount) || 0), 0);
-                setTextSafe('unreadChatBadge', totalUnreadChats);
-
-                if (!listEl) return;
-
-                if (users.length > 0) {
-                    listEl.innerHTML = users.map(u => {
-                        const isActive = u.userId === selectedUserId;
-                        const unreadBadge = u.unreadCount > 0 ? `<span class="bg-neoPink text-white border border-black text-[9px] font-black px-1.5 ml-1.5">${u.unreadCount}</span>` : '';
-                        return `
-                            <button onclick="selectUserChat('${escapeHtml(u.userId)}', '${escapeHtml(u.username)}', '${escapeHtml(u.email || u.userId)}')" 
-                                    class="user-pill shrink-0 px-3 py-2 text-left flex items-center gap-2.5 cursor-pointer ${isActive ? 'active' : 'bg-white'}">
-                                <div class="whitespace-nowrap">
-                                    <div class="text-xs font-extrabold font-cyber text-black flex items-center">${escapeHtml(u.username)}${unreadBadge}</div>
-                                    <div class="text-[10px] font-mono text-slate-600">${escapeHtml(u.email || u.userId)}</div>
-                                </div>
-                            </button>`;
-                    }).join('');
-                } else {
-                    listEl.innerHTML = `<div class="p-2 text-xs font-mono font-bold text-slate-700">Belum ada percakapan pengguna.</div>`;
-                }
-            } catch(e) {}
-        }
-
-        function selectUserChat(userId, username, email) {
-            selectedUserId = userId;
-            selectedUsername = username;
-            selectedUserEmail = email || userId;
-            const chatForm = document.getElementById('adminChatForm');
-            if (chatForm) chatForm.classList.remove('opacity-50', 'pointer-events-none');
-            loadUserMessages();
-            loadUserList();
-        }
-
-        async function loadUserMessages() {
-            if (!selectedUserId) return;
-            try {
-                const res = await fetch(`/api/bantuan/admin/messages/${encodeURIComponent(selectedUserId)}`);
-                const data = await res.json();
-                const container = document.getElementById('adminChatMessages');
-                if (!container) return;
-                if (data.status && data.messages) {
-                    container.innerHTML = data.messages.map(msg => {
-                        const isAdmin = msg.sender === 'admin' || msg.sender === 'owner';
-                        return `
-                            <div class="flex ${isAdmin ? 'justify-end' : 'justify-start'}">
-                                <div class="max-w-[80%] p-3 text-xs space-y-1 ${isAdmin ? 'bg-neoYellow' : 'bg-white'} border-[2.5px] border-black shadow-[3px_3px_0px_#000] font-bold">
-                                    <div class="font-extrabold font-cyber text-[10px] border-b-2 border-black/20 pb-1 uppercase">${isAdmin ? 'Admin / Owner' : escapeHtml(selectedUsername)}</div>
-                                    <p class="pt-1 whitespace-pre-line break-words">${escapeHtml(msg.message)}</p>
-                                </div>
-                            </div>`;
-                    }).join('');
-                    container.scrollTop = container.scrollHeight;
-                }
-            } catch(e) {}
-        }
-
-        async function sendAdminReply(e) {
-            e.preventDefault();
-            if (!selectedUserId) return;
-            const input = document.getElementById('adminChatInput');
-            if (!input) return;
-            const message = input.value.trim();
-            if (!message) return;
-            input.value = '';
-            await fetch('/api/bantuan/admin/reply', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: selectedUserId, message })
-            });
-            loadUserMessages();
-            loadUserList();
-        }
-
+        // ============================================================
+        // INISIALISASI HALAMAN ADMIN
+        // ============================================================
         document.addEventListener('click', (e) => {
             const wrapper = document.getElementById('customNotifSelectWrapper');
-            if (wrapper && !wrapper.contains(e.target)) {
-                closeCustomNotifDropdown();
+            const menu = document.getElementById('customNotifDropdownMenu');
+            const chevron = document.getElementById('customNotifChevron');
+            if (wrapper && menu && !wrapper.contains(e.target)) {
+                menu.classList.add('hidden');
+                if (chevron) chevron.classList.remove('rotate-180');
             }
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            selectDeliveryMode('broadcast');
+            setDefaultVoucherExpiry();
             loadDepositsQris();
             loadUserList();
             loadAdminNotifications();
             loadAdminProducts();
             loadAdminVouchers();
-            adminPollInterval = setInterval(() => {
-                loadDepositsQris();
-                if (selectedUserId) loadUserMessages();
-                loadUserList();
-            }, 5000);
         });
     </script>
 </body>
