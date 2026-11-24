@@ -3919,6 +3919,91 @@ app.post('/api/admin/deposits-qrisv2/:orderId/cancel', checkAuthSession, checkAd
     }
 });
 
+app.delete('/api/admin/deposits-qrisv2/:orderId', isAuthenticated, isAdmin, async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        if (!orderId) {
+            return res.status(400).json({ success: false, message: 'Order ID tidak valid.' });
+        }
+
+        const deleted = await Transaction.findOneAndDelete({
+            orderId: orderId,
+            $or: [
+                { type: 'deposit' },
+                { paymentMethod: { $regex: /qris/i } },
+                { orderId: { $regex: /^DEP-/i } }
+            ]
+        });
+
+        const finalDeleted = deleted || await Transaction.findOneAndDelete({ orderId: orderId });
+
+        if (!finalDeleted) {
+            return res.status(404).json({
+                success: false,
+                message: `Data deposit dengan Order ID ${orderId} tidak ditemukan.`
+            });
+        }
+
+        return res.json({
+            success: true,
+            message: `Riwayat deposit ${orderId} berhasil dihapus permanen.`
+        });
+    } catch (error) {
+        console.error('Error DELETE /api/admin/deposits-qrisv2/:orderId:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Terjadi kesalahan server saat menghapus riwayat deposit.'
+        });
+    }
+});
+
+app.post('/api/admin/deposits-qrisv2/bulk-delete', isAuthenticated, isAdmin, async (req, res) => {
+    try {
+        const { status } = req.body;
+        const allowedStatuses = ['cancelled', 'pending', 'success', 'all'];
+
+        if (!status || !allowedStatuses.includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Kategori status penghapusan tidak valid.'
+            });
+        }
+
+        const baseDepositFilter = {
+            $or: [
+                { type: 'deposit' },
+                { paymentMethod: { $regex: /qris/i } },
+                { orderId: { $regex: /^DEP-/i } }
+            ]
+        };
+
+        const queryFilter = status === 'all'
+            ? baseDepositFilter
+            : { ...baseDepositFilter, status: status };
+
+        const result = await Transaction.deleteMany(queryFilter);
+
+        const labelMap = {
+            cancelled: 'Dibatalkan',
+            pending: 'Belum Upload',
+            success: 'Sukses',
+            all: 'Seluruh Riwayat QRIS'
+        };
+
+        return res.json({
+            success: true,
+            deletedCount: result.deletedCount || 0,
+            message: `Berhasil menghapus ${result.deletedCount || 0} data deposit (${labelMap[status]}).`
+        });
+    } catch (error) {
+        console.error('Error POST /api/admin/deposits-qrisv2/bulk-delete:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Terjadi kesalahan server saat membersihkan riwayat deposit.'
+        });
+    }
+});
+
 app.get('/auth/telegram', (req, res) => {
     if (!TELEGRAM_CLIENT_ID || !TELEGRAM_CLIENT_SECRET) {
         return res.status(503).send('Telegram Login belum dikonfigurasi. Atur TELEGRAM_CLIENT_ID dan TELEGRAM_CLIENT_SECRET.');
@@ -6274,6 +6359,145 @@ app.delete('/api/admin/products/:id', checkAuthSession, checkAdminRole, async (r
     }
 });
 
+app.post('/api/admin/generate-notif-ai', isAuthenticated, isAdmin, async (req, res) => {
+    try {
+        const { entityType, data } = req.body || {};
+        if (!entityType || !data) {
+            return res.status(400).json({
+                success: false,
+                message: 'Parameter entityType dan data wajib diisi.'
+            });
+        }
+
+        const isProduct = entityType === 'product';
+        const formatRp = (val) => 'Rp ' + Number(val || 0).toLocaleString('id-ID');
+
+        // Susun ringkasan data produk / voucher untuk prompt Gemini
+        let contextSummary = '';
+        if (isProduct) {
+            const variants = Array.isArray(data.variants) ? data.variants : [];
+            const variantText = variants.length > 0
+                ? variants.map(v => `${v.name}: ${formatRp(v.harga_diskon > 0 ? v.harga_diskon : v.harga)} (Stok ${v.stok})`).join(', ')
+                : `Harga: ${formatRp(data.harga_diskon > 0 ? data.harga_diskon : data.harga)} (Stok ${data.stok || 0})`;
+
+            contextSummary = [
+                `Jenis: Produk Baru di ARULZXD STORE`,
+                `Nama Produk: ${data.nama || '-'}`,
+                `Kategori: ${data.kategori || '-'}`,
+                `Badge: ${data.badge || '-'}`,
+                `Detail Harga & Varian: ${variantText}`,
+                `Deskripsi: ${data.deskripsi || '-'}`
+            ].join('\n');
+        } else {
+            const isPercent = data.type === 'percentage' || data.type === 'percent';
+            const discLabel = isPercent ? `${Number(data.discount || 0)}%` : formatRp(data.discount || 0);
+            contextSummary = [
+                `Jenis: Kode Voucher Promo Baru di ARULZXD STORE`,
+                `Kode Voucher: ${data.code || '-'}`,
+                `Besar Diskon: ${discLabel}`,
+                `Kuota Pemakaian: ${data.usageLimit || 0} pengguna`,
+                `Masa Berlaku: ${data.expiredReadable || data.expiredAt || '-'}`
+            ].join('\n');
+        }
+
+        // Susun fallback otomatis jika GEMINI_API_KEY tidak tersedia
+        const buildFallbackDraft = () => {
+            if (isProduct) {
+                const variants = Array.isArray(data.variants) ? data.variants : [];
+                const priceInfo = variants.length > 0
+                    ? `mulai ${formatRp(Math.min(...variants.map(v => Number(v.harga_diskon > 0 ? v.harga_diskon : v.harga || 0))))}`
+                    : formatRp(data.harga_diskon > 0 ? data.harga_diskon : data.harga || 0);
+                return {
+                    title: `🔥 Rilis Baru: ${data.nama} Kini Tersedia di Store!`,
+                    type: 'promo',
+                    link: '/store',
+                    message: `Halo Sobat ARULZXD STORE! Produk baru "${data.nama}" kategori ${data.kategori} sudah resmi hadir dengan harga ${priceInfo}. Stok terbatas, yuk segera amankan pesananmu sekarang sebelum kehabisan!`
+                };
+            } else {
+                const isPercent = data.type === 'percentage' || data.type === 'percent';
+                const discLabel = isPercent ? `${Number(data.discount || 0)}%` : formatRp(data.discount || 0);
+                return {
+                    title: `🎟️ Promo Spesial! Klaim Voucher ${data.code} Diskon ${discLabel}`,
+                    type: 'promo',
+                    link: '/store',
+                    message: `Kabar gembira buat kamu! Gunakan kode voucher "${data.code}" saat checkout di ARULZXD STORE untuk hemat ${discLabel}. Kuota terbatas hanya ${data.usageLimit} kali pemakaian (${data.expiredReadable || 'segera sebelum berakhir'})!`
+                };
+            }
+        };
+
+        const geminiApiKey = process.env.GEMINI_API_KEY;
+        if (!geminiApiKey) {
+            return res.json({
+                success: true,
+                source: 'fallback',
+                draft: buildFallbackDraft()
+            });
+        }
+
+        const promptText = `Kamu adalah copywriter promosi e-commerce digital "ARULZXD STORE" (shoparulzxd.biz.id).
+Berdasarkan data ${isProduct ? 'produk baru' : 'kode voucher promo baru'} berikut:
+${contextSummary}
+
+Buatkan draft pengumuman notifikasi aplikasi & broadcast Telegram/Email dalam Bahasa Indonesia yang menarik, jelas, persuasif, tidak berlebihan, dan langsung mengajak user bertransaksi di toko.
+Balas HANYA dalam format JSON valid tanpa markdown codeblock dengan struktur persis:
+{
+  "title": "Judul notifikasi singkat maksimal 65 karakter dengan 1 emoji relevan di awal",
+  "type": "promo",
+  "link": "/store",
+  "message": "Isi pesan notifikasi 2 sampai 3 kalimat padat dan informatif"
+}`;
+
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(geminiApiKey)}`;
+        const aiResponse = await fetch(geminiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: promptText }] }],
+                generationConfig: {
+                    temperature: 0.7,
+                    responseMimeType: 'application/json'
+                }
+            })
+        });
+
+        if (!aiResponse.ok) {
+            const errText = await aiResponse.text();
+            console.warn('Gemini API Warning:', aiResponse.status, errText);
+            return res.json({
+                success: true,
+                source: 'fallback',
+                draft: buildFallbackDraft()
+            });
+        }
+
+        const aiJson = await aiResponse.json();
+        const rawText = aiJson?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        const cleanedJsonStr = rawText.replace(/```json|```/gi, '').trim();
+        const parsedDraft = JSON.parse(cleanedJsonStr);
+
+        const validTypes = ['info', 'promo', 'transaksi', 'sistem'];
+        const safeType = validTypes.includes(String(parsedDraft.type || '').toLowerCase())
+            ? String(parsedDraft.type).toLowerCase()
+            : 'promo';
+
+        return res.json({
+            success: true,
+            source: 'gemini',
+            draft: {
+                title: String(parsedDraft.title || buildFallbackDraft().title).trim(),
+                type: safeType,
+                link: String(parsedDraft.link || '/store').trim(),
+                message: String(parsedDraft.message || buildFallbackDraft().message).trim()
+            }
+        });
+    } catch (error) {
+        console.error('Error POST /api/admin/generate-notif-ai:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Gagal memproses generator notifikasi AI.'
+        });
+    }
+});
 // ============================================================
 // 11. START SERVER
 // ============================================================
