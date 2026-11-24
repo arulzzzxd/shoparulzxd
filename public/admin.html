@@ -705,6 +705,39 @@
     </main>
 
     <!-- ======================================================= -->
+    <!-- MODAL LIGHTBOX PEMBESAR GAMBAR BUKTI TRANSFER           -->
+    <!-- ======================================================= -->
+    <div id="proofLightboxModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6">
+        <div class="neo-box bg-neoBg w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden">
+            <div class="bg-neoYellow border-b-[3px] border-black px-4 py-3 flex items-center justify-between gap-2 shrink-0">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="w-7 h-7 bg-black text-neoYellow border-2 border-black flex items-center justify-center text-xs shrink-0">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                    </span>
+                    <span id="lightboxModalTitle" class="font-cyber font-extrabold text-xs sm:text-sm uppercase truncate">
+                        Bukti Pembayaran
+                    </span>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" onclick="toggleLightboxZoom()" id="btnLightboxZoom" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-3 py-1.5 text-[11px] uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i> <span>Perbesar 2x</span>
+                    </button>
+                    <a id="btnLightboxDownload" href="#" download="bukti-transfer.png" class="neo-btn bg-neoGreen text-black font-cyber font-extrabold px-3 py-1.5 text-[11px] uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Unduh</span>
+                    </a>
+                    <button type="button" onclick="closeProofLightbox()" class="neo-btn bg-neoPink text-white font-cyber font-extrabold px-3 py-1.5 text-xs uppercase">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="lightboxScrollArea" class="flex-1 overflow-auto p-4 bg-neutral-900 flex items-center justify-center min-h-[320px]">
+                <img id="lightboxImage" src="" alt="Bukti Transfer Full" onclick="toggleLightboxZoom()" class="max-h-[75vh] w-auto object-contain border-[3px] border-white shadow-[0_0_25px_rgba(0,0,0,0.7)] cursor-zoom-in transition-transform duration-200">
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================= -->
     <!-- BOTTOM TAB SWITCHER (5 MENU)                            -->
     <!-- ======================================================= -->
     <div class="fixed bottom-0 left-0 right-0 z-40 bg-neoBg border-t-[3px] border-black shadow-[0_-4px_0_rgba(0,0,0,0.08)]">
@@ -747,8 +780,8 @@
             </div>
         </div>
     </div>
-    
-        <!-- ======================================================= -->
+
+    <!-- ======================================================= -->
     <!-- SCRIPT ADMIN PANEL (QRIS, CHAT, NOTIF, PRODUK, VOUCHER) -->
     <!-- ======================================================= -->
     <script>
@@ -761,6 +794,7 @@
         let allAdminNotifications = [];
         let allAdminProducts = [];
         let allAdminVouchers = [];
+        let isLightboxZoomed = false;
 
         function formatRupiah(num) {
             return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
@@ -782,6 +816,65 @@
             if (t === 'transaksi') return { bg: 'bg-neoGreen', icon: 'fa-receipt', label: 'TRANSAKSI' };
             if (t === 'sistem') return { bg: 'bg-neoPink text-white', icon: 'fa-gear', label: 'SISTEM' };
             return { bg: 'bg-neoCyan', icon: 'fa-circle-info', label: 'INFO' };
+        }
+
+        // ============================================================
+        // LIGHTBOX MODAL PEMBESAR GAMBAR BUKTI TRANSFER (ANTI-ERROR DATA URL)
+        // ============================================================
+        function openProofLightbox(orderId) {
+            const dep = allDepositsData.find(d => String(d.orderId) === String(orderId));
+            const proofSrc = dep ? (dep.proofImage || dep.proofUrl || '') : '';
+            if (!proofSrc) {
+                Swal.fire({
+                    title: 'Gambar Tidak Tersedia',
+                    text: 'Bukti transfer tidak ditemukan pada transaksi ini.',
+                    icon: 'warning',
+                    customClass: { popup: 'cyber-swal' }
+                });
+                return;
+            }
+
+            const modal = document.getElementById('proofLightboxModal');
+            const imgEl = document.getElementById('lightboxImage');
+            const titleEl = document.getElementById('lightboxModalTitle');
+            const dlBtn = document.getElementById('btnLightboxDownload');
+
+            isLightboxZoomed = false;
+            imgEl.src = proofSrc;
+            imgEl.className = 'max-h-[75vh] w-auto object-contain border-[3px] border-white shadow-[0_0_25px_rgba(0,0,0,0.7)] cursor-zoom-in transition-all duration-200';
+            titleEl.textContent = `Bukti Transfer • ${dep.orderId || ''}`;
+            dlBtn.href = proofSrc;
+            dlBtn.download = `bukti-${dep.orderId || 'deposit'}.png`;
+
+            const zoomBtn = document.getElementById('btnLightboxZoom');
+            if (zoomBtn) {
+                zoomBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass-plus"></i> <span>Perbesar 2x</span>';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function toggleLightboxZoom() {
+            const imgEl = document.getElementById('lightboxImage');
+            const zoomBtn = document.getElementById('btnLightboxZoom');
+            if (!imgEl) return;
+
+            isLightboxZoomed = !isLightboxZoomed;
+            if (isLightboxZoomed) {
+                imgEl.className = 'max-h-none w-[165%] sm:w-[140%] max-w-none object-contain border-[3px] border-white shadow-[0_0_25px_rgba(0,0,0,0.7)] cursor-zoom-out transition-all duration-200';
+                if (zoomBtn) zoomBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass-minus"></i> <span>Perkecil</span>';
+            } else {
+                imgEl.className = 'max-h-[75vh] w-auto object-contain border-[3px] border-white shadow-[0_0_25px_rgba(0,0,0,0.7)] cursor-zoom-in transition-all duration-200';
+                if (zoomBtn) zoomBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass-plus"></i> <span>Perbesar 2x</span>';
+            }
+        }
+
+        function closeProofLightbox() {
+            const modal = document.getElementById('proofLightboxModal');
+            const imgEl = document.getElementById('lightboxImage');
+            if (modal) modal.classList.add('hidden');
+            if (imgEl) imgEl.src = '';
+            isLightboxZoomed = false;
         }
 
         // ============================================================
@@ -869,6 +962,13 @@
             }
         }
 
+        function calculateFallbackFeeV2(baseNominal) {
+            const n = Number(baseNominal) || 0;
+            if (n <= 0) return 0;
+            if (n >= 150000) return Math.ceil((n * 95) / 10000);
+            return Math.ceil((n * 70) / 10000) + 250;
+        }
+
         function renderDepositsGrid() {
             const grid = document.getElementById('adminDepositsGrid');
             if (!grid) return;
@@ -887,14 +987,40 @@
             }
 
             grid.innerHTML = filtered.map(dep => {
-                const orderId = escapeHtml(dep.orderId || '-');
-                const userName = escapeHtml(dep.userName || dep.name || 'User');
+                const orderIdRaw = dep.orderId || '-';
+                const orderId = escapeHtml(orderIdRaw);
+                const userName = escapeHtml(dep.username || dep.userName || dep.name || 'User');
                 const userEmail = escapeHtml(dep.userEmail || dep.email || '-');
-                const amount = Number(dep.amount || 0);
-                const fee = Number(dep.fee || 0);
-                const totalPay = Number(dep.totalPay || dep.totalAmount || (amount + fee));
+
+                // Ambil data dari itemDetails (tempat index.js menyimpan harga saldo masuk & fee admin)
+                const itemDetails = dep.itemDetails || {};
+                const rawTotal = Number(dep.amount || 0);
+                const baseSaldo = Number(itemDetails.harga || dep.depositAmount || 0);
+
+                let saldoMasuk = baseSaldo > 0 ? baseSaldo : rawTotal;
+                let fee = 0;
+                let totalPay = rawTotal > 0 ? rawTotal : saldoMasuk;
+
+                if (itemDetails.fee !== undefined && itemDetails.fee !== null && !isNaN(Number(itemDetails.fee))) {
+                    fee = Number(itemDetails.fee);
+                    if (totalPay <= saldoMasuk && fee > 0) {
+                        totalPay = saldoMasuk + fee;
+                    }
+                } else if (dep.fee !== undefined && dep.fee !== null && !isNaN(Number(dep.fee))) {
+                    fee = Number(dep.fee);
+                    if (totalPay <= saldoMasuk && fee > 0) {
+                        totalPay = saldoMasuk + fee;
+                    }
+                } else if (rawTotal > saldoMasuk && saldoMasuk > 0) {
+                    fee = rawTotal - saldoMasuk;
+                    totalPay = rawTotal;
+                } else {
+                    fee = calculateFallbackFeeV2(saldoMasuk);
+                    totalPay = saldoMasuk + fee;
+                }
+
                 const status = dep.status || 'pending';
-                const proofUrl = dep.proofUrl || dep.proofImage || '';
+                const proofUrl = dep.proofImage || dep.proofUrl || '';
                 const createdStr = dep.createdAt ? new Date(dep.createdAt).toLocaleString('id-ID') : '-';
 
                 let statusBadge = `<span class="bg-neoYellow border-2 border-black px-2 py-0.5 text-[10px] font-mono font-black uppercase">BELUM UPLOAD</span>`;
@@ -907,15 +1033,18 @@
                 }
 
                 const proofBlock = proofUrl
-                    ? `<div class="border-2 border-black bg-neoBg p-2 space-y-2">
-                            <a href="${escapeHtml(proofUrl)}" target="_blank" rel="noopener" class="block overflow-hidden border-2 border-black bg-white">
-                                <img src="${escapeHtml(proofUrl)}" alt="Bukti Transfer ${orderId}" class="w-full h-44 object-contain bg-white hover:scale-105 transition-transform">
-                            </a>
-                            <a href="${escapeHtml(proofUrl)}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-[11px] font-cyber font-extrabold underline">
-                                <i class="fa-solid fa-up-right-from-square"></i> Buka Gambar Ukuran Penuh
-                            </a>
+                    ? `<div class="border-2 border-black bg-neoBg p-2.5 space-y-2.5">
+                            <div onclick="openProofLightbox('${orderId}')" title="Klik untuk memperbesar gambar bukti" class="relative group cursor-zoom-in overflow-hidden border-2 border-black bg-white">
+                                <img src="${escapeHtml(proofUrl)}" alt="Bukti Transfer ${orderId}" class="w-full h-72 sm:h-80 object-contain bg-white group-hover:scale-[1.02] transition-transform duration-200">
+                                <div class="absolute bottom-2 right-2 bg-neoYellow border-2 border-black px-2.5 py-1 text-[10px] font-cyber font-black uppercase shadow-[2px_2px_0px_#000] flex items-center gap-1">
+                                    <i class="fa-solid fa-magnifying-glass-plus"></i> Klik Perbesar
+                                </div>
+                            </div>
+                            <button type="button" onclick="openProofLightbox('${orderId}')" class="w-full neo-btn bg-neoCyan text-black font-cyber font-extrabold py-2 px-3 text-xs uppercase flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-expand"></i> Buka Gambar Ukuran Penuh (Zoom)
+                            </button>
                        </div>`
-                    : `<div class="border-2 border-dashed border-black bg-neoBg p-3 text-center text-[11px] font-mono font-bold text-slate-600">
+                    : `<div class="border-2 border-dashed border-black bg-neoBg p-4 text-center text-[11px] font-mono font-bold text-slate-600">
                             User belum mengunggah bukti transfer QRIS.
                        </div>`;
 
@@ -949,11 +1078,11 @@
                             <div class="grid grid-cols-3 gap-2 bg-neoBg border-2 border-black p-2.5 text-center">
                                 <div>
                                     <div class="text-[10px] font-mono font-bold text-slate-600">SALDO MASUK</div>
-                                    <div class="text-xs font-mono font-black text-black">${formatRupiah(amount)}</div>
+                                    <div class="text-xs font-mono font-black text-black">${formatRupiah(saldoMasuk)}</div>
                                 </div>
                                 <div>
                                     <div class="text-[10px] font-mono font-bold text-slate-600">BIAYA ADMIN</div>
-                                    <div class="text-xs font-mono font-black text-black">${formatRupiah(fee)}</div>
+                                    <div class="text-xs font-mono font-black text-amber-700">${formatRupiah(fee)}</div>
                                 </div>
                                 <div>
                                     <div class="text-[10px] font-mono font-bold text-slate-600">TOTAL BAYAR</div>
@@ -1059,7 +1188,7 @@
         async function loadUserList() {
             const listEl = document.getElementById('adminUserList');
             try {
-                const res = await fetch('/api/admin/chats/users');
+                const res = await fetch('/api/bantuan/admin/users');
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Gagal memuat daftar chat user');
 
@@ -1078,8 +1207,8 @@
                 }
 
                 listEl.innerHTML = cachedUsers.map(u => {
-                    const email = u.userEmail || u.email || '';
-                    const name = u.userName || u.name || email.split('@')[0] || 'User';
+                    const email = u.userId || u.userEmail || u.email || '';
+                    const name = u.username || u.userName || u.name || email.split('@')[0] || 'User';
                     const unread = Number(u.unreadCount || 0);
                     const isActive = selectedUserEmail === email;
                     return `
@@ -1124,7 +1253,7 @@
             if (!box) return;
 
             try {
-                const res = await fetch(`/api/admin/chats/${encodeURIComponent(selectedUserEmail)}`);
+                const res = await fetch(`/api/bantuan/admin/messages/${encodeURIComponent(selectedUserEmail)}`);
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Gagal memuat pesan');
 
@@ -1135,7 +1264,7 @@
                 }
 
                 box.innerHTML = messages.map(m => {
-                    const isAdmin = m.sender === 'admin' || m.role === 'admin' || m.isAdmin === true;
+                    const isAdmin = m.sender === 'owner' || m.sender === 'admin' || m.role === 'admin' || m.isAdmin === true;
                     const text = escapeHtml(m.message || m.text || '');
                     const time = m.createdAt ? new Date(m.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '';
 
@@ -1168,10 +1297,10 @@
             if (!message) return;
 
             try {
-                const res = await fetch(`/api/admin/chats/${encodeURIComponent(selectedUserEmail)}/reply`, {
+                const res = await fetch('/api/bantuan/admin/reply', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message })
+                    body: JSON.stringify({ userId: selectedUserEmail, message })
                 });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Gagal mengirim balasan');
@@ -1405,7 +1534,7 @@
                 targetEmail: document.getElementById('editNotifTargetEmail').value.trim(),
                 link: document.getElementById('editNotifLink').value.trim(),
                 message: document.getElementById('editNotifMessage').value.trim(),
-                resetRead: document.getElementById('editNotifResetRead').checked,
+                resetReadBy: document.getElementById('editNotifResetRead').checked,
                 resendBroadcast: document.getElementById('editNotifResendBroadcast').checked
             };
 
@@ -2095,6 +2224,17 @@
             if (wrapper && menu && !wrapper.contains(e.target)) {
                 menu.classList.add('hidden');
                 if (chevron) chevron.classList.remove('rotate-180');
+            }
+
+            const lightbox = document.getElementById('proofLightboxModal');
+            if (lightbox && e.target === lightbox) {
+                closeProofLightbox();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeProofLightbox();
             }
         });
 
