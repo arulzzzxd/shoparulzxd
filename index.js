@@ -84,6 +84,7 @@ if (MISSING_ENV.length > 0) {
     console.warn('⚠️ Environment variable belum diisi:', MISSING_ENV.join(', '));
 }
 
+
 // ============================================================
 // 2. APP SETUP
 // ============================================================
@@ -200,7 +201,7 @@ const userSchemaV2 = new mongoose.Schema({
     providerId: { type: String, default: null },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
-    avatar: { type: String, default: 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png' },
+    avatar: { type: String, default: 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png' }, 
     banner: { type: String, default: 'https://cdn.larasxd.my.id/files/Tk4GavOaHEEP2ykm.mp4' },
     saldo: { type: Number, default: 0 },
     referralCode: { type: String, unique: true },
@@ -216,7 +217,7 @@ const userSchemaV2 = new mongoose.Schema({
 
 const UserV2 = mongoose.models.UserV2 || mongoose.model('UserV2', userSchemaV2);
 
-// TIKET SEKALI PAKAI UNTUK LOGIN TELEGRAM & PENAUTAN AKUN
+// Tiket sekali pakai untuk login Telegram dan penautan akun.
 const telegramTicketSchema = new mongoose.Schema({
     tokenHash: { type: String, required: true, unique: true },
     type: { type: String, enum: ['login', 'link'], required: true },
@@ -226,8 +227,8 @@ const telegramTicketSchema = new mongoose.Schema({
     completed: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now, expires: 600 }
 });
-
 const TelegramTicket = mongoose.models.TelegramTicket || mongoose.model('TelegramTicket', telegramTicketSchema);
+
 
 // NOTIFIKASI SCHEMA V2
 const notifikasiSchemaV2 = new mongoose.Schema({
@@ -265,6 +266,14 @@ const emailLimitSchema = new mongoose.Schema({
 const EmailLimit = mongoose.models.EmailLimit || mongoose.model('EmailLimit', emailLimitSchema);
 
 // PRODUCT SCHEMA V2
+const productVariantOptionSchema = new mongoose.Schema({
+    name: { type: String, required: true, trim: true },
+    harga: { type: Number, required: true },
+    harga_diskon: { type: Number, default: null },
+    stok: { type: Number, default: 0 },
+    gambar: { type: String, default: "" }
+}, { _id: false });
+
 const productSchemaV2 = new mongoose.Schema({
     Id: { type: String, required: true, unique: true, trim: true },
     nama: { type: String, required: true, trim: true },
@@ -274,12 +283,14 @@ const productSchemaV2 = new mongoose.Schema({
     badge: { type: String, default: "" },
     terjual: { type: Number, default: 0 },
     stok: { type: Number, default: 0 },
-    gambar: {
-        type: [String],
-        default: ["https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png"]
-    },
+    gambar: { 
+        type: [String], 
+        default: ["https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png"] 
+    },    
     deskripsi: { type: String, default: "" },
     link: { type: String, required: true },
+    variantGroup: { type: String, default: "" },
+    variants: { type: [productVariantOptionSchema], default: [] },
     purchasedBy: [{ type: String }],
     createdAt: { type: Date, default: Date.now }
 });
@@ -309,7 +320,7 @@ const ReviewV2 = mongoose.models.ReviewV2 || mongoose.model('ReviewV2', reviewSc
 const cacheSchemaV2 = new mongoose.Schema({
     key: { type: String, required: true, unique: true },
     data: { type: mongoose.Schema.Types.Mixed, required: true },
-    createdAt: { type: Date, default: Date.now, expires: 60 }
+    createdAt: { type: Date, default: Date.now, expires: 60 } 
 });
 
 const CacheV2 = mongoose.models.CacheV2 || mongoose.model('CacheV2', cacheSchemaV2);
@@ -332,14 +343,14 @@ const VoucherV2 = mongoose.models.VoucherV2 || mongoose.model('VoucherV2', vouch
 const transactionSchemaV2 = new mongoose.Schema({
     orderId: { type: String, required: true, unique: true },
     amount: { type: Number, required: true },
-    paymentNumber: { type: String, default: null },
+    paymentNumber: { type: String, default: null }, 
     paymentMethod: { type: String, default: "QRIS" },
-    qrisVersion: { type: String, default: "v1" }, // 'v1' (Paywuz) atau 'v2' (Manual Dynamic QRIS)
-    proofImage: { type: String, default: null },  // Menyimpan Base64 / URL Bukti Pembayaran
+    qrisVersion: { type: String, default: "v1" },
+    proofImage: { type: String, default: null },
     proofUploadedAt: { type: Date, default: null },
     type: { type: String, enum: ['PURCHASE', 'DEPOSIT'], default: 'PURCHASE' },
     userEmail: { type: String, default: null, index: true },
-    status: { type: String, default: "pending" }, // pending, waiting_verification, success, cancelled
+    status: { type: String, default: "pending" },
     itemDetails: {
         nama: String,
         harga: Number,
@@ -350,7 +361,10 @@ const transactionSchemaV2 = new mongoose.Schema({
         link: String,
         buyer: String,
         qty: Number,
-        phone: String
+        phone: String,
+        note: String,
+        variantGroup: { type: String, default: "" },
+        variantOption: { type: String, default: "" }
     },
     productLink: { type: String, default: null },
     downloadCount: { type: Number, default: 0 },
@@ -390,64 +404,9 @@ const ChatMessage = mongoose.models.ChatMessage || mongoose.model('ChatMessage',
 // 5. HELPERS & UTILS
 // ============================================================
 
-// --- 5A. IDENTIFIER, REFERRAL, CACHE & VALIDASI UMUM ---
-
 function generateReferralCode() {
     return 'REF' + Math.floor(100000 + Math.random() * 900000);
 }
-
-function getUserIdentifier(req) {
-    if (req.user) {
-        return (req.user.email || req.user.username || req.user._id || "").toString().toLowerCase().trim();
-    }
-    const bodyIdentifier = req.body?.username || req.body?.email || req.body?.userIdentifier;
-    if (bodyIdentifier) {
-        return bodyIdentifier.toString().toLowerCase().trim();
-    }
-    return req.ip;
-}
-
-function sanitizeReturnTo(rawUrl, fallback = '/dashboard') {
-    if (!rawUrl || typeof rawUrl !== 'string') return fallback;
-    const trimmed = rawUrl.trim();
-    if (!trimmed.startsWith('/') || trimmed.startsWith('//')) return fallback;
-    return trimmed;
-}
-
-function isValidIndonesianPhone(phone) {
-    if (!phone) return false;
-    const cleaned = phone.toString().replace(/[\s\-()]/g, '');
-    return /^(\+62|62|08)[0-9]{8,12}$/.test(cleaned);
-}
-
-async function setCache(key, data) {
-    try {
-        await CacheV2.findOneAndUpdate(
-            { key },
-            { data, createdAt: new Date() },
-            { upsert: true, returnDocument: 'after' }
-        );
-    } catch (e) {
-        console.error("Gagal simpan cache Database:", e.message);
-    }
-}
-
-async function getCache(key) {
-    try {
-        const cached = await CacheV2.findOne({ key });
-        return cached ? cached.data : null;
-    } catch (e) {
-        return null;
-    }
-}
-
-async function deleteCache(key) {
-    try {
-        await CacheV2.deleteOne({ key });
-    } catch (e) {}
-}
-
-// --- 5B. EMAIL OTP & DISPATCH NOTIFIKASI ---
 
 // HELPER PENGIRIMAN EMAIL OTP MAKSIMAL 5 KALI SEHARI
 async function checkAndIncrementEmailLimit(email) {
@@ -473,7 +432,7 @@ async function sendEmailOTP(email, code, typeTitle) {
     const transporter = nodemailer.createTransport({
         host: SMTP_HOST,
         port: SMTP_PORT,
-        secure: true,
+        secure: true, 
         auth: {
             user: SMTP_USER,
             pass: SMTP_PASS
@@ -482,10 +441,10 @@ async function sendEmailOTP(email, code, typeTitle) {
     });
 
     const mailOptions = {
-        from: MAIL_FROM,
-        to: email,
-        subject: `Kode Verifikasi ${typeTitle} - ArulzXD Store`,
-        html: `
+    from: MAIL_FROM,
+    to: email,
+    subject: `Kode Verifikasi ${typeTitle} - ArulzXD Store`,
+    html: `
 <!-- Preheader (teks pratinjau di inbox) -->
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:#F5F2EB;font-size:1px;line-height:1px;">
     Kode verifikasi ${typeTitle} Anda: ${code}. Berlaku 10 menit.
@@ -569,10 +528,14 @@ async function sendEmailOTP(email, code, typeTitle) {
 </tr>
 </table>
 `
-    };
+};
 
     await transporter.sendMail(mailOptions);
 }
+
+// ============================================================
+// HELPER SMTP & DISPATCH NOTIFIKASI KE EMAIL + TELEGRAM USER
+// ============================================================
 
 function createFreshMailTransporter() {
     if (!SMTP_USER || !SMTP_PASS) return null;
@@ -776,7 +739,7 @@ async function dispatchNotificationToUsers(notifDoc) {
             query = targets.length > 1 ? { email: { $in: targets } } : { email: targets[0] };
         }
 
-        const users = await UserV2.find(query)
+            const users = await UserV2.find(query)
             .select('email username telegramChatId telegramNotifEnabled emailNotifEnabled provider providerId')
             .lean();
 
@@ -845,7 +808,16 @@ async function dispatchNotificationToUsers(notifDoc) {
     }
 }
 
-// --- 5C. QRIS DINAMIS & TELEGRAM ADMIN HELPERS ---
+function getUserIdentifier(req) {
+    if (req.user) {
+        return (req.user.email || req.user.username || req.user._id || "").toString().toLowerCase().trim();
+    }
+    const bodyIdentifier = req.body?.username || req.body?.email || req.body?.userIdentifier;
+    if (bodyIdentifier) {
+        return bodyIdentifier.toString().toLowerCase().trim();
+    }
+    return req.ip; 
+}
 
 const STATIC_QRIS_V2_BASE = "00020101021126570011ID.DANA.WWW011893600915396562113302099656211330303UMI51440014ID.CO.QRIS.WWW0215ID10254420078250303UMI5204481453033605802ID5914IDZHARUL STORE600409146105531936304C1E4";
 
@@ -1013,7 +985,12 @@ Pilih tindakan di bawah ini atau cek melalui Web Admin:
     }
 }
 
-// --- 5D. TRANSAKSI, PAYWUZ, STOK & VOUCHER HELPERS ---
+function sanitizeReturnTo(rawUrl, fallback = '/dashboard') {
+    if (!rawUrl || typeof rawUrl !== 'string') return fallback;
+    const trimmed = rawUrl.trim();
+    if (!trimmed.startsWith('/') || trimmed.startsWith('//')) return fallback;
+    return trimmed;
+}
 
 async function approveDepositQrisV2(orderId, adminSource = 'Web Admin') {
     const trx = await TransactionV2.findOne({ orderId });
@@ -1098,6 +1075,12 @@ async function axiosPaywuzWithRetry(config, maxRetries = 3, delayMs = 1500) {
     }
 }
 
+function isValidIndonesianPhone(phone) {
+    if (!phone) return false;
+    const cleaned = phone.toString().replace(/[\s\-()]/g, '');
+    return /^(\+62|62|08)[0-9]{8,12}$/.test(cleaned);
+}
+
 const SETTLED_STATUSES = ['settlement', 'settled', 'paid', 'success', 'lunas'];
 const CANCELLED_STATUSES = ['expired', 'expire', 'cancelled', 'cancel', 'failed', 'deny'];
 
@@ -1108,80 +1091,6 @@ function normalizeGatewayStatus(rawStatus) {
         return (st === 'expired' || st === 'expire') ? 'expired' : 'cancelled';
     }
     return st || 'pending';
-}
-
-function verifyPaywuzSignature(rawBody, receivedSignature, apikey) {
-    if (!receivedSignature || !rawBody) return false;
-
-    const computedSignature = "sha256=" + crypto
-        .createHmac("sha256", apikey)
-        .update(typeof rawBody === 'string' ? rawBody : JSON.stringify(rawBody))
-        .digest("hex");
-
-    try {
-        return crypto.timingSafeEqual(
-            Buffer.from(receivedSignature),
-            Buffer.from(computedSignature)
-        );
-    } catch (err) {
-        return false;
-    }
-}
-
-function calculateDepositFee(amount, version = 'v1') {
-    const nominal = Number(amount) || 0;
-    if (nominal >= 150000) {
-        // >= Rp 150.000: flat 0,95% tanpa biaya tetap tambahan
-        return Math.ceil((nominal * 95) / 10000);
-    }
-    // < Rp 150.000: 0,7% + Rp 290 (v1) atau 0,7% + Rp 250 (v2)
-    const flatFee = version === 'v2' ? 250 : 290;
-    return Math.ceil((nominal * 70) / 10000) + flatFee;
-}
-
-async function recordProductBuyer(productQuery, userIdentifier) {
-    if (!productQuery || !userIdentifier) return;
-    try {
-        const cleanIdentifier = userIdentifier.toString().toLowerCase().trim();
-        await ProductV2.findOneAndUpdate(
-            {
-                $or: [
-                    { Id: productQuery },
-                    { _id: mongoose.Types.ObjectId.isValid(productQuery) ? productQuery : null },
-                    { nama: { $regex: new RegExp(`^${productQuery.toString().trim()}$`, 'i') } }
-                ]
-            },
-            { $addToSet: { purchasedBy: cleanIdentifier } }
-        );
-    } catch (err) {
-        console.error("❌ Gagal mencatat pembeli produk:", err.message);
-    }
-}
-
-async function updateProductStockAndSold(productName, qtyChange = 1, isRollback = false) {
-    try {
-        if (!productName) return null;
-
-        const product = await ProductV2.findOne({
-            nama: { $regex: new RegExp(`^${productName.trim()}$`, 'i') }
-        });
-
-        if (product) {
-            if (isRollback) {
-                product.stok = (product.stok || 0) + qtyChange;
-                product.terjual = Math.max(0, (product.terjual || 0) - qtyChange);
-            } else {
-                product.stok = Math.max(0, (product.stok || 0) - qtyChange);
-                product.terjual = (product.terjual || 0) + qtyChange;
-            }
-
-            await product.save();
-            return product;
-        }
-    } catch (err) {
-        console.error("❌ Gagal meng-update stok produk:", err.message);
-    }
-    return null;
 }
 
 async function processQrisV1Settlement(orderId, rawGatewayStatus) {
@@ -1276,47 +1185,168 @@ async function processQrisV1Settlement(orderId, rawGatewayStatus) {
     return await TransactionV2.findOne({ orderId }).lean();
 }
 
-async function consumeVoucherCode(voucherCode, userIdentifier, subtotalAmount) {
-    if (!voucherCode || !String(voucherCode).trim()) {
-        return { valid: false, discountAmount: 0, voucher: null };
+async function recordProductBuyer(productQuery, userIdentifier) {
+    if (!productQuery || !userIdentifier) return;
+    try {
+        const cleanIdentifier = userIdentifier.toString().toLowerCase().trim();
+        await ProductV2.findOneAndUpdate(
+            { 
+                $or: [
+                    { Id: productQuery },
+                    { _id: mongoose.Types.ObjectId.isValid(productQuery) ? productQuery : null },
+                    { nama: { $regex: new RegExp(`^${productQuery.toString().trim()}$`, 'i') } }
+                ]
+            },
+            { $addToSet: { purchasedBy: cleanIdentifier } }
+        );
+    } catch (err) {
+        console.error("❌ Gagal mencatat pembeli produk:", err.message);
     }
-
-    const cleanCode = String(voucherCode).trim().toUpperCase();
-    const voucher = await VoucherV2.findOne({ code: cleanCode });
-
-    if (!voucher) {
-        return { valid: false, message: 'Kode voucher tidak ditemukan!', discountAmount: 0, voucher: null };
-    }
-    if (voucher.usageLimit <= 0) {
-        return { valid: false, message: 'Kuota penggunaan voucher ini sudah habis!', discountAmount: 0, voucher: null };
-    }
-    if (new Date() > new Date(voucher.expiredAt)) {
-        return { valid: false, message: 'Voucher telah kedaluwarsa!', discountAmount: 0, voucher: null };
-    }
-    if (userIdentifier && voucher.usedBy && voucher.usedBy.includes(userIdentifier)) {
-        return { valid: false, message: 'Anda sudah pernah menggunakan voucher ini sebelumnya!', discountAmount: 0, voucher: null };
-    }
-
-    let discountAmount = 0;
-    if (voucher.type === 'percentage') {
-        discountAmount = Math.floor((subtotalAmount * Number(voucher.discount || 0)) / 100);
-    } else {
-        discountAmount = Number(voucher.discount || 0);
-    }
-    discountAmount = Math.min(subtotalAmount, Math.max(0, discountAmount));
-
-    voucher.usedCount = (voucher.usedCount || 0) + 1;
-    voucher.usageLimit = Math.max(0, voucher.usageLimit - 1);
-    if (userIdentifier) {
-        if (!voucher.usedBy) voucher.usedBy = [];
-        voucher.usedBy.push(userIdentifier);
-    }
-    await voucher.save();
-
-    return { valid: true, discountAmount, voucher };
 }
 
-// --- 5E. DIRECT DOWNLOAD STREAM & RESOLVER LINK PRODUK ---
+// Helper resolve harga & stok berdasarkan varian yang dipilih user (ala Shopee)
+function resolveProductVariantSelection(dbProduct, selectedVariantName = '') {
+    const variants = Array.isArray(dbProduct.variants) ? dbProduct.variants : [];
+    const cleanVarName = String(selectedVariantName || '').trim();
+
+    if (variants.length === 0) {
+        return {
+            hasVariants: false,
+            matchedVariant: null,
+            variantGroup: '',
+            variantOption: '',
+            unitPrice: dbProduct.harga_diskon || dbProduct.harga,
+            availableStock: Number(dbProduct.stok) || 0,
+            displayName: dbProduct.nama
+        };
+    }
+
+    const matched = variants.find(
+        (v) => String(v.name || '').trim().toLowerCase() === cleanVarName.toLowerCase()
+    );
+
+    if (!matched) {
+        return {
+            hasVariants: true,
+            matchedVariant: null,
+            error: `Silakan pilih opsi ${dbProduct.variantGroup || 'varian'} terlebih dahulu!`
+        };
+    }
+
+    const varPrice = (matched.harga_diskon !== null && matched.harga_diskon !== undefined && Number(matched.harga_diskon) > 0)
+        ? Number(matched.harga_diskon)
+        : Number(matched.harga);
+
+    const groupLabel = (dbProduct.variantGroup || 'Varian').trim();
+
+    return {
+        hasVariants: true,
+        matchedVariant: matched,
+        variantGroup: groupLabel,
+        variantOption: matched.name,
+        unitPrice: varPrice,
+        availableStock: Number(matched.stok) || 0,
+        displayName: `${dbProduct.nama} (${groupLabel}: ${matched.name})`
+    };
+}
+
+async function updateProductStockAndSold(productName, qtyChange = 1, isRollback = false, variantOptionName = '') {
+    try {
+        if (!productName) return null;
+
+        // Bersihkan suffix "(Negara: Indonesia)" jika tersimpan pada nama transaksi
+        const baseProductName = String(productName).replace(/\s*\([^()]+:\s*[^()]+\)\s*$/, '').trim();
+        const escapedName = baseProductName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+        const product = await ProductV2.findOne({ 
+            nama: { $regex: new RegExp(`^${escapedName}$`, 'i') } 
+        });
+
+        if (product) {
+            const cleanVar = String(variantOptionName || '').trim().toLowerCase();
+
+            // Jika produk punya varian & nama varian dikirim, update stok varian spesifiknya
+            if (Array.isArray(product.variants) && product.variants.length > 0 && cleanVar) {
+                const varIdx = product.variants.findIndex(
+                    (v) => String(v.name || '').trim().toLowerCase() === cleanVar
+                );
+                if (varIdx !== -1) {
+                    if (isRollback) {
+                        product.variants[varIdx].stok = (Number(product.variants[varIdx].stok) || 0) + qtyChange;
+                    } else {
+                        product.variants[varIdx].stok = Math.max(0, (Number(product.variants[varIdx].stok) || 0) - qtyChange);
+                    }
+                }
+                // Sinkronkan stok induk dari total seluruh stok varian
+                const totalVarStock = product.variants.reduce((acc, item) => acc + (Number(item.stok) || 0), 0);
+                product.stok = totalVarStock;
+            } else {
+                if (isRollback) {
+                    product.stok = (product.stok || 0) + qtyChange;
+                } else {
+                    product.stok = Math.max(0, (product.stok || 0) - qtyChange);
+                }
+            }
+
+            if (isRollback) {
+                product.terjual = Math.max(0, (product.terjual || 0) - qtyChange);
+            } else {
+                product.terjual = (product.terjual || 0) + qtyChange;
+            }
+
+            await product.save();
+            return product;
+        }
+    } catch (err) {
+        console.error("❌ Gagal meng-update stok produk:", err.message);
+    }
+    return null;
+}
+
+async function setCache(key, data) {
+    try {
+        await CacheV2.findOneAndUpdate(
+            { key },
+            { data, createdAt: new Date() },
+            { upsert: true, returnDocument: 'after' }
+        );
+    } catch (e) {
+        console.error("Gagal simpan cache Database:", e.message);
+    }
+}
+
+async function getCache(key) {
+    try {
+        const cached = await CacheV2.findOne({ key });
+        return cached ? cached.data : null;
+    } catch (e) {
+        return null;
+    }
+}
+
+async function deleteCache(key) {
+    try {
+        await CacheV2.deleteOne({ key });
+    } catch (e) {}
+}
+
+function verifyPaywuzSignature(rawBody, receivedSignature, apikey) {
+    if (!receivedSignature || !rawBody) return false;
+
+    const computedSignature = "sha256=" + crypto
+        .createHmac("sha256", apikey)
+        .update(typeof rawBody === 'string' ? rawBody : JSON.stringify(rawBody))
+        .digest("hex");
+
+    try {
+        return crypto.timingSafeEqual(
+            Buffer.from(receivedSignature),
+            Buffer.from(computedSignature)
+        );
+    } catch (err) {
+        return false;
+    }
+}
 
 function classifyProductLink(rawLink) {
     const link = (rawLink || '').trim();
@@ -1575,8 +1605,6 @@ function scrapeDirectLinkFromHtml(html, baseUrl) {
     return null;
 }
 
-// --- 5F. SWEETALERT & OPEN GRAPH CANVAS HELPERS ---
-
 function sendSweetAlert(res, icon, title, text, redirectUrl) {
     return res.send(`
         <!DOCTYPE html>
@@ -1795,7 +1823,7 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines = 3) {
 // 6. UPLOAD CONFIG (MULTER)
 // ============================================================
 
-const uploadavatar = multer({
+const uploadavatar = multer({ 
     limits: { fileSize: 4 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         if (file.mimetype.startsWith('image/')) {
@@ -1806,7 +1834,7 @@ const uploadavatar = multer({
     }
 });
 
-const uploadBannerMulter = multer({
+const uploadBannerMulter = multer({ 
     limits: { fileSize: 4 * 1024 * 1024 }, // Batas maksimal upload 4MB
     fileFilter: (req, file, cb) => {
         if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
@@ -1843,7 +1871,6 @@ const uploadPaymentProofMulter = multer({
 // 7. MIDDLEWARES
 // ============================================================
 
-// Pencatat metrik latensi API & sistem
 app.use((req, res, next) => {
     const start = Date.now();
     res.on('finish', async () => {
@@ -1863,7 +1890,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Pastikan koneksi database siap & webhook Telegram terdaftar otomatis saat pertama kali ada request
+// Pastikan webhook terdaftar otomatis saat pertama kali ada request di Vercel
 app.use(async (req, res, next) => {
     try {
         await connectDB();
@@ -1877,7 +1904,7 @@ app.use(async (req, res, next) => {
     }
 });
 
-// Konfigurasi Session Store MongoDB
+
 app.use(session({
     secret: SESSION_SECRET,
     resave: false,
@@ -1887,10 +1914,9 @@ app.use(session({
         dbName: 'sessions',
         ttl: 24 * 60 * 60
     }),
-    cookie: { maxAge: 24 * 60 * 60 * 1000 }
+    cookie: { maxAge: 24 * 60 * 60 * 1000 } 
 }));
 
-// Verifikasi JWT cookie auth_session
 const checkAuthSession = async (req, res, next) => {
     const token = req.cookies?.auth_session;
     let decodedUser = null;
@@ -1909,7 +1935,6 @@ const checkAuthSession = async (req, res, next) => {
 
 app.use(checkAuthSession);
 
-// Validasi hak akses khusus Owner/Admin
 const checkAdminRole = (req, res, next) => {
     if (!req.user) return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu!' });
     const ownerEmail = OWNER_EMAIL;
@@ -1924,8 +1949,7 @@ const checkAdminRole = (req, res, next) => {
 // 8. ROUTES: BANTUAN, USER, REVIEW, VOUCHER, DEPOSIT, STORE, TRANSAKSI
 // ============================================================
 
-// --- 8A. LIVE CHAT BANTUAN & PANEL ADMIN ---
-
+// CHAT BANTUAN API
 app.get('/api/bantuan/messages', checkAuthSession, async (req, res) => {
     try {
         const userIdentifier = getUserIdentifier(req);
@@ -1935,6 +1959,8 @@ app.get('/api/bantuan/messages', checkAuthSession, async (req, res) => {
         return res.status(500).json({ status: false, message: 'Gagal memuat pesan live chat.' });
     }
 });
+
+
 
 app.post('/api/bantuan/send-user', checkAuthSession, async (req, res) => {
     try {
@@ -1946,7 +1972,7 @@ app.post('/api/bantuan/send-user', checkAuthSession, async (req, res) => {
         const userIdentifier = getUserIdentifier(req);
         let displayUsername = 'Pengguna Guest';
         let displayEmail = userIdentifier;
-
+        
         if (req.user) {
             const activeUser = await UserV2.findById(req.user.id || req.user._id).select('username email').lean();
             displayUsername = activeUser?.username || req.user.username || req.user.name || 'User';
@@ -1977,7 +2003,7 @@ app.get('/api/bantuan/admin/users', checkAuthSession, checkAdminRole, async (req
     try {
         const rooms = await ChatMessage.aggregate([
             { $sort: { createdAt: -1 } },
-            {
+            { 
                 $group: {
                     _id: "$userEmail",
                     lastMessage: { $first: "$message" },
@@ -2083,8 +2109,6 @@ app.get(['/admin', '/admin/livechat'], checkAuthSession, (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
-// --- 8B. PENGATURAN PROFIL USER (USERNAME, AVATAR, BANNER) ---
-
 app.post('/api/user/update-username', checkAuthSession, async (req, res) => {
     try {
         if (!req.user) {
@@ -2131,10 +2155,11 @@ app.post('/api/user/update-username', checkAuthSession, async (req, res) => {
             message: 'Username berhasil diperbarui!',
             username: updatedUser.username
         });
-    } catch (err) {
+    } catch(err) {
         return res.status(500).json({ status: false, message: 'Gagal memperbarui username.' });
     }
 });
+
 
 app.post('/api/user/update-avatar', checkAuthSession, (req, res) => {
     uploadavatar.single('avatar')(req, res, async (err) => {
@@ -2221,9 +2246,9 @@ app.post('/api/user/update-banner', checkAuthSession, (req, res) => {
                 const maxSize = 4 * 1024 * 1024; // Maksimal 4 MB
 
                 if (fileSize > maxSize) {
-                    return res.status(400).json({
-                        status: false,
-                        message: `Ukuran file berkas maksimal adalah 4MB! (Ukuran file Anda: ${(fileSize / (1024 * 1024)).toFixed(2)}MB)`
+                    return res.status(400).json({ 
+                        status: false, 
+                        message: `Ukuran file berkas maksimal adalah 4MB! (Ukuran file Anda: ${(fileSize / (1024*1024)).toFixed(2)}MB)` 
                     });
                 }
 
@@ -2231,7 +2256,7 @@ app.post('/api/user/update-banner', checkAuthSession, (req, res) => {
                 const mimeType = req.file.mimetype || mime.lookup(req.file.originalname) || 'image/png';
                 const base64 = req.file.buffer.toString("base64");
                 finalBanner = `data:${mimeType};base64,${base64}`;
-            }
+            } 
             // JIKA MENGGUNAKAN LINK URL
             else if (bannerUrlInput && bannerUrlInput.trim() !== '') {
                 finalBanner = bannerUrlInput.trim();
@@ -2262,7 +2287,7 @@ app.post('/api/user/update-banner', checkAuthSession, (req, res) => {
     });
 });
 
-// --- 8C. ULASAN PRODUK (REVIEWS) & VOUCHER DISKON ---
+
 
 app.post('/api/reviews', checkAuthSession, (req, res) => {
     uploadReviewMedia.array('mediaFiles', 5)(req, res, async (err) => {
@@ -2275,9 +2300,9 @@ app.post('/api/reviews', checkAuthSession, (req, res) => {
 
         try {
             if (!req.user) {
-                return res.status(401).json({
-                    status: false,
-                    message: 'Anda wajib login terlebih dahulu untuk memberikan ulasan!'
+                return res.status(401).json({ 
+                    status: false, 
+                    message: 'Anda wajib login terlebih dahulu untuk memberikan ulasan!' 
                 });
             }
 
@@ -2311,9 +2336,9 @@ app.post('/api/reviews', checkAuthSession, (req, res) => {
             let existingReview = await ReviewV2.findOne({ productId, userId });
 
             const purchasedList = (product.purchasedBy || []).map(p => p.toLowerCase().trim());
-            const isBuyer = purchasedList.some(p =>
-                p === userEmail ||
-                p === username.toLowerCase() ||
+            const isBuyer = purchasedList.some(p => 
+                p === userEmail || 
+                p === username.toLowerCase() || 
                 p === userId.toLowerCase()
             );
 
@@ -2407,7 +2432,7 @@ app.get('/api/reviews/:productId', async (req, res) => {
 
         const userIds = reviews.map(r => r.userId).filter(Boolean);
         const users = await UserV2.find({ _id: { $in: userIds } }).select('_id avatar username').lean();
-
+        
         const userMap = {};
         users.forEach(u => {
             userMap[u._id.toString()] = u;
@@ -2479,6 +2504,46 @@ app.delete('/api/reviews/:reviewId', checkAuthSession, async (req, res) => {
         return res.status(500).json({ status: false, message: 'Terjadi kesalahan server saat menghapus ulasan.' });
     }
 });
+
+async function consumeVoucherCode(voucherCode, userIdentifier, subtotalAmount) {
+    if (!voucherCode || !String(voucherCode).trim()) {
+        return { valid: false, discountAmount: 0, voucher: null };
+    }
+
+    const cleanCode = String(voucherCode).trim().toUpperCase();
+    const voucher = await VoucherV2.findOne({ code: cleanCode });
+
+    if (!voucher) {
+        return { valid: false, message: 'Kode voucher tidak ditemukan!', discountAmount: 0, voucher: null };
+    }
+    if (voucher.usageLimit <= 0) {
+        return { valid: false, message: 'Kuota penggunaan voucher ini sudah habis!', discountAmount: 0, voucher: null };
+    }
+    if (new Date() > new Date(voucher.expiredAt)) {
+        return { valid: false, message: 'Voucher telah kedaluwarsa!', discountAmount: 0, voucher: null };
+    }
+    if (userIdentifier && voucher.usedBy && voucher.usedBy.includes(userIdentifier)) {
+        return { valid: false, message: 'Anda sudah pernah menggunakan voucher ini sebelumnya!', discountAmount: 0, voucher: null };
+    }
+
+    let discountAmount = 0;
+    if (voucher.type === 'percentage') {
+        discountAmount = Math.floor((subtotalAmount * Number(voucher.discount || 0)) / 100);
+    } else {
+        discountAmount = Number(voucher.discount || 0);
+    }
+    discountAmount = Math.min(subtotalAmount, Math.max(0, discountAmount));
+
+    voucher.usedCount = (voucher.usedCount || 0) + 1;
+    voucher.usageLimit = Math.max(0, voucher.usageLimit - 1);
+    if (userIdentifier) {
+        if (!voucher.usedBy) voucher.usedBy = [];
+        voucher.usedBy.push(userIdentifier);
+    }
+    await voucher.save();
+
+    return { valid: true, discountAmount, voucher };
+}
 
 app.post('/api/vouchers/claim', async (req, res) => {
     try {
@@ -2592,7 +2657,16 @@ app.get('/api/vouchers/:code', async (req, res) => {
     }
 });
 
-// --- 8D. DEPOSIT QRIS V1, PEMBAYARAN SALDO, STORE CHECKOUT & ONE-TIME DOWNLOAD ---
+function calculateDepositFee(amount, version = 'v1') {
+    const nominal = Number(amount) || 0;
+    if (nominal >= 150000) {
+        // >= Rp 150.000: flat 0,95% tanpa biaya tetap tambahan
+        return Math.ceil((nominal * 95) / 10000);
+    }
+    // < Rp 150.000: 0,7% + Rp 290 (v1) atau 0,7% + Rp 250 (v2)
+    const flatFee = version === 'v2' ? 250 : 290;
+    return Math.ceil((nominal * 70) / 10000) + flatFee;
+}
 
 // DEPOSIT & SALDO
 app.post('/api/deposit', checkAuthSession, async (req, res) => {
@@ -2609,9 +2683,9 @@ app.post('/api/deposit', checkAuthSession, async (req, res) => {
         }
 
         if (!isValidIndonesianPhone(customerPhone)) {
-            return res.status(400).json({
-                status: false,
-                message: 'Nomor HP Indonesia aktif wajib diisi dengan format 08xx, 62xx, atau +62!'
+            return res.status(400).json({ 
+                status: false, 
+                message: 'Nomor HP Indonesia aktif wajib diisi dengan format 08xx, 62xx, atau +62!' 
             });
         }
 
@@ -2639,8 +2713,8 @@ app.post('/api/deposit', checkAuthSession, async (req, res) => {
         });
 
         const transactionData = paywuzRes.data?.data || paywuzRes.data;
-        const qrisString = transactionData?.payment?.qrString ||
-                           transactionData?.qrString ||
+        const qrisString = transactionData?.payment?.qrString || 
+                           transactionData?.qrString || 
                            transactionData?.payment?.qrUrl ||
                            transactionData?.paymentNumber;
 
@@ -2655,15 +2729,15 @@ app.post('/api/deposit', checkAuthSession, async (req, res) => {
 
         // Aturan Fee QRIS V1: >= 150.000 -> 0.95% flat | < 150.000 -> 0.7% + Rp 290
         const calculatedFee = calculateDepositFee(amount, 'v1');
-        const gatewayTotal = safeNum(transactionData.grossAmount) ||
-                             safeNum(transactionData.totalAmount) ||
+        const gatewayTotal = safeNum(transactionData.grossAmount) || 
+                             safeNum(transactionData.totalAmount) || 
                              safeNum(transactionData.total);
 
         const finalAmount = gatewayTotal || (amount + calculatedFee);
         const appliedFee = Math.max(0, finalAmount - amount);
 
-        const expiredAt = transactionData.expiredAt
-            ? new Date(transactionData.expiredAt)
+        const expiredAt = transactionData.expiredAt 
+            ? new Date(transactionData.expiredAt) 
             : new Date(Date.now() + 15 * 60 * 1000);
 
         const newTrx = new TransactionV2({
@@ -2714,8 +2788,8 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
             return res.status(401).json({ status: false, message: "Silakan login terlebih dahulu untuk bertransaksi." });
         }
 
-        const { productId, qty, voucherCode, orderId: clientOrderId } = req.body;
-        const buyQty = Number(qty) || 1;
+        const { productId, qty, voucherCode, orderId: clientOrderId, variantOption } = req.body;
+        const buyQty = Math.max(1, Number(qty) || 1);
 
         if (!productId) {
             return res.status(400).json({ status: false, message: "Product ID wajib diisi!" });
@@ -2729,16 +2803,20 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
             return res.status(404).json({ status: false, message: "Produk tidak ditemukan di database." });
         }
 
+        const variantResolved = resolveProductVariantSelection(dbProduct, variantOption);
+        if (variantResolved.error) {
+            return res.status(400).json({ status: false, message: variantResolved.error });
+        }
+
         const user = await UserV2.findById(req.user.id || req.user._id);
         if (!user) {
             return res.status(404).json({ status: false, message: "Data akun tidak ditemukan." });
         }
 
-        const unitPrice = dbProduct.harga_diskon || dbProduct.harga;
+        const unitPrice = variantResolved.unitPrice;
         const totalPrice = unitPrice * buyQty;
         const userIdentifier = getUserIdentifier(req);
 
-        // Hitung diskon lebih dulu sebelum cek saldo
         let discountAmount = 0;
         let validVoucherDoc = null;
         if (voucherCode && String(voucherCode).trim()) {
@@ -2758,6 +2836,10 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
             ? String(clientOrderId).trim()
             : `TRX-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`;
 
+        const selectedImage = (variantResolved.matchedVariant?.gambar && variantResolved.matchedVariant.gambar.trim())
+            ? variantResolved.matchedVariant.gambar.trim()
+            : (Array.isArray(dbProduct.gambar) ? dbProduct.gambar[0] : dbProduct.gambar);
+
         const saveCancelledBalanceTrx = async () => {
             await TransactionV2.findOneAndUpdate(
                 { orderId },
@@ -2770,13 +2852,15 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
                         type: "PURCHASE",
                         userEmail: user.email.toLowerCase().trim(),
                         itemDetails: {
-                            nama: dbProduct.nama,
+                            nama: variantResolved.displayName,
                             harga: unitPrice,
                             harga_setelah_voucher: finalPrice,
                             kategori: dbProduct.kategori,
-                            gambar: Array.isArray(dbProduct.gambar) ? dbProduct.gambar[0] : dbProduct.gambar,
+                            gambar: selectedImage,
                             buyer: user.email,
-                            qty: buyQty
+                            qty: buyQty,
+                            variantGroup: variantResolved.variantGroup,
+                            variantOption: variantResolved.variantOption
                         },
                         expiredAt: new Date(),
                         createdAt: new Date(),
@@ -2787,9 +2871,14 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
             );
         };
 
-        if (dbProduct.stok < buyQty) {
+        if (variantResolved.availableStock < buyQty) {
             await saveCancelledBalanceTrx();
-            return res.status(400).json({ status: false, message: "Stok produk tidak mencukupi! Transaksi dibatalkan." });
+            return res.status(400).json({
+                status: false,
+                message: variantResolved.hasVariants
+                    ? `Stok varian ${variantResolved.variantOption} tidak mencukupi! Transaksi dibatalkan.`
+                    : "Stok produk tidak mencukupi! Transaksi dibatalkan."
+            });
         }
 
         const currentBalance = user.saldo || 0;
@@ -2803,7 +2892,6 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
             });
         }
 
-        // Potong saldo & kuota voucher hanya ketika pembayaran benar-benar berhasil
         user.saldo = currentBalance - finalPrice;
         await user.save();
 
@@ -2815,7 +2903,7 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
             await validVoucherDoc.save();
         }
 
-        await updateProductStockAndSold(dbProduct.nama, buyQty, false);
+        await updateProductStockAndSold(dbProduct.nama, buyQty, false, variantResolved.variantOption);
         await recordProductBuyer(dbProduct.nama, user.email);
 
         await TransactionV2.findOneAndUpdate(
@@ -2829,14 +2917,16 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
                     type: "PURCHASE",
                     userEmail: user.email.toLowerCase().trim(),
                     itemDetails: {
-                        nama: dbProduct.nama,
+                        nama: variantResolved.displayName,
                         harga: unitPrice,
                         harga_setelah_voucher: finalPrice,
                         kategori: dbProduct.kategori,
-                        gambar: Array.isArray(dbProduct.gambar) ? dbProduct.gambar[0] : dbProduct.gambar,
+                        gambar: selectedImage,
                         link: dbProduct.link,
                         buyer: user.email,
-                        qty: buyQty
+                        qty: buyQty,
+                        variantGroup: variantResolved.variantGroup,
+                        variantOption: variantResolved.variantOption
                     },
                     productLink: dbProduct.link,
                     downloadCount: 0,
@@ -2856,6 +2946,8 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
             data: {
                 orderId: orderId,
                 amount: finalPrice,
+                variantGroup: variantResolved.variantGroup,
+                variantOption: variantResolved.variantOption,
                 linkType: linkInfo.linkType,
                 chatUrl: linkInfo.chatUrl,
                 specialDescription: linkInfo.specialDescription,
@@ -2873,7 +2965,7 @@ app.post('/api/store/pay-with-balance', checkAuthSession, async (req, res) => {
 
 app.post('/api/store/create-order', checkAuthSession, async (req, res) => {
     try {
-        const { orderId, productId, qty, amount, paymentMethod, username, note, voucherCode } = req.body;
+        const { orderId, productId, qty, amount, paymentMethod, username, note, voucherCode, variantOption } = req.body;
         if (!orderId || !productId) {
             return res.status(400).json({ status: false, message: "Data pesanan tidak lengkap." });
         }
@@ -2886,13 +2978,18 @@ app.post('/api/store/create-order', checkAuthSession, async (req, res) => {
             return res.status(404).json({ status: false, message: "Produk tidak ditemukan." });
         }
 
+        const variantResolved = resolveProductVariantSelection(dbProduct, variantOption);
+        if (variantResolved.error) {
+            return res.status(400).json({ status: false, message: variantResolved.error });
+        }
+
         const existingTrx = await TransactionV2.findOne({ orderId: String(orderId).trim() }).lean();
         if (existingTrx) {
             return res.json({ status: true, data: existingTrx });
         }
 
         const buyQty = Math.max(1, Number(qty) || 1);
-        const unitPrice = dbProduct.harga_diskon || dbProduct.harga;
+        const unitPrice = variantResolved.unitPrice;
         const subtotal = unitPrice * buyQty;
         const userIdentifier = getUserIdentifier(req);
 
@@ -2910,6 +3007,9 @@ app.post('/api/store/create-order', checkAuthSession, async (req, res) => {
 
         const userEmail = req.user?.email ? req.user.email.toLowerCase().trim() : null;
         const buyerLabel = userEmail || (username && String(username).trim()) || 'Pembeli Tamu';
+        const selectedImage = (variantResolved.matchedVariant?.gambar && variantResolved.matchedVariant.gambar.trim())
+            ? variantResolved.matchedVariant.gambar.trim()
+            : (Array.isArray(dbProduct.gambar) ? dbProduct.gambar[0] : dbProduct.gambar);
 
         const newTrx = await TransactionV2.create({
             orderId: String(orderId).trim(),
@@ -2919,14 +3019,16 @@ app.post('/api/store/create-order', checkAuthSession, async (req, res) => {
             type: "PURCHASE",
             userEmail,
             itemDetails: {
-                nama: dbProduct.nama,
+                nama: variantResolved.displayName,
                 harga: unitPrice,
                 harga_setelah_voucher: finalAmount,
                 kategori: dbProduct.kategori,
-                gambar: Array.isArray(dbProduct.gambar) ? dbProduct.gambar[0] : dbProduct.gambar,
+                gambar: selectedImage,
                 buyer: buyerLabel,
                 qty: buyQty,
-                note: note || ''
+                note: note || '',
+                variantGroup: variantResolved.variantGroup,
+                variantOption: variantResolved.variantOption
             },
             expiredAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
         });
@@ -2940,7 +3042,7 @@ app.post('/api/store/create-order', checkAuthSession, async (req, res) => {
 
 app.post(['/api/store/cancel-balance-order', '/api/store/cancel-order'], checkAuthSession, async (req, res) => {
     try {
-        const { orderId, productId, qty, amount, paymentMethod, username } = req.body;
+        const { orderId, productId, qty, amount, paymentMethod, username, variantOption } = req.body;
         if (!orderId || !productId) {
             return res.status(400).json({ status: false, message: "Data pesanan tidak lengkap." });
         }
@@ -2953,8 +3055,9 @@ app.post(['/api/store/cancel-balance-order', '/api/store/cancel-order'], checkAu
             return res.status(404).json({ status: false, message: "Produk tidak ditemukan." });
         }
 
+        const variantResolved = resolveProductVariantSelection(dbProduct, variantOption);
         const buyQty = Math.max(1, Number(qty) || 1);
-        const unitPrice = dbProduct.harga_diskon || dbProduct.harga;
+        const unitPrice = variantResolved.error ? (dbProduct.harga_diskon || dbProduct.harga) : variantResolved.unitPrice;
         const finalAmount = Number(amount) >= 0 ? Number(amount) : unitPrice * buyQty;
 
         const cleanMethodRaw = String(paymentMethod || 'SALDO').trim().toUpperCase();
@@ -2986,13 +3089,15 @@ app.post(['/api/store/cancel-balance-order', '/api/store/cancel-order'], checkAu
             type: "PURCHASE",
             userEmail,
             itemDetails: {
-                nama: dbProduct.nama,
+                nama: variantResolved.error ? dbProduct.nama : variantResolved.displayName,
                 harga: unitPrice,
                 harga_setelah_voucher: finalAmount,
                 kategori: dbProduct.kategori,
                 gambar: Array.isArray(dbProduct.gambar) ? dbProduct.gambar[0] : dbProduct.gambar,
                 buyer: buyerLabel,
-                qty: buyQty
+                qty: buyQty,
+                variantGroup: variantResolved.variantGroup || '',
+                variantOption: variantResolved.variantOption || ''
             },
             expiredAt: new Date()
         });
@@ -3001,36 +3106,6 @@ app.post(['/api/store/cancel-balance-order', '/api/store/cancel-order'], checkAu
     } catch (err) {
         console.error("Error cancel order:", err);
         return res.status(500).json({ status: false, message: "Gagal mencatat pembatalan transaksi." });
-    }
-});
-
-app.post('/api/store/manual-order', checkAuthSession, async (req, res) => {
-    try {
-        const productName = req.body.productName;
-        const qty = req.body.qty;
-        const buyQty = Number(qty) || 1;
-
-        if (!productName) {
-            return res.status(400).json({ status: false, message: "Nama produk wajib diisi!" });
-        }
-
-        const updatedProduct = await updateProductStockAndSold(productName, buyQty);
-
-        if (!updatedProduct) {
-            return res.status(404).json({ status: false, message: "Produk tidak ditemukan di database." });
-        }
-
-        const buyer = req.user ? req.user.email : (req.body.username || getUserIdentifier(req));
-        await recordProductBuyer(updatedProduct.Id || updatedProduct._id, buyer);
-
-        return res.json({
-            status: true,
-            message: "Stok dan jumlah terjual berhasil diperbarui secara otomatis!",
-            data: updatedProduct
-        });
-    } catch (err) {
-        console.error("Manual Order Error:", err);
-        return res.status(500).json({ status: false, message: "Terjadi kesalahan server." });
     }
 });
 
@@ -3298,8 +3373,6 @@ app.get('/api/store/download/:orderId', checkAuthSession, async (req, res) => {
     }
 });
 
-// --- 8E. STATUS TRANSAKSI, WEBHOOK PAYWUZ & RIWAYAT TRANSAKSI USER ---
-
 app.get('/transactions/:orderId', async (req, res) => {
     try {
         const orderId = String(req.params.orderId || '').trim();
@@ -3449,6 +3522,36 @@ app.post(['/webhook', '/api/webhook/paywuz'], async (req, res) => {
     }
 });
 
+app.post('/api/store/manual-order', checkAuthSession, async (req, res) => {
+    try {
+        const productName = req.body.productName;
+        const qty = req.body.qty;
+        const buyQty = Number(qty) || 1;
+
+        if (!productName) {
+            return res.status(400).json({ status: false, message: "Nama produk wajib diisi!" });
+        }
+
+        const updatedProduct = await updateProductStockAndSold(productName, buyQty);
+
+        if (!updatedProduct) {
+            return res.status(404).json({ status: false, message: "Produk tidak ditemukan di database." });
+        }
+
+        const buyer = req.user ? req.user.email : (req.body.username || getUserIdentifier(req));
+        await recordProductBuyer(updatedProduct.Id || updatedProduct._id, buyer);
+
+        return res.json({
+            status: true,
+            message: "Stok dan jumlah terjual berhasil diperbarui secara otomatis!",
+            data: updatedProduct
+        });
+    } catch (err) {
+        console.error("Manual Order Error:", err);
+        return res.status(500).json({ status: false, message: "Terjadi kesalahan server." });
+    }
+});
+
 app.get(['/api/user/transactions', '/api/my-transactions'], checkAuthSession, async (req, res) => {
     try {
         let transactions = [];
@@ -3521,8 +3624,6 @@ app.get(['/api/user/transactions', '/api/my-transactions'], checkAuthSession, as
         return res.status(500).json({ status: false, message: "Gagal mengambil riwayat transaksi" });
     }
 });
-
-// --- 8F. DEPOSIT QRIS V2 (DINAMIS MANUAL, BUKTI BAYAR & APPROVAL ADMIN) ---
 
 app.post('/api/deposit-qrisv2', checkAuthSession, async (req, res) => {
     try {
@@ -3817,8 +3918,6 @@ app.post('/api/admin/deposits-qrisv2/:orderId/cancel', checkAuthSession, checkAd
         return res.status(500).json({ status: false, message: 'Gagal membatalkan deposit.' });
     }
 });
-
-// --- 8G. TELEGRAM OIDC LOGIN, LINK TICKET & BOT WEBHOOK ---
 
 app.get('/auth/telegram', (req, res) => {
     if (!TELEGRAM_CLIENT_ID || !TELEGRAM_CLIENT_SECRET) {
@@ -4184,219 +4283,275 @@ app.post('/api/telegram/webhook', async (req, res) => {
 // 9. AUTHENTICATION (PASSPORT, OTP, LOGIN, REGISTER, OAUTH)
 // ============================================================
 
+// AUTHENTICATION HANDLERS
+app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((obj, done) => done(null, obj));
-
-// KONFIGURASI PASSPORT LOCAL STRATEGY (LOGIN MENGGUNAKAN EMAIL & PASSWORD)
-passport.use(new LocalStrategy({
-    usernameField: 'email',
-    passwordField: 'password'
-}, async (email, password, done) => {
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser(async (id, done) => {
     try {
-        const cleanEmail = email.toLowerCase().trim();
-        const user = await UserV2.findOne({ email: cleanEmail });
-
-        if (!user) {
-            return done(null, false, { message: 'Email tidak terdaftar!' });
-        }
-
-        if (!user.password) {
-            return done(null, false, { message: 'Akun ini terdaftar menggunakan Google/GitHub. Silakan login lewat sosial media.' });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return done(null, false, { message: 'Password salah!' });
-        }
-
-        return done(null, user);
+        const user = await UserV2.findById(id);
+        done(null, user);
     } catch (err) {
-        return done(err);
-    }
-}));
-
-// --- 9A. ENDPOINT KIRIM OTP (LOGIN, REGISTER, LUPA PASSWORD) ---
-
-// ENDPOINT KIRIM KODE VERIFIKASI LOGIN
-app.post('/api/auth/send-login-code', async (req, res) => {
-    try {
-        const { email } = req.body;
-        if (!email || !email.trim()) {
-            return res.status(400).json({ status: false, message: 'Email wajib diisi!' });
-        }
-
-        const cleanEmail = email.toLowerCase().trim();
-        const user = await UserV2.findOne({ email: cleanEmail });
-
-        if (!user) {
-            return res.status(404).json({ status: false, message: 'Email tidak terdaftar! Silakan daftar akun baru terlebih dahulu.' });
-        }
-
-        // Cek batas maksimal pengiriman email harian (5x per hari)
-        const allowed = await checkAndIncrementEmailLimit(cleanEmail);
-        if (!allowed) {
-            return res.status(429).json({
-                status: false,
-                message: 'Batas pengiriman kode verifikasi harian Anda (maksimal 5x sehari) telah habis! Coba lagi besok.'
-            });
-        }
-
-        // Generate 6 digit kode angka acak
-        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-        const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 Menit
-
-        // Hapus kode lama jika ada
-        await VerificationCode.deleteMany({ email: cleanEmail, type: 'login' });
-
-        await VerificationCode.create({
-            email: cleanEmail,
-            code: otpCode,
-            type: 'login',
-            expiresAt
-        });
-
-        await sendEmailOTP(cleanEmail, otpCode, 'Login Akun');
-
-        return res.json({ status: true, message: 'Kode verifikasi 6 digit telah dikirim ke email Anda!' });
-    } catch (err) {
-        console.error('Error send login code:', err);
-        return res.status(500).json({ status: false, message: 'Gagal mengirim email verifikasi. Pastikan email benar!' });
+        done(err, null);
     }
 });
 
-// ENDPOINT VERIFIKASI KODE LOGIN & BUAT SESI AKUN
-app.post('/api/auth/verify-login-code', async (req, res) => {
+passport.use(new LocalStrategy({ usernameField: 'username', passwordField: 'password' }, 
+    async (usernameOrEmail, password, done) => {
+        try {
+            const user = await UserV2.findOne({
+                $or: [
+                    { username: usernameOrEmail }, 
+                    { email: usernameOrEmail.toLowerCase() }
+                ]
+            });
+
+            if (!user) return done(null, false, { message: 'Username atau Email tidak ditemukan.' });
+
+            if (!user.password || user.provider !== 'local') {
+                return done(null, false, { 
+                    message: `Akun ini terdaftar via ${user.provider.toUpperCase()}. Silakan masuk dengan tombol ${user.provider.toUpperCase()}.` 
+                });
+            }
+
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) return done(null, false, { message: 'Kata sandi salah.' });
+
+            return done(null, user);
+        } catch (err) {
+            return done(err);
+        }
+    }
+));
+
+// ====================================================
+// FITUR API OTP KODE 6 DIGIT & PEMBATASAN MAKSIMAL 5x SEHARI
+// ====================================================
+
+// 1. ENDPOINT MINTA KODE OTP
+app.post('/auth/send-otp', async (req, res) => {
     try {
-        const { email, code } = req.body;
-        if (!email || !code) {
-            return res.status(400).json({ status: false, message: 'Email dan kode wajib diisi!' });
+        const { email, type } = req.body;
+        if (!email || !type) {
+            return res.status(400).json({ status: false, message: 'Email/Username dan jenis aksi wajib diisi!' });
         }
 
-        const cleanEmail = email.toLowerCase().trim();
-        const verification = await VerificationCode.findOne({
-            email: cleanEmail,
-            code: code.trim(),
-            type: 'login',
+        const inputClean = email.toLowerCase().trim();
+        let targetEmail = inputClean;
+
+        if (type === 'login' || type === 'forgot') {
+            const user = await UserV2.findOne({
+                $or: [{ email: inputClean }, { username: inputClean }]
+            });
+            if (!user) {
+                return res.status(404).json({ status: false, message: 'Username atau Email tidak terdaftar di sistem kami!' });
+            }
+            if (user.provider !== 'local') {
+                return res.status(400).json({ status: false, message: `Akun mendaftar via ${user.provider.toUpperCase()}, tidak membutuhkan OTP.` });
+            }
+            targetEmail = user.email;
+        } else if (type === 'register') {
+            const existingUser = await UserV2.findOne({ email: inputClean });
+            if (existingUser) {
+                return res.status(400).json({ status: false, message: 'Email sudah terdaftar!' });
+            }
+        }
+
+        // Cek Kuota Pengiriman Harian (Maksimal 5x)
+        const canSend = await checkAndIncrementEmailLimit(targetEmail);
+        if (!canSend) {
+            return res.status(429).json({ status: false, message: 'Batas harian pengiriman email OTP tercapai (Maksimal 5 kali sehari).' });
+        }
+
+        // Buat Kode OTP 6 Digit
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // Expire 10 Menit
+
+        await VerificationCode.deleteMany({ email: targetEmail, type });
+
+        const newVerification = new VerificationCode({
+            email: targetEmail,
+            code: otpCode,
+            type,
+            expiresAt
+        });
+        await newVerification.save();
+
+        const typeNames = { login: 'Login Akun', register: 'Pendaftaran Akun', forgot: 'Reset Kata Sandi' };
+        await sendEmailOTP(targetEmail, otpCode, typeNames[type] || 'Verifikasi');
+
+        return res.json({ status: true, message: `Kode verifikasi 6 digit berhasil dikirim ke ${targetEmail}.` });
+
+    } catch (err) {
+        console.error("Gagal kirim OTP:", err);
+        return res.status(500).json({ status: false, message: 'Gagal mengirim kode verifikasi ke email.' });
+    }
+});
+
+// 2. ENDPOINT VERIFIKASI OTP
+app.post('/auth/verify-otp', async (req, res) => {
+    try {
+        const { email, code, type } = req.body;
+        if (!email || !code || !type) {
+            return res.status(400).json({ status: false, message: 'Email, kode OTP, dan jenis aksi wajib diisi!' });
+        }
+
+        const inputClean = email.toLowerCase().trim();
+        const cleanCode = code.toString().trim();
+        let targetEmail = inputClean;
+
+        if (type === 'login' || type === 'forgot') {
+            const user = await UserV2.findOne({
+                $or: [{ email: inputClean }, { username: inputClean }]
+            });
+            if (user) targetEmail = user.email;
+        }
+
+        const record = await VerificationCode.findOne({
+            email: targetEmail,
+            code: cleanCode,
+            type,
             expiresAt: { $gt: new Date() }
         });
 
-        if (!verification) {
-            return res.status(400).json({ status: false, message: 'Kode verifikasi salah atau sudah kedaluwarsa!' });
+        if (!record) {
+            return res.status(400).json({ status: false, message: 'Kode OTP tidak valid atau sudah kedaluwarsa!' });
+        }
+
+        await VerificationCode.deleteOne({ _id: record._id });
+
+        return res.json({ status: true, message: 'Verifikasi kode berhasil!' });
+
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal memproses verifikasi OTP.' });
+    }
+});
+
+// 3. ENDPOINT RESET PASSWORD VIA OTP
+app.post('/auth/reset-password-otp', async (req, res) => {
+    try {
+        const { email, code, newPassword } = req.body;
+        if (!email || !code || !newPassword) {
+            return res.status(400).json({ status: false, message: 'Email, Kode OTP, dan Kata Sandi Baru wajib diisi!' });
+        }
+
+        if (newPassword.length < 8) {
+            return res.status(400).json({ status: false, message: 'Kata sandi baru minimal 8 karakter!' });
+        }
+
+        const cleanEmail = email.toLowerCase().trim();
+        const cleanCode = code.toString().trim();
+
+        const record = await VerificationCode.findOne({
+            email: cleanEmail,
+            code: cleanCode,
+            type: 'forgot',
+            expiresAt: { $gt: new Date() }
+        });
+
+        if (!record) {
+            return res.status(400).json({ status: false, message: 'Kode OTP tidak valid atau sudah kedaluwarsa!' });
         }
 
         const user = await UserV2.findOne({ email: cleanEmail });
         if (!user) {
-            return res.status(404).json({ status: false, message: 'Akun tidak ditemukan!' });
+            return res.status(404).json({ status: false, message: 'Pengguna tidak ditemukan.' });
         }
 
-        // Hapus kode verifikasi setelah berhasil dipakai
-        await VerificationCode.deleteOne({ _id: verification._id });
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
 
-        const userPayload = {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            name: user.username,
-            avatar: user.avatar,
-            createdAt: user.createdAt
-        };
+        await VerificationCode.deleteOne({ _id: record._id });
 
-        const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '7d' });
+        return res.json({ status: true, message: 'Kata sandi berhasil diperbarui! Silakan masuk kembali.' });
 
-        res.cookie('auth_session', token, {
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-            httpOnly: true,
-            secure: true,
-            sameSite: 'lax'
-        });
-
-        const redirectUrl = !user.hasCompletedOnboarding ? '/store?onboarding=1' : '/dashboard';
-        return res.json({ status: true, message: 'Login berhasil!', redirectUrl });
     } catch (err) {
-        console.error('Error verify login code:', err);
-        return res.status(500).json({ status: false, message: 'Gagal memverifikasi kode!' });
+        console.error("Reset Password OTP Error:", err);
+        return res.status(500).json({ status: false, message: 'Gagal mengatur ulang kata sandi.' });
     }
 });
 
-// ENDPOINT KIRIM KODE VERIFIKASI REGISTER
-app.post('/api/auth/send-register-code', async (req, res) => {
+// LOGIN ROUTE
+app.post('/auth/login', (req, res, next) => {
+    passport.authenticate('local', async (err, user, info) => { 
+        if (err) return next(err);
+
+        if (!user) {
+            const pesanGagal = info && info.message ? info.message : 'Username atau password salah.';
+            return sendSweetAlert(res, 'error', 'Gagal Masuk', pesanGagal, '/login');
+        }
+
+        req.logIn(user, async (err) => { 
+            if (err) return next(err);
+
+            try {
+                const userPayload = {
+                    id: user._id,
+                    username: user.username,
+                    email: user.email,
+                    name: user.username,
+                    avatar: user.avatar || 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png',
+                    createdAt: user.createdAt
+                };
+
+                const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '7d' });
+
+                res.cookie('auth_session', token, {
+                    maxAge: 7 * 24 * 60 * 60 * 1000, 
+                    httpOnly: true,
+                    secure: true, 
+                    sameSite: 'lax'
+                });
+
+                // Arahkan langsung ke tutorial interaktif jika pertama kali login
+                if (!user.hasCompletedOnboarding) {
+                    return res.redirect('/store?onboarding=1');
+                }
+
+                return res.redirect('/dashboard');
+
+            } catch (error) {
+                console.error("Gagal sinkronisasi data saat login:", error);
+                return next(error);
+            }
+        });
+    })(req, res, next);
+});
+
+// REGISTER ROUTE
+app.post('/auth/register', async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, email, password, referralCode } = req.body;
+
         if (!username || !email || !password) {
-            return res.status(400).json({ status: false, message: 'Username, Email, dan Password wajib diisi!' });
+            return sendSweetAlert(res, 'error', 'Pendaftaran Gagal', 'Semua data wajib diisi!', '/login');
         }
 
+        const cleanUsername = username.trim();
         const cleanEmail = email.toLowerCase().trim();
-        const existingUser = await UserV2.findOne({ email: cleanEmail });
 
-        if (existingUser) {
-            return res.status(400).json({ status: false, message: 'Email ini sudah terdaftar! Silakan gunakan halaman Login.' });
-        }
-
-        // Cek batas maksimal 5 kali sehari
-        const allowed = await checkAndIncrementEmailLimit(cleanEmail);
-        if (!allowed) {
-            return res.status(429).json({
-                status: false,
-                message: 'Batas pengiriman kode verifikasi harian Anda (maksimal 5x sehari) telah habis! Coba lagi besok.'
-            });
-        }
-
-        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
-
-        await VerificationCode.deleteMany({ email: cleanEmail, type: 'register' });
-
-        await VerificationCode.create({
-            email: cleanEmail,
-            code: otpCode,
-            type: 'register',
-            expiresAt
+        const existingUser = await UserV2.findOne({ 
+            $or: [{ username: cleanUsername }, { email: cleanEmail }] 
         });
 
-        await sendEmailOTP(cleanEmail, otpCode, 'Pendaftaran Akun');
-
-        return res.json({ status: true, message: 'Kode verifikasi pendaftaran telah dikirim ke email Anda!' });
-    } catch (err) {
-        console.error('Error send register code:', err);
-        return res.status(500).json({ status: false, message: 'Gagal mengirim kode verifikasi ke email!' });
-    }
-});
-
-// ENDPOINT VERIFIKASI KODE REGISTER & BUAT AKUN BARU
-app.post('/api/auth/verify-register-code', async (req, res) => {
-    try {
-        const { username, email, password, code, referral } = req.body;
-        if (!username || !email || !password || !code) {
-            return res.status(400).json({ status: false, message: 'Semua field & kode wajib diisi!' });
-        }
-
-        const cleanEmail = email.toLowerCase().trim();
-        const verification = await VerificationCode.findOne({
-            email: cleanEmail,
-            code: code.trim(),
-            type: 'register',
-            expiresAt: { $gt: new Date() }
-        });
-
-        if (!verification) {
-            return res.status(400).json({ status: false, message: 'Kode verifikasi salah atau sudah kedaluwarsa!' });
-        }
-
-        const existingUser = await UserV2.findOne({ email: cleanEmail });
         if (existingUser) {
-            return res.status(400).json({ status: false, message: 'Email sudah terdaftar!' });
+            return sendSweetAlert(res, 'warning', 'Sudah Terdaftar', 'Username atau Email sudah terdaftar!', '/login');
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
+        const defaultAvatar = 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png';
+        const myReferralCode = generateReferralCode();
 
         let initialSaldo = 0;
         let inviterUser = null;
-        if (referral && referral.trim() !== '') {
-            inviterUser = await UserV2.findOne({ referralCode: referral.trim().toUpperCase() });
+
+        const codeToUse = referralCode || req.cookies?.pending_ref;
+
+        if (codeToUse && codeToUse.trim()) {
+            inviterUser = await UserV2.findOne({ referralCode: codeToUse.trim().toUpperCase() });
             if (inviterUser) {
                 initialSaldo = 500;
                 inviterUser.saldo = (inviterUser.saldo || 0) + 1000;
@@ -4404,258 +4559,114 @@ app.post('/api/auth/verify-register-code', async (req, res) => {
             }
         }
 
+        res.clearCookie('pending_ref');
+
         const newUser = new UserV2({
-            username: username.trim(),
+            username: cleanUsername,
             email: cleanEmail,
             password: hashedPassword,
             provider: 'local',
+            avatar: defaultAvatar,
             saldo: initialSaldo,
-            referralCode: generateReferralCode(),
+            referralCode: myReferralCode,
             referredBy: inviterUser ? inviterUser.referralCode : null,
-            hasCompletedOnboarding: false
+            hasCompletedOnboarding: false,
+            createdAt: new Date()
         });
-
         await newUser.save();
-        await VerificationCode.deleteOne({ _id: verification._id });
 
         const userPayload = {
             id: newUser._id,
             username: newUser.username,
-            email: newUser.email,
             name: newUser.username,
-            avatar: newUser.avatar,
+            email: newUser.email,
+            avatar: defaultAvatar,
             createdAt: newUser.createdAt
         };
 
         const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '7d' });
 
         res.cookie('auth_session', token, {
-            maxAge: 7 * 24 * 60 * 60 * 1000,
+            maxAge: 7 * 24 * 60 * 60 * 1000, 
             httpOnly: true,
-            secure: true,
+            secure: true, 
             sameSite: 'lax'
         });
 
-        return res.json({ status: true, message: 'Registrasi berhasil! Selamat datang.', redirectUrl: '/store?onboarding=1' });
-    } catch (err) {
-        console.error('Error verify register code:', err);
-        return res.status(500).json({ status: false, message: 'Terjadi kesalahan saat membuat akun!' });
+        req.logIn(newUser, (err) => {
+            if (err) return res.redirect('/login');
+            const alertMsg = inviterUser 
+                ? 'Pendaftaran berhasil! Anda mendapatkan bonus saldo Rp 500. Mari mulai tur singkat!' 
+                : 'Pendaftaran berhasil! Mari mulai tur singkat cara belanja.';
+            return sendSweetAlert(res, 'success', 'Berhasil!', alertMsg, '/store?onboarding=1');
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Terjadi error internal saat pendaftaran.');
     }
 });
 
-// ENDPOINT KIRIM KODE LUPA PASSWORD
-app.post('/api/auth/send-forgot-code', async (req, res) => {
+// ENDPOINT SETEL / UBAH KATA SANDI USER
+app.post('/api/user/change-password', checkAuthSession, async (req, res) => {
     try {
-        const { email } = req.body;
-        if (!email || !email.trim()) {
-            return res.status(400).json({ status: false, message: 'Email wajib diisi!' });
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu!' });
         }
 
-        const cleanEmail = email.toLowerCase().trim();
-        const user = await UserV2.findOne({ email: cleanEmail });
+        const { currentPassword, newPassword, confirmPassword } = req.body;
+        const userId = req.user.id || req.user._id;
 
+        const user = await UserV2.findById(userId);
         if (!user) {
-            return res.status(404).json({ status: false, message: 'Email tidak terdaftar di sistem kami!' });
+            return res.status(404).json({ status: false, message: 'User tidak ditemukan.' });
         }
 
-        // Cek batas maksimal 5x sehari
-        const allowed = await checkAndIncrementEmailLimit(cleanEmail);
-        if (!allowed) {
-            return res.status(429).json({
-                status: false,
-                message: 'Batas pengiriman kode verifikasi harian Anda (maksimal 5x sehari) telah habis! Coba lagi besok.'
-            });
+        if (!newPassword || newPassword.length < 8) {
+            return res.status(400).json({ status: false, message: 'Kata sandi baru minimal 8 karakter!' });
         }
 
-        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
-
-        await VerificationCode.deleteMany({ email: cleanEmail, type: 'forgot' });
-
-        await VerificationCode.create({
-            email: cleanEmail,
-            code: otpCode,
-            type: 'forgot',
-            expiresAt
-        });
-
-        await sendEmailOTP(cleanEmail, otpCode, 'Reset Password');
-
-        return res.json({ status: true, message: 'Kode reset password telah dikirim ke email Anda!' });
-    } catch (err) {
-        console.error('Error send forgot code:', err);
-        return res.status(500).json({ status: false, message: 'Gagal mengirim kode verifikasi ke email!' });
-    }
-});
-
-// ENDPOINT VERIFIKASI KODE & SIMPAN PASSWORD BARU
-app.post('/api/auth/reset-password-code', async (req, res) => {
-    try {
-        const { email, code, newPassword } = req.body;
-        if (!email || !code || !newPassword) {
-            return res.status(400).json({ status: false, message: 'Email, kode, dan password baru wajib diisi!' });
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({ status: false, message: 'Konfirmasi kata sandi tidak cocok!' });
         }
 
-        const cleanEmail = email.toLowerCase().trim();
-        const verification = await VerificationCode.findOne({
-            email: cleanEmail,
-            code: code.trim(),
-            type: 'forgot',
-            expiresAt: { $gt: new Date() }
-        });
-
-        if (!verification) {
-            return res.status(400).json({ status: false, message: 'Kode verifikasi salah atau sudah kedaluwarsa!' });
-        }
-
-        const user = await UserV2.findOne({ email: cleanEmail });
-        if (!user) {
-            return res.status(404).json({ status: false, message: 'User tidak ditemukan!' });
-        }
-
-        user.password = await bcrypt.hash(newPassword, 10);
-        await user.save();
-
-        await VerificationCode.deleteOne({ _id: verification._id });
-
-        return res.json({ status: true, message: 'Password berhasil diperbarui! Silakan login dengan password baru Anda.' });
-    } catch (err) {
-        console.error('Error reset password code:', err);
-        return res.status(500).json({ status: false, message: 'Gagal memperbarui password!' });
-    }
-});
-
-// --- 9B. HALAMAN LOGIN, REGISTER, LOGOUT & OAUTH (GITHUB / GOOGLE) ---
-
-app.get('/login', (req, res) => {
-    if (req.user) {
-        const returnTo = sanitizeReturnTo(req.query.returnTo, '/dashboard');
-        return res.redirect(returnTo);
-    }
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-
-app.post('/login', (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
-        if (err) {
-            return sendSweetAlert(res, 'error', 'Error!', 'Terjadi kesalahan server.', '/login');
-        }
-        if (!user) {
-            return sendSweetAlert(res, 'error', 'Login Gagal!', info ? info.message : 'Email atau Password salah!', '/login');
-        }
-
-        const userPayload = {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            name: user.username,
-            avatar: user.avatar,
-            createdAt: user.createdAt
-        };
-
-        const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '7d' });
-
-        res.cookie('auth_session', token, {
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-            httpOnly: true,
-            secure: true,
-            sameSite: 'lax'
-        });
-
-        return sendSweetAlert(res, 'success', 'Login Berhasil!', `Selamat datang kembali, ${user.username}!`, '/dashboard');
-    })(req, res, next);
-});
-
-app.get('/register', (req, res) => {
-    if (req.user) return res.redirect('/dashboard');
-
-    if (req.query.ref) {
-        res.cookie('pending_ref', req.query.ref.trim().toUpperCase(), {
-            maxAge: 10 * 60 * 1000,
-            httpOnly: true,
-            secure: true,
-            sameSite: 'lax'
-        });
-    }
-    res.sendFile(path.join(__dirname, 'public', 'register.html'));
-});
-
-app.post('/register', async (req, res) => {
-    const { username, email, password, referral } = req.body;
-
-    if (!username || !email || !password) {
-        return sendSweetAlert(res, 'warning', 'Data Kurang!', 'Username, Email, dan Password wajib diisi!', '/register');
-    }
-
-    try {
-        const cleanEmail = email.toLowerCase().trim();
-        const existingUser = await UserV2.findOne({ email: cleanEmail });
-
-        if (existingUser) {
-            return sendSweetAlert(res, 'error', 'Gagal Daftar!', 'Email ini sudah terdaftar! Silakan gunakan halaman Login.', '/register');
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        let initialSaldo = 0;
-        let inviterUser = null;
-
-        if (referral && referral.trim() !== '') {
-            inviterUser = await UserV2.findOne({ referralCode: referral.trim().toUpperCase() });
-            if (inviterUser) {
-                initialSaldo = 500;
-                inviterUser.saldo = (inviterUser.saldo || 0) + 1000;
-                await inviterUser.save();
+        if (user.password) {
+            if (!currentPassword) {
+                return res.status(400).json({ status: false, message: 'Kata sandi saat ini wajib diisi!' });
+            }
+            const isMatch = await bcrypt.compare(currentPassword, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ status: false, message: 'Kata sandi saat ini salah!' });
             }
         }
 
-        const newUser = new UserV2({
-            username: username.trim(),
-            email: cleanEmail,
-            password: hashedPassword,
-            provider: 'local',
-            saldo: initialSaldo,
-            referralCode: generateReferralCode(),
-            referredBy: inviterUser ? inviterUser.referralCode : null
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
+
+        return res.json({
+            status: true,
+            message: user.password ? 'Kata sandi berhasil diperbarui!' : 'Kata sandi lokal berhasil disetel!'
         });
 
-        await newUser.save();
-
-        const bonusMsg = inviterUser
-            ? ' Selamat! Anda mendapatkan bonus saldo Rp 500 dari kode referral!'
-            : '';
-
-        return sendSweetAlert(res, 'success', 'Registrasi Berhasil!', `Akun berhasil dibuat!${bonusMsg} Silakan login.`, '/login');
-    } catch (error) {
-        console.error(error);
-        return sendSweetAlert(res, 'error', 'Error!', 'Terjadi kesalahan sistem saat mendaftar.', '/register');
-    }
-});
-
-app.post('/api/user/complete-onboarding', checkAuthSession, async (req, res) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
-        }
-
-        const userId = req.user.id || req.user._id;
-        await UserV2.findByIdAndUpdate(userId, { $set: { hasCompletedOnboarding: true } });
-
-        return res.json({ status: true, message: 'Onboarding berhasil diselesaikan!' });
     } catch (err) {
-        return res.status(500).json({ status: false, message: 'Gagal menyimpan status onboarding.' });
+        console.error("Gagal ubah password:", err);
+        return res.status(500).json({ status: false, message: 'Terjadi kesalahan pada server saat mengubah kata sandi.' });
     }
 });
 
-app.get('/logout', (req, res) => {
+// LOGOUT ROUTE
+app.get('/auth/logout', (req, res, next) => {
     res.clearCookie('auth_session');
-    req.logout(() => {
-        res.redirect('/dashboard');
+    req.logout((err) => {
+        if (err) return next(err);
+        res.redirect('/login');
     });
 });
 
-// GITHUB OAUTH
+/* OAuth GitHub */
 app.get('/auth/github', (req, res) => {
+    const ref = req.query.ref ? encodeURIComponent(req.query.ref) : '';
     const returnTo = sanitizeReturnTo(req.query.returnTo, '');
     if (returnTo) {
         res.cookie('oauth_return_to', returnTo, {
@@ -4665,53 +4676,74 @@ app.get('/auth/github', (req, res) => {
             sameSite: 'lax'
         });
     }
-
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(GITHUB_CALLBACK_URL)}&scope=user:email`;
-    res.redirect(githubAuthUrl);
+    const stateObj = {};
+    if (ref) stateObj.ref = ref;
+    if (returnTo) stateObj.returnTo = returnTo;
+    const state = Object.keys(stateObj).length ? JSON.stringify(stateObj) : '';
+    const url = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${GITHUB_CALLBACK_URL}&scope=user:email${state ? '&state=' + encodeURIComponent(state) : ''}`;
+    res.redirect(url);
 });
 
 app.get('/auth/github/callback', async (req, res) => {
-    const { code } = req.query;
-    const returnTo = sanitizeReturnTo(req.cookies?.oauth_return_to, '');
+    const { code, state } = req.query;
+    if (!code) return res.send('Authentication failed: No code provided');
+
+    let refCodeFromState = req.cookies?.pending_ref || null;
+    let returnTo = sanitizeReturnTo(req.cookies?.oauth_return_to, '');
     res.clearCookie('oauth_return_to');
 
-    if (!code) return res.redirect('/login');
+    if (state) {
+        try {
+            const parsedState = JSON.parse(decodeURIComponent(state));
+            if (parsedState.ref) refCodeFromState = parsedState.ref;
+            if (parsedState.returnTo) returnTo = sanitizeReturnTo(parsedState.returnTo, returnTo);
+        } catch (e) {}
+    }
 
     try {
         const tokenResponse = await axios.post('https://github.com/login/oauth/access_token', {
             client_id: GITHUB_CLIENT_ID,
             client_secret: GITHUB_CLIENT_SECRET,
             code: code
-        }, { headers: { Accept: 'application/json' } });
+        }, { headers: { accept: 'application/json' } });
 
         const accessToken = tokenResponse.data.access_token;
+        if (!accessToken) return res.send('Authentication failed: Invalid access token');
 
         const userResponse = await axios.get('https://api.github.com/user', {
-            headers: { Authorization: `Bearer ${accessToken}` }
+            headers: { Authorization: `token ${accessToken}` }
         });
 
-        let email = userResponse.data.email;
-        if (!email) {
-            const emailsRes = await axios.get('https://api.github.com/user/emails', {
-                headers: { Authorization: `Bearer ${accessToken}` }
-            });
-            const primaryEmailObj = emailsRes.data.find(e => e.primary) || emailsRes.data[0];
-            email = primaryEmailObj ? primaryEmailObj.email : `${userResponse.data.login}@github.user`;
+        const userData = userResponse.data;
+        let userEmail = userData.email;
+
+        if (!userEmail) {
+            try {
+                const emailsResponse = await axios.get('https://api.github.com/user/emails', {
+                    headers: { Authorization: `token ${accessToken}` }
+                });
+                const primaryEmailObj = emailsResponse.data.find(e => e.primary && e.verified) || emailsResponse.data[0];
+                if (primaryEmailObj) {
+                    userEmail = primaryEmailObj.email;
+                }
+            } catch (emailErr) {
+                console.error('Gagal mengambil private email:', emailErr.message);
+            }
         }
 
-        const cleanEmail = email.toLowerCase().trim();
-        let user = await UserV2.findOne({ email: cleanEmail });
+        const finalEmail = (userEmail || `${userData.login}@github.com`).toLowerCase().trim();
+        const currentUsername = (userData.login || finalEmail.split('@')[0]).toLowerCase().trim();
 
-        const refCodeFromCookie = req.cookies?.pending_ref || null;
+        let dbUser = await UserV2.findOne({ email: finalEmail });
         let isFirstTimeLogin = false;
 
-        if (!user) {
+        if (!dbUser) {
             isFirstTimeLogin = true;
             let initialSaldo = 0;
             let inviterUser = null;
 
-            if (refCodeFromCookie) {
-                inviterUser = await UserV2.findOne({ referralCode: refCodeFromCookie.trim().toUpperCase() });
+            if (refCodeFromState) {
+                inviterUser = await UserV2.findOne({ referralCode: refCodeFromState.trim().toUpperCase() });
                 if (inviterUser) {
                     initialSaldo = 500;
                     inviterUser.saldo = (inviterUser.saldo || 0) + 1000;
@@ -4719,52 +4751,61 @@ app.get('/auth/github/callback', async (req, res) => {
                 }
             }
 
-            user = new UserV2({
-                username: userResponse.data.name || userResponse.data.login,
-                email: cleanEmail,
+            dbUser = new UserV2({
+                username: currentUsername,
+                email: finalEmail,
                 provider: 'github',
-                providerId: userResponse.data.id.toString(),
-                avatar: userResponse.data.avatar_url,
+                providerId: String(userData.id),
+                avatar: userData.avatar_url || 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png',
                 saldo: initialSaldo,
                 referralCode: generateReferralCode(),
                 referredBy: inviterUser ? inviterUser.referralCode : null,
-                hasCompletedOnboarding: false
+                hasCompletedOnboarding: false,
+                createdAt: new Date()
             });
-            await user.save();
-        } else if (!user.hasCompletedOnboarding) {
-            isFirstTimeLogin = true;
+
+            await dbUser.save();
+        } else {
+            if (!dbUser.hasCompletedOnboarding) {
+                isFirstTimeLogin = true;
+            }
+            if (userData.avatar_url && dbUser.avatar !== userData.avatar_url) {
+                dbUser.avatar = userData.avatar_url;
+                await dbUser.save();
+            }
         }
 
         res.clearCookie('pending_ref');
 
         const userPayload = {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            name: user.username,
-            avatar: user.avatar,
-            createdAt: user.createdAt
+            id: dbUser._id,
+            username: dbUser.username,
+            email: dbUser.email,
+            name: userData.name || dbUser.username,
+            avatar: dbUser.avatar,
+            createdAt: dbUser.createdAt
         };
 
         const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '7d' });
 
         res.cookie('auth_session', token, {
-            maxAge: 7 * 24 * 60 * 60 * 1000,
+            maxAge: 7 * 24 * 60 * 60 * 1000, 
             httpOnly: true,
-            secure: true,
+            secure: true, 
             sameSite: 'lax'
         });
 
         if (returnTo) return res.redirect(returnTo);
         return res.redirect(isFirstTimeLogin ? '/store?onboarding=1' : '/dashboard');
     } catch (error) {
-        console.error('GitHub OAuth Error:', error.message);
-        res.redirect('/login');
+        console.error(error);
+        res.send('Login Error: ' + error.message);
     }
 });
 
-// GOOGLE OAUTH
+/* OAuth Google */
 app.get('/auth/google', (req, res) => {
+    const ref = req.query.ref ? encodeURIComponent(req.query.ref) : '';
     const returnTo = sanitizeReturnTo(req.query.returnTo, '');
     if (returnTo) {
         res.cookie('oauth_return_to', returnTo, {
@@ -4774,20 +4815,32 @@ app.get('/auth/google', (req, res) => {
             sameSite: 'lax'
         });
     }
-
-    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(GOOGLE_CALLBACK_URL)}&response_type=code&scope=profile email`;
-    res.redirect(googleAuthUrl);
+    const stateObj = {};
+    if (ref) stateObj.ref = ref;
+    if (returnTo) stateObj.returnTo = returnTo;
+    const state = Object.keys(stateObj).length ? JSON.stringify(stateObj) : '';
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${GOOGLE_CALLBACK_URL}&response_type=code&scope=profile email${state ? '&state=' + encodeURIComponent(state) : ''}`;
+    res.redirect(url);
 });
 
 app.get('/auth/google/callback', async (req, res) => {
-    const { code } = req.query;
-    const returnTo = sanitizeReturnTo(req.cookies?.oauth_return_to, '');
+    const { code, state } = req.query;
+    if (!code) return res.send('Authentication failed: No code provided');
+
+    let refCodeFromState = req.cookies?.pending_ref || null;
+    let returnTo = sanitizeReturnTo(req.cookies?.oauth_return_to, '');
     res.clearCookie('oauth_return_to');
 
-    if (!code) return res.redirect('/login');
+    if (state) {
+        try {
+            const parsedState = JSON.parse(decodeURIComponent(state));
+            if (parsedState.ref) refCodeFromState = parsedState.ref;
+            if (parsedState.returnTo) returnTo = sanitizeReturnTo(parsedState.returnTo, returnTo);
+        } catch (e) {}
+    }
 
     try {
-        const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', {
+        const params = new URLSearchParams({
             client_id: GOOGLE_CLIENT_ID,
             client_secret: GOOGLE_CLIENT_SECRET,
             code: code,
@@ -4795,25 +4848,35 @@ app.get('/auth/google/callback', async (req, res) => {
             redirect_uri: GOOGLE_CALLBACK_URL
         });
 
-        const accessToken = tokenResponse.data.access_token;
+        const tokenResponse = await axios.post(
+            'https://oauth2.googleapis.com/token',
+            params.toString(),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }
+        );
 
+        const accessToken = tokenResponse.data.access_token;
         const userResponse = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
             headers: { Authorization: `Bearer ${accessToken}` }
         });
 
-        const cleanEmail = userResponse.data.email.toLowerCase().trim();
-        let user = await UserV2.findOne({ email: cleanEmail });
+        const userData = userResponse.data;
+        const email = userData.email.toLowerCase().trim();
+        const currentUsername = (userData.login || email.split('@')[0]).toLowerCase().trim();
 
-        const refCodeFromCookie = req.cookies?.pending_ref || null;
+        let dbUser = await UserV2.findOne({ email: email });
         let isFirstTimeLogin = false;
 
-        if (!user) {
+        if (!dbUser) {
             isFirstTimeLogin = true;
             let initialSaldo = 0;
             let inviterUser = null;
 
-            if (refCodeFromCookie) {
-                inviterUser = await UserV2.findOne({ referralCode: refCodeFromCookie.trim().toUpperCase() });
+            if (refCodeFromState) {
+                inviterUser = await UserV2.findOne({ referralCode: refCodeFromState.trim().toUpperCase() });
                 if (inviterUser) {
                     initialSaldo = 500;
                     inviterUser.saldo = (inviterUser.saldo || 0) + 1000;
@@ -4821,31 +4884,39 @@ app.get('/auth/google/callback', async (req, res) => {
                 }
             }
 
-            user = new UserV2({
-                username: userResponse.data.name,
-                email: cleanEmail,
+            dbUser = new UserV2({
+                username: currentUsername,
+                email: email,
                 provider: 'google',
-                providerId: userResponse.data.id,
-                avatar: userResponse.data.picture,
+                providerId: String(userData.id),
+                avatar: userData.picture || 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png',
                 saldo: initialSaldo,
                 referralCode: generateReferralCode(),
                 referredBy: inviterUser ? inviterUser.referralCode : null,
-                hasCompletedOnboarding: false
+                hasCompletedOnboarding: false,
+                createdAt: new Date()
             });
-            await user.save();
-        } else if (!user.hasCompletedOnboarding) {
-            isFirstTimeLogin = true;
+
+            await dbUser.save();
+        } else {
+            if (!dbUser.hasCompletedOnboarding) {
+                isFirstTimeLogin = true;
+            }
+            if (userData.picture && dbUser.avatar !== userData.picture) {
+                dbUser.avatar = userData.picture;
+                await dbUser.save();
+            }
         }
 
         res.clearCookie('pending_ref');
 
         const userPayload = {
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            name: user.username,
-            avatar: user.avatar,
-            createdAt: user.createdAt
+            id: dbUser._id,
+            username: dbUser.username,
+            email: dbUser.email,
+            name: userData.name || dbUser.username,
+            avatar: dbUser.avatar,
+            createdAt: dbUser.createdAt
         };
 
         const token = jwt.sign(userPayload, JWT_SECRET, { expiresIn: '7d' });
@@ -4860,402 +4931,445 @@ app.get('/auth/google/callback', async (req, res) => {
         if (returnTo) return res.redirect(returnTo);
         return res.redirect(isFirstTimeLogin ? '/store?onboarding=1' : '/dashboard');
     } catch (error) {
-        console.error('Google OAuth Error:', error.message);
-        res.redirect('/login');
+        console.error('Google Auth Callback Error:', error.response?.data || error.message);
+        res.send('Login Error: ' + (error.response?.data?.error_description || error.message));
+    }
+});
+
+// TANDAI TUTORIAL ONBOARDING SELESAI
+app.post('/api/user/complete-onboarding', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
+        }
+
+        const userId = req.user.id || req.user._id;
+        await UserV2.findByIdAndUpdate(userId, {
+            $set: { hasCompletedOnboarding: true }
+        });
+
+        return res.json({ status: true, message: 'Tutorial selesai!' });
+    } catch (err) {
+        console.error('Gagal menyimpan status onboarding:', err.message);
+        return res.status(500).json({ status: false, message: 'Gagal memperbarui status tutorial.' });
     }
 });
 
 // ============================================================
-// 10. PAGES, OPEN GRAPH, PRODUK, NOTIFIKASI & DASHBOARD API
+// 10. PAGES, OPEN GRAPH, PRODUK & DASHBOARD API
 // ============================================================
 
-// --- 10A. HALAMAN PUBLIK (HTML) ---
-
-app.get(['/', '/dashboard'], (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+app.get('/login', (req, res) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    if (req.user) {
+        return res.redirect('/profile'); 
+    }
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-app.get('/store', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'store.html'));
-});
-
+// NAVIGASI UTAMA
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
+app.get('/dashboard', (req, res) => res.redirect(301, '/'));
 app.get('/riwayat', (req, res) => {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
     res.sendFile(path.join(__dirname, 'public', 'riwayat.html'));
 });
-
+app.get('/store', (req, res) => res.sendFile(path.join(__dirname, 'public', 'store.html')));
+app.get('/deposit', checkAuthSession, (req, res) => {
+    if (!req.user) {
+        return res.redirect('/login');
+    }
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    res.sendFile(path.join(__dirname, 'public', 'deposit.html'));
+});
+app.get('/privacy', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacy.html')));
 app.get('/notifikasi', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'notifikasi.html'));
 });
-
-app.get('/privacy', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'privacy.html'));
-});
-
-app.get('/deposit', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'deposit.html'));
-});
-
-app.get('/profile', (req, res) => {
+app.get('/profile', checkAuthSession, (req, res) => {
+    if (!req.user) {
+        return res.redirect('/login');
+    }
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow');
     res.sendFile(path.join(__dirname, 'public', 'profile.html'));
 });
 
-app.get('/bantuan', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'bantuan.html'));
-});
-
-// --- 10B. DYNAMIC OPEN GRAPH PNG GENERATOR (/og-image.png) ---
-
-app.get('/og-image.png', async (req, res) => {
+// ENDPOINT GENERATOR OPEN GRAPH CANVAS (1200 x 630)
+app.get('/api/og/product/:productId', async (req, res) => {
     try {
         await ensureOgFonts();
+
+        const { productId } = req.params;
+        const product = await ProductV2.findOne({
+            $or: [
+                { Id: productId },
+                { _id: mongoose.Types.ObjectId.isValid(productId) ? productId : null }
+            ]
+        }).lean();
 
         const width = 1200;
         const height = 630;
         const canvas = createCanvas(width, height);
         const ctx = canvas.getContext('2d');
 
-        // 1. Ambil query params atau data asli dari MongoDB (jika ?productId= dikirim)
-        let title = req.query.title || 'ArulzXD Store';
-        let subtitle = req.query.subtitle || 'Store Produk Digital Premium, Bot Otomasi, Script & Source Code Terpercaya.';
-        let priceText = req.query.price || 'MULAI RP 5.000';
-        let categoryText = (req.query.category || 'DIGITAL STORE').toUpperCase();
-        let stockText = req.query.stock || 'INSTAN 24/7';
-        let previewImgUrl = req.query.image || null;
+        const fontDisplay = ogFontLoaded ? 'SpaceGrotesk, sans-serif' : 'sans-serif';
+        const fontBody = ogFontLoaded ? 'JakartaSans, sans-serif' : 'sans-serif';
+        const fontMono = ogFontLoaded ? 'JetBrainsMono, monospace' : 'monospace';
 
-        if (req.query.productId) {
-            const prod = await ProductV2.findOne({
-                $or: [
-                    { Id: req.query.productId },
-                    { _id: mongoose.Types.ObjectId.isValid(req.query.productId) ? req.query.productId : null }
-                ]
-            }).lean();
-
-            if (prod) {
-                title = prod.nama || title;
-                subtitle = prod.deskripsi || subtitle;
-                categoryText = (prod.kategori || 'PRODUK DIGITAL').toUpperCase();
-                const finalHarga = prod.harga_diskon || prod.harga;
-                priceText = `RP ${Number(finalHarga || 0).toLocaleString('id-ID')}`;
-                stockText = `STOK: ${prod.stok ?? 0} | TERJUAL: ${prod.terjual ?? 0}`;
-                if (Array.isArray(prod.gambar) && prod.gambar[0]) {
-                    previewImgUrl = prod.gambar[0];
-                } else if (typeof prod.gambar === 'string' && prod.gambar) {
-                    previewImgUrl = prod.gambar;
-                }
-            }
-        }
-
-        // 2. BACKGROUND NEO-BRUTALISM (#F4F0EA + Grid Pattern halus)
-        ctx.fillStyle = '#F4F0EA';
+        // 1. BACKGROUND CYAN DENGAN PATTERN GRID HALUS NEO-BRUTALISM
+        ctx.fillStyle = '#00E5FF';
         ctx.fillRect(0, 0, width, height);
 
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.06)';
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.08)';
         ctx.lineWidth = 2;
-        const gridSize = 40;
-        for (let gx = 0; gx <= width; gx += gridSize) {
+        for (let gx = 0; gx <= width; gx += 40) {
             ctx.beginPath();
             ctx.moveTo(gx, 0);
             ctx.lineTo(gx, height);
             ctx.stroke();
         }
-        for (let gy = 0; gy <= height; gy += gridSize) {
+        for (let gy = 0; gy <= height; gy += 40) {
             ctx.beginPath();
             ctx.moveTo(0, gy);
             ctx.lineTo(width, gy);
             ctx.stroke();
         }
 
-        // 3. CONTAINER KARTU UTAMA PUTIH (dengan Hard Shadow 12px)
-        drawNeoBox(ctx, 44, 42, width - 88, height - 84, 28, '#FFFFFF', 12, 5);
+        // Aksen Kuning Sudut Kanan Atas & Kiri Bawah
+        ctx.fillStyle = '#FFDE59';
+        ctx.beginPath();
+        ctx.moveTo(860, 0);
+        ctx.lineTo(width, 0);
+        ctx.lineTo(width, 320);
+        ctx.closePath();
+        ctx.fill();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = '#000000';
+        ctx.stroke();
 
-        // 4. HEADER TOP BAR KUNING (#FFDE59)
+        ctx.beginPath();
+        ctx.moveTo(0, 460);
+        ctx.lineTo(280, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 2. PANEL UTAMA KIRI (KARTU INFORMASI PRODUK)
+        drawNeoBox(ctx, 36, 36, 650, 558, 24, '#F5F2EB', 10, 5);
+
+        // Header Bar Panel Kiri (Window Browser Style)
         ctx.save();
         ctx.beginPath();
-        ctx.roundRect(44, 42, width - 88, 92, [28, 28, 0, 0]);
-        ctx.fillStyle = '#FFDE59';
+        ctx.roundRect(36, 36, 650, 56, [24, 24, 0, 0]);
+        ctx.fillStyle = '#FFFFFF';
         ctx.fill();
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 4;
         ctx.strokeStyle = '#000000';
         ctx.stroke();
         ctx.restore();
 
-        // Brand Logo di Header Kiri
-        drawNeoBox(ctx, 76, 63, 48, 48, 12, '#000000', 0, 0);
+        // Tiga Titik Window (Merah, Kuning, Hijau)
+        const dotColors = ['#FF5F56', '#FFBD2E', '#27C93F'];
+        dotColors.forEach((c, i) => {
+            ctx.fillStyle = c;
+            ctx.beginPath();
+            ctx.arc(68 + i * 24, 64, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#000000';
+            ctx.stroke();
+        });
+
+        // Brand Name di Header Bar
+        ctx.fillStyle = '#000000';
+        ctx.font = `800 15px ${fontMono}`;
+        ctx.fillText('SHOPARULZXD.BIZ.ID // OFFICIAL STORE', 155, 69);
+
+        // Badge Kategori & Status Instan
+        const kategoriText = (product?.kategori || 'DIGITAL PRODUCT').toUpperCase();
+        ctx.font = `800 15px ${fontDisplay}`;
+        const katWidth = Math.min(260, Math.max(150, ctx.measureText(kategoriText).width + 36));
+        drawNeoBox(ctx, 64, 114, katWidth, 38, 10, '#FFDE59', 4, 3);
+        ctx.fillStyle = '#000000';
+        ctx.fillText(kategoriText.slice(0, 22), 82, 139);
+
+        // Badge "OTOMATIS 24/7"
+        drawNeoBox(ctx, 64 + katWidth + 14, 114, 165, 38, 10, '#00E676', 4, 3);
+        ctx.fillStyle = '#000000';
+        ctx.font = `800 14px ${fontDisplay}`;
+        ctx.fillText('INSTAN 24/7', 64 + katWidth + 34, 139);
+
+        // Judul Produk Utama
+        const namaProduk = product ? product.nama : 'ArulzXD Digital Store';
+        ctx.fillStyle = '#000000';
+        ctx.font = `800 44px ${fontDisplay}`;
+        wrapText(ctx, namaProduk, 64, 206, 595, 52, 2);
+
+        // Deskripsi Singkat Produk
+        ctx.fillStyle = '#333333';
+        ctx.font = `500 20px ${fontBody}`;
+        const descText = product?.deskripsi || 'Source Code, REST API, & Layanan Digital Premium dengan pengiriman otomatis.';
+        wrapText(ctx, descText, 64, 305, 590, 28, 3);
+
+        // Garis Pemisah
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 3;
+        ctx.setLineDash([8, 6]);
+        ctx.beginPath();
+        ctx.moveTo(64, 412);
+        ctx.lineTo(656, 412);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Kotak Harga Utama
+        const hargaFinal = product ? (product.harga_diskon || product.harga) : 0;
+        const hargaText = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(hargaFinal);
+
+        ctx.font = `800 28px ${fontDisplay}`;
+        const priceBoxW = Math.max(220, ctx.measureText(hargaText).width + 44);
+        drawNeoBox(ctx, 64, 434, priceBoxW, 58, 14, '#000000', 5, 0);
         ctx.fillStyle = '#FFDE59';
-        ctx.font = 'bold 28px "SpaceGrotesk", sans-serif';
-        ctx.fillText('⚡', 87, 97);
+        ctx.fillText(hargaText, 86, 473);
+
+        // Info Stok & Terjual di Samping Harga
+        const infoBoxX = 64 + priceBoxW + 16;
+        const infoBoxW = 656 - infoBoxX;
+        drawNeoBox(ctx, infoBoxX, 434, infoBoxW, 58, 14, '#FFFFFF', 5, 3);
+
+        ctx.fillStyle = '#00E676';
+        ctx.beginPath();
+        ctx.arc(infoBoxX + 24, 463, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#000000';
+        ctx.stroke();
 
         ctx.fillStyle = '#000000';
-        ctx.font = '900 32px "SpaceGrotesk", sans-serif';
-        ctx.fillText('Arulz', 138, 99);
+        ctx.font = `700 16px ${fontBody}`;
+        ctx.fillText(`Stok: ${product?.stok ?? 99}  •  Terjual: ${product?.terjual ?? 0}`, infoBoxX + 42, 469);
 
-        drawNeoBox(ctx, 226, 66, 114, 42, 10, '#000000', 0, 0);
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = '800 24px "SpaceGrotesk", sans-serif';
-        ctx.fillText('Store', 246, 95);
-
-        // Badge Status di Header Kanan (Pink & Cyan)
-        drawNeoBox(ctx, width - 355, 65, 275, 44, 12, '#00E5FF', 4, 3);
+        // Tombol CTA Bawah Full-Width
+        drawNeoBox(ctx, 64, 512, 592, 56, 16, '#00E5FF', 5, 4);
         ctx.fillStyle = '#000000';
-        ctx.font = '800 18px "JetBrainsMono", monospace';
-        ctx.fillText('● OTOMATIS & INSTAN', width - 333, 93);
+        ctx.font = `800 20px ${fontDisplay}`;
+        ctx.fillText('BELI SEKARANG  →', 245, 547);
 
-        // 5. KONTEN KIRI (Kategori Badge, Judul Besar, Deskripsi, Harga & CTA)
-        const leftX = 80;
-        const leftMaxW = 635;
+        // 3. AMBIL GAMBAR PRODUK
+        let rawImages = [];
+        if (product && Array.isArray(product.gambar) && product.gambar.length > 0) {
+            rawImages = product.gambar.slice(0, 3);
+        } else if (product && typeof product.gambar === 'string' && product.gambar.trim() !== '') {
+            rawImages = [product.gambar];
+        } else {
+            rawImages = ['https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png'];
+        }
 
-        // Badge Kategori (Pink #FF79C6)
-        ctx.font = '800 18px "JetBrainsMono", monospace';
-        const catWidth = Math.min(340, Math.max(170, ctx.measureText(categoryText).width + 44));
-        drawNeoBox(ctx, leftX, 166, catWidth, 42, 10, '#FF79C6', 4, 3);
+        const loadedImages = await Promise.all(
+            rawImages.map(async (src) => {
+                try {
+                    if (src.startsWith('data:image/')) {
+                        const base64Data = src.split(',')[1];
+                        return await loadImage(Buffer.from(base64Data, 'base64'));
+                    }
+                    const imgRes = await axios.get(src, {
+                        responseType: 'arraybuffer',
+                        timeout: 4500,
+                        headers: { 'User-Agent': 'Mozilla/5.0' }
+                    });
+                    return await loadImage(Buffer.from(imgRes.data));
+                } catch (e) {
+                    return null;
+                }
+            })
+        );
+        const validImages = loadedImages.filter(Boolean);
+
+        // Header Badge Galeri di Kanan Atas
+        drawNeoBox(ctx, 718, 36, 446, 56, 16, '#FFFFFF', 6, 4);
         ctx.fillStyle = '#000000';
-        ctx.fillText(categoryText.slice(0, 22), leftX + 20, 193);
+        ctx.font = `800 16px ${fontDisplay}`;
+        ctx.fillText(`PREVIEW PRODUK (${validImages.length} FOTO)`, 742, 70);
 
-        // Badge Stok / Info di sebelahnya (Hijau #00E676)
-        const stockX = leftX + catWidth + 16;
-        drawNeoBox(ctx, stockX, 166, 235, 42, 10, '#00E676', 4, 3);
-        ctx.fillStyle = '#000000';
-        ctx.font = '800 17px "JetBrainsMono", monospace';
-        ctx.fillText(stockText.slice(0, 20), stockX + 18, 193);
+        drawNeoBox(ctx, 1042, 46, 106, 36, 10, '#FFDE59', 0, 2.5);
+        ctx.font = `800 13px ${fontMono}`;
+        ctx.fillText('VERIFIED', 1060, 69);
 
-        // Judul Utama Produk / Halaman
-        ctx.fillStyle = '#000000';
-        ctx.font = '900 46px "SpaceGrotesk", sans-serif';
-        const afterTitleY = wrapText(ctx, title, leftX, 266, leftMaxW, 54, 2);
+        // 4. RENDER KARTU GAMBAR PRODUK (RAPI & PROPORSIONAL)
+        const cardLayouts = {
+            1: [{ x: 718, y: 114, w: 446, h: 480, angle: 0 }],
+            2: [
+                { x: 718, y: 114, w: 446, h: 265, angle: 0 },
+                { x: 718, y: 396, w: 446, h: 198, angle: 0 }
+            ],
+            3: [
+                { x: 718, y: 114, w: 446, h: 265, angle: 0 },
+                { x: 718, y: 396, w: 215, h: 198, angle: 0 },
+                { x: 949, y: 396, w: 215, h: 198, angle: 0 }
+            ]
+        };
 
-        // Deskripsi Singkat
-        ctx.fillStyle = '#334155';
-        ctx.font = '600 22px "JakartaSans", sans-serif';
-        wrapText(ctx, subtitle, leftX, afterTitleY + 46, leftMaxW, 32, 2);
+        const count = Math.min(validImages.length, 3);
+        if (count > 0) {
+            const layouts = cardLayouts[count];
+            layouts.forEach((layout, idx) => {
+                const img = validImages[idx];
+                if (!img) return;
 
-        // Box Harga & Domain di bagian bawah kartu kiri
-        drawNeoBox(ctx, leftX, 456, 315, 76, 16, '#FFDE59', 6, 4);
-        ctx.fillStyle = '#000000';
-        ctx.font = '700 14px "JetBrainsMono", monospace';
-        ctx.fillText('HARGA TERBAIK', leftX + 20, 482);
-        ctx.font = '900 28px "SpaceGrotesk", sans-serif';
-        ctx.fillText(priceText, leftX + 20, 517);
+                drawNeoBox(ctx, layout.x, layout.y, layout.w, layout.h, 20, '#FFFFFF', 8, 4);
 
-        drawNeoBox(ctx, leftX + 335, 456, 295, 76, 16, '#000000', 6, 4);
-        ctx.fillStyle = '#00E5FF';
-        ctx.font = '700 14px "JetBrainsMono", monospace';
-        ctx.fillText('KUNJUNGI WEBSITE', leftX + 355, 482);
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = '800 21px "SpaceGrotesk", sans-serif';
-        ctx.fillText('shoparulzxd.biz.id', leftX + 355, 516);
+                const pad = 12;
+                const footerH = 34;
+                const imgBoxX = layout.x + pad;
+                const imgBoxY = layout.y + pad;
+                const imgBoxW = layout.w - pad * 2;
+                const imgBoxH = layout.h - pad * 2 - footerH;
 
-        // 6. KONTEN KANAN (PREVIEW THUMBNAIL PRODUK / VISUAL CARD)
-        const rightX = 755;
-        const rightY = 166;
-        const rightW = 365;
-        const rightH = 366;
-
-        drawNeoBox(ctx, rightX, rightY, rightW, rightH, 22, '#F4F0EA', 8, 4);
-
-        let imageDrawn = false;
-        if (previewImgUrl && /^https?:\/\//i.test(previewImgUrl)) {
-            try {
-                const imgRes = await axios.get(previewImgUrl, {
-                    responseType: 'arraybuffer',
-                    timeout: 4500
-                });
-                const img = await loadImage(Buffer.from(imgRes.data));
                 ctx.save();
                 ctx.beginPath();
-                ctx.roundRect(rightX + 10, rightY + 10, rightW - 20, rightH - 20, 14);
+                ctx.roundRect(imgBoxX, imgBoxY, imgBoxW, imgBoxH, 12);
                 ctx.clip();
 
-                // Cover crop center
-                const scale = Math.max((rightW - 20) / img.width, (rightH - 20) / img.height);
-                const dw = img.width * scale;
-                const dh = img.height * scale;
-                const dx = rightX + 10 + ((rightW - 20) - dw) / 2;
-                const dy = rightY + 10 + ((rightH - 20) - dh) / 2;
-                ctx.drawImage(img, dx, dy, dw, dh);
+                const scale = Math.max(imgBoxW / img.width, imgBoxH / img.height);
+                const drawW = img.width * scale;
+                const drawH = img.height * scale;
+                const drawX = imgBoxX + (imgBoxW - drawW) / 2;
+                const drawY = imgBoxY + (imgBoxH - drawH) / 2;
+
+                ctx.drawImage(img, drawX, drawY, drawW, drawH);
                 ctx.restore();
-                imageDrawn = true;
-            } catch (e) {
-                imageDrawn = false;
-            }
+
+                ctx.lineWidth = 2.5;
+                ctx.strokeStyle = '#000000';
+                ctx.beginPath();
+                ctx.roundRect(imgBoxX, imgBoxY, imgBoxW, imgBoxH, 12);
+                ctx.stroke();
+
+                // Label Bawah Gambar
+                const labelY = layout.y + layout.h - 14;
+                ctx.fillStyle = '#000000';
+                ctx.font = `700 13px ${fontMono}`;
+                ctx.fillText(idx === 0 ? 'UTAMA' : `FOTO #${idx + 1}`, layout.x + 16, labelY);
+
+                drawNeoBox(ctx, layout.x + layout.w - 64, layout.y + layout.h - 30, 50, 20, 6, '#FFDE59', 0, 2);
+                ctx.fillStyle = '#000000';
+                ctx.font = `800 11px ${fontMono}`;
+                ctx.fillText(`${idx + 1}/${count}`, layout.x + layout.w - 50, layout.y + layout.h - 16);
+            });
         }
 
-        // Fallback Ilustrasi Neo-Brutalism keren jika gambar produk tidak dimuat
-        if (!imageDrawn) {
-            drawNeoBox(ctx, rightX + 26, rightY + 26, rightW - 52, 130, 16, '#00E5FF', 5, 3);
-            ctx.fillStyle = '#000000';
-            ctx.font = '900 26px "SpaceGrotesk", sans-serif';
-            ctx.fillText('⚡ QRIS OTOMATIS', rightX + 46, rightY + 82);
-            ctx.font = '700 17px "JakartaSans", sans-serif';
-            ctx.fillText('Proses Cepat & Saldo Instan', rightX + 46, rightY + 118);
+        const jpegBuffer = await canvas.encode('jpeg', 92);
+        res.setHeader('Content-Type', 'image/jpeg');
+        res.setHeader('Content-Length', jpegBuffer.length);
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+        return res.send(jpegBuffer);
 
-            drawNeoBox(ctx, rightX + 26, rightY + 180, rightW - 52, 156, 16, '#FF79C6', 5, 3);
-            ctx.fillStyle = '#000000';
-            ctx.font = '900 24px "SpaceGrotesk", sans-serif';
-            ctx.fillText('🛡️ 100% TERPERCAYA', rightX + 46, rightY + 234);
-            ctx.font = '700 17px "JakartaSans", sans-serif';
-            ctx.fillText('Script, Bot, Panel & Jasa Digital', rightX + 46, rightY + 270);
-            ctx.font = '800 15px "JetBrainsMono", monospace';
-            ctx.fillText('✓ SUPPORT LIVE CHAT 24/7', rightX + 46, rightY + 305);
-        }
-
-        // 7. Render ke PNG & kirim dengan Cache-Control
-        const pngBuffer = await canvas.encode('png');
-        res.setHeader('Content-Type', 'image/png');
-        res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600');
-        return res.send(pngBuffer);
-    } catch (err) {
-        console.error('❌ Gagal generate OG Image:', err);
-        return res.status(500).send('Failed to generate OG image');
-    }
-});
-
-// --- 10C. API DATA PRODUK & ADMIN GENERATOR ---
-
-app.get('/api/products', async (req, res) => {
-    try {
-        const products = await ProductV2.find({}).sort({ createdAt: -1 }).lean();
-
-        const sanitizedProducts = products.map(prod => {
-            const { link, purchasedBy, ...safeProduct } = prod;
-            return safeProduct;
-        });
-
-        return res.json({ status: true, products: sanitizedProducts });
     } catch (error) {
-        console.error("Error fetching products:", error);
-        return res.status(500).json({ status: false, message: "Gagal mengambil daftar produk dari database" });
+        console.error('Error generate OG Canvas:', error);
+        return res.redirect('https://cdn.larasxd.my.id/files/t19j.jpg');
     }
 });
 
-app.get('/api/admin/products', checkAuthSession, checkAdminRole, async (req, res) => {
+
+app.get('/store/:productId', async (req, res) => {
     try {
-        const products = await ProductV2.find({}).sort({ createdAt: -1 }).lean();
-        return res.json({ status: true, products });
-    } catch (error) {
-        return res.status(500).json({ status: false, message: 'Gagal memuat daftar produk.' });
-    }
-});
-
-app.post('/api/admin/products', checkAuthSession, checkAdminRole, async (req, res) => {
-    try {
-        const { Id, nama, harga, harga_diskon, kategori, badge, terjual, stok, gambar, deskripsi, link } = req.body;
-
-        if (!Id || !nama || harga === undefined || !kategori || !link) {
-            return res.status(400).json({ status: false, message: 'ID Produk, Nama, Harga, Kategori, dan Link wajib diisi!' });
-        }
-
-        const cleanId = String(Id).trim();
-        const existing = await ProductV2.findOne({ Id: cleanId });
-        if (existing) {
-            return res.status(409).json({ status: false, message: `Produk dengan ID "${cleanId}" sudah ada! Gunakan ID lain.` });
-        }
-
-        const gambarArray = Array.isArray(gambar)
-            ? gambar.map(g => String(g).trim()).filter(Boolean)
-            : typeof gambar === 'string' && gambar.trim()
-                ? gambar.split('\n').map(g => g.trim()).filter(Boolean)
-                : ['https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png'];
-
-        const newProduct = await ProductV2.create({
-            Id: cleanId,
-            nama: String(nama).trim(),
-            harga: Number(harga) || 0,
-            harga_diskon: (harga_diskon !== null && harga_diskon !== '' && Number(harga_diskon) > 0) ? Number(harga_diskon) : null,
-            kategori: String(kategori).trim(),
-            badge: String(badge || '').trim(),
-            terjual: Number(terjual) || 0,
-            stok: Number(stok) || 0,
-            gambar: gambarArray.length > 0 ? gambarArray : ['https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png'],
-            deskripsi: String(deskripsi || '').trim(),
-            link: String(link).trim()
-        });
-
-        await deleteCache('products_list');
-        return res.status(201).json({ status: true, message: 'Produk berhasil ditambahkan ke database!', product: newProduct });
-    } catch (error) {
-        console.error('Error create product admin:', error);
-        return res.status(500).json({ status: false, message: error.message || 'Gagal menyimpan produk.' });
-    }
-});
-
-app.put('/api/admin/products/:id', checkAuthSession, checkAdminRole, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { Id, nama, harga, harga_diskon, kategori, badge, terjual, stok, gambar, deskripsi, link } = req.body;
+        const { productId } = req.params;
 
         const product = await ProductV2.findOne({
             $or: [
-                { _id: mongoose.Types.ObjectId.isValid(id) ? id : null },
-                { Id: id }
+                { Id: productId },
+                { _id: mongoose.Types.ObjectId.isValid(productId) ? productId : null }
             ]
-        });
+        }).lean();
 
         if (!product) {
-            return res.status(404).json({ status: false, message: 'Produk tidak ditemukan.' });
+            return res.sendFile(path.join(__dirname, 'public', 'store.html'));
         }
 
-        if (Id && String(Id).trim() !== product.Id) {
-            const dup = await ProductV2.findOne({ Id: String(Id).trim() });
-            if (dup) {
-                return res.status(409).json({ status: false, message: `ID "${Id}" sudah digunakan produk lain.` });
-            }
-            product.Id = String(Id).trim();
-        }
+        // Gunakan domain kanonis agar URL produk konsisten di Google dan social preview.
+        const baseUrl = CANONICAL_ORIGIN;
+        res.setHeader('X-Robots-Tag', 'noindex, follow');
+        const ogCanvasUrl = `${baseUrl}/api/og/product/${productId}`;
+        const fullUrl = `${baseUrl}/store/${productId}`;
 
-        if (nama !== undefined) product.nama = String(nama).trim();
-        if (harga !== undefined) product.harga = Number(harga) || 0;
-        if (harga_diskon !== undefined) {
-            product.harga_diskon = (harga_diskon !== null && harga_diskon !== '' && Number(harga_diskon) > 0) ? Number(harga_diskon) : null;
-        }
-        if (kategori !== undefined) product.kategori = String(kategori).trim();
-        if (badge !== undefined) product.badge = String(badge).trim();
-        if (terjual !== undefined) product.terjual = Number(terjual) || 0;
-        if (stok !== undefined) product.stok = Number(stok) || 0;
-        if (deskripsi !== undefined) product.deskripsi = String(deskripsi).trim();
-        if (link !== undefined) product.link = String(link).trim();
+        const priceFormatted = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(product.harga_diskon || product.harga);
 
-        if (gambar !== undefined) {
-            const gambarArray = Array.isArray(gambar)
-                ? gambar.map(g => String(g).trim()).filter(Boolean)
-                : typeof gambar === 'string'
-                    ? gambar.split('\n').map(g => g.trim()).filter(Boolean)
-                    : product.gambar;
-            product.gambar = gambarArray.length > 0 ? gambarArray : ['https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png'];
-        }
+        const escapeMeta = (str) => String(str || '')
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
 
-        await product.save();
-        await deleteCache('products_list');
-        return res.json({ status: true, message: 'Produk berhasil diperbarui!', product });
+        const shareTitle = escapeMeta(`${product.nama} (${priceFormatted}) - ArulzXD Store`);
+        const shareDesc = escapeMeta(
+            product.deskripsi
+                ? product.deskripsi.slice(0, 160)
+                : 'Beli source code dan layanan digital berkualitas di ArulzXD Store.'
+        );
+
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.send(`<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${shareTitle}</title>
+    <meta name="description" content="${shareDesc}">
+    <meta name="robots" content="noindex, follow">
+
+    <!-- Open Graph / WhatsApp / Facebook / Telegram -->
+    <meta property="og:site_name" content="ArulzXD Store">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="${fullUrl}">
+    <meta property="og:title" content="${shareTitle}">
+    <meta property="og:description" content="${shareDesc}">
+    <meta property="og:image" content="${ogCanvasUrl}">
+    <meta property="og:image:secure_url" content="${ogCanvasUrl}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="${fullUrl}">
+    <meta name="twitter:title" content="${shareTitle}">
+    <meta name="twitter:description" content="${shareDesc}">
+    <meta name="twitter:image" content="${ogCanvasUrl}">
+</head>
+<body style="background-color: #F4F0EA; color: #000000; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <p>Mengarahkan ke produk...</p>
+    <script>
+        setTimeout(function() {
+            window.location.replace("/store?shareId=${encodeURIComponent(productId)}");
+        }, 150);
+    </script>
+</body>
+</html>`);
     } catch (error) {
-        console.error('Error update product admin:', error);
-        return res.status(500).json({ status: false, message: error.message || 'Gagal memperbarui produk.' });
+        console.error("Error Open Graph Share:", error);
+        res.redirect('/store');
     }
 });
 
-app.delete('/api/admin/products/:id', checkAuthSession, checkAdminRole, async (req, res) => {
+app.get('/database/produk', async (req, res) => {
     try {
-        const { id } = req.params;
-        const deleted = await ProductV2.findOneAndDelete({
-            $or: [
-                { _id: mongoose.Types.ObjectId.isValid(id) ? id : null },
-                { Id: id }
-            ]
-        });
-
-        if (!deleted) {
-            return res.status(404).json({ status: false, message: 'Produk tidak ditemukan.' });
-        }
-
-        await deleteCache('products_list');
-        return res.json({ status: true, message: `Produk "${deleted.nama}" berhasil dihapus!` });
-    } catch (error) {
-        return res.status(500).json({ status: false, message: 'Gagal menghapus produk.' });
+        const produk = await ProductV2.find({}).sort({ createdAt: -1 });
+        res.json(produk);
+    } catch (err) {
+        console.error("Gagal mengambil data produk dari Database:", err);
+        res.status(500).json({ error: "Gagal memuat data produk" });
     }
 });
 
-// --- 10D. API NOTIFIKASI USER & ADMIN ---
-
-app.get('/api/notifikasi', checkAuthSession, async (req, res) => {
+app.get('/api/notifications', checkAuthSession, async (req, res) => {
     try {
         const userEmail = req.user?.email ? req.user.email.toLowerCase().trim() : null;
 
@@ -5263,144 +5377,158 @@ app.get('/api/notifikasi', checkAuthSession, async (req, res) => {
             ? { $or: [{ targetEmail: null }, { targetEmail: '' }, { targetEmail: userEmail }] }
             : { $or: [{ targetEmail: null }, { targetEmail: '' }] };
 
-        const rawList = await NotifikasiV2.find(filter).sort({ createdAt: -1 }).limit(100).lean();
+        const list = await NotifikasiV2.find(filter).sort({ createdAt: -1 }).limit(100).lean();
 
-        let unreadCount = 0;
-        const notifications = rawList.map((n) => {
-            const readByList = Array.isArray(n.readBy) ? n.readBy : [];
-            const isRead = userEmail ? readByList.includes(userEmail) : false;
-            if (userEmail && !isRead) unreadCount++;
-
+        const formatted = list.map((item) => {
+            const readByList = Array.isArray(item.readBy) ? item.readBy : [];
+            const isReadServer = userEmail ? readByList.includes(userEmail) : false;
             return {
-                _id: n._id,
-                title: n.title,
-                message: n.message,
-                type: n.type || 'info',
-                link: n.link || null,
-                isPersonal: Boolean(n.targetEmail),
-                isRead,
-                createdAt: n.createdAt
+                id: String(item._id),
+                title: item.title,
+                message: item.message,
+                type: item.type || 'info',
+                link: item.link || null,
+                createdAt: item.createdAt,
+                isReadServer
             };
         });
 
+        const unreadServerCount = userEmail
+            ? formatted.filter((n) => !n.isReadServer).length
+            : formatted.length;
+
         return res.json({
             status: true,
-            isLoggedIn: Boolean(userEmail),
-            unreadCount,
-            notifications
+            loggedIn: Boolean(userEmail),
+            userEmail: userEmail,
+            unreadCount: unreadServerCount,
+            notifications: formatted
         });
-    } catch (error) {
-        console.error('Error fetch notifikasi:', error);
+    } catch (err) {
+        console.error('Error fetch notifications:', err);
         return res.status(500).json({ status: false, message: 'Gagal memuat notifikasi.' });
     }
 });
 
-app.get('/api/notifikasi/unread-count', checkAuthSession, async (req, res) => {
+app.post('/api/notifications/mark-read', checkAuthSession, async (req, res) => {
     try {
+        const { notificationId, markAll } = req.body;
         const userEmail = req.user?.email ? req.user.email.toLowerCase().trim() : null;
+
         if (!userEmail) {
-            return res.json({ status: true, unreadCount: 0 });
+            return res.json({ status: true, guest: true, message: 'Status baca disimpan di sesi perangkat.' });
         }
 
-        const unreadCount = await NotifikasiV2.countDocuments({
-            $or: [{ targetEmail: null }, { targetEmail: '' }, { targetEmail: userEmail }],
-            readBy: { $ne: userEmail }
-        });
+        if (markAll) {
+            await NotifikasiV2.updateMany(
+                {
+                    $or: [{ targetEmail: null }, { targetEmail: '' }, { targetEmail: userEmail }],
+                    readBy: { $ne: userEmail }
+                },
+                { $addToSet: { readBy: userEmail } }
+            );
+            return res.json({ status: true, message: 'Semua notifikasi ditandai telah dibaca.' });
+        }
 
-        return res.json({ status: true, unreadCount });
-    } catch (error) {
-        return res.json({ status: true, unreadCount: 0 });
+        if (notificationId && mongoose.Types.ObjectId.isValid(notificationId)) {
+            await NotifikasiV2.findByIdAndUpdate(notificationId, {
+                $addToSet: { readBy: userEmail }
+            });
+        }
+
+        return res.json({ status: true, message: 'Notifikasi ditandai telah dibaca.' });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal memperbarui status baca.' });
     }
 });
 
-app.post('/api/notifikasi/read/:id', checkAuthSession, async (req, res) => {
+app.get('/api/admin/notifications', checkAuthSession, checkAdminRole, async (req, res) => {
     try {
-        if (!req.user?.email) {
-            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
+        const notifications = await NotifikasiV2.find({}).sort({ createdAt: -1 }).lean();
+        return res.json({ status: true, notifications });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal memuat daftar notifikasi.' });
+    }
+});
+
+app.post('/api/admin/notifications', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const { title, message, type, link, targetEmail, deliveryMode } = req.body;
+        if (!title || !title.trim() || !message || !message.trim()) {
+            return res.status(400).json({ status: false, message: 'Judul dan isi notifikasi wajib diisi!' });
         }
 
+        const newNotif = await NotifikasiV2.create({
+            title: title.trim(),
+            message: message.trim(),
+            type: ['info', 'promo', 'transaksi', 'sistem'].includes(type) ? type : 'info',
+            link: link && link.trim() ? link.trim() : null,
+            targetEmail: targetEmail && targetEmail.trim() ? targetEmail.toLowerCase().trim() : null,
+            readBy: [],
+            createdBy: req.user.username || 'Admin'
+        });
+
+        if (deliveryMode === 'web_only') {
+            return res.json({
+                status: true,
+                message: 'Notifikasi berhasil disimpan & ditampilkan di halaman notifikasi website (tanpa broadcast Email/Telegram).',
+                data: newNotif,
+                stats: { totalUsers: 0, emailSent: 0, telegramSent: 0 }
+            });
+        }
+
+        const stats = await dispatchNotificationToUsers(newNotif);
+
+        return res.json({
+            status: true,
+            message: `Notifikasi terkirim! (Email: ${stats.emailSent} user, Bot Telegram: ${stats.telegramSent} user)`,
+            data: newNotif,
+            stats
+        });
+    } catch (err) {
+        console.error('Error create notification:', err);
+        return res.status(500).json({ status: false, message: 'Gagal membuat notifikasi.' });
+    }
+});
+
+app.put('/api/admin/notifications/:id', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
         const { id } = req.params;
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ status: false, message: 'ID notifikasi tidak valid.' });
         }
 
-        const userEmail = req.user.email.toLowerCase().trim();
-        await NotifikasiV2.updateOne(
-            { _id: id },
-            { $addToSet: { readBy: userEmail } }
-        );
-
-        return res.json({ status: true, message: 'Notifikasi ditandai sudah dibaca.' });
-    } catch (error) {
-        return res.status(500).json({ status: false, message: 'Gagal memperbarui status baca.' });
-    }
-});
-
-app.post('/api/notifikasi/read-all', checkAuthSession, async (req, res) => {
-    try {
-        if (!req.user?.email) {
-            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
+        const existing = await NotifikasiV2.findById(id);
+        if (!existing) {
+            return res.status(404).json({ status: false, message: 'Notifikasi tidak ditemukan.' });
         }
 
-        const userEmail = req.user.email.toLowerCase().trim();
-        await NotifikasiV2.updateMany(
-            {
-                $or: [{ targetEmail: null }, { targetEmail: '' }, { targetEmail: userEmail }],
-                readBy: { $ne: userEmail }
-            },
-            { $addToSet: { readBy: userEmail } }
-        );
+        const { title, message, type, link, targetEmail, resetReadBy, resendBroadcast } = req.body;
+        if (title !== undefined && title.trim()) existing.title = title.trim();
+        if (message !== undefined && message.trim()) existing.message = message.trim();
+        if (type && ['info', 'promo', 'transaksi', 'sistem'].includes(type)) existing.type = type;
+        if (link !== undefined) existing.link = link && link.trim() ? link.trim() : null;
+        if (targetEmail !== undefined) {
+            existing.targetEmail = targetEmail && targetEmail.trim() ? targetEmail.toLowerCase().trim() : null;
+        }
+        if (resetReadBy === true) existing.readBy = [];
 
-        return res.json({ status: true, message: 'Semua notifikasi ditandai sudah dibaca.' });
-    } catch (error) {
-        return res.status(500).json({ status: false, message: 'Gagal menandai semua notifikasi.' });
-    }
-});
+        await existing.save();
 
-app.get('/api/admin/notifikasi', checkAuthSession, checkAdminRole, async (req, res) => {
-    try {
-        const list = await NotifikasiV2.find({}).sort({ createdAt: -1 }).limit(100).lean();
-        return res.json({ status: true, notifications: list });
-    } catch (error) {
-        return res.status(500).json({ status: false, message: 'Gagal memuat daftar notifikasi.' });
-    }
-});
-
-app.post('/api/admin/notifikasi', checkAuthSession, checkAdminRole, async (req, res) => {
-    try {
-        const { title, message, type, link, targetEmail } = req.body;
-        if (!title || !message) {
-            return res.status(400).json({ status: false, message: 'Judul dan isi pesan notifikasi wajib diisi!' });
+        let msgInfo = `Notifikasi "${existing.title}" berhasil diperbarui!`;
+        if (resendBroadcast === true) {
+            const stats = await dispatchNotificationToUsers(existing);
+            msgInfo += ` Broadcast ulang terkirim (Email: ${stats.emailSent}, Telegram: ${stats.telegramSent}).`;
         }
 
-        const validTypes = ['info', 'promo', 'transaksi', 'sistem'];
-        const notifType = validTypes.includes(type) ? type : 'info';
-
-        const notif = await NotifikasiV2.create({
-            title: String(title).trim(),
-            message: String(message).trim(),
-            type: notifType,
-            link: link && String(link).trim() ? String(link).trim() : null,
-            targetEmail: targetEmail && String(targetEmail).trim() ? String(targetEmail).toLowerCase().trim() : null,
-            createdBy: req.user.username || 'Admin'
-        });
-
-        // Kirim notifikasi ke Telegram Bot & Email seluruh user (atau target user)
-        const delivery = await dispatchNotificationToUsers(notif);
-
-        return res.status(201).json({
-            status: true,
-            message: `Notifikasi berhasil dikirim! (Web + ${delivery.telegramSent} Telegram + ${delivery.emailSent} Email)`,
-            notification: notif,
-            delivery
-        });
-    } catch (error) {
-        console.error('Error create notifikasi admin:', error);
-        return res.status(500).json({ status: false, message: 'Gagal mengirim notifikasi.' });
+        return res.json({ status: true, message: msgInfo, data: existing });
+    } catch (err) {
+        console.error('Error update notification:', err);
+        return res.status(500).json({ status: false, message: 'Gagal memperbarui notifikasi.' });
     }
 });
 
-app.delete('/api/admin/notifikasi/:id', checkAuthSession, checkAdminRole, async (req, res) => {
+app.delete('/api/admin/notifications/:id', checkAuthSession, checkAdminRole, async (req, res) => {
     try {
         const { id } = req.params;
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -5412,270 +5540,737 @@ app.delete('/api/admin/notifikasi/:id', checkAuthSession, checkAdminRole, async 
             return res.status(404).json({ status: false, message: 'Notifikasi tidak ditemukan.' });
         }
 
-        return res.json({ status: true, message: 'Notifikasi berhasil dihapus!' });
-    } catch (error) {
+        return res.json({ status: true, message: `Notifikasi "${deleted.title}" berhasil dihapus!` });
+    } catch (err) {
         return res.status(500).json({ status: false, message: 'Gagal menghapus notifikasi.' });
     }
 });
 
-// --- 10E. API STATUS USER, ANALYTICS & SYSTEM DASHBOARD ---
+app.post('/api/user/telegram-notif-toggle', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
+        }
 
-app.get('/api/user', checkAuthSession, async (req, res) => {
+        const userDoc = await UserV2.findById(req.user.id || req.user._id);
+        if (!userDoc) {
+            return res.status(404).json({ status: false, message: 'Akun tidak ditemukan.' });
+        }
+        if (!userDoc.telegramChatId) {
+            return res.status(400).json({ status: false, message: 'Tautkan akun Telegram terlebih dahulu.' });
+        }
+
+        userDoc.telegramNotifEnabled = Boolean(req.body.enabled);
+        await userDoc.save();
+
+        return res.json({
+            status: true,
+            telegramNotifEnabled: userDoc.telegramNotifEnabled,
+            message: userDoc.telegramNotifEnabled ? 'Notifikasi diaktifkan.' : 'Notifikasi dinonaktifkan.'
+        });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal memperbarui status notifikasi.' });
+    }
+});
+
+app.post('/api/user/notif-preferences', checkAuthSession, async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ status: false, message: 'Silakan login terlebih dahulu.' });
+        }
+
+        await connectDB();
+        const userId = req.user.id || req.user._id;
+        const user = await UserV2.findById(userId);
+        if (!user) {
+            return res.status(404).json({ status: false, message: 'Akun tidak ditemukan.' });
+        }
+
+        const updates = {};
+        let msg = 'Pengaturan notifikasi diperbarui!';
+
+        if (typeof req.body.telegramNotifEnabled === 'boolean') {
+            if (!user.telegramChatId) {
+                return res.status(400).json({ status: false, message: 'Tautkan akun Telegram terlebih dahulu.' });
+            }
+            updates.telegramNotifEnabled = req.body.telegramNotifEnabled;
+            msg = req.body.telegramNotifEnabled
+                ? 'Notifikasi Telegram diaktifkan!'
+                : 'Notifikasi Telegram dinonaktifkan!';
+        }
+
+        if (typeof req.body.emailNotifEnabled === 'boolean') {
+            updates.emailNotifEnabled = req.body.emailNotifEnabled;
+            msg = req.body.emailNotifEnabled
+                ? 'Notifikasi Email diaktifkan!'
+                : 'Notifikasi Email dinonaktifkan!';
+        }
+
+        const updated = await UserV2.findByIdAndUpdate(
+            userId,
+            { $set: updates },
+            { returnDocument: 'after' }
+        ).lean();
+
+        return res.json({
+            status: true,
+            message: msg,
+            telegramNotifEnabled: updated.telegramNotifEnabled !== false,
+            emailNotifEnabled: updated.emailNotifEnabled !== false
+        });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: 'Gagal menyimpan preferensi notifikasi.' });
+    }
+});
+app.get('/api/user-status', checkAuthSession, async (req, res) => {
     if (req.user) {
         try {
-            let dbUser = await UserV2.findById(req.user.id || req.user._id).lean();
-            if (dbUser) {
-                if (!dbUser.referralCode) {
-                    const newRef = generateReferralCode();
-                    await UserV2.updateOne({ _id: dbUser._id }, { $set: { referralCode: newRef } });
-                    dbUser.referralCode = newRef;
+            await connectDB();
+            const activeUser = await UserV2.findById(req.user.id || req.user._id);
+
+            if (!activeUser) {
+                res.clearCookie('auth_session');
+                return res.json({ loggedIn: false, user: null });
+            }
+
+            if (!activeUser.referralCode) {
+                activeUser.referralCode = generateReferralCode();
+                await activeUser.save();
+            }
+
+            const uEmail = activeUser.email.toLowerCase().trim();
+
+            const [deposits, purchases, invitedUsers] = await Promise.all([
+                TransactionV2.aggregate([
+                    { 
+                        $match: { 
+                            userEmail: uEmail, 
+                            type: 'DEPOSIT', 
+                            status: { $in: ['settlement', 'success', 'paid', 'settled'] } 
+                        } 
+                    },
+                    { 
+                        $group: { 
+                            _id: null, 
+                            total: { $sum: { $ifNull: ['$itemDetails.harga', '$amount'] } } 
+                        } 
+                    }
+                ]),
+                TransactionV2.aggregate([
+                    { 
+                        $match: { 
+                            userEmail: uEmail, 
+                            type: 'PURCHASE', 
+                            status: { $in: ['settlement', 'success', 'paid', 'settled'] } 
+                        } 
+                    },
+                    { 
+                        $group: { 
+                            _id: null, 
+                            total: { $sum: '$amount' } 
+                        } 
+                    }
+                ]),
+                UserV2.find({ referredBy: activeUser.referralCode })
+                    .select('username email createdAt')
+                    .sort({ createdAt: -1 })
+                    .lean()
+            ]);
+
+            const totalDeposit = deposits.length > 0 ? deposits[0].total : 0;
+            const totalBelanja = purchases.length > 0 ? purchases[0].total : 0;
+
+            return res.json({
+                loggedIn: true,
+                user: {
+                    id: activeUser._id,
+                    name: activeUser.username,
+                    username: activeUser.username,
+                    email: activeUser.email,
+                    avatar: activeUser.avatar,
+                    banner: activeUser.banner || '',
+                    saldo: activeUser.saldo || 0,
+                    provider: activeUser.provider || 'local',
+                    hasPassword: Boolean(activeUser.password),
+                    referralCode: activeUser.referralCode,
+                    totalDeposit: totalDeposit,
+                    totalBelanja: totalBelanja,
+                    invitedUsers: invitedUsers,
+                    hasCompletedOnboarding: Boolean(activeUser.hasCompletedOnboarding),
+                    telegramLinked: Boolean(activeUser.telegramChatId),
+                    telegramUsername: activeUser.telegramUsername || null,
+                    telegramChatId: activeUser.telegramChatId || null,
+                    telegramNotifEnabled: activeUser.telegramNotifEnabled !== false,
+                    emailNotifEnabled: activeUser.emailNotifEnabled !== false,
+                    createdAt: activeUser.createdAt
+                }
+            });
+        } catch (err) {
+            return res.json({ loggedIn: true, user: req.user });
+        }
+    } else {
+        return res.json({ loggedIn: false, user: null });
+    }
+});
+
+app.get('/api/dashboard-stats', async (req, res) => {
+    try {
+        const TIMEZONE = 'Asia/Jakarta';
+        const now = moment().tz(TIMEZONE);
+        const startOfToday = now.clone().startOf('day');
+        const startOfYesterday = startOfToday.clone().subtract(1, 'day');
+
+        const getTrxTimeMs = (trx) => {
+            if (trx.createdAt) {
+                const m = moment(trx.createdAt).tz(TIMEZONE);
+                if (m.isValid()) return m.valueOf();
+            }
+            if (trx.updatedAt) {
+                const m = moment(trx.updatedAt).tz(TIMEZONE);
+                if (m.isValid()) return m.valueOf();
+            }
+            if (trx._id && typeof trx._id.getTimestamp === 'function') {
+                return moment(trx._id.getTimestamp()).tz(TIMEZONE).valueOf();
+            }
+            return moment().tz(TIMEZONE).valueOf();
+        };
+
+        const [
+            totalUsers,
+            totalProducts,
+            allTrxRaw,
+            latencyMetrics
+        ] = await Promise.all([
+            UserV2.countDocuments(),
+            ProductV2.countDocuments(),
+            TransactionV2.find({})
+                .sort({ createdAt: -1 })
+                .select('orderId userEmail amount status itemDetails createdAt updatedAt type paymentMethod')
+                .lean(),
+            SystemMetricsV2.aggregate([
+                { $match: { timestamp: { $gte: moment().subtract(24, 'hours').toDate() } } },
+                {
+                    $group: {
+                        _id: null,
+                        avgLatency: { $avg: '$responseTimeMs' },
+                        totalRequests: { $sum: 1 }
+                    }
+                }
+            ])
+        ]);
+
+        const successStatuses = ['settlement', 'success', 'paid', 'settled'];
+        const cancelStatuses = ['cancelled', 'failed', 'expire', 'expired', 'batal'];
+
+        const todayStartMs = startOfToday.valueOf();
+        const yesterdayStartMs = startOfYesterday.valueOf();
+
+        let lunasTrx = 0;
+        let trxToday = 0;
+        let trxYesterday = 0;
+
+        const emailSet = new Set();
+        allTrxRaw.forEach(trx => {
+            const st = (trx.status || '').toLowerCase();
+            if (successStatuses.includes(st)) lunasTrx++;
+
+            const tMs = getTrxTimeMs(trx);
+            if (tMs >= todayStartMs) {
+                trxToday++;
+            } else if (tMs >= yesterdayStartMs && tMs < todayStartMs) {
+                trxYesterday++;
+            }
+
+            if (trx.userEmail) emailSet.add(trx.userEmail.toLowerCase().trim());
+            if (trx.itemDetails?.buyer && trx.itemDetails.buyer.includes('@')) {
+                emailSet.add(trx.itemDetails.buyer.toLowerCase().trim());
+            }
+        });
+
+        const totalTrx = allTrxRaw.length;
+
+        const users = await UserV2.find({ email: { $in: Array.from(emailSet) } })
+            .select('email username avatar')
+            .lean();
+
+        const userMap = {};
+        users.forEach(u => {
+            if (u.email) {
+                userMap[u.email.toLowerCase().trim()] = {
+                    username: u.username,
+                    avatar: u.avatar
+                };
+            }
+        });
+
+        // Urutkan terbaru -> terlama untuk tabel Status Transaksi
+        const allTrxDesc = [...allTrxRaw].sort((a, b) => getTrxTimeMs(b) - getTrxTimeMs(a));
+
+        const recentTrx = allTrxDesc.map(trx => {
+            const emailKey = (trx.userEmail || (trx.itemDetails?.buyer?.includes('@') ? trx.itemDetails.buyer : '') || '')
+                .toLowerCase()
+                .trim();
+            const matchedUser = userMap[emailKey];
+            let cleanName = matchedUser?.username || trx.itemDetails?.buyer || 'Pembeli Tamu';
+            if (cleanName.includes('@')) cleanName = cleanName.split('@')[0];
+
+            const trxMoment = moment(getTrxTimeMs(trx)).tz(TIMEZONE).locale('id');
+
+            return {
+                orderId: trx.orderId,
+                pelanggan: cleanName,
+                avatar: matchedUser?.avatar || null,
+                produk: trx.itemDetails?.nama || (trx.type === 'DEPOSIT' ? 'Isi Saldo Akun' : 'Produk Digital'),
+                metode: trx.paymentMethod || 'QRIS',
+                amount: trx.itemDetails?.harga_setelah_voucher || trx.amount || 0,
+                status: trx.status,
+                createdAt: trxMoment.toISOString(),
+                clockWib: `${trxMoment.format('HH:mm')} WIB`
+            };
+        });
+
+        // Urutkan terlama -> terbaru untuk membentuk candle OHLC berbasis transaksi riil
+        const allTrxAsc = [...allTrxDesc].reverse();
+
+        function buildCandlesByInterval(startMs, bucketCount, intervalMs, trxItems, labelFormatter) {
+            let cumulativeNet = 0;
+            let idx = 0;
+
+            // Akumulasi nilai transaksi sebelum jendela waktu dimulai
+            while (idx < trxItems.length && getTrxTimeMs(trxItems[idx]) < startMs) {
+                const st = (trxItems[idx].status || '').toLowerCase();
+                const val = Number(trxItems[idx].itemDetails?.harga_setelah_voucher || trxItems[idx].amount || 0);
+                if (successStatuses.includes(st)) {
+                    cumulativeNet += val;
+                } else if (cancelStatuses.includes(st)) {
+                    cumulativeNet -= val;
+                }
+                idx++;
+            }
+
+            const candles = [];
+            for (let b = 0; b < bucketCount; b++) {
+                const bucketStart = startMs + b * intervalMs;
+                const bucketEnd = bucketStart + intervalMs;
+                const isLastBucket = b === bucketCount - 1;
+
+                const open = cumulativeNet;
+                let high = open;
+                let low = open;
+                let lunasCount = 0;
+                let cancelCount = 0;
+                let totalCount = 0;
+                let periodOmzet = 0;
+
+                while (idx < trxItems.length) {
+                    const tMs = getTrxTimeMs(trxItems[idx]);
+                    if (!isLastBucket && tMs >= bucketEnd) break;
+
+                    const st = (trxItems[idx].status || '').toLowerCase();
+                    const val = Number(trxItems[idx].itemDetails?.harga_setelah_voucher || trxItems[idx].amount || 0);
+                    totalCount++;
+
+                    if (successStatuses.includes(st)) {
+                        cumulativeNet += val;
+                        periodOmzet += val;
+                        lunasCount++;
+                        if (cumulativeNet > high) high = cumulativeNet;
+                        if (cumulativeNet < low) low = cumulativeNet;
+                    } else if (cancelStatuses.includes(st)) {
+                        cumulativeNet -= val;
+                        cancelCount++;
+                        if (cumulativeNet < low) low = cumulativeNet;
+                        if (cumulativeNet > high) high = cumulativeNet;
+                    } else {
+                        const pendingHigh = cumulativeNet + Math.max(500, Math.round(val * 0.25));
+                        if (pendingHigh > high) high = pendingHigh;
+                    }
+                    idx++;
                 }
 
-                const referredCount = await UserV2.countDocuments({ referredBy: dbUser.referralCode });
-                const isAdmin = dbUser.email?.toLowerCase().trim() === OWNER_EMAIL;
+                const close = cumulativeNet;
+                if (close > high) high = close;
+                if (close < low) low = close;
 
-                return res.json({
-                    loggedIn: true,
-                    isAdmin,
-                    user: {
-                        ...dbUser,
-                        isAdmin,
-                        saldo: dbUser.saldo || 0,
-                        referralCode: dbUser.referralCode,
-                        referredCount: referredCount,
-                        hasCompletedOnboarding: dbUser.hasCompletedOnboarding || false,
-                        telegramLinked: Boolean(dbUser.telegramChatId || (dbUser.provider === 'telegram' && dbUser.providerId)),
-                        telegramUsername: dbUser.telegramUsername || null,
-                        telegramNotifEnabled: dbUser.telegramNotifEnabled !== false,
-                        emailNotifEnabled: dbUser.emailNotifEnabled !== false,
-                        telegramBotUsername: TELEGRAM_BOT_USERNAME || null,
-                        banner: dbUser.banner || 'https://cdn.larasxd.my.id/files/Tk4GavOaHEEP2ykm.mp4'
-                    }
+                candles.push({
+                    label: labelFormatter(bucketStart),
+                    o: open,
+                    h: high,
+                    l: low,
+                    c: close,
+                    volume: totalCount,
+                    lunas: lunasCount,
+                    batal: cancelCount,
+                    omzet: periodOmzet
                 });
             }
-        } catch (err) {
-            console.error("Error fetch user balance:", err);
+
+            return candles;
         }
-        const isAdminFallback = req.user.email?.toLowerCase().trim() === OWNER_EMAIL;
-        return res.json({ loggedIn: true, isAdmin: isAdminFallback, user: { ...req.user, isAdmin: isAdminFallback } });
-    } else {
-        return res.json({ loggedIn: false, isAdmin: false });
+
+        // 1 Hari: 48 candle (interval 30 menit WIB = 24 jam) -> proporsional & tidak gepeng di mobile
+        const aligned30Min = Math.floor(now.minute() / 30) * 30;
+        const current30MinStart = now.clone().minute(aligned30Min).second(0).millisecond(0);
+        const interval30m = 30 * 60 * 1000;
+        const start1d = current30MinStart.clone().subtract(47 * 30, 'minutes').valueOf();
+        const candles1d = buildCandlesByInterval(
+            start1d,
+            48,
+            interval30m,
+            allTrxAsc,
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('HH:mm')
+        );
+
+        // 7 Hari: 42 candle (interval 4 jam WIB = 7 hari penuh)
+        const aligned4h = Math.floor(now.hour() / 4) * 4;
+        const current4hStart = now.clone().hour(aligned4h).minute(0).second(0).millisecond(0);
+        const interval4h = 4 * 60 * 60 * 1000;
+        const start7d = current4hStart.clone().subtract(41 * 4, 'hours').valueOf();
+        const candles7d = buildCandlesByInterval(
+            start7d,
+            42,
+            interval4h,
+            allTrxAsc,
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD/MM HH:mm')
+        );
+
+        // 1 Bulan: 30 candle (interval 1 hari WIB = 30 hari penuh)
+        const interval1d = 24 * 60 * 60 * 1000;
+        const start1m = startOfToday.clone().subtract(29, 'days').valueOf();
+        const candles1m = buildCandlesByInterval(
+            start1m,
+            30,
+            interval1d,
+            allTrxAsc,
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD MMM')
+        );
+
+        // Semua: 36 candle proporsional dari transaksi pertama hingga saat ini
+        const firstTrxMs = allTrxAsc.length > 0 ? getTrxTimeMs(allTrxAsc[0]) : start1d;
+        const totalSpanMs = Math.max(interval30m * 12, now.valueOf() - firstTrxMs + interval30m);
+        const allBuckets = 36;
+        const allIntervalMs = Math.max(60 * 1000, Math.ceil(totalSpanMs / allBuckets));
+        const candlesAll = buildCandlesByInterval(
+            firstTrxMs,
+            allBuckets,
+            allIntervalMs,
+            allTrxAsc,
+            (ms) => moment(ms).tz(TIMEZONE).locale('id').format('DD/MM HH:mm')
+        );
+
+        const systemLatency = latencyMetrics.length > 0 ? Math.round(latencyMetrics[0].avgLatency) : 12;
+        const totalRequests = latencyMetrics.length > 0 ? latencyMetrics[0].totalRequests : totalTrx;
+
+        res.json({
+            status: true,
+            timezone: TIMEZONE,
+            serverTimeWib: now.locale('id').format('DD MMM YYYY HH:mm:ss [WIB]'),
+            totalUsers,
+            totalProducts,
+            totalTrx,
+            lunasTrx,
+            trxToday,
+            trxYesterday,
+            systemLatency: `${systemLatency} ms`,
+            totalRequests,
+            recentTrx,
+            tradingSeries: {
+                '1d': candles1d,
+                '7d': candles7d,
+                '1m': candles1m,
+                'all': candlesAll
+            }
+        });
+    } catch (err) {
+        console.error("Gagal mengambil statistik dashboard:", err);
+        res.status(500).json({ status: false, message: "Gagal memuat data statistik" });
     }
 });
 
-app.get('/api/analytics-data', async (req, res) => {
-    try {
-        const range = req.query.range || '7d';
-        const now = moment().tz('Asia/Jakarta');
-        let startDate, groupFormat, labelFormat;
+// ============================================================
+// ADMIN GENERATOR PRODUK & VOUCHER V2 (UNTUK ADMIN.HTML)
+// ============================================================
 
-        if (range === '24h') {
-            startDate = now.clone().subtract(23, 'hours').startOf('hour');
-            groupFormat = "%Y-%m-%d %H:00";
-            labelFormat = "HH:00";
-        } else if (range === '30d') {
-            startDate = now.clone().subtract(29, 'days').startOf('day');
-            groupFormat = "%Y-%m-%d";
-            labelFormat = "DD MMM";
+function parseAdminCleanNumber(val, fallback = 0) {
+    if (val === null || val === undefined || val === '') return fallback;
+    if (typeof val === 'number') return Number.isFinite(val) ? val : fallback;
+    const cleaned = String(val).replace(/[^\d-]/g, '');
+    if (cleaned === '' || cleaned === '-') return fallback;
+    const num = Number(cleaned);
+    return Number.isFinite(num) ? num : fallback;
+}
+
+function generateAdminRandomId(length = 15) {
+    const allowed = [10, 15, 20, 25];
+    const targetLength = allowed.includes(Number(length))
+        ? Number(length)
+        : allowed[Math.floor(Math.random() * allowed.length)];
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let out = '';
+    for (let i = 0; i < targetLength; i++) {
+        out += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return out;
+}
+
+function normalizeAdminVariants(variantsRaw) {
+    if (!Array.isArray(variantsRaw)) return [];
+    return variantsRaw
+        .map((v) => {
+            const name = String(v?.name || '').trim();
+            if (!name) return null;
+            const harga = parseAdminCleanNumber(v?.harga, 0);
+            const hasDisc = v?.harga_diskon !== null && v?.harga_diskon !== '' && v?.harga_diskon !== undefined;
+            const harga_diskon = hasDisc ? parseAdminCleanNumber(v.harga_diskon, null) : null;
+            const stok = Math.max(0, parseAdminCleanNumber(v?.stok, 0));
+            const gambar = String(v?.gambar || '').trim();
+            return { name, harga, harga_diskon, stok, gambar };
+        })
+        .filter(Boolean);
+}
+
+// --- ADMIN VOUCHER GENERATOR V2 ---
+app.get('/api/admin/vouchers', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const vouchers = await VoucherV2.find({}).sort({ createdAt: -1 }).lean();
+        return res.json({ status: true, success: true, vouchers });
+    } catch (error) {
+        return res.status(500).json({ status: false, success: false, message: error.message });
+    }
+});
+
+app.post('/api/admin/vouchers', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const { code, discount, type, expiredAt, usageLimit } = req.body;
+        const cleanCode = (code && String(code).trim())
+            ? String(code).trim().toUpperCase()
+            : `ARULZXD${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+
+        const cleanDiscount = parseAdminCleanNumber(discount, 0);
+        if (cleanDiscount <= 0) {
+            return res.status(400).json({ status: false, success: false, message: 'Nominal / persentase diskon harus lebih dari 0!' });
+        }
+
+        const cleanLimit = Math.max(1, parseAdminCleanNumber(usageLimit, 100));
+        const parsedExpired = expiredAt
+            ? moment.tz(expiredAt, 'Asia/Jakarta').toDate()
+            : moment().tz('Asia/Jakarta').add(24, 'hours').toDate();
+
+        const newVoucher = await VoucherV2.create({
+            code: cleanCode,
+            discount: cleanDiscount,
+            type: type === 'fixed' ? 'fixed' : 'percentage',
+            expiredAt: isNaN(parsedExpired.getTime()) ? moment().tz('Asia/Jakarta').add(24, 'hours').toDate() : parsedExpired,
+            usageLimit: cleanLimit,
+            usedCount: 0,
+            usedBy: []
+        });
+
+        return res.status(201).json({
+            status: true,
+            success: true,
+            message: `Voucher ${newVoucher.code} berhasil dibuat!`,
+            voucher: newVoucher
+        });
+    } catch (error) {
+        const msg = error.code === 11000 ? 'Kode voucher sudah terdaftar!' : error.message;
+        return res.status(400).json({ status: false, success: false, message: msg });
+    }
+});
+
+app.delete('/api/admin/vouchers/:id', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const targetId = String(req.params.id || '').trim();
+        const deleted = await VoucherV2.findOneAndDelete({
+            $or: [
+                { code: targetId.toUpperCase() },
+                { _id: mongoose.Types.ObjectId.isValid(targetId) ? targetId : null }
+            ]
+        });
+        if (!deleted) {
+            return res.status(404).json({ status: false, success: false, message: 'Voucher tidak ditemukan.' });
+        }
+        return res.json({ status: true, success: true, message: `Voucher ${deleted.code} berhasil dihapus!` });
+    } catch (error) {
+        return res.status(500).json({ status: false, success: false, message: error.message });
+    }
+});
+
+// --- ADMIN PRODUCT GENERATOR V2 (DENGAN VARIAN SHOPEE-STYLE) ---
+app.get('/api/admin/products', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const products = await ProductV2.find({}).sort({ createdAt: -1 }).lean();
+        return res.json({ status: true, success: true, products });
+    } catch (error) {
+        return res.status(500).json({ status: false, success: false, message: error.message });
+    }
+});
+
+app.post('/api/admin/products', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const {
+            Id, nama, harga, harga_diskon, kategori, badge,
+            terjual, stok, gambar, deskripsi, link, variantGroup, variants
+        } = req.body;
+
+        if (!nama || !kategori || !link) {
+            return res.status(400).json({ status: false, success: false, message: 'Nama produk, kategori, dan link wajib diisi!' });
+        }
+
+        const normalizedVariants = normalizeAdminVariants(variants);
+        let cleanHarga = parseAdminCleanNumber(harga, 0);
+        let cleanHargaDiskon = (harga_diskon !== null && harga_diskon !== '' && harga_diskon !== undefined)
+            ? parseAdminCleanNumber(harga_diskon, null)
+            : null;
+        let cleanStok = Math.max(0, parseAdminCleanNumber(stok, 0));
+
+        // Jika varian diisi (misal Negara: Indonesia, Jepang), sinkronkan harga dasar & total stok
+        if (normalizedVariants.length > 0) {
+            cleanStok = normalizedVariants.reduce((sum, v) => sum + v.stok, 0);
+            if (cleanHarga <= 0) {
+                cleanHarga = Math.min(...normalizedVariants.map(v => v.harga));
+            }
+        }
+
+        let gambarArray = [];
+        if (Array.isArray(gambar)) {
+            gambarArray = gambar.map(u => String(u).trim()).filter(Boolean);
+        } else if (typeof gambar === 'string') {
+            gambarArray = gambar.split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+        }
+        if (gambarArray.length === 0) {
+            gambarArray = ["https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png"];
+        }
+
+        const newProduct = await ProductV2.create({
+            Id: (Id && String(Id).trim()) || generateAdminRandomId(),
+            nama: String(nama).trim(),
+            harga: cleanHarga,
+            harga_diskon: cleanHargaDiskon,
+            kategori: String(kategori).trim(),
+            badge: badge ? String(badge).trim() : "",
+            terjual: Math.max(0, parseAdminCleanNumber(terjual, 0)),
+            stok: cleanStok,
+            gambar: gambarArray,
+            deskripsi: deskripsi ? String(deskripsi) : "",
+            link: String(link).trim(),
+            variantGroup: normalizedVariants.length > 0 ? (String(variantGroup || 'Pilihan').trim()) : "",
+            variants: normalizedVariants,
+            purchasedBy: []
+        });
+
+        return res.status(201).json({
+            status: true,
+            success: true,
+            message: `Produk "${newProduct.nama}" berhasil ditambahkan!`,
+            product: newProduct
+        });
+    } catch (error) {
+        const msg = error.code === 11000 ? 'ID Produk sudah digunakan!' : error.message;
+        return res.status(400).json({ status: false, success: false, message: msg });
+    }
+});
+
+app.put('/api/admin/products/:id', checkAuthSession, checkAdminRole, async (req, res) => {
+    try {
+        const targetId = String(req.params.id || '').trim();
+        const existing = await ProductV2.findOne({
+            $or: [
+                { Id: targetId },
+                { _id: mongoose.Types.ObjectId.isValid(targetId) ? targetId : null }
+            ]
+        });
+
+        if (!existing) {
+            return res.status(404).json({ status: false, success: false, message: `Produk "${targetId}" tidak ditemukan.` });
+        }
+
+        const {
+            Id, nama, harga, harga_diskon, kategori, badge,
+            terjual, stok, gambar, deskripsi, link, variantGroup, variants
+        } = req.body;
+
+        if (Id !== undefined && String(Id).trim() !== '' && String(Id).trim() !== existing.Id) {
+            const customId = String(Id).trim();
+            const duplicate = await ProductV2.findOne({ Id: customId, _id: { $ne: existing._id } });
+            if (duplicate) {
+                return res.status(400).json({ status: false, success: false, message: `ID Produk "${customId}" sudah dipakai produk lain!` });
+            }
+            existing.Id = customId;
+        }
+
+        if (nama !== undefined) existing.nama = String(nama).trim();
+        if (kategori !== undefined) existing.kategori = String(kategori).trim();
+        if (badge !== undefined) existing.badge = String(badge).trim();
+        if (terjual !== undefined) existing.terjual = Math.max(0, parseAdminCleanNumber(terjual, 0));
+        if (deskripsi !== undefined) existing.deskripsi = String(deskripsi);
+        if (link !== undefined) existing.link = String(link).trim();
+
+        if (gambar !== undefined) {
+            let gambarArray = Array.isArray(gambar)
+                ? gambar.map(u => String(u).trim()).filter(Boolean)
+                : String(gambar).split(/[\n,]+/).map(u => u.trim()).filter(Boolean);
+            existing.gambar = gambarArray.length > 0 ? gambarArray : ["https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png"];
+        }
+
+        if (variants !== undefined) {
+            const normalizedVariants = normalizeAdminVariants(variants);
+            existing.variants = normalizedVariants;
+            existing.variantGroup = normalizedVariants.length > 0 ? String(variantGroup || 'Pilihan').trim() : "";
+
+            if (normalizedVariants.length > 0) {
+                existing.stok = normalizedVariants.reduce((sum, v) => sum + v.stok, 0);
+                existing.harga = harga !== undefined && parseAdminCleanNumber(harga, 0) > 0
+                    ? parseAdminCleanNumber(harga, 0)
+                    : Math.min(...normalizedVariants.map(v => v.harga));
+            } else {
+                if (harga !== undefined) existing.harga = parseAdminCleanNumber(harga, existing.harga);
+                if (stok !== undefined) existing.stok = Math.max(0, parseAdminCleanNumber(stok, 0));
+            }
         } else {
-            startDate = now.clone().subtract(6, 'days').startOf('day');
-            groupFormat = "%Y-%m-%d";
-            labelFormat = "DD MMM";
+            if (harga !== undefined) existing.harga = parseAdminCleanNumber(harga, existing.harga);
+            if (stok !== undefined) existing.stok = Math.max(0, parseAdminCleanNumber(stok, 0));
         }
 
-        const trxAgg = await TransactionV2.aggregate([
-            { $match: { createdAt: { $gte: startDate.toDate() } } },
-            {
-                $group: {
-                    _id: {
-                        timeBucket: {
-                            $dateToString: {
-                                format: groupFormat,
-                                date: "$createdAt",
-                                timezone: "Asia/Jakarta"
-                            }
-                        }
-                    },
-                    successCount: {
-                        $sum: {
-                            $cond: [{ $in: [{ $toLower: "$status" }, ["settlement", "success", "paid", "settled"]] }, 1, 0]
-                        }
-                    },
-                    cancelledCount: {
-                        $sum: {
-                            $cond: [{ $in: [{ $toLower: "$status" }, ["cancelled", "expired", "failed"]] }, 1, 0]
-                        }
-                    },
-                    pendingCount: {
-                        $sum: {
-                            $cond: [{ $eq: [{ $toLower: "$status" }, "pending"] }, 1, 0]
-                        }
-                    },
-                    revenueTotal: {
-                        $sum: {
-                            $cond: [
-                                { $in: [{ $toLower: "$status" }, ["settlement", "success", "paid", "settled"]] },
-                                "$amount",
-                                0
-                            ]
-                        }
-                    }
-                }
-            }
-        ]);
-
-        const perfAgg = await SystemMetricsV2.aggregate([
-            { $match: { timestamp: { $gte: startDate.toDate() } } },
-            {
-                $group: {
-                    _id: {
-                        timeBucket: {
-                            $dateToString: {
-                                format: groupFormat,
-                                date: "$timestamp",
-                                timezone: "Asia/Jakarta"
-                            }
-                        }
-                    },
-                    avgLatency: { $avg: "$responseTimeMs" },
-                    totalHits: { $sum: 1 }
-                }
-            }
-        ]);
-
-        const labels = [];
-        const successSeries = [];
-        const cancelledSeries = [];
-        const pendingSeries = [];
-        const revenueSeries = [];
-        const latencySeries = [];
-        const hitsSeries = [];
-
-        const steps = range === '24h' ? 24 : (range === '30d' ? 30 : 7);
-        const unit = range === '24h' ? 'hours' : 'days';
-
-        for (let i = 0; i < steps; i++) {
-            const currentSlot = startDate.clone().add(i, unit);
-            const bucketKey = currentSlot.format(range === '24h' ? "YYYY-MM-DD HH:00" : "YYYY-MM-DD");
-            const displayLabel = currentSlot.format(labelFormat);
-
-            const foundTrx = trxAgg.find(item => item._id.timeBucket === bucketKey);
-            const foundPerf = perfAgg.find(item => item._id.timeBucket === bucketKey);
-
-            labels.push(displayLabel);
-            successSeries.push(foundTrx ? foundTrx.successCount : 0);
-            cancelledSeries.push(foundTrx ? foundTrx.cancelledCount : 0);
-            pendingSeries.push(foundTrx ? foundTrx.pendingCount : 0);
-            revenueSeries.push(foundTrx ? foundTrx.revenueTotal : 0);
-            latencySeries.push(foundPerf ? Math.round(foundPerf.avgLatency) : 12);
-            hitsSeries.push(foundPerf ? foundPerf.totalHits : 0);
+        if (harga_diskon !== undefined) {
+            existing.harga_diskon = (harga_diskon !== null && harga_diskon !== '')
+                ? parseAdminCleanNumber(harga_diskon, null)
+                : null;
         }
 
-        const totalRev = revenueSeries.reduce((a, b) => a + b, 0);
-        const totalSucc = successSeries.reduce((a, b) => a + b, 0);
-        const totalCanc = cancelledSeries.reduce((a, b) => a + b, 0);
-        const avgLat = latencySeries.length > 0 ? Math.round(latencySeries.reduce((a, b) => a + b, 0) / latencySeries.length) : 15;
-
+        await existing.save();
         return res.json({
             status: true,
-            range,
-            labels,
-            transactions: {
-                success: successSeries,
-                cancelled: cancelledSeries,
-                pending: pendingSeries
-            },
-            revenue: revenueSeries,
-            performance: {
-                latencyMs: latencySeries,
-                requests: hitsSeries
-            },
-            summary: {
-                totalRevenue: totalRev,
-                totalSuccess: totalSucc,
-                totalCancelled: totalCanc,
-                avgLatencyMs: avgLat
-            }
+            success: true,
+            message: `Produk "${existing.nama}" (${existing.Id}) berhasil diperbarui!`,
+            product: existing
         });
-
     } catch (error) {
-        console.error("Analytics Data Error:", error);
-        return res.status(500).json({ status: false, message: "Gagal memproses analitik sistem." });
+        return res.status(400).json({ status: false, success: false, message: error.message });
     }
 });
 
-app.get('/api/system-status', async (req, res) => {
+app.delete('/api/admin/products/:id', checkAuthSession, checkAdminRole, async (req, res) => {
     try {
-        const startPing = Date.now();
-        await mongoose.connection.db.admin().ping();
-        const dbLatency = Date.now() - startPing;
+        const targetId = String(req.params.id || '').trim();
+        const deleted = await ProductV2.findOneAndDelete({
+            $or: [
+                { Id: targetId },
+                { _id: mongoose.Types.ObjectId.isValid(targetId) ? targetId : null }
+            ]
+        });
 
-        const nowWib = moment().tz('Asia/Jakarta');
-
-        const uptimeSeconds = process.uptime();
-        const days = Math.floor(uptimeSeconds / (3600 * 24));
-        const hours = Math.floor((uptimeSeconds % (3600 * 24)) / 3600);
-        const minutes = Math.floor((uptimeSeconds % 3600) / 60);
-        const seconds = Math.floor(uptimeSeconds % 60);
-
-        const totalMem = os.totalmem();
-        const freeMem = os.freemem();
-        const usedMem = totalMem - freeMem;
-        const memPercentage = ((usedMem / totalMem) * 100).toFixed(1);
-
-        const totalUsers = await UserV2.countDocuments();
-        const totalProducts = await ProductV2.countDocuments();
-        const totalReviews = await ReviewV2.countDocuments();
-
-        const salesAggregation = await ProductV2.aggregate([
-            { $group: { _id: null, totalTerjual: { $sum: "$terjual" } } }
-        ]);
-        const totalTerjual = salesAggregation.length > 0 ? salesAggregation[0].totalTerjual : 0;
-
-        const totalTrx = await TransactionV2.countDocuments();
-        const settledTrx = await TransactionV2.countDocuments({ status: { $in: ["settlement", "success", "paid", "settled"] } });
-        const pendingTrx = await TransactionV2.countDocuments({ status: "pending" });
-        const cancelledTrx = await TransactionV2.countDocuments({ status: { $in: ["cancelled", "expired"] } });
+        if (!deleted) {
+            return res.status(404).json({ status: false, success: false, message: `Produk "${targetId}" tidak ditemukan.` });
+        }
 
         return res.json({
             status: true,
-            server: {
-                status: 'ONLINE',
-                uptime: `${days}d ${hours}h ${minutes}m ${seconds}s`,
-                platform: os.platform() + ' (' + os.arch() + ')',
-                nodeVersion: process.version,
-                cpuLoad: os.loadavg()[0].toFixed(2)
-            },
-            database: {
-                connected: mongoose.connection.readyState === 1,
-                latencyMs: dbLatency,
-                statusText: mongoose.connection.readyState === 1 ? 'CONNECTED' : 'DISCONNECTED'
-            },
-            memory: {
-                totalMB: Math.round(totalMem / 1024 / 1024),
-                usedMB: Math.round(usedMem / 1024 / 1024),
-                percentage: memPercentage
-            },
-            time: {
-                wib: nowWib.format('HH:mm:ss'),
-                date: nowWib.format('dddd, DD MMMM YYYY')
-            },
-            metrics: {
-                totalUsers,
-                totalProducts,
-                totalTerjual,
-                totalReviews,
-                transactions: {
-                    total: totalTrx,
-                    success: settledTrx,
-                    pending: pendingTrx,
-                    cancelled: cancelledTrx
-                }
-            }
+            success: true,
+            message: `Produk "${deleted.nama}" (${deleted.Id}) berhasil dihapus!`
         });
     } catch (error) {
-        console.error("System Status Error:", error);
-        return res.status(500).json({ status: false, message: "Gagal mengambil status sistem" });
+        return res.status(500).json({ status: false, success: false, message: error.message });
     }
 });
 
@@ -5683,11 +6278,11 @@ app.get('/api/system-status', async (req, res) => {
 // 11. START SERVER
 // ============================================================
 
-app.listen(PORT, () => {
-    console.log(`=================================================`);
-    console.log(`⚡ ARULZXD DASHBOARD BERJALAN PADA PORT ${PORT}`);
-    console.log(`🌐 URL Lokal: http://localhost:${PORT}`);
-    console.log(`=================================================`);
-});
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+        ensureTelegramWebhook();
+    });
+}
 
 export default app;
