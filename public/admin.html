@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=JetBrains+Mono:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/locale/id.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.45/moment-timezone-with-data.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -97,22 +100,47 @@
             font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
 
-        /* Custom Neo-Brutalist Select & Radio Card */
+        /* Custom Neo-Brutalist Select & Dropdown System */
+        .neo-select-wrapper {
+            position: relative;
+        }
         .neo-select-trigger {
             border: 3px solid #000000;
             box-shadow: 4px 4px 0px #000000;
             border-radius: 0px;
+            background-color: #FFFFFF;
             transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+            cursor: pointer;
         }
         .neo-select-trigger:hover {
             transform: translate(-1px, -1px);
             box-shadow: 5px 5px 0px #000000;
+            background-color: #FFFDF2;
+        }
+        .neo-select-trigger.is-open {
+            background-color: #FFDF4F;
+            transform: translate(1px, 1px);
+            box-shadow: 3px 3px 0px #000000;
         }
         .neo-select-menu {
             border: 3px solid #000000;
             box-shadow: 6px 6px 0px #000000;
             border-radius: 0px;
+            background-color: #FFFFFF;
+            z-index: 60;
         }
+        .neo-select-option {
+            transition: background-color 0.1s ease;
+            cursor: pointer;
+        }
+        .neo-select-option:hover {
+            background-color: #1AE5FF;
+        }
+        .neo-select-option.is-selected {
+            background-color: #FFDF4F;
+            font-weight: 900;
+        }
+
         .delivery-mode-card {
             border: 3px solid #000000;
             box-shadow: 4px 4px 0px #000000;
@@ -128,6 +156,12 @@
         }
         .delivery-mode-card.selected-webonly {
             background-color: #FFDF4F !important;
+        }
+
+        /* Touchscreen Pinch & Pan Area untuk Bukti Transfer */
+        #lightboxScrollArea {
+            touch-action: pan-x pan-y pinch-zoom;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
@@ -164,20 +198,25 @@
                         </span>
                         Verifikasi Deposit QRIS
                     </h1>
-                    <p class="text-xs font-bold text-black mt-1.5">Periksa bukti pembayaran user, konfirmasi penambahan saldo, atau batalkan deposit.</p>
+                    <p class="text-xs font-bold text-black mt-1.5">Sentuh gambar bukti pembayaran untuk memperbesar (2X, 3X, 4X), konfirmasi saldo, atau kelola hapus riwayat.</p>
                 </div>
-                <button onclick="loadDepositsQris()" class="neo-btn bg-white text-black font-cyber font-extrabold px-4 py-2.5 text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0 relative z-10">
-                    <i class="fa-solid fa-rotate-right"></i> Refresh Data
-                </button>
+                <div class="flex flex-wrap items-center gap-2 shrink-0 relative z-10">
+                    <button onclick="bulkDeleteDepositsPrompt()" class="neo-btn bg-neoPink text-white font-cyber font-extrabold px-3.5 py-2.5 text-xs flex items-center justify-center gap-1.5 uppercase tracking-wider">
+                        <i class="fa-solid fa-trash-can"></i> Kelola Hapus
+                    </button>
+                    <button onclick="loadDepositsQris()" class="neo-btn bg-white text-black font-cyber font-extrabold px-4 py-2.5 text-xs flex items-center justify-center gap-2 uppercase tracking-wider">
+                        <i class="fa-solid fa-rotate-right"></i> Refresh Data
+                    </button>
+                </div>
             </div>
 
-            <!-- FILTER STATUS -->
-            <div class="flex flex-wrap items-center gap-2">
-                <button onclick="setDepositFilter('all')" id="filterAll" class="neo-btn bg-neoYellow px-3 py-1.5 text-xs font-cyber font-extrabold uppercase">Semua</button>
-                <button onclick="setDepositFilter('waiting_verification')" id="filterWaiting" class="neo-btn bg-white px-3 py-1.5 text-xs font-cyber font-extrabold uppercase">Perlu Dicek</button>
-                <button onclick="setDepositFilter('pending')" id="filterPending" class="neo-btn bg-white px-3 py-1.5 text-xs font-cyber font-extrabold uppercase">Belum Upload</button>
-                <button onclick="setDepositFilter('success')" id="filterSuccess" class="neo-btn bg-white px-3 py-1.5 text-xs font-cyber font-extrabold uppercase">Sukses</button>
-                <button onclick="setDepositFilter('cancelled')" id="filterCancelled" class="neo-btn bg-white px-3 py-1.5 text-xs font-cyber font-extrabold uppercase">Dibatalkan</button>
+            <!-- FILTER STATUS SEJAJAR -->
+            <div class="grid grid-cols-5 gap-1.5 sm:gap-2">
+                <button onclick="setDepositFilter('all')" id="filterAll" class="neo-btn bg-neoYellow px-1 sm:px-3 py-2 text-[9.5px] sm:text-xs font-cyber font-extrabold uppercase text-center truncate">Semua</button>
+                <button onclick="setDepositFilter('waiting_verification')" id="filterWaiting" class="neo-btn bg-white px-1 sm:px-3 py-2 text-[9.5px] sm:text-xs font-cyber font-extrabold uppercase text-center truncate">Perlu Dicek</button>
+                <button onclick="setDepositFilter('pending')" id="filterPending" class="neo-btn bg-white px-1 sm:px-3 py-2 text-[9.5px] sm:text-xs font-cyber font-extrabold uppercase text-center truncate">Belum Upload</button>
+                <button onclick="setDepositFilter('success')" id="filterSuccess" class="neo-btn bg-white px-1 sm:px-3 py-2 text-[9.5px] sm:text-xs font-cyber font-extrabold uppercase text-center truncate">Sukses</button>
+                <button onclick="setDepositFilter('cancelled')" id="filterCancelled" class="neo-btn bg-white px-1 sm:px-3 py-2 text-[9.5px] sm:text-xs font-cyber font-extrabold uppercase text-center truncate">Dibatalkan</button>
             </div>
 
             <!-- DAFTAR KARTU DEPOSIT QRIS -->
@@ -270,7 +309,7 @@
             </div>
 
             <!-- SUB-PANEL 1: TAMBAH NOTIFIKASI BARU -->
-            <div id="notifPanelAdd" class="neo-box bg-white overflow-hidden">
+            <div id="notifPanelAdd" class="neo-box bg-white overflow-visible">
                 <div class="bg-neoCyan border-b-[3px] border-black px-5 py-3 flex items-center justify-between gap-2">
                     <span class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i> Buat &amp; Kirim Notifikasi Baru
@@ -319,14 +358,39 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- CUSTOM NEO-BRUTALIST SELECT: KATEGORI TAMBAH -->
                         <div>
-                            <label for="addNotifType" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kategori / Tipe</label>
-                            <select id="addNotifType" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
-                                <option value="info">Info (info)</option>
-                                <option value="promo">Promo (promo)</option>
-                                <option value="transaksi">Transaksi (transaksi)</option>
-                                <option value="sistem">Sistem (sistem)</option>
-                            </select>
+                            <label class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kategori / Tipe</label>
+                            <div class="neo-select-wrapper" data-neo-select="addNotifType">
+                                <input type="hidden" id="addNotifType" value="info">
+                                <button type="button" onclick="toggleNeoSelect('addNotifType')" class="neo-select-trigger w-full px-3.5 py-2.5 text-xs font-cyber font-extrabold flex items-center justify-between gap-2">
+                                    <span class="neo-select-label flex items-center gap-2 truncate">
+                                        <span class="w-5 h-5 bg-neoCyan border border-black flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid fa-circle-info"></i></span>
+                                        <span>Info (info)</span>
+                                    </span>
+                                    <span class="w-6 h-6 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-chevron-down text-[10px] neo-select-arrow transition-transform duration-150"></i>
+                                    </span>
+                                </button>
+                                <div class="neo-select-menu hidden absolute left-0 right-0 top-full mt-1.5 divide-y-2 divide-black">
+                                    <div onclick="pickNeoSelectOption('addNotifType', 'info', 'Info (info)', 'fa-circle-info', 'bg-neoCyan')" data-value="info" class="neo-select-option is-selected px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-neoCyan border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-circle-info"></i></span>
+                                        <span>Info (info)</span>
+                                    </div>
+                                    <div onclick="pickNeoSelectOption('addNotifType', 'promo', 'Promo (promo)', 'fa-tags', 'bg-neoYellow')" data-value="promo" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-neoYellow border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-tags"></i></span>
+                                        <span>Promo (promo)</span>
+                                    </div>
+                                    <div onclick="pickNeoSelectOption('addNotifType', 'transaksi', 'Transaksi (transaksi)', 'fa-receipt', 'bg-neoGreen')" data-value="transaksi" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-neoGreen border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-receipt"></i></span>
+                                        <span>Transaksi (transaksi)</span>
+                                    </div>
+                                    <div onclick="pickNeoSelectOption('addNotifType', 'sistem', 'Sistem (sistem)', 'fa-gear', 'bg-neoPink text-white')" data-value="sistem" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-neoPink text-white border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-gear"></i></span>
+                                        <span>Sistem (sistem)</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div>
@@ -368,8 +432,6 @@
                             <span id="editSelectAvailableBadge" class="text-[10px] font-mono font-extrabold bg-neoYellow border-2 border-black px-2 py-0.5">0 Tersedia</span>
                         </div>
 
-                        <select id="editNotifSelector" class="hidden"></select>
-
                         <button type="button" id="customNotifSelectTrigger" onclick="toggleCustomNotifDropdown()" class="neo-select-trigger w-full bg-white px-4 py-3 text-left flex items-center justify-between gap-3">
                             <div id="customNotifTriggerContent" class="flex items-center gap-2.5 min-w-0 flex-1">
                                 <span class="w-8 h-8 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
@@ -405,14 +467,39 @@
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- CUSTOM NEO-BRUTALIST SELECT: KATEGORI EDIT -->
                             <div>
-                                <label for="editNotifType" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kategori / Tipe</label>
-                                <select id="editNotifType" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
-                                    <option value="info">Info (info)</option>
-                                    <option value="promo">Promo (promo)</option>
-                                    <option value="transaksi">Transaksi (transaksi)</option>
-                                    <option value="sistem">Sistem (sistem)</option>
-                                </select>
+                                <label class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kategori / Tipe</label>
+                                <div class="neo-select-wrapper" data-neo-select="editNotifType">
+                                    <input type="hidden" id="editNotifType" value="info">
+                                    <button type="button" onclick="toggleNeoSelect('editNotifType')" class="neo-select-trigger w-full px-3.5 py-2.5 text-xs font-cyber font-extrabold flex items-center justify-between gap-2">
+                                        <span class="neo-select-label flex items-center gap-2 truncate">
+                                            <span class="w-5 h-5 bg-neoCyan border border-black flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid fa-circle-info"></i></span>
+                                            <span>Info (info)</span>
+                                        </span>
+                                        <span class="w-6 h-6 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
+                                            <i class="fa-solid fa-chevron-down text-[10px] neo-select-arrow transition-transform duration-150"></i>
+                                        </span>
+                                    </button>
+                                    <div class="neo-select-menu hidden absolute left-0 right-0 top-full mt-1.5 divide-y-2 divide-black">
+                                        <div onclick="pickNeoSelectOption('editNotifType', 'info', 'Info (info)', 'fa-circle-info', 'bg-neoCyan')" data-value="info" class="neo-select-option is-selected px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                            <span class="w-5 h-5 bg-neoCyan border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-circle-info"></i></span>
+                                            <span>Info (info)</span>
+                                        </div>
+                                        <div onclick="pickNeoSelectOption('editNotifType', 'promo', 'Promo (promo)', 'fa-tags', 'bg-neoYellow')" data-value="promo" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                            <span class="w-5 h-5 bg-neoYellow border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-tags"></i></span>
+                                            <span>Promo (promo)</span>
+                                        </div>
+                                        <div onclick="pickNeoSelectOption('editNotifType', 'transaksi', 'Transaksi (transaksi)', 'fa-receipt', 'bg-neoGreen')" data-value="transaksi" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                            <span class="w-5 h-5 bg-neoGreen border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-receipt"></i></span>
+                                            <span>Transaksi (transaksi)</span>
+                                        </div>
+                                        <div onclick="pickNeoSelectOption('editNotifType', 'sistem', 'Sistem (sistem)', 'fa-gear', 'bg-neoPink text-white')" data-value="sistem" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                            <span class="w-5 h-5 bg-neoPink text-white border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-gear"></i></span>
+                                            <span>Sistem (sistem)</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div>
@@ -464,8 +551,8 @@
                 </div>
             </div>
         </section>
-
-        <!-- ======================================================= -->
+        
+                <!-- ======================================================= -->
         <!-- SECTION 4: GENERATOR PRODUK & MULTI-VARIAN SHOPEE-STYLE -->
         <!-- ======================================================= -->
         <section id="sectionProducts" class="hidden space-y-5">
@@ -477,7 +564,7 @@
                         </span>
                         Generator &amp; Kelola Produk
                     </h1>
-                    <p class="text-xs font-bold text-black mt-1.5">Buat produk tunggal atau produk dengan varian ala Shopee (contoh: Jual Nokos dengan opsi negara Indonesia, Jepang, dll.).</p>
+                    <p class="text-xs font-bold text-black mt-1.5">Buat produk tunggal atau multi-varian ala Shopee, lalu kirim notifikasi promo otomatis hasil AI Gemini.</p>
                 </div>
                 <button onclick="loadAdminProducts()" class="neo-btn bg-white text-black font-cyber font-extrabold px-4 py-2.5 text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
                     <i class="fa-solid fa-rotate-right"></i> Refresh Produk
@@ -495,113 +582,209 @@
             </div>
 
             <!-- SUB-PANEL 1: FORM GENERATOR / EDIT PRODUK -->
-            <div id="prodPanelForm" class="neo-box bg-white overflow-hidden">
-                <div class="bg-neoYellow border-b-[3px] border-black px-5 py-3 flex flex-wrap items-center justify-between gap-2">
-                    <span id="prodFormHeaderTitle" class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-plus-circle"></i> Generator Produk Baru
-                    </span>
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="fillNokosPreset()" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-2.5 py-1 text-[10px] uppercase">
-                            <i class="fa-solid fa-bolt"></i> Template Jual Nokos
-                        </button>
-                        <button type="button" id="btnCancelProductEdit" onclick="resetProductForm()" class="hidden neo-btn bg-neoPink text-white font-cyber font-extrabold px-2.5 py-1 text-[10px] uppercase">
-                            <i class="fa-solid fa-xmark"></i> Batal Edit
-                        </button>
+            <div id="prodPanelForm" class="space-y-5">
+                <div class="neo-box bg-white overflow-hidden">
+                    <div class="bg-neoYellow border-b-[3px] border-black px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+                        <span id="prodFormHeaderTitle" class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-plus-circle"></i> Generator Produk Baru
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="fillNokosPreset()" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-2.5 py-1 text-[10px] uppercase">
+                                <i class="fa-solid fa-bolt"></i> Template Jual Nokos
+                            </button>
+                            <button type="button" id="btnCancelProductEdit" onclick="resetProductForm()" class="hidden neo-btn bg-neoPink text-white font-cyber font-extrabold px-2.5 py-1 text-[10px] uppercase">
+                                <i class="fa-solid fa-xmark"></i> Batal Edit
+                            </button>
+                        </div>
                     </div>
+
+                    <form id="productGeneratorForm" onsubmit="submitProductGenerator(event)" class="p-5 space-y-4">
+                        <input type="hidden" id="prodIdInput">
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="prodNameInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Nama Produk *</label>
+                                <input type="text" id="prodNameInput" required placeholder="Contoh: Jual Nokos WhatsApp Fresh" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                            </div>
+
+                            <div>
+                                <label for="prodCategoryInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kategori Produk *</label>
+                                <input type="text" id="prodCategoryInput" required placeholder="Contoh: Nomor Virtual / Nokos" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="prodBadgeInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Badge Label (Opsional)</label>
+                                <input type="text" id="prodBadgeInput" placeholder="Contoh: BEST SELLER / HOT / INSTANT" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                            </div>
+
+                            <div>
+                                <label for="prodImageInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">URL Gambar Utama Produk *</label>
+                                <input type="url" id="prodImageInput" required placeholder="https://cdn.larasxd.my.id/files/..." class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="prodGalleryInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">URL Galeri Gambar Tambahan (Pisahkan dengan koma / baris baru)</label>
+                            <textarea id="prodGalleryInput" rows="2" placeholder="https://contoh.com/gambar2.jpg, https://contoh.com/gambar3.jpg" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]"></textarea>
+                        </div>
+
+                        <div>
+                            <label for="prodDescInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Deskripsi Produk *</label>
+                            <textarea id="prodDescInput" required rows="3" placeholder="Jelaskan detail produk, garansi, fitur, dan cara order..." class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]"></textarea>
+                        </div>
+
+                        <div>
+                            <label for="prodDownloadUrlInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Link Download / WA / TG Produk *</label>
+                            <input type="text" id="prodDownloadUrlInput" required placeholder="https://wa.me/6285122629940 atau link download file" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        </div>
+
+                        <!-- TOGGLE MODE VARIAN ALA SHOPEE -->
+                        <div class="neo-box p-4 bg-neoBg space-y-3">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                                    <input type="checkbox" id="prodEnableVariants" onchange="toggleProductVariantsMode()" class="w-4 h-4 accent-black">
+                                    <span class="font-cyber font-extrabold text-xs uppercase">Aktifkan Pilihan Varian Produk ala Shopee (Multi-Negara / Multi-Paket)</span>
+                                </label>
+                                <span id="variantModeStatusBadge" class="text-[10px] font-mono font-extrabold bg-white border-2 border-black px-2 py-0.5 uppercase">
+                                    PRODUK TUNGGAL
+                                </span>
+                            </div>
+
+                            <!-- FIELD PRODUK TUNGGAL (JIKA VARIAN NONAKTIF) -->
+                            <div id="singleProductPriceBlock" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t-2 border-black">
+                                <div>
+                                    <label for="prodPriceInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Harga Normal (Rp) *</label>
+                                    <input type="number" id="prodPriceInput" min="0" placeholder="15000" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
+                                </div>
+                                <div>
+                                    <label for="prodDiscountPriceInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Harga Diskon (Opsional)</label>
+                                    <input type="number" id="prodDiscountPriceInput" min="0" placeholder="0" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
+                                </div>
+                                <div>
+                                    <label for="prodStockInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Stok Tersedia *</label>
+                                    <input type="number" id="prodStockInput" min="0" value="10" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
+                                </div>
+                            </div>
+
+                            <!-- FIELD MULTI-VARIAN ALA SHOPEE (JIKA VARIAN AKTIF) -->
+                            <div id="multiVariantBuilderBlock" class="hidden space-y-3 pt-3 border-t-2 border-black">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
+                                    <div>
+                                        <label for="prodVariantGroupName" class="block font-cyber font-extrabold text-xs uppercase mb-1">Nama Grup Varian (Contoh: Negara / Paket) *</label>
+                                        <input type="text" id="prodVariantGroupName" value="Negara" placeholder="Contoh: Negara" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-bold">
+                                    </div>
+                                    <div class="flex justify-end">
+                                        <button type="button" onclick="addVariantRow()" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-3.5 py-2 text-xs uppercase flex items-center gap-1.5">
+                                            <i class="fa-solid fa-plus"></i> Tambah Opsi Varian
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="variantRowsContainer" class="space-y-3"></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btnSubmitProduct" class="w-full neo-btn bg-neoGreen text-black font-cyber font-extrabold py-3.5 px-5 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-floppy-disk"></i> <span id="btnSubmitProductText">Simpan &amp; Terbitkan Produk</span>
+                        </button>
+                    </form>
                 </div>
 
-                <form id="productGeneratorForm" onsubmit="submitProductGenerator(event)" class="p-5 space-y-4">
-                    <input type="hidden" id="prodIdInput">
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label for="prodNameInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Nama Produk *</label>
-                            <input type="text" id="prodNameInput" required placeholder="Contoh: Jual Nokos WhatsApp Fresh" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
-                        </div>
-
-                        <div>
-                            <label for="prodCategoryInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kategori Produk *</label>
-                            <input type="text" id="prodCategoryInput" required placeholder="Contoh: Nomor Virtual / Nokos" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label for="prodBadgeInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Badge Label (Opsional)</label>
-                            <input type="text" id="prodBadgeInput" placeholder="Contoh: BEST SELLER / HOT / INSTANT" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
-                        </div>
-
-                        <div>
-                            <label for="prodImageInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">URL Gambar Utama Produk *</label>
-                            <input type="url" id="prodImageInput" required placeholder="https://cdn.larasxd.my.id/files/..." class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                <!-- PANEL HASIL PEMBUATAN PRODUK + AUTO-GENERATED NOTIFIKASI AI GEMINI -->
+                <div id="productResultAiPanel" class="hidden neo-box bg-white overflow-visible">
+                    <div class="bg-neoGreen border-b-[3px] border-black px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+                        <span class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check"></i> Hasil Produk &amp; Auto-Notifikasi AI Gemini
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="regenerateProductAiNotif()" class="neo-btn bg-neoYellow text-black font-cyber font-extrabold px-3 py-1 text-[10px] uppercase flex items-center gap-1">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Ulang AI
+                            </button>
+                            <button type="button" onclick="document.getElementById('productResultAiPanel').classList.add('hidden')" class="neo-btn bg-white text-black font-cyber font-extrabold px-2.5 py-1 text-[10px] uppercase">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <div>
-                        <label for="prodGalleryInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">URL Galeri Gambar Tambahan (Pisahkan dengan koma / baris baru)</label>
-                        <textarea id="prodGalleryInput" rows="2" placeholder="https://contoh.com/gambar2.jpg, https://contoh.com/gambar3.jpg" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]"></textarea>
-                    </div>
+                    <div class="p-5 space-y-4">
+                        <!-- RINGKASAN PRODUK YANG BARU DIBUAT -->
+                        <div id="productCreatedSummaryBox" class="bg-neoBg border-[2.5px] border-black p-3.5 shadow-[3px_3px_0px_#000]"></div>
 
-                    <div>
-                        <label for="prodDescInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Deskripsi Produk *</label>
-                        <textarea id="prodDescInput" required rows="3" placeholder="Jelaskan detail produk, garansi, fitur, dan cara order..." class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]"></textarea>
-                    </div>
-
-                    <div>
-                        <label for="prodDownloadUrlInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Link Download / WA / TG Produk *</label>
-                        <input type="text" id="prodDownloadUrlInput" required placeholder="https://wa.me/6285122629940 atau link download file" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
-                    </div>
-
-                    <!-- TOGGLE MODE VARIAN ALA SHOPEE -->
-                    <div class="neo-box p-4 bg-neoBg space-y-3">
-                        <div class="flex flex-wrap items-center justify-between gap-2">
-                            <label class="flex items-center gap-2.5 cursor-pointer select-none">
-                                <input type="checkbox" id="prodEnableVariants" onchange="toggleProductVariantsMode()" class="w-4 h-4 accent-black">
-                                <span class="font-cyber font-extrabold text-xs uppercase">Aktifkan Pilihan Varian Produk ala Shopee (Multi-Negara / Multi-Paket)</span>
-                            </label>
-                            <span id="variantModeStatusBadge" class="text-[10px] font-mono font-extrabold bg-white border-2 border-black px-2 py-0.5 uppercase">
-                                PRODUK TUNGGAL
+                        <!-- STATUS LOADING / BADGE GEMINI -->
+                        <div class="flex items-center justify-between bg-neoCyan/30 border-2 border-black px-3.5 py-2">
+                            <span class="font-cyber font-extrabold text-xs uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-robot"></i> Draft Notifikasi Otomatis (AI Gemini)
                             </span>
+                            <span id="prodAiStatusTag" class="text-[10px] font-mono font-black bg-neoYellow border border-black px-2 py-0.5 uppercase">SIAP DIKIRIM</span>
                         </div>
 
-                        <!-- FIELD PRODUK TUNGGAL (JIKA VARIAN NONAKTIF) -->
-                        <div id="singleProductPriceBlock" class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t-2 border-black">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label for="prodPriceInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Harga Normal (Rp) *</label>
-                                <input type="number" id="prodPriceInput" min="0" placeholder="15000" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
+                                <label for="prodAiNotifTitle" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Judul Notifikasi *</label>
+                                <input type="text" id="prodAiNotifTitle" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                             </div>
-                            <div>
-                                <label for="prodDiscountPriceInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Harga Diskon (Opsional)</label>
-                                <input type="number" id="prodDiscountPriceInput" min="0" placeholder="0" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
-                            </div>
-                            <div>
-                                <label for="prodStockInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Stok Tersedia *</label>
-                                <input type="number" id="prodStockInput" min="0" value="10" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
-                            </div>
-                        </div>
 
-                        <!-- FIELD MULTI-VARIAN ALA SHOPEE (JIKA VARIAN AKTIF) -->
-                        <div id="multiVariantBuilderBlock" class="hidden space-y-3 pt-3 border-t-2 border-black">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
-                                <div>
-                                    <label for="prodVariantGroupName" class="block font-cyber font-extrabold text-xs uppercase mb-1">Nama Grup Varian (Contoh: Negara / Paket) *</label>
-                                    <input type="text" id="prodVariantGroupName" value="Negara" placeholder="Contoh: Negara" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-bold">
-                                </div>
-                                <div class="flex justify-end">
-                                    <button type="button" onclick="addVariantRow()" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-3.5 py-2 text-xs uppercase flex items-center gap-1.5">
-                                        <i class="fa-solid fa-plus"></i> Tambah Opsi Varian
+                            <!-- CUSTOM NEO-BRUTALIST SELECT: KATEGORI NOTIF PRODUK AI -->
+                            <div>
+                                <label class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kategori Notifikasi</label>
+                                <div class="neo-select-wrapper" data-neo-select="prodAiNotifType">
+                                    <input type="hidden" id="prodAiNotifType" value="promo">
+                                    <button type="button" onclick="toggleNeoSelect('prodAiNotifType')" class="neo-select-trigger w-full px-3.5 py-2.5 text-xs font-cyber font-extrabold flex items-center justify-between gap-2">
+                                        <span class="neo-select-label flex items-center gap-2 truncate">
+                                            <span class="w-5 h-5 bg-neoYellow border border-black flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid fa-tags"></i></span>
+                                            <span>Promo (promo)</span>
+                                        </span>
+                                        <span class="w-6 h-6 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
+                                            <i class="fa-solid fa-chevron-down text-[10px] neo-select-arrow transition-transform duration-150"></i>
+                                        </span>
                                     </button>
+                                    <div class="neo-select-menu hidden absolute left-0 right-0 top-full mt-1.5 divide-y-2 divide-black">
+                                        <div onclick="pickNeoSelectOption('prodAiNotifType', 'promo', 'Promo (promo)', 'fa-tags', 'bg-neoYellow')" data-value="promo" class="neo-select-option is-selected px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                            <span class="w-5 h-5 bg-neoYellow border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-tags"></i></span>
+                                            <span>Promo (promo)</span>
+                                        </div>
+                                        <div onclick="pickNeoSelectOption('prodAiNotifType', 'info', 'Info (info)', 'fa-circle-info', 'bg-neoCyan')" data-value="info" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                            <span class="w-5 h-5 bg-neoCyan border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-circle-info"></i></span>
+                                            <span>Info (info)</span>
+                                        </div>
+                                        <div onclick="pickNeoSelectOption('prodAiNotifType', 'transaksi', 'Transaksi (transaksi)', 'fa-receipt', 'bg-neoGreen')" data-value="transaksi" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                            <span class="w-5 h-5 bg-neoGreen border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-receipt"></i></span>
+                                            <span>Transaksi (transaksi)</span>
+                                        </div>
+                                        <div onclick="pickNeoSelectOption('prodAiNotifType', 'sistem', 'Sistem (sistem)', 'fa-gear', 'bg-neoPink text-white')" data-value="sistem" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                            <span class="w-5 h-5 bg-neoPink text-white border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-gear"></i></span>
+                                            <span>Sistem (sistem)</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div id="variantRowsContainer" class="space-y-3"></div>
+                        <div>
+                            <label for="prodAiNotifLink" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Link CTA Notifikasi</label>
+                            <input type="text" id="prodAiNotifLink" value="/store" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        </div>
+
+                        <div>
+                            <label for="prodAiNotifMessage" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Isi Pesan Notifikasi *</label>
+                            <textarea id="prodAiNotifMessage" rows="4" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                            <button type="button" onclick="sendGeneratedAiNotif('prod', true)" class="neo-btn bg-neoGreen text-black font-cyber font-extrabold py-3 px-3 text-[11px] uppercase flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-tower-broadcast"></i> <span>Kirim ke Semua User</span>
+                            </button>
+                            <button type="button" onclick="sendGeneratedAiNotif('prod', false)" class="neo-btn bg-neoYellow text-black font-cyber font-extrabold py-3 px-3 text-[11px] uppercase flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-bell"></i> <span>Web Notifikasi Saja</span>
+                            </button>
+                            <button type="button" onclick="copyAiDraftToNotifTab('prod')" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold py-3 px-3 text-[11px] uppercase flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> <span>Buka di Tab Notif</span>
+                            </button>
                         </div>
                     </div>
-
-                    <button type="submit" id="btnSubmitProduct" class="w-full neo-btn bg-neoGreen text-black font-cyber font-extrabold py-3.5 px-5 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i> <span id="btnSubmitProductText">Simpan &amp; Terbitkan Produk</span>
-                    </button>
-                </form>
+                </div>
             </div>
 
             <!-- SUB-PANEL 2: DAFTAR & KELOLA PRODUK -->
@@ -631,7 +814,7 @@
                         </span>
                         Generator Voucher Diskon
                     </h1>
-                    <p class="text-xs font-bold text-black mt-1.5">Buat kode voucher promo persen atau potongan nominal Rupiah untuk dipakai pembeli saat checkout.</p>
+                    <p class="text-xs font-bold text-black mt-1.5">Buat kode voucher promo dan langsung bagikan notifikasi promo yang dirangkai otomatis oleh AI Gemini.</p>
                 </div>
                 <button onclick="loadAdminVouchers()" class="neo-btn bg-white text-black font-cyber font-extrabold px-4 py-2.5 text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
                     <i class="fa-solid fa-rotate-right"></i> Refresh Voucher
@@ -639,7 +822,7 @@
             </div>
 
             <!-- FORM GENERATOR VOUCHER -->
-            <div class="neo-box bg-white overflow-hidden">
+            <div class="neo-box bg-white overflow-visible">
                 <div class="bg-neoYellow border-b-[3px] border-black px-5 py-3 flex items-center justify-between gap-2">
                     <span class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
                         <i class="fa-solid fa-wand-sparkles"></i> Buat Kode Voucher Baru
@@ -656,12 +839,31 @@
                             <input type="text" id="voucherCodeInput" required placeholder="Contoh: NOKOSHEMAT" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-extrabold uppercase focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
                         </div>
 
+                        <!-- CUSTOM NEO-BRUTALIST SELECT: TIPE DISKON VOUCHER -->
                         <div>
-                            <label for="voucherTypeInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Tipe Diskon *</label>
-                            <select id="voucherTypeInput" onchange="toggleVoucherTypeFields()" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
-                                <option value="fixed">Potongan Nominal (Rp)</option>
-                                <option value="percentage">Persentase (%)</option>
-                            </select>
+                            <label class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Tipe Diskon *</label>
+                            <div class="neo-select-wrapper" data-neo-select="voucherTypeInput">
+                                <input type="hidden" id="voucherTypeInput" value="fixed">
+                                <button type="button" onclick="toggleNeoSelect('voucherTypeInput')" class="neo-select-trigger w-full px-3.5 py-2.5 text-xs font-cyber font-extrabold flex items-center justify-between gap-2">
+                                    <span class="neo-select-label flex items-center gap-2 truncate">
+                                        <span class="w-5 h-5 bg-neoGreen border border-black flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid fa-rupiah-sign"></i></span>
+                                        <span>Potongan Nominal (Rp)</span>
+                                    </span>
+                                    <span class="w-6 h-6 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-chevron-down text-[10px] neo-select-arrow transition-transform duration-150"></i>
+                                    </span>
+                                </button>
+                                <div class="neo-select-menu hidden absolute left-0 right-0 top-full mt-1.5 divide-y-2 divide-black">
+                                    <div onclick="pickNeoSelectOption('voucherTypeInput', 'fixed', 'Potongan Nominal (Rp)', 'fa-rupiah-sign', 'bg-neoGreen'); toggleVoucherTypeFields();" data-value="fixed" class="neo-select-option is-selected px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-neoGreen border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-rupiah-sign"></i></span>
+                                        <span>Potongan Nominal (Rp)</span>
+                                    </div>
+                                    <div onclick="pickNeoSelectOption('voucherTypeInput', 'percentage', 'Persentase (%)', 'fa-percent', 'bg-neoYellow'); toggleVoucherTypeFields();" data-value="percentage" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-neoYellow border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-percent"></i></span>
+                                        <span>Persentase (%)</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div>
@@ -670,22 +872,200 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label for="voucherQuotaInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kuota Pemakaian *</label>
-                            <input type="number" id="voucherQuotaInput" required min="1" value="50" placeholder="50" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                    <div>
+                        <label for="voucherQuotaInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kuota Pemakaian *</label>
+                        <input type="number" id="voucherQuotaInput" required min="1" value="50" placeholder="50" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                    </div>
+
+                    <!-- MASA BERLAKU VOUCHER (MOMENT-TIMEZONE ASIA/JAKARTA + NEO-BRUTALIST SELECT) -->
+                    <div class="neo-box p-4 bg-neoBg space-y-3.5 overflow-visible">
+                        <div class="flex items-center gap-2 font-cyber font-extrabold text-xs uppercase">
+                            <i class="fa-regular fa-clock"></i>
+                            <span>WAKTU EXPIRED VOUCHER (WIB / ASIA/JAKARTA)</span>
                         </div>
 
-                        <div>
-                            <label for="voucherExpiredInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Masa Berlaku Hingga (WIB) *</label>
-                            <input type="datetime-local" id="voucherExpiredInput" required class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        <div class="flex items-center gap-2.5">
+                            <button type="button" id="btnVoucherExpiryAuto" onclick="setVoucherExpiryMode('auto')" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-4 py-2 text-xs uppercase">
+                                OTOMATIS
+                            </button>
+                            <button type="button" id="btnVoucherExpiryCustom" onclick="setVoucherExpiryMode('custom')" class="neo-btn bg-white text-black font-cyber font-extrabold px-4 py-2 text-xs uppercase">
+                                ATUR SENDIRI
+                            </button>
                         </div>
+
+                        <!-- PANEL 1: MODE OTOMATIS -->
+                        <div id="voucherExpiryAutoPanel" class="flex flex-wrap items-center gap-2 pt-1">
+                            <button type="button" data-preset="1h" onclick="selectVoucherAutoPreset('1h')" class="voucher-preset-btn neo-btn bg-white text-black font-cyber font-extrabold px-3.5 py-2 text-xs">+1 Jam</button>
+                            <button type="button" data-preset="6h" onclick="selectVoucherAutoPreset('6h')" class="voucher-preset-btn neo-btn bg-white text-black font-cyber font-extrabold px-3.5 py-2 text-xs">+6 Jam</button>
+                            <button type="button" data-preset="12h" onclick="selectVoucherAutoPreset('12h')" class="voucher-preset-btn neo-btn bg-white text-black font-cyber font-extrabold px-3.5 py-2 text-xs">+12 Jam</button>
+                            <button type="button" data-preset="24h" onclick="selectVoucherAutoPreset('24h')" class="voucher-preset-btn neo-btn bg-neoYellow text-black font-cyber font-extrabold px-3.5 py-2 text-xs">+24 Jam (Default)</button>
+                            <button type="button" data-preset="3d" onclick="selectVoucherAutoPreset('3d')" class="voucher-preset-btn neo-btn bg-white text-black font-cyber font-extrabold px-3.5 py-2 text-xs">+3 Hari</button>
+                            <button type="button" data-preset="7d" onclick="selectVoucherAutoPreset('7d')" class="voucher-preset-btn neo-btn bg-white text-black font-cyber font-extrabold px-3.5 py-2 text-xs">+7 Hari</button>
+                        </div>
+
+                        <!-- PANEL 2: MODE ATUR SENDIRI (CUSTOM NEO-BRUTALIST SELECT) -->
+                        <div id="voucherExpiryCustomPanel" class="hidden grid grid-cols-2 gap-3 pt-1">
+                            <!-- TANGGAL -->
+                            <div>
+                                <label class="block font-cyber font-extrabold text-[11px] uppercase mb-1">TANGGAL</label>
+                                <div class="neo-select-wrapper" data-neo-select="voucherCustomDay">
+                                    <input type="hidden" id="voucherCustomDay" value="01">
+                                    <button type="button" onclick="toggleNeoSelect('voucherCustomDay')" class="neo-select-trigger w-full px-3 py-2 text-xs font-mono font-extrabold flex items-center justify-between gap-1">
+                                        <span class="neo-select-label truncate">01</span>
+                                        <span class="w-5 h-5 bg-neoYellow border border-black flex items-center justify-center shrink-0">
+                                            <i class="fa-solid fa-chevron-down text-[9px] neo-select-arrow transition-transform duration-150"></i>
+                                        </span>
+                                    </button>
+                                    <div id="voucherCustomDayOptions" class="neo-select-menu hidden absolute left-0 right-0 top-full mt-1 max-h-48 overflow-y-auto divide-y divide-black"></div>
+                                </div>
+                            </div>
+
+                            <!-- BULAN -->
+                            <div>
+                                <label class="block font-cyber font-extrabold text-[11px] uppercase mb-1">BULAN</label>
+                                <div class="neo-select-wrapper" data-neo-select="voucherCustomMonth">
+                                    <input type="hidden" id="voucherCustomMonth" value="01">
+                                    <button type="button" onclick="toggleNeoSelect('voucherCustomMonth')" class="neo-select-trigger w-full px-3 py-2 text-xs font-mono font-extrabold flex items-center justify-between gap-1">
+                                        <span class="neo-select-label truncate">01 - Januari</span>
+                                        <span class="w-5 h-5 bg-neoYellow border border-black flex items-center justify-center shrink-0">
+                                            <i class="fa-solid fa-chevron-down text-[9px] neo-select-arrow transition-transform duration-150"></i>
+                                        </span>
+                                    </button>
+                                    <div id="voucherCustomMonthOptions" class="neo-select-menu hidden absolute left-0 right-0 top-full mt-1 max-h-48 overflow-y-auto divide-y divide-black"></div>
+                                </div>
+                            </div>
+
+                            <!-- TAHUN -->
+                            <div>
+                                <label class="block font-cyber font-extrabold text-[11px] uppercase mb-1">TAHUN</label>
+                                <div class="neo-select-wrapper" data-neo-select="voucherCustomYear">
+                                    <input type="hidden" id="voucherCustomYear" value="2026">
+                                    <button type="button" onclick="toggleNeoSelect('voucherCustomYear')" class="neo-select-trigger w-full px-3 py-2 text-xs font-mono font-extrabold flex items-center justify-between gap-1">
+                                        <span class="neo-select-label truncate">2026</span>
+                                        <span class="w-5 h-5 bg-neoYellow border border-black flex items-center justify-center shrink-0">
+                                            <i class="fa-solid fa-chevron-down text-[9px] neo-select-arrow transition-transform duration-150"></i>
+                                        </span>
+                                    </button>
+                                    <div id="voucherCustomYearOptions" class="neo-select-menu hidden absolute left-0 right-0 top-full mt-1 max-h-48 overflow-y-auto divide-y divide-black"></div>
+                                </div>
+                            </div>
+
+                            <!-- JAM (WIB) -->
+                            <div>
+                                <label for="voucherCustomTime" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">JAM (WIB)</label>
+                                <input type="time" id="voucherCustomTime" onchange="updateVoucherExpiryPreview()" oninput="updateVoucherExpiryPreview()" class="w-full bg-white border-[3px] border-black px-3 py-2 text-xs font-mono font-extrabold shadow-[4px_4px_0px_#000] focus:outline-none">
+                            </div>
+                        </div>
+
+                        <!-- TARGET KEDALUWARSA PREVIEW -->
+                        <div class="bg-white border-2 border-black p-3 shadow-[3px_3px_0px_#000]">
+                            <div class="text-[10px] font-mono font-extrabold text-slate-600 uppercase">TARGET KEDALUWARSA (WIB):</div>
+                            <div id="voucherExpiryPreviewText" class="text-xs sm:text-sm font-mono font-extrabold text-black mt-1">
+                                Memuat waktu WIB...
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="voucherExpiredInput" required>
                     </div>
 
                     <button type="submit" id="btnSubmitVoucher" class="w-full neo-btn bg-neoCyan text-black font-cyber font-extrabold py-3.5 px-5 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
                         <i class="fa-solid fa-ticket"></i> <span>Generate &amp; Aktifkan Voucher</span>
                     </button>
                 </form>
+            </div>
+
+            <!-- PANEL HASIL PEMBUATAN VOUCHER + AUTO-GENERATED NOTIFIKASI AI GEMINI -->
+            <div id="voucherResultAiPanel" class="hidden neo-box bg-white overflow-visible">
+                <div class="bg-neoYellow border-b-[3px] border-black px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+                    <span class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i> Hasil Voucher &amp; Auto-Notifikasi AI Gemini
+                    </span>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="regenerateVoucherAiNotif()" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-3 py-1 text-[10px] uppercase flex items-center gap-1">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate Ulang AI
+                        </button>
+                        <button type="button" onclick="document.getElementById('voucherResultAiPanel').classList.add('hidden')" class="neo-btn bg-white text-black font-cyber font-extrabold px-2.5 py-1 text-[10px] uppercase">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-5 space-y-4">
+                    <!-- RINGKASAN VOUCHER YANG BARU DIBUAT -->
+                    <div id="voucherCreatedSummaryBox" class="bg-neoBg border-[2.5px] border-black p-3.5 shadow-[3px_3px_0px_#000]"></div>
+
+                    <!-- STATUS LOADING / BADGE GEMINI -->
+                    <div class="flex items-center justify-between bg-neoGreen/30 border-2 border-black px-3.5 py-2">
+                        <span class="font-cyber font-extrabold text-xs uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-robot"></i> Draft Notifikasi Promo Voucher (AI Gemini)
+                        </span>
+                        <span id="voucherAiStatusTag" class="text-[10px] font-mono font-black bg-neoYellow border border-black px-2 py-0.5 uppercase">SIAP DIKIRIM</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="voucherAiNotifTitle" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Judul Notifikasi *</label>
+                            <input type="text" id="voucherAiNotifTitle" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        </div>
+
+                        <!-- CUSTOM NEO-BRUTALIST SELECT: KATEGORI NOTIF VOUCHER AI -->
+                        <div>
+                            <label class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kategori Notifikasi</label>
+                            <div class="neo-select-wrapper" data-neo-select="voucherAiNotifType">
+                                <input type="hidden" id="voucherAiNotifType" value="promo">
+                                <button type="button" onclick="toggleNeoSelect('voucherAiNotifType')" class="neo-select-trigger w-full px-3.5 py-2.5 text-xs font-cyber font-extrabold flex items-center justify-between gap-2">
+                                    <span class="neo-select-label flex items-center gap-2 truncate">
+                                        <span class="w-5 h-5 bg-neoYellow border border-black flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid fa-tags"></i></span>
+                                        <span>Promo (promo)</span>
+                                    </span>
+                                    <span class="w-6 h-6 bg-neoYellow border-2 border-black flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-chevron-down text-[10px] neo-select-arrow transition-transform duration-150"></i>
+                                    </span>
+                                </button>
+                                <div class="neo-select-menu hidden absolute left-0 right-0 top-full mt-1.5 divide-y-2 divide-black">
+                                    <div onclick="pickNeoSelectOption('voucherAiNotifType', 'promo', 'Promo (promo)', 'fa-tags', 'bg-neoYellow')" data-value="promo" class="neo-select-option is-selected px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-neoYellow border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-tags"></i></span>
+                                        <span>Promo (promo)</span>
+                                    </div>
+                                    <div onclick="pickNeoSelectOption('voucherAiNotifType', 'info', 'Info (info)', 'fa-circle-info', 'bg-neoCyan')" data-value="info" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-neoCyan border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-circle-info"></i></span>
+                                        <span>Info (info)</span>
+                                    </div>
+                                    <div onclick="pickNeoSelectOption('voucherAiNotifType', 'transaksi', 'Transaksi (transaksi)', 'fa-receipt', 'bg-neoGreen')" data-value="transaksi" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-neoGreen border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-receipt"></i></span>
+                                        <span>Transaksi (transaksi)</span>
+                                    </div>
+                                    <div onclick="pickNeoSelectOption('voucherAiNotifType', 'sistem', 'Sistem (sistem)', 'fa-gear', 'bg-neoPink text-white')" data-value="sistem" class="neo-select-option px-3.5 py-2.5 text-xs font-cyber font-bold flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-neoPink text-white border border-black flex items-center justify-center text-[10px]"><i class="fa-solid fa-gear"></i></span>
+                                        <span>Sistem (sistem)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="voucherAiNotifLink" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Link CTA Notifikasi</label>
+                        <input type="text" id="voucherAiNotifLink" value="/store" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                    </div>
+
+                    <div>
+                        <label for="voucherAiNotifMessage" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Isi Pesan Notifikasi *</label>
+                        <textarea id="voucherAiNotifMessage" rows="4" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                        <button type="button" onclick="sendGeneratedAiNotif('voucher', true)" class="neo-btn bg-neoGreen text-black font-cyber font-extrabold py-3 px-3 text-[11px] uppercase flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-tower-broadcast"></i> <span>Kirim ke Semua User</span>
+                        </button>
+                        <button type="button" onclick="sendGeneratedAiNotif('voucher', false)" class="neo-btn bg-neoYellow text-black font-cyber font-extrabold py-3 px-3 text-[11px] uppercase flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-bell"></i> <span>Web Notifikasi Saja</span>
+                        </button>
+                        <button type="button" onclick="copyAiDraftToNotifTab('voucher')" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold py-3 px-3 text-[11px] uppercase flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> <span>Buka di Tab Notif</span>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- DAFTAR VOUCHER AKTIF -->
@@ -707,9 +1087,9 @@
     <!-- ======================================================= -->
     <!-- MODAL LIGHTBOX PEMBESAR GAMBAR BUKTI TRANSFER           -->
     <!-- ======================================================= -->
-    <div id="proofLightboxModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6">
-        <div class="neo-box bg-neoBg w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden">
-            <div class="bg-neoYellow border-b-[3px] border-black px-4 py-3 flex items-center justify-between gap-2 shrink-0">
+    <div id="proofLightboxModal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-xs flex items-center justify-center p-2 sm:p-6">
+        <div class="neo-box bg-neoBg w-full max-w-4xl max-h-[94vh] flex flex-col overflow-hidden">
+            <div class="bg-neoYellow border-b-[3px] border-black px-3 sm:px-4 py-2.5 flex items-center justify-between gap-2 shrink-0">
                 <div class="flex items-center gap-2 min-w-0">
                     <span class="w-7 h-7 bg-black text-neoYellow border-2 border-black flex items-center justify-center text-xs shrink-0">
                         <i class="fa-solid fa-magnifying-glass-plus"></i>
@@ -718,11 +1098,11 @@
                         Bukti Pembayaran
                     </span>
                 </div>
-                <div class="flex items-center gap-2 shrink-0">
-                    <button type="button" onclick="toggleLightboxZoom()" id="btnLightboxZoom" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-3 py-1.5 text-[11px] uppercase flex items-center gap-1.5">
-                        <i class="fa-solid fa-magnifying-glass-plus"></i> <span>Perbesar 2x</span>
+                <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    <button type="button" onclick="cycleLightboxZoom()" id="btnLightboxZoom" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-2.5 sm:px-3 py-1.5 text-[11px] uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i> <span>2X</span>
                     </button>
-                    <a id="btnLightboxDownload" href="#" download="bukti-transfer.png" class="neo-btn bg-neoGreen text-black font-cyber font-extrabold px-3 py-1.5 text-[11px] uppercase flex items-center gap-1.5">
+                    <a id="btnLightboxDownload" href="#" download="bukti-transfer.png" class="neo-btn bg-neoGreen text-black font-cyber font-extrabold px-2.5 sm:px-3 py-1.5 text-[11px] uppercase flex items-center gap-1.5">
                         <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Unduh</span>
                     </a>
                     <button type="button" onclick="closeProofLightbox()" class="neo-btn bg-neoPink text-white font-cyber font-extrabold px-3 py-1.5 text-xs uppercase">
@@ -731,8 +1111,13 @@
                 </div>
             </div>
 
-            <div id="lightboxScrollArea" class="flex-1 overflow-auto p-4 bg-neutral-900 flex items-center justify-center min-h-[320px]">
-                <img id="lightboxImage" src="" alt="Bukti Transfer Full" onclick="toggleLightboxZoom()" class="max-h-[75vh] w-auto object-contain border-[3px] border-white shadow-[0_0_25px_rgba(0,0,0,0.7)] cursor-zoom-in transition-transform duration-200">
+            <div class="bg-black text-white px-3 py-1.5 flex items-center justify-between text-[10px] font-mono border-b-2 border-black shrink-0">
+                <span><i class="fa-solid fa-hand-pointer text-neoYellow mr-1"></i> Ketuk gambar untuk ubah zoom (1X → 2X → 3X → 4X) atau cubit layar</span>
+                <span id="lightboxZoomLevelBadge" class="bg-neoYellow text-black px-2 py-0.5 font-extrabold">ZOOM: 1X</span>
+            </div>
+
+            <div id="lightboxScrollArea" class="flex-1 overflow-auto p-3 sm:p-4 bg-neutral-900 flex items-center justify-center min-h-[340px]">
+                <img id="lightboxImage" src="" alt="Bukti Transfer Full" onclick="cycleLightboxZoom()" class="max-h-[74vh] w-auto object-contain border-[3px] border-white shadow-[0_0_25px_rgba(0,0,0,0.7)] cursor-zoom-in transition-all duration-150 select-none">
             </div>
         </div>
     </div>
@@ -743,35 +1128,30 @@
     <div class="fixed bottom-0 left-0 right-0 z-40 bg-neoBg border-t-[3px] border-black shadow-[0_-4px_0_rgba(0,0,0,0.08)]">
         <div class="max-w-6xl mx-auto px-2 sm:px-3 py-2">
             <div class="grid grid-cols-5 gap-1.5 sm:gap-2.5">
-                <!-- TAB 1: DEPOSIT QRIS -->
                 <button id="tabBtnDeposits" onclick="switchAdminTab('deposits')" class="tab-btn active neo-btn bg-white text-black font-cyber font-extrabold py-2 px-1.5 sm:px-3 text-[9.5px] sm:text-xs uppercase flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5">
                     <i class="fa-solid fa-qrcode text-xs sm:text-sm"></i>
                     <span class="truncate">QRIS</span>
                     <span id="pendingDepositBadge" class="bg-neoPink text-white border border-black font-mono font-black text-[9px] px-1 py-0.2 shrink-0">0</span>
                 </button>
 
-                <!-- TAB 2: LIVE CHAT CS -->
                 <button id="tabBtnChat" onclick="switchAdminTab('chat')" class="tab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2 px-1.5 sm:px-3 text-[9.5px] sm:text-xs uppercase flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5">
                     <i class="fa-solid fa-headset text-xs sm:text-sm"></i>
                     <span class="truncate">Chat</span>
                     <span id="unreadChatBadge" class="bg-neoGreen text-black border border-black font-mono font-black text-[9px] px-1 py-0.2 shrink-0">0</span>
                 </button>
 
-                <!-- TAB 3: NOTIFIKASI -->
                 <button id="tabBtnNotifications" onclick="switchAdminTab('notifications')" class="tab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2 px-1.5 sm:px-3 text-[9.5px] sm:text-xs uppercase flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5">
                     <i class="fa-solid fa-bell text-xs sm:text-sm"></i>
                     <span class="truncate">Notif</span>
                     <span id="totalNotifBadge" class="bg-neoCyan text-black border border-black font-mono font-black text-[9px] px-1 py-0.2 shrink-0">0</span>
                 </button>
 
-                <!-- TAB 4: PRODUK & VARIAN -->
                 <button id="tabBtnProducts" onclick="switchAdminTab('products')" class="tab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2 px-1.5 sm:px-3 text-[9.5px] sm:text-xs uppercase flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5">
                     <i class="fa-solid fa-boxes-stacked text-xs sm:text-sm"></i>
                     <span class="truncate">Produk</span>
                     <span id="totalProdBadge" class="bg-neoPurple text-black border border-black font-mono font-black text-[9px] px-1 py-0.2 shrink-0">0</span>
                 </button>
 
-                <!-- TAB 5: VOUCHER -->
                 <button id="tabBtnVouchers" onclick="switchAdminTab('vouchers')" class="tab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2 px-1.5 sm:px-3 text-[9.5px] sm:text-xs uppercase flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5">
                     <i class="fa-solid fa-ticket text-xs sm:text-sm"></i>
                     <span class="truncate">Voucher</span>
@@ -782,9 +1162,13 @@
     </div>
 
     <!-- ======================================================= -->
-    <!-- SCRIPT ADMIN PANEL (QRIS, CHAT, NOTIF, PRODUK, VOUCHER) -->
+    <!-- SCRIPT ADMIN PANEL (NEO SELECT, AI GEMINI, DLL)         -->
     <!-- ======================================================= -->
     <script>
+        if (typeof moment !== 'undefined') {
+            moment.locale('id');
+        }
+
         let allDepositsData = [];
         let currentDepositFilter = 'all';
         let selectedUserEmail = null;
@@ -794,7 +1178,17 @@
         let allAdminNotifications = [];
         let allAdminProducts = [];
         let allAdminVouchers = [];
-        let isLightboxZoomed = false;
+
+        // State Produk & Voucher terakhir dibuat untuk Regenerate AI Gemini
+        let lastCreatedProductData = null;
+        let lastCreatedVoucherData = null;
+
+        // Zoom Lightbox State
+        let lightboxZoomScale = 1;
+
+        // Voucher Expiry State (Asia/Jakarta)
+        let voucherExpiryMode = 'auto';
+        let voucherAutoPreset = '24h';
 
         function formatRupiah(num) {
             return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
@@ -819,8 +1213,273 @@
         }
 
         // ============================================================
-        // LIGHTBOX MODAL PEMBESAR GAMBAR BUKTI TRANSFER (ANTI-ERROR DATA URL)
+        // CUSTOM NEO-BRUTALIST SELECT ENGINE
         // ============================================================
+        function closeAllNeoSelects(exceptId = null) {
+            document.querySelectorAll('.neo-select-wrapper').forEach(wrapper => {
+                const id = wrapper.getAttribute('data-neo-select');
+                if (exceptId && id === exceptId) return;
+                const trigger = wrapper.querySelector('.neo-select-trigger');
+                const menu = wrapper.querySelector('.neo-select-menu');
+                const arrow = wrapper.querySelector('.neo-select-arrow');
+                if (menu) menu.classList.add('hidden');
+                if (trigger) trigger.classList.remove('is-open');
+                if (arrow) arrow.classList.remove('rotate-180');
+            });
+        }
+
+        function toggleNeoSelect(selectId) {
+            const wrapper = document.querySelector(`.neo-select-wrapper[data-neo-select="${selectId}"]`);
+            if (!wrapper) return;
+            const trigger = wrapper.querySelector('.neo-select-trigger');
+            const menu = wrapper.querySelector('.neo-select-menu');
+            const arrow = wrapper.querySelector('.neo-select-arrow');
+            const willOpen = menu.classList.contains('hidden');
+
+            closeAllNeoSelects(selectId);
+
+            if (willOpen) {
+                menu.classList.remove('hidden');
+                if (trigger) trigger.classList.add('is-open');
+                if (arrow) arrow.classList.add('rotate-180');
+            } else {
+                menu.classList.add('hidden');
+                if (trigger) trigger.classList.remove('is-open');
+                if (arrow) arrow.classList.remove('rotate-180');
+            }
+        }
+
+        function pickNeoSelectOption(selectId, value, labelText, iconClass = null, badgeBgClass = null, silentCallback = false) {
+            const wrapper = document.querySelector(`.neo-select-wrapper[data-neo-select="${selectId}"]`);
+            if (!wrapper) return;
+            const hiddenInput = document.getElementById(selectId);
+            const labelContainer = wrapper.querySelector('.neo-select-label');
+            const trigger = wrapper.querySelector('.neo-select-trigger');
+            const menu = wrapper.querySelector('.neo-select-menu');
+            const arrow = wrapper.querySelector('.neo-select-arrow');
+
+            if (hiddenInput) hiddenInput.value = value;
+
+            if (labelContainer) {
+                if (iconClass && badgeBgClass) {
+                    labelContainer.innerHTML = `
+                        <span class="w-5 h-5 ${badgeBgClass} border border-black flex items-center justify-center text-[10px] shrink-0"><i class="fa-solid ${iconClass}"></i></span>
+                        <span class="truncate">${escapeHtml(labelText)}</span>`;
+                } else {
+                    labelContainer.textContent = labelText;
+                }
+            }
+
+            wrapper.querySelectorAll('.neo-select-option').forEach(opt => {
+                opt.classList.toggle('is-selected', opt.getAttribute('data-value') === String(value));
+            });
+
+            if (menu) menu.classList.add('hidden');
+            if (trigger) trigger.classList.remove('is-open');
+            if (arrow) arrow.classList.remove('rotate-180');
+
+            if (!silentCallback && (selectId === 'voucherCustomDay' || selectId === 'voucherCustomMonth' || selectId === 'voucherCustomYear')) {
+                updateVoucherExpiryPreview();
+            }
+        }
+
+        function setNotifCategoryNeoSelect(selectId, typeValue) {
+            const map = {
+                info: { label: 'Info (info)', icon: 'fa-circle-info', bg: 'bg-neoCyan' },
+                promo: { label: 'Promo (promo)', icon: 'fa-tags', bg: 'bg-neoYellow' },
+                transaksi: { label: 'Transaksi (transaksi)', icon: 'fa-receipt', bg: 'bg-neoGreen' },
+                sistem: { label: 'Sistem (sistem)', icon: 'fa-gear', bg: 'bg-neoPink text-white' }
+            };
+            const cfg = map[String(typeValue || 'promo').toLowerCase()] || map.promo;
+            pickNeoSelectOption(selectId, String(typeValue || 'promo').toLowerCase(), cfg.label, cfg.icon, cfg.bg, true);
+        }
+
+        // ============================================================
+        // AI GEMINI AUTO-GENERATED NOTIFIKASI PRODUK & VOUCHER
+        // ============================================================
+        async function generateAiNotificationDraft(kind, itemData) {
+            const isProduct = kind === 'prod';
+            const statusTag = document.getElementById(isProduct ? 'prodAiStatusTag' : 'voucherAiStatusTag');
+            const titleEl = document.getElementById(isProduct ? 'prodAiNotifTitle' : 'voucherAiNotifTitle');
+            const msgEl = document.getElementById(isProduct ? 'prodAiNotifMessage' : 'voucherAiNotifMessage');
+            const linkEl = document.getElementById(isProduct ? 'prodAiNotifLink' : 'voucherAiNotifLink');
+            const typeSelectId = isProduct ? 'prodAiNotifType' : 'voucherAiNotifType';
+
+            if (statusTag) {
+                statusTag.textContent = 'AI GEMINI MERANGKAI...';
+                statusTag.className = 'text-[10px] font-mono font-black bg-neoCyan border border-black px-2 py-0.5 uppercase animate-pulse';
+            }
+            if (titleEl) titleEl.value = 'Sedang membuat judul otomatis dengan AI Gemini...';
+            if (msgEl) msgEl.value = 'AI Gemini sedang menyusun pesan promosi menarik dalam Bahasa Indonesia...';
+
+            try {
+                const res = await fetch('/api/admin/generate-notif-ai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        entityType: isProduct ? 'product' : 'voucher',
+                        data: itemData
+                    })
+                });
+                const result = await res.json();
+                if (!res.ok || !result.success) {
+                    throw new Error(result.message || 'Gagal memanggil AI Gemini');
+                }
+
+                const draft = result.draft || {};
+                if (titleEl) titleEl.value = draft.title || '';
+                if (msgEl) msgEl.value = draft.message || '';
+                if (linkEl) linkEl.value = draft.link || '/store';
+                setNotifCategoryNeoSelect(typeSelectId, draft.type || 'promo');
+
+                if (statusTag) {
+                    statusTag.textContent = result.source === 'gemini' ? 'GENERATED BY GEMINI AI' : 'AUTO TEMPLATE';
+                    statusTag.className = 'text-[10px] font-mono font-black bg-neoGreen border border-black px-2 py-0.5 uppercase';
+                }
+            } catch (err) {
+                console.error('generateAiNotificationDraft Error:', err);
+                // Fallback lokal jika koneksi Gemini bermasalah
+                if (isProduct) {
+                    const priceText = itemData.variants && itemData.variants.length > 0
+                        ? `mulai ${formatRupiah(Math.min(...itemData.variants.map(v => Number(v.harga_diskon || v.harga || 0))))}`
+                        : formatRupiah(itemData.harga_diskon || itemData.harga || 0);
+                    if (titleEl) titleEl.value = `🔥 Produk Baru: ${itemData.nama} Sudah Tersedia!`;
+                    if (msgEl) msgEl.value = `Halo Sobat ArulzXD Store! Produk baru "${itemData.nama}" (${itemData.kategori}) kini sudah siap diorder dengan harga ${priceText}. Stok terbatas, yuk langsung checkout sekarang sebelum kehabisan!`;
+                } else {
+                    const discLabel = itemData.type === 'percentage'
+                        ? `${itemData.discount}%`
+                        : formatRupiah(itemData.discount);
+                    if (titleEl) titleEl.value = `🎟️ Klaim Kode Voucher ${itemData.code} Diskon ${discLabel}!`;
+                    if (msgEl) msgEl.value = `Kabar gembira! Gunakan kode promo "${itemData.code}" saat checkout untuk mendapatkan potongan spesial ${discLabel}. Kuota terbatas hanya untuk ${itemData.usageLimit} pengguna tercepat!`;
+                }
+                setNotifCategoryNeoSelect(typeSelectId, 'promo');
+                if (statusTag) {
+                    statusTag.textContent = 'FALLBACK READY';
+                    statusTag.className = 'text-[10px] font-mono font-black bg-neoYellow border border-black px-2 py-0.5 uppercase';
+                }
+            }
+        }
+
+        function regenerateProductAiNotif() {
+            if (!lastCreatedProductData) return;
+            generateAiNotificationDraft('prod', lastCreatedProductData);
+        }
+
+        function regenerateVoucherAiNotif() {
+            if (!lastCreatedVoucherData) return;
+            generateAiNotificationDraft('voucher', lastCreatedVoucherData);
+        }
+
+        async function sendGeneratedAiNotif(kind, sendExternal) {
+            const isProduct = kind === 'prod';
+            const title = document.getElementById(isProduct ? 'prodAiNotifTitle' : 'voucherAiNotifTitle')?.value.trim();
+            const type = document.getElementById(isProduct ? 'prodAiNotifType' : 'voucherAiNotifType')?.value || 'promo';
+            const link = document.getElementById(isProduct ? 'prodAiNotifLink' : 'voucherAiNotifLink')?.value.trim() || '/store';
+            const message = document.getElementById(isProduct ? 'prodAiNotifMessage' : 'voucherAiNotifMessage')?.value.trim();
+
+            if (!title || !message) {
+                Swal.fire({
+                    title: 'Data Belum Lengkap',
+                    text: 'Judul dan isi pesan notifikasi tidak boleh kosong.',
+                    icon: 'warning',
+                    customClass: { popup: 'cyber-swal' }
+                });
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/admin/notifications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title,
+                        type,
+                        targetEmail: '',
+                        link,
+                        message,
+                        sendExternal,
+                        deliveryMode: sendExternal ? 'broadcast' : 'web_only'
+                    })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal mengirim notifikasi');
+
+                Swal.fire({
+                    title: 'Notifikasi Terkirim!',
+                    text: data.message || 'Notifikasi berhasil dipublikasikan.',
+                    icon: 'success',
+                    customClass: { popup: 'cyber-swal' }
+                });
+                loadAdminNotifications();
+            } catch (err) {
+                Swal.fire({
+                    title: 'Error',
+                    text: err.message,
+                    icon: 'error',
+                    customClass: { popup: 'cyber-swal' }
+                });
+            }
+        }
+
+        function copyAiDraftToNotifTab(kind) {
+            const isProduct = kind === 'prod';
+            const title = document.getElementById(isProduct ? 'prodAiNotifTitle' : 'voucherAiNotifTitle')?.value || '';
+            const type = document.getElementById(isProduct ? 'prodAiNotifType' : 'voucherAiNotifType')?.value || 'promo';
+            const link = document.getElementById(isProduct ? 'prodAiNotifLink' : 'voucherAiNotifLink')?.value || '/store';
+            const message = document.getElementById(isProduct ? 'prodAiNotifMessage' : 'voucherAiNotifMessage')?.value || '';
+
+            switchAdminTab('notifications');
+            switchNotifSubTab('add');
+
+            document.getElementById('addNotifTitle').value = title;
+            document.getElementById('addNotifLink').value = link;
+            document.getElementById('addNotifMessage').value = message;
+            setNotifCategoryNeoSelect('addNotifType', type);
+        }
+
+        // ============================================================
+        // LIGHTBOX MODAL PEMBESAR GAMBAR BUKTI TRANSFER (2X, 3X, 4X)
+        // ============================================================
+        function applyLightboxZoomStyles() {
+            const imgEl = document.getElementById('lightboxImage');
+            const scrollArea = document.getElementById('lightboxScrollArea');
+            const zoomBtn = document.getElementById('btnLightboxZoom');
+            const levelBadge = document.getElementById('lightboxZoomLevelBadge');
+            if (!imgEl) return;
+
+            const nextScale = lightboxZoomScale >= 4 ? 1 : lightboxZoomScale + 1;
+
+            if (lightboxZoomScale === 1) {
+                imgEl.style.width = '';
+                imgEl.style.maxWidth = '100%';
+                imgEl.style.maxHeight = '74vh';
+                imgEl.classList.remove('cursor-zoom-out');
+                imgEl.classList.add('cursor-zoom-in');
+                if (scrollArea) {
+                    scrollArea.classList.add('items-center', 'justify-center');
+                    scrollArea.classList.remove('items-start', 'justify-start');
+                }
+            } else {
+                const widthPercent = lightboxZoomScale * 100;
+                imgEl.style.maxWidth = 'none';
+                imgEl.style.maxHeight = 'none';
+                imgEl.style.width = `${widthPercent}%`;
+                imgEl.classList.remove('cursor-zoom-in');
+                imgEl.classList.add(lightboxZoomScale === 4 ? 'cursor-zoom-out' : 'cursor-zoom-in');
+                if (scrollArea) {
+                    scrollArea.classList.remove('items-center', 'justify-center');
+                    scrollArea.classList.add('items-start', 'justify-start');
+                }
+            }
+
+            if (levelBadge) levelBadge.textContent = `ZOOM: ${lightboxZoomScale}X`;
+            if (zoomBtn) {
+                zoomBtn.innerHTML = nextScale === 1
+                    ? '<i class="fa-solid fa-magnifying-glass-minus"></i> <span>Reset 1X</span>'
+                    : `<i class="fa-solid fa-magnifying-glass-plus"></i> <span>${nextScale}X</span>`;
+            }
+        }
+
         function openProofLightbox(orderId) {
             const dep = allDepositsData.find(d => String(d.orderId) === String(orderId));
             const proofSrc = dep ? (dep.proofImage || dep.proofUrl || '') : '';
@@ -839,48 +1498,38 @@
             const titleEl = document.getElementById('lightboxModalTitle');
             const dlBtn = document.getElementById('btnLightboxDownload');
 
-            isLightboxZoomed = false;
+            lightboxZoomScale = 1;
             imgEl.src = proofSrc;
-            imgEl.className = 'max-h-[75vh] w-auto object-contain border-[3px] border-white shadow-[0_0_25px_rgba(0,0,0,0.7)] cursor-zoom-in transition-all duration-200';
-            titleEl.textContent = `Bukti Transfer • ${dep.orderId || ''}`;
+            applyLightboxZoomStyles();
+
+            titleEl.textContent = `Bukti • ${dep.orderId || ''}`;
             dlBtn.href = proofSrc;
             dlBtn.download = `bukti-${dep.orderId || 'deposit'}.png`;
-
-            const zoomBtn = document.getElementById('btnLightboxZoom');
-            if (zoomBtn) {
-                zoomBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass-plus"></i> <span>Perbesar 2x</span>';
-            }
 
             modal.classList.remove('hidden');
         }
 
-        function toggleLightboxZoom() {
-            const imgEl = document.getElementById('lightboxImage');
-            const zoomBtn = document.getElementById('btnLightboxZoom');
-            if (!imgEl) return;
-
-            isLightboxZoomed = !isLightboxZoomed;
-            if (isLightboxZoomed) {
-                imgEl.className = 'max-h-none w-[165%] sm:w-[140%] max-w-none object-contain border-[3px] border-white shadow-[0_0_25px_rgba(0,0,0,0.7)] cursor-zoom-out transition-all duration-200';
-                if (zoomBtn) zoomBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass-minus"></i> <span>Perkecil</span>';
-            } else {
-                imgEl.className = 'max-h-[75vh] w-auto object-contain border-[3px] border-white shadow-[0_0_25px_rgba(0,0,0,0.7)] cursor-zoom-in transition-all duration-200';
-                if (zoomBtn) zoomBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass-plus"></i> <span>Perbesar 2x</span>';
-            }
+        function cycleLightboxZoom() {
+            lightboxZoomScale = lightboxZoomScale >= 4 ? 1 : lightboxZoomScale + 1;
+            applyLightboxZoomStyles();
         }
 
         function closeProofLightbox() {
             const modal = document.getElementById('proofLightboxModal');
             const imgEl = document.getElementById('lightboxImage');
             if (modal) modal.classList.add('hidden');
-            if (imgEl) imgEl.src = '';
-            isLightboxZoomed = false;
+            if (imgEl) {
+                imgEl.src = '';
+                imgEl.style.width = '';
+            }
+            lightboxZoomScale = 1;
         }
 
         // ============================================================
         // NAVIGASI TAB UTAMA ADMIN (5 TAB)
         // ============================================================
         function switchAdminTab(tabName) {
+            closeAllNeoSelects();
             const sections = {
                 deposits: document.getElementById('sectionDeposits'),
                 chat: document.getElementById('sectionChat'),
@@ -902,21 +1551,15 @@
                 if (buttons[key]) buttons[key].classList.toggle('active', key === tabName);
             });
 
-            if (tabName === 'deposits') {
-                loadDepositsQris();
-            } else if (tabName === 'chat') {
-                loadUserList();
-            } else if (tabName === 'notifications') {
-                loadAdminNotifications();
-            } else if (tabName === 'products') {
-                loadAdminProducts();
-            } else if (tabName === 'vouchers') {
-                loadAdminVouchers();
-            }
+            if (tabName === 'deposits') loadDepositsQris();
+            else if (tabName === 'chat') loadUserList();
+            else if (tabName === 'notifications') loadAdminNotifications();
+            else if (tabName === 'products') loadAdminProducts();
+            else if (tabName === 'vouchers') loadAdminVouchers();
         }
 
         // ============================================================
-        // BAGIAN 1: VERIFIKASI DEPOSIT QRIS V2
+        // BAGIAN 1: VERIFIKASI DEPOSIT QRIS V2 & KELOLA HAPUS
         // ============================================================
         function setDepositFilter(status) {
             currentDepositFilter = status;
@@ -992,7 +1635,6 @@
                 const userName = escapeHtml(dep.username || dep.userName || dep.name || 'User');
                 const userEmail = escapeHtml(dep.userEmail || dep.email || '-');
 
-                // Ambil data dari itemDetails (tempat index.js menyimpan harga saldo masuk & fee admin)
                 const itemDetails = dep.itemDetails || {};
                 const rawTotal = Number(dep.amount || 0);
                 const baseSaldo = Number(itemDetails.harga || dep.depositAmount || 0);
@@ -1003,14 +1645,10 @@
 
                 if (itemDetails.fee !== undefined && itemDetails.fee !== null && !isNaN(Number(itemDetails.fee))) {
                     fee = Number(itemDetails.fee);
-                    if (totalPay <= saldoMasuk && fee > 0) {
-                        totalPay = saldoMasuk + fee;
-                    }
+                    if (totalPay <= saldoMasuk && fee > 0) totalPay = saldoMasuk + fee;
                 } else if (dep.fee !== undefined && dep.fee !== null && !isNaN(Number(dep.fee))) {
                     fee = Number(dep.fee);
-                    if (totalPay <= saldoMasuk && fee > 0) {
-                        totalPay = saldoMasuk + fee;
-                    }
+                    if (totalPay <= saldoMasuk && fee > 0) totalPay = saldoMasuk + fee;
                 } else if (rawTotal > saldoMasuk && saldoMasuk > 0) {
                     fee = rawTotal - saldoMasuk;
                     totalPay = rawTotal;
@@ -1021,7 +1659,7 @@
 
                 const status = dep.status || 'pending';
                 const proofUrl = dep.proofImage || dep.proofUrl || '';
-                const createdStr = dep.createdAt ? new Date(dep.createdAt).toLocaleString('id-ID') : '-';
+                const createdStr = dep.createdAt ? moment(dep.createdAt).tz('Asia/Jakarta').format('DD/MM/YYYY, HH.mm') : '-';
 
                 let statusBadge = `<span class="bg-neoYellow border-2 border-black px-2 py-0.5 text-[10px] font-mono font-black uppercase">BELUM UPLOAD</span>`;
                 if (status === 'waiting_verification') {
@@ -1033,16 +1671,10 @@
                 }
 
                 const proofBlock = proofUrl
-                    ? `<div class="border-2 border-black bg-neoBg p-2.5 space-y-2.5">
-                            <div onclick="openProofLightbox('${orderId}')" title="Klik untuk memperbesar gambar bukti" class="relative group cursor-zoom-in overflow-hidden border-2 border-black bg-white">
-                                <img src="${escapeHtml(proofUrl)}" alt="Bukti Transfer ${orderId}" class="w-full h-72 sm:h-80 object-contain bg-white group-hover:scale-[1.02] transition-transform duration-200">
-                                <div class="absolute bottom-2 right-2 bg-neoYellow border-2 border-black px-2.5 py-1 text-[10px] font-cyber font-black uppercase shadow-[2px_2px_0px_#000] flex items-center gap-1">
-                                    <i class="fa-solid fa-magnifying-glass-plus"></i> Klik Perbesar
-                                </div>
+                    ? `<div class="border-2 border-black bg-neoBg p-2">
+                            <div onclick="openProofLightbox('${orderId}')" class="overflow-hidden border-2 border-black bg-white touch-manipulation active:opacity-90">
+                                <img src="${escapeHtml(proofUrl)}" alt="Bukti Transfer ${orderId}" class="w-full h-72 sm:h-80 object-contain bg-white select-none">
                             </div>
-                            <button type="button" onclick="openProofLightbox('${orderId}')" class="w-full neo-btn bg-neoCyan text-black font-cyber font-extrabold py-2 px-3 text-xs uppercase flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-expand"></i> Buka Gambar Ukuran Penuh (Zoom)
-                            </button>
                        </div>`
                     : `<div class="border-2 border-dashed border-black bg-neoBg p-4 text-center text-[11px] font-mono font-bold text-slate-600">
                             User belum mengunggah bukti transfer QRIS.
@@ -1058,9 +1690,14 @@
                                 <i class="fa-solid fa-xmark"></i> Tolak / Batal
                             </button>
                        </div>`
-                    : `<div class="pt-2 border-t-2 border-black text-[11px] font-mono font-bold text-slate-600 flex items-center justify-between">
+                    : `<div class="pt-2 border-t-2 border-black text-[11px] font-mono font-bold text-slate-600 flex items-center justify-between gap-2">
                             <span>Status Final: ${escapeHtml(status.toUpperCase())}</span>
-                            <span>${createdStr}</span>
+                            <div class="flex items-center gap-2">
+                                <span>${createdStr}</span>
+                                <button type="button" onclick="deleteDepositQris('${orderId}')" title="Hapus Riwayat Deposit" class="bg-neoPink text-white border-2 border-black px-2 py-0.5 text-[10px] font-cyber font-extrabold uppercase shadow-[2px_2px_0px_#000] active:translate-x-[1px] active:translate-y-[1px]">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
                        </div>`;
 
                 return `
@@ -1072,7 +1709,10 @@
                                     <div class="text-xs font-extrabold text-black mt-0.5 truncate">${userName}</div>
                                     <div class="text-[11px] font-mono text-slate-700 truncate">${userEmail}</div>
                                 </div>
-                                <div class="shrink-0">${statusBadge}</div>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    ${statusBadge}
+                                    ${canAct ? `<button type="button" onclick="deleteDepositQris('${orderId}')" title="Hapus Data Deposit" class="bg-neoPink text-white border-2 border-black px-2 py-0.5 text-[10px] font-cyber font-extrabold uppercase shadow-[2px_2px_0px_#000]"><i class="fa-solid fa-trash"></i></button>` : ''}
+                                </div>
                             </div>
 
                             <div class="grid grid-cols-3 gap-2 bg-neoBg border-2 border-black p-2.5 text-center">
@@ -1096,6 +1736,83 @@
                         ${actionButtons}
                     </div>`;
             }).join('');
+        }
+
+        async function deleteDepositQris(orderId) {
+            const confirmRes = await Swal.fire({
+                title: 'Hapus Riwayat Deposit?',
+                text: `Transaksi ${orderId} akan dihapus permanen dari daftar deposit QRIS.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                customClass: { popup: 'cyber-swal' }
+            });
+            if (!confirmRes.isConfirmed) return;
+
+            try {
+                const res = await fetch(`/api/admin/deposits-qrisv2/${encodeURIComponent(orderId)}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal menghapus data deposit');
+
+                Swal.fire({
+                    title: 'Terhapus!',
+                    text: data.message || 'Riwayat deposit berhasil dihapus.',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+                loadDepositsQris();
+            } catch (err) {
+                Swal.fire({ title: 'Error', text: err.message, icon: 'error', customClass: { popup: 'cyber-swal' } });
+            }
+        }
+
+        async function bulkDeleteDepositsPrompt() {
+            const cancelledCount = allDepositsData.filter(d => d.status === 'cancelled').length;
+            const pendingCount = allDepositsData.filter(d => d.status === 'pending').length;
+            const successCount = allDepositsData.filter(d => d.status === 'success').length;
+
+            const { value: selectedScope } = await Swal.fire({
+                title: 'Kelola Hapus Riwayat QRIS',
+                input: 'select',
+                inputOptions: {
+                    cancelled: `Hapus Semua Dibatalkan (${cancelledCount} data)`,
+                    pending: `Hapus Semua Belum Upload (${pendingCount} data)`,
+                    success: `Hapus Semua Riwayat Sukses (${successCount} data)`,
+                    all: `Hapus Seluruh Riwayat QRIS (${allDepositsData.length} data)`
+                },
+                inputPlaceholder: '-- Pilih Kategori yang Akan Dihapus --',
+                showCancelButton: true,
+                confirmButtonText: 'Hapus Terpilih',
+                cancelButtonText: 'Batal',
+                customClass: { popup: 'cyber-swal' }
+            });
+
+            if (!selectedScope) return;
+
+            try {
+                const res = await fetch(`/api/admin/deposits-qrisv2/bulk-delete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: selectedScope })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Gagal membersihkan riwayat deposit');
+
+                Swal.fire({
+                    title: 'Berhasil Dibersihkan!',
+                    text: data.message || 'Riwayat deposit terpilih berhasil dihapus.',
+                    icon: 'success',
+                    timer: 1800,
+                    showConfirmButton: false,
+                    customClass: { popup: 'cyber-swal' }
+                });
+                loadDepositsQris();
+            } catch (err) {
+                Swal.fire({ title: 'Error', text: err.message, icon: 'error', customClass: { popup: 'cyber-swal' } });
+            }
         }
 
         async function approveDepositQris(orderId) {
@@ -1128,12 +1845,7 @@
                 });
                 loadDepositsQris();
             } catch (err) {
-                Swal.fire({
-                    title: 'Error',
-                    text: err.message,
-                    icon: 'error',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ title: 'Error', text: err.message, icon: 'error', customClass: { popup: 'cyber-swal' } });
             }
         }
 
@@ -1167,12 +1879,7 @@
                 });
                 loadDepositsQris();
             } catch (err) {
-                Swal.fire({
-                    title: 'Error',
-                    text: err.message,
-                    icon: 'error',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ title: 'Error', text: err.message, icon: 'error', customClass: { popup: 'cyber-swal' } });
             }
         }
 
@@ -1231,9 +1938,7 @@
             selectedUserName = name || email;
 
             const form = document.getElementById('adminChatForm');
-            if (form) {
-                form.classList.remove('opacity-50', 'pointer-events-none');
-            }
+            if (form) form.classList.remove('opacity-50', 'pointer-events-none');
 
             loadUserList();
             await loadSelectedUserMessages();
@@ -1266,7 +1971,7 @@
                 box.innerHTML = messages.map(m => {
                     const isAdmin = m.sender === 'owner' || m.sender === 'admin' || m.role === 'admin' || m.isAdmin === true;
                     const text = escapeHtml(m.message || m.text || '');
-                    const time = m.createdAt ? new Date(m.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '';
+                    const time = m.createdAt ? moment(m.createdAt).tz('Asia/Jakarta').format('HH:mm') : '';
 
                     return `
                         <div class="flex ${isAdmin ? 'justify-end' : 'justify-start'}">
@@ -1280,9 +1985,7 @@
                         </div>`;
                 }).join('');
 
-                if (!silent) {
-                    box.scrollTop = box.scrollHeight;
-                }
+                if (!silent) box.scrollTop = box.scrollHeight;
             } catch (err) {
                 console.error('loadSelectedUserMessages Error:', err);
             }
@@ -1309,12 +2012,7 @@
                 await loadSelectedUserMessages();
                 loadUserList();
             } catch (err) {
-                Swal.fire({
-                    title: 'Gagal Mengirim',
-                    text: err.message,
-                    icon: 'error',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ title: 'Gagal Mengirim', text: err.message, icon: 'error', customClass: { popup: 'cyber-swal' } });
             }
         }
 
@@ -1322,6 +2020,7 @@
         // BAGIAN 3: PUSAT NOTIFIKASI & BROADCAST
         // ============================================================
         function switchNotifSubTab(sub) {
+            closeAllNeoSelects();
             const panels = {
                 add: document.getElementById('notifPanelAdd'),
                 edit: document.getElementById('notifPanelEdit'),
@@ -1417,6 +2116,7 @@
                 if (!res.ok) throw new Error(data.message || 'Gagal mengirim notifikasi');
 
                 document.getElementById('createNotifForm').reset();
+                setNotifCategoryNeoSelect('addNotifType', 'info');
                 selectDeliveryMode('broadcast');
 
                 Swal.fire({
@@ -1427,12 +2127,7 @@
                 });
                 loadAdminNotifications();
             } catch (err) {
-                Swal.fire({
-                    title: 'Gagal',
-                    text: err.message,
-                    icon: 'error',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ title: 'Gagal', text: err.message, icon: 'error', customClass: { popup: 'cyber-swal' } });
             } finally {
                 if (btn) btn.disabled = false;
             }
@@ -1443,6 +2138,7 @@
             const chevron = document.getElementById('customNotifChevron');
             if (!menu) return;
             const isHidden = menu.classList.contains('hidden');
+            closeAllNeoSelects();
             menu.classList.toggle('hidden', !isHidden);
             if (chevron) chevron.classList.toggle('rotate-180', isHidden);
             if (isHidden) renderCustomNotifDropdownItems();
@@ -1489,7 +2185,7 @@
 
             document.getElementById('editNotifId').value = notif._id || notif.id || '';
             document.getElementById('editNotifTitle').value = notif.title || '';
-            document.getElementById('editNotifType').value = notif.type || 'info';
+            setNotifCategoryNeoSelect('editNotifType', notif.type || 'info');
             document.getElementById('editNotifTargetEmail').value = notif.targetEmail || '';
             document.getElementById('editNotifLink').value = notif.link || '';
             document.getElementById('editNotifMessage').value = notif.message || '';
@@ -1555,12 +2251,7 @@
                 });
                 loadAdminNotifications();
             } catch (err) {
-                Swal.fire({
-                    title: 'Error',
-                    text: err.message,
-                    icon: 'error',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ title: 'Error', text: err.message, icon: 'error', customClass: { popup: 'cyber-swal' } });
             }
         }
 
@@ -1587,7 +2278,7 @@
             container.innerHTML = filtered.map(n => {
                 const id = escapeHtml(n._id || n.id || '');
                 const badge = getCategoryBadgeStyle(n.type);
-                const dateStr = n.createdAt ? new Date(n.createdAt).toLocaleString('id-ID') : '-';
+                const dateStr = n.createdAt ? moment(n.createdAt).tz('Asia/Jakarta').format('DD/MM/YYYY, HH.mm') : '-';
                 const target = n.targetEmail ? escapeHtml(n.targetEmail) : 'Broadcast Semua User';
 
                 return `
@@ -1600,7 +2291,7 @@
                             <p class="text-xs font-medium text-slate-800 line-clamp-2">${escapeHtml(n.message || '')}</p>
                             <div class="text-[10px] font-mono font-bold text-slate-600 flex flex-wrap gap-3">
                                 <span><i class="fa-solid fa-user"></i> ${target}</span>
-                                <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
+                                <span><i class="fa-regular fa-clock"></i> ${dateStr} WIB</span>
                             </div>
                         </div>
 
@@ -1629,9 +2320,7 @@
             if (!confirmRes.isConfirmed) return;
 
             try {
-                const res = await fetch(`/api/admin/notifications/${encodeURIComponent(id)}`, {
-                    method: 'DELETE'
-                });
+                const res = await fetch(`/api/admin/notifications/${encodeURIComponent(id)}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Gagal menghapus notifikasi');
 
@@ -1645,19 +2334,15 @@
                 });
                 loadAdminNotifications();
             } catch (err) {
-                Swal.fire({
-                    title: 'Error',
-                    text: err.message,
-                    icon: 'error',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ title: 'Error', text: err.message, icon: 'error', customClass: { popup: 'cyber-swal' } });
             }
         }
 
         // ============================================================
-        // BAGIAN 4: GENERATOR & KELOLA PRODUK (/api/admin/products)
+        // BAGIAN 4: GENERATOR & KELOLA PRODUK + HASIL AI GEMINI
         // ============================================================
         function switchProductSubTab(sub) {
+            closeAllNeoSelects();
             const panelForm = document.getElementById('prodPanelForm');
             const panelManage = document.getElementById('prodPanelManage');
             const btnForm = document.getElementById('prodSubBtnForm');
@@ -1687,9 +2372,7 @@
 
             if (enabled) {
                 const container = document.getElementById('variantRowsContainer');
-                if (container && container.children.length === 0) {
-                    addVariantRow();
-                }
+                if (container && container.children.length === 0) addVariantRow();
             }
         }
 
@@ -1771,6 +2454,38 @@
             if (btnCancel) btnCancel.classList.add('hidden');
         }
 
+        function showProductCreatedResultAndAi(productObj) {
+            lastCreatedProductData = productObj;
+            const panel = document.getElementById('productResultAiPanel');
+            const summaryBox = document.getElementById('productCreatedSummaryBox');
+            if (!panel || !summaryBox) return;
+
+            const variants = Array.isArray(productObj.variants) ? productObj.variants : [];
+            const priceDisplay = variants.length > 0
+                ? variants.map(v => `${escapeHtml(v.name)} (${formatRupiah(v.harga_diskon > 0 ? v.harga_diskon : v.harga)})`).join(' • ')
+                : (Number(productObj.harga_diskon) > 0
+                    ? `<span class="line-through text-slate-400">${formatRupiah(productObj.harga)}</span> <span class="text-emerald-700">${formatRupiah(productObj.harga_diskon)}</span>`
+                    : formatRupiah(productObj.harga));
+
+            summaryBox.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b-2 border-black pb-2 mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-neoYellow border border-black px-2 py-0.5 text-[10px] font-mono font-black">${escapeHtml(productObj.Id || 'BARU')}</span>
+                        <span class="bg-neoCyan border border-black px-2 py-0.5 text-[10px] font-mono font-black uppercase">${escapeHtml(productObj.kategori || '')}</span>
+                    </div>
+                    <span class="text-[11px] font-mono font-extrabold text-black">Total Stok: ${Number(productObj.stok || 0)}</span>
+                </div>
+                <div class="text-sm font-cyber font-extrabold text-black">${escapeHtml(productObj.nama || '')}</div>
+                <div class="text-xs font-mono font-bold text-slate-800 mt-1">Harga: ${priceDisplay}</div>
+            `;
+
+            panel.classList.remove('hidden');
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // Panggil AI Gemini untuk merangkai judul, kategori, dan isi pesan notifikasi
+            generateAiNotificationDraft('prod', productObj);
+        }
+
         async function loadAdminProducts() {
             try {
                 const res = await fetch('/api/admin/products');
@@ -1801,10 +2516,7 @@
 
             const mainImage = document.getElementById('prodImageInput').value.trim();
             const galleryRaw = document.getElementById('prodGalleryInput').value;
-            const extraImages = galleryRaw
-                .split(/[\n,]+/)
-                .map(s => s.trim())
-                .filter(Boolean);
+            const extraImages = galleryRaw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
             const gambarArray = [mainImage, ...extraImages.filter(u => u !== mainImage)].filter(Boolean);
 
             let variantsPayload = [];
@@ -1851,9 +2563,7 @@
                 variants: hasVariants ? variantsPayload : []
             };
 
-            const url = editId
-                ? `/api/admin/products/${encodeURIComponent(editId)}`
-                : '/api/admin/products';
+            const url = editId ? `/api/admin/products/${encodeURIComponent(editId)}` : '/api/admin/products';
             const method = editId ? 'PUT' : 'POST';
 
             const btn = document.getElementById('btnSubmitProduct');
@@ -1868,21 +2578,13 @@
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Gagal menyimpan produk');
 
-                Swal.fire({
-                    title: editId ? 'Produk Diperbarui!' : 'Produk Diterbitkan!',
-                    text: data.message || 'Data produk berhasil disimpan ke katalog.',
-                    icon: 'success',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                const savedProduct = data.product || { ...payload, Id: editId || 'NEW' };
+
                 resetProductForm();
                 loadAdminProducts();
+                showProductCreatedResultAndAi(savedProduct);
             } catch (err) {
-                Swal.fire({
-                    title: 'Error',
-                    text: err.message,
-                    icon: 'error',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ title: 'Error', text: err.message, icon: 'error', customClass: { popup: 'cyber-swal' } });
             } finally {
                 if (btn) btn.disabled = false;
             }
@@ -2008,9 +2710,7 @@
             if (!confirmRes.isConfirmed) return;
 
             try {
-                const res = await fetch(`/api/admin/products/${encodeURIComponent(prodId)}`, {
-                    method: 'DELETE'
-                });
+                const res = await fetch(`/api/admin/products/${encodeURIComponent(prodId)}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Gagal menghapus produk');
 
@@ -2024,17 +2724,12 @@
                 });
                 loadAdminProducts();
             } catch (err) {
-                Swal.fire({
-                    title: 'Error',
-                    text: err.message,
-                    icon: 'error',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ title: 'Error', text: err.message, icon: 'error', customClass: { popup: 'cyber-swal' } });
             }
         }
 
         // ============================================================
-        // BAGIAN 5: GENERATOR & KELOLA VOUCHER (/api/admin/vouchers)
+        // BAGIAN 5: GENERATOR & KELOLA VOUCHER + HASIL AI GEMINI
         // ============================================================
         function generateRandomVoucherCode() {
             const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -2065,12 +2760,158 @@
             }
         }
 
-        function setDefaultVoucherExpiry() {
-            const expInput = document.getElementById('voucherExpiredInput');
-            if (!expInput || expInput.value) return;
-            const d = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-            const pad = n => String(n).padStart(2, '0');
-            expInput.value = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        function initVoucherExpirySelectors() {
+            const dayOptionsContainer = document.getElementById('voucherCustomDayOptions');
+            const monthOptionsContainer = document.getElementById('voucherCustomMonthOptions');
+            const yearOptionsContainer = document.getElementById('voucherCustomYearOptions');
+            const timeInput = document.getElementById('voucherCustomTime');
+
+            const nowWib = moment().tz('Asia/Jakarta').locale('id');
+            const tomorrowWib = nowWib.clone().add(24, 'hours');
+
+            if (dayOptionsContainer && dayOptionsContainer.children.length === 0) {
+                let dayHtml = '';
+                for (let d = 1; d <= 31; d++) {
+                    const val = String(d).padStart(2, '0');
+                    dayHtml += `<div onclick="pickNeoSelectOption('voucherCustomDay', '${val}', '${val}')" data-value="${val}" class="neo-select-option px-3 py-2 text-xs font-mono font-bold">${val}</div>`;
+                }
+                dayOptionsContainer.innerHTML = dayHtml;
+            }
+
+            const monthsList = [
+                { val: '01', label: '01 - Januari' },
+                { val: '02', label: '02 - Februari' },
+                { val: '03', label: '03 - Maret' },
+                { val: '04', label: '04 - April' },
+                { val: '05', label: '05 - Mei' },
+                { val: '06', label: '06 - Juni' },
+                { val: '07', label: '07 - Juli' },
+                { val: '08', label: '08 - Agustus' },
+                { val: '09', label: '09 - September' },
+                { val: '10', label: '10 - Oktober' },
+                { val: '11', label: '11 - November' },
+                { val: '12', label: '12 - Desember' }
+            ];
+
+            if (monthOptionsContainer && monthOptionsContainer.children.length === 0) {
+                monthOptionsContainer.innerHTML = monthsList.map(m =>
+                    `<div onclick="pickNeoSelectOption('voucherCustomMonth', '${m.val}', '${m.label}')" data-value="${m.val}" class="neo-select-option px-3 py-2 text-xs font-mono font-bold">${m.label}</div>`
+                ).join('');
+            }
+
+            if (yearOptionsContainer && yearOptionsContainer.children.length === 0) {
+                const startYear = nowWib.year();
+                let yearHtml = '';
+                for (let y = startYear; y <= startYear + 5; y++) {
+                    const yStr = String(y);
+                    yearHtml += `<div onclick="pickNeoSelectOption('voucherCustomYear', '${yStr}', '${yStr}')" data-value="${yStr}" class="neo-select-option px-3 py-2 text-xs font-mono font-bold">${yStr}</div>`;
+                }
+                yearOptionsContainer.innerHTML = yearHtml;
+            }
+
+            const targetDay = tomorrowWib.format('DD');
+            const targetMonth = tomorrowWib.format('MM');
+            const targetYear = tomorrowWib.format('YYYY');
+            const monthObj = monthsList.find(m => m.val === targetMonth) || monthsList[0];
+
+            pickNeoSelectOption('voucherCustomDay', targetDay, targetDay, null, null, true);
+            pickNeoSelectOption('voucherCustomMonth', targetMonth, monthObj.label, null, null, true);
+            pickNeoSelectOption('voucherCustomYear', targetYear, targetYear, null, null, true);
+            if (timeInput && !timeInput.value) timeInput.value = tomorrowWib.format('HH:mm');
+
+            setVoucherExpiryMode('auto');
+        }
+
+        function setVoucherExpiryMode(mode) {
+            closeAllNeoSelects();
+            voucherExpiryMode = mode;
+            const btnAuto = document.getElementById('btnVoucherExpiryAuto');
+            const btnCustom = document.getElementById('btnVoucherExpiryCustom');
+            const autoPanel = document.getElementById('voucherExpiryAutoPanel');
+            const customPanel = document.getElementById('voucherExpiryCustomPanel');
+
+            if (mode === 'custom') {
+                if (btnAuto) { btnAuto.classList.remove('bg-neoCyan'); btnAuto.classList.add('bg-white'); }
+                if (btnCustom) { btnCustom.classList.remove('bg-white'); btnCustom.classList.add('bg-neoCyan'); }
+                if (autoPanel) autoPanel.classList.add('hidden');
+                if (customPanel) customPanel.classList.remove('hidden');
+            } else {
+                if (btnAuto) { btnAuto.classList.remove('bg-white'); btnAuto.classList.add('bg-neoCyan'); }
+                if (btnCustom) { btnCustom.classList.remove('bg-neoCyan'); btnCustom.classList.add('bg-white'); }
+                if (autoPanel) autoPanel.classList.remove('hidden');
+                if (customPanel) customPanel.classList.add('hidden');
+            }
+
+            updateVoucherExpiryPreview();
+        }
+
+        function selectVoucherAutoPreset(preset) {
+            voucherAutoPreset = preset;
+            document.querySelectorAll('.voucher-preset-btn').forEach(btn => {
+                const isSelected = btn.getAttribute('data-preset') === preset;
+                btn.classList.toggle('bg-neoYellow', isSelected);
+                btn.classList.toggle('bg-white', !isSelected);
+            });
+            updateVoucherExpiryPreview();
+        }
+
+        function computeVoucherTargetMoment() {
+            const nowWib = moment().tz('Asia/Jakarta').locale('id');
+            if (voucherExpiryMode === 'custom') {
+                const day = document.getElementById('voucherCustomDay')?.value || nowWib.format('DD');
+                const month = document.getElementById('voucherCustomMonth')?.value || nowWib.format('MM');
+                const year = document.getElementById('voucherCustomYear')?.value || nowWib.format('YYYY');
+                const timeStr = document.getElementById('voucherCustomTime')?.value || '23:59';
+                const parsed = moment.tz(`${year}-${month}-${day} ${timeStr}`, 'YYYY-MM-DD HH:mm', 'Asia/Jakarta').locale('id');
+                return parsed.isValid() ? parsed : nowWib.clone().add(24, 'hours');
+            }
+
+            const target = nowWib.clone();
+            if (voucherAutoPreset === '1h') return target.add(1, 'hours');
+            if (voucherAutoPreset === '6h') return target.add(6, 'hours');
+            if (voucherAutoPreset === '12h') return target.add(12, 'hours');
+            if (voucherAutoPreset === '3d') return target.add(3, 'days');
+            if (voucherAutoPreset === '7d') return target.add(7, 'days');
+            return target.add(24, 'hours');
+        }
+
+        function updateVoucherExpiryPreview() {
+            const targetMoment = computeVoucherTargetMoment().locale('id');
+            const hiddenInput = document.getElementById('voucherExpiredInput');
+            const previewEl = document.getElementById('voucherExpiryPreviewText');
+
+            if (hiddenInput) hiddenInput.value = targetMoment.format('YYYY-MM-DDTHH:mm');
+            if (previewEl) previewEl.textContent = `${targetMoment.format('dddd, DD MMMM YYYY')} • ${targetMoment.format('HH.mm')} WIB`;
+        }
+
+        function showVoucherCreatedResultAndAi(voucherObj) {
+            lastCreatedVoucherData = voucherObj;
+            const panel = document.getElementById('voucherResultAiPanel');
+            const summaryBox = document.getElementById('voucherCreatedSummaryBox');
+            if (!panel || !summaryBox) return;
+
+            const isPercent = voucherObj.type === 'percentage' || voucherObj.type === 'percent';
+            const discLabel = isPercent ? `${Number(voucherObj.discount || 0)}%` : formatRupiah(voucherObj.discount || 0);
+            const expStr = voucherObj.expiredAt
+                ? moment(voucherObj.expiredAt).tz('Asia/Jakarta').locale('id').format('dddd, DD MMMM YYYY • HH.mm [WIB]')
+                : '-';
+
+            summaryBox.innerHTML = `
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-black pb-2 mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-neoYellow border border-black px-2.5 py-0.5 text-xs font-mono font-black">${escapeHtml(voucherObj.code || '')}</span>
+                        <span class="bg-neoGreen border border-black px-2 py-0.5 text-[10px] font-mono font-black uppercase">DISKON ${discLabel}</span>
+                    </div>
+                    <span class="text-[11px] font-mono font-extrabold text-black">Kuota: ${Number(voucherObj.usageLimit || 0)}x</span>
+                </div>
+                <div class="text-xs font-mono font-bold text-slate-800">Berlaku s/d: ${expStr}</div>
+            `;
+
+            panel.classList.remove('hidden');
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // Panggil AI Gemini untuk merangkai judul, kategori, dan isi pesan notifikasi
+            generateAiNotificationDraft('voucher', { ...voucherObj, expiredReadable: expStr });
         }
 
         async function loadAdminVouchers() {
@@ -2095,6 +2936,8 @@
 
         async function submitVoucherGenerator(event) {
             event.preventDefault();
+            updateVoucherExpiryPreview();
+
             const payload = {
                 code: document.getElementById('voucherCodeInput').value.trim().toUpperCase(),
                 type: document.getElementById('voucherTypeInput').value,
@@ -2115,24 +2958,18 @@
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Gagal membuat voucher');
 
-                document.getElementById('voucherGeneratorForm').reset();
-                toggleVoucherTypeFields();
-                setDefaultVoucherExpiry();
+                const savedVoucher = data.voucher || payload;
 
-                Swal.fire({
-                    title: 'Voucher Aktif!',
-                    text: data.message || `Kode voucher ${payload.code} berhasil dibuat.`,
-                    icon: 'success',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                document.getElementById('voucherGeneratorForm').reset();
+                pickNeoSelectOption('voucherTypeInput', 'fixed', 'Potongan Nominal (Rp)', 'fa-rupiah-sign', 'bg-neoGreen', true);
+                toggleVoucherTypeFields();
+                selectVoucherAutoPreset('24h');
+                setVoucherExpiryMode('auto');
+
                 loadAdminVouchers();
+                showVoucherCreatedResultAndAi(savedVoucher);
             } catch (err) {
-                Swal.fire({
-                    title: 'Error',
-                    text: err.message,
-                    icon: 'error',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ title: 'Error', text: err.message, icon: 'error', customClass: { popup: 'cyber-swal' } });
             } finally {
                 if (btn) btn.disabled = false;
             }
@@ -2155,7 +2992,9 @@
                 const discountLabel = isPercent ? `${discountVal}%` : formatRupiah(discountVal);
                 const used = Number(v.usedCount || 0);
                 const limit = Number(v.usageLimit ?? v.quota ?? 0);
-                const expStr = v.expiredAt ? new Date(v.expiredAt).toLocaleString('id-ID') : 'Tanpa batas';
+                const expStr = v.expiredAt
+                    ? moment(v.expiredAt).tz('Asia/Jakarta').locale('id').format('dddd, DD MMMM YYYY • HH.mm [WIB]')
+                    : 'Tanpa batas';
 
                 return `
                     <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neoBg/60">
@@ -2189,9 +3028,7 @@
             if (!confirmRes.isConfirmed) return;
 
             try {
-                const res = await fetch(`/api/admin/vouchers/${encodeURIComponent(id)}`, {
-                    method: 'DELETE'
-                });
+                const res = await fetch(`/api/admin/vouchers/${encodeURIComponent(id)}`, { method: 'DELETE' });
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.message || 'Gagal menghapus voucher');
 
@@ -2205,19 +3042,18 @@
                 });
                 loadAdminVouchers();
             } catch (err) {
-                Swal.fire({
-                    title: 'Error',
-                    text: err.message,
-                    icon: 'error',
-                    customClass: { popup: 'cyber-swal' }
-                });
+                Swal.fire({ title: 'Error', text: err.message, icon: 'error', customClass: { popup: 'cyber-swal' } });
             }
         }
 
         // ============================================================
-        // INISIALISASI HALAMAN ADMIN
+        // EVENT GLOBAL & INISIALISASI HALAMAN ADMIN
         // ============================================================
         document.addEventListener('click', (e) => {
+            if (!e.target.closest('.neo-select-wrapper')) {
+                closeAllNeoSelects();
+            }
+
             const wrapper = document.getElementById('customNotifSelectWrapper');
             const menu = document.getElementById('customNotifDropdownMenu');
             const chevron = document.getElementById('customNotifChevron');
@@ -2234,12 +3070,13 @@
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                closeAllNeoSelects();
                 closeProofLightbox();
             }
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            setDefaultVoucherExpiry();
+            initVoucherExpirySelectors();
             loadDepositsQris();
             loadUserList();
             loadAdminNotifications();
