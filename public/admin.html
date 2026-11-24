@@ -41,7 +41,7 @@
             background-image: radial-gradient(#00000018 1px, transparent 1px);
             background-size: 16px 16px;
         }
-        /* Neo-Brutalisme Persegi Panjang Tegas (Sama seperti deposit.html) */
+        /* Neo-Brutalisme Persegi Panjang Tegas */
         .neo-box {
             background-color: #FFFFFF;
             border: 3px solid #000000;
@@ -153,7 +153,7 @@
     <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 space-y-6">
 
         <!-- ======================================================= -->
-        <!-- SECTION 1: VERIFIKASI BUKTI DEPOSIT QRIS V2             -->
+        <!-- SECTION 1: VERIFIKASI BUKTI DEPOSIT QRIS                -->
         <!-- ======================================================= -->
         <section id="sectionDeposits" class="space-y-4">
             <div class="p-4 sm:p-5 neo-box bg-neoCyan flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative overflow-hidden">
@@ -162,11 +162,11 @@
                         <span class="w-8 h-8 bg-black text-neoYellow border-2 border-black flex items-center justify-center text-xs shadow-[2px_2px_0px_#fff]">
                             <i class="fa-solid fa-file-invoice-dollar"></i>
                         </span>
-                        Verifikasi Deposit QRIS v2
+                        Verifikasi Deposit QRIS
                     </h1>
                     <p class="text-xs font-bold text-black mt-1.5">Periksa bukti pembayaran user, konfirmasi penambahan saldo, atau batalkan deposit.</p>
                 </div>
-                <button onclick="loadDepositsQrisV2()" class="neo-btn bg-white text-black font-cyber font-extrabold px-4 py-2.5 text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0 relative z-10">
+                <button onclick="loadDepositsQris()" class="neo-btn bg-white text-black font-cyber font-extrabold px-4 py-2.5 text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0 relative z-10">
                     <i class="fa-solid fa-rotate-right"></i> Refresh Data
                 </button>
             </div>
@@ -180,10 +180,10 @@
                 <button onclick="setDepositFilter('cancelled')" id="filterCancelled" class="neo-btn bg-white px-3 py-1.5 text-xs font-cyber font-extrabold uppercase">Dibatalkan</button>
             </div>
 
-            <!-- DAFTAR KARTU DEPOSIT QRIS V2 -->
+            <!-- DAFTAR KARTU DEPOSIT QRIS -->
             <div id="adminDepositsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="neo-box p-6 text-center text-xs font-mono font-bold col-span-full">
-                    Memuat data deposit QRIS v2...
+                    Memuat data deposit QRIS...
                 </div>
             </div>
         </section>
@@ -465,47 +465,305 @@
             </div>
         </section>
 
+        <!-- ======================================================= -->
+        <!-- SECTION 4: GENERATOR PRODUK & MULTI-VARIAN SHOPEE-STYLE -->
+        <!-- ======================================================= -->
+        <section id="sectionProducts" class="hidden space-y-5">
+            <div class="p-4 sm:p-5 neo-box bg-neoPurple flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-lg sm:text-2xl font-extrabold font-cyber text-black flex items-center gap-2 uppercase tracking-tight">
+                        <span class="w-8 h-8 bg-black text-neoYellow border-2 border-black flex items-center justify-center text-xs shadow-[2px_2px_0px_#fff]">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                        </span>
+                        Generator &amp; Kelola Produk
+                    </h1>
+                    <p class="text-xs font-bold text-black mt-1.5">Buat produk tunggal atau produk dengan varian ala Shopee (contoh: Jual Nokos dengan opsi negara Indonesia, Jepang, dll.).</p>
+                </div>
+                <button onclick="loadAdminProducts()" class="neo-btn bg-white text-black font-cyber font-extrabold px-4 py-2.5 text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh Produk
+                </button>
+            </div>
+
+            <!-- SUB-TAB SWITCHER PRODUK -->
+            <div class="grid grid-cols-2 gap-2.5">
+                <button type="button" id="prodSubBtnForm" onclick="switchProductSubTab('form')" class="subtab-btn active neo-btn bg-white text-black font-cyber font-extrabold py-2.5 px-3 text-xs uppercase flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span id="prodFormTabLabel">Tambah Produk Baru</span>
+                </button>
+                <button type="button" id="prodSubBtnManage" onclick="switchProductSubTab('manage')" class="subtab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2.5 px-3 text-xs uppercase flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-store"></i> <span>Daftar Produk (<span id="prodManageCountTab">0</span>)</span>
+                </button>
+            </div>
+
+            <!-- SUB-PANEL 1: FORM GENERATOR / EDIT PRODUK -->
+            <div id="prodPanelForm" class="neo-box bg-white overflow-hidden">
+                <div class="bg-neoYellow border-b-[3px] border-black px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+                    <span id="prodFormHeaderTitle" class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle"></i> Generator Produk Baru
+                    </span>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="fillNokosPreset()" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-2.5 py-1 text-[10px] uppercase">
+                            <i class="fa-solid fa-bolt"></i> Template Jual Nokos
+                        </button>
+                        <button type="button" id="btnCancelProductEdit" onclick="resetProductForm()" class="hidden neo-btn bg-neoPink text-white font-cyber font-extrabold px-2.5 py-1 text-[10px] uppercase">
+                            <i class="fa-solid fa-xmark"></i> Batal Edit
+                        </button>
+                    </div>
+                </div>
+
+                <form id="productGeneratorForm" onsubmit="submitProductGenerator(event)" class="p-5 space-y-4">
+                    <input type="hidden" id="prodIdInput">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="prodNameInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Nama Produk *</label>
+                            <input type="text" id="prodNameInput" required placeholder="Contoh: Jual Nokos WhatsApp Fresh" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        </div>
+
+                        <div>
+                            <label for="prodCategoryInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kategori Produk *</label>
+                            <input type="text" id="prodCategoryInput" required placeholder="Contoh: Nomor Virtual / Nokos" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="prodBadgeInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Badge Label (Opsional)</label>
+                            <input type="text" id="prodBadgeInput" placeholder="Contoh: BEST SELLER / HOT / INSTANT" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        </div>
+
+                        <div>
+                            <label for="prodImageInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">URL Gambar Utama Produk *</label>
+                            <input type="url" id="prodImageInput" required placeholder="https://cdn.larasxd.my.id/files/..." class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="prodGalleryInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">URL Galeri Gambar Tambahan (Pisahkan dengan koma / baris baru)</label>
+                        <textarea id="prodGalleryInput" rows="2" placeholder="https://contoh.com/gambar2.jpg, https://contoh.com/gambar3.jpg" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="prodDescInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Deskripsi Produk *</label>
+                        <textarea id="prodDescInput" required rows="3" placeholder="Jelaskan detail produk, garansi, fitur, dan cara order..." class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]"></textarea>
+                    </div>
+
+                    <!-- TOGGLE MODE VARIAN ALA SHOPEE -->
+                    <div class="neo-box p-4 bg-neoBg space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                                <input type="checkbox" id="prodEnableVariants" onchange="toggleProductVariantsMode()" class="w-4 h-4 accent-black">
+                                <span class="font-cyber font-extrabold text-xs uppercase">Aktifkan Pilihan Varian Produk ala Shopee (Multi-Negara / Multi-Paket)</span>
+                            </label>
+                            <span id="variantModeStatusBadge" class="text-[10px] font-mono font-extrabold bg-white border-2 border-black px-2 py-0.5 uppercase">
+                                PRODUK TUNGGAL
+                            </span>
+                        </div>
+
+                        <!-- FIELD PRODUK TUNGGAL (JIKA VARIAN NONAKTIF) -->
+                        <div id="singleProductPriceBlock" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t-2 border-black">
+                            <div>
+                                <label for="prodPriceInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Harga Normal (Rp) *</label>
+                                <input type="number" id="prodPriceInput" min="0" placeholder="15000" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
+                            </div>
+                            <div>
+                                <label for="prodDiscountPriceInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Harga Diskon (Opsional)</label>
+                                <input type="number" id="prodDiscountPriceInput" min="0" placeholder="0" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
+                            </div>
+                            <div>
+                                <label for="prodStockInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Stok Tersedia *</label>
+                                <input type="number" id="prodStockInput" min="0" value="10" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
+                            </div>
+                            <div>
+                                <label for="prodDownloadUrlInput" class="block font-cyber font-extrabold text-[11px] uppercase mb-1">Link Download / WA / TG</label>
+                                <input type="text" id="prodDownloadUrlInput" placeholder="https://wa.me/6285122629940" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-mono font-bold">
+                            </div>
+                        </div>
+
+                        <!-- FIELD MULTI-VARIAN ALA SHOPEE (JIKA VARIAN AKTIF) -->
+                        <div id="multiVariantBuilderBlock" class="hidden space-y-3 pt-3 border-t-2 border-black">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
+                                <div>
+                                    <label for="prodVariantGroupName" class="block font-cyber font-extrabold text-xs uppercase mb-1">Nama Grup Varian (Contoh: Negara / Paket) *</label>
+                                    <input type="text" id="prodVariantGroupName" value="Negara" placeholder="Contoh: Negara" class="w-full bg-white border-2 border-black px-3 py-2 text-xs font-bold">
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="button" onclick="addVariantRow()" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-3.5 py-2 text-xs uppercase flex items-center gap-1.5">
+                                        <i class="fa-solid fa-plus"></i> Tambah Opsi Varian
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div id="variantRowsContainer" class="space-y-3"></div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btnSubmitProduct" class="w-full neo-btn bg-neoGreen text-black font-cyber font-extrabold py-3.5 px-5 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> <span id="btnSubmitProductText">Simpan &amp; Terbitkan Produk</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- SUB-PANEL 2: DAFTAR & KELOLA PRODUK -->
+            <div id="prodPanelManage" class="hidden neo-box bg-white overflow-hidden">
+                <div class="bg-neoCyan border-b-[3px] border-black px-5 py-3 flex flex-wrap items-center justify-between gap-2">
+                    <span class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-boxes-stacked"></i> Katalog Produk Aktif (<span id="manageProdTotalText">0</span>)
+                    </span>
+                    <input type="text" id="searchProdAdminInput" oninput="renderAdminProductsList()" placeholder="Cari nama produk atau kategori..." class="bg-white border-2 border-black px-3 py-1.5 text-xs font-bold focus:outline-none w-full sm:w-64">
+                </div>
+
+                <div id="adminProductsListContainer" class="divide-y-2 divide-black max-h-[560px] overflow-y-auto">
+                    <div class="p-6 text-center text-xs font-mono font-bold text-slate-600">Memuat daftar produk...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================= -->
+        <!-- SECTION 5: GENERATOR & KELOLA VOUCHER DISKON            -->
+        <!-- ======================================================= -->
+        <section id="sectionVouchers" class="hidden space-y-5">
+            <div class="p-4 sm:p-5 neo-box bg-neoGreen flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-lg sm:text-2xl font-extrabold font-cyber text-black flex items-center gap-2 uppercase tracking-tight">
+                        <span class="w-8 h-8 bg-black text-neoYellow border-2 border-black flex items-center justify-center text-xs shadow-[2px_2px_0px_#fff]">
+                            <i class="fa-solid fa-ticket"></i>
+                        </span>
+                        Generator Voucher Diskon
+                    </h1>
+                    <p class="text-xs font-bold text-black mt-1.5">Buat kode voucher promo persen atau potongan nominal Rupiah untuk dipakai pembeli saat checkout.</p>
+                </div>
+                <button onclick="loadAdminVouchers()" class="neo-btn bg-white text-black font-cyber font-extrabold px-4 py-2.5 text-xs flex items-center justify-center gap-2 uppercase tracking-wider shrink-0">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh Voucher
+                </button>
+            </div>
+
+            <!-- FORM GENERATOR VOUCHER -->
+            <div class="neo-box bg-white overflow-hidden">
+                <div class="bg-neoYellow border-b-[3px] border-black px-5 py-3 flex items-center justify-between gap-2">
+                    <span class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-wand-sparkles"></i> Buat Kode Voucher Baru
+                    </span>
+                    <button type="button" onclick="generateRandomVoucherCode()" class="neo-btn bg-white text-black font-cyber font-extrabold px-3 py-1 text-[11px] uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-dice"></i> Acak Kode
+                    </button>
+                </div>
+
+                <form id="voucherGeneratorForm" onsubmit="submitVoucherGenerator(event)" class="p-5 space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label for="voucherCodeInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kode Voucher *</label>
+                            <input type="text" id="voucherCodeInput" required placeholder="Contoh: NOKOSHEMAT" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-extrabold uppercase focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        </div>
+
+                        <div>
+                            <label for="voucherTypeInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Tipe Diskon *</label>
+                            <select id="voucherTypeInput" onchange="toggleVoucherTypeFields()" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                                <option value="fixed">Potongan Nominal (Rp)</option>
+                                <option value="percent">Persentase (%)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label id="voucherValueLabel" for="voucherValueInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Nominal Diskon (Rp) *</label>
+                            <input type="number" id="voucherValueInput" required min="1" placeholder="5000" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label for="voucherMinOrderInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Minimal Belanja (Rp)</label>
+                            <input type="number" id="voucherMinOrderInput" min="0" value="0" placeholder="0" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        </div>
+
+                        <div id="voucherMaxDiscountGroup" class="hidden">
+                            <label for="voucherMaxDiscountInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Maksimal Potongan (Rp)</label>
+                            <input type="number" id="voucherMaxDiscountInput" min="0" value="0" placeholder="10000" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        </div>
+
+                        <div>
+                            <label for="voucherQuotaInput" class="block font-cyber font-extrabold text-xs uppercase mb-1.5">Kuota Pemakaian (0 = Unlimited)</label>
+                            <input type="number" id="voucherQuotaInput" min="0" value="50" placeholder="50" class="w-full bg-neoBg border-[2.5px] border-black px-3.5 py-2.5 text-xs font-mono font-bold focus:outline-none focus:bg-white shadow-[3px_3px_0px_#000]">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btnSubmitVoucher" class="w-full neo-btn bg-neoCyan text-black font-cyber font-extrabold py-3.5 px-5 text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-ticket"></i> <span>Generate &amp; Aktifkan Voucher</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- DAFTAR VOUCHER AKTIF -->
+            <div class="neo-box bg-white overflow-hidden">
+                <div class="bg-neoCyan border-b-[3px] border-black px-5 py-3 flex items-center justify-between">
+                    <span class="font-cyber font-extrabold text-sm uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-list"></i> Daftar Voucher Tersimpan (<span id="manageVoucherTotalText">0</span>)
+                    </span>
+                </div>
+
+                <div id="adminVouchersListContainer" class="divide-y-2 divide-black max-h-[420px] overflow-y-auto">
+                    <div class="p-6 text-center text-xs font-mono font-bold text-slate-600">Memuat daftar voucher...</div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- ======================================================= -->
-    <!-- BOTTOM TAB SWITCHER (DIPINDAH DARI ATAS KE BAWAH)       -->
+    <!-- BOTTOM TAB SWITCHER (5 MENU TANPA KATA-KATA V1/V2)      -->
     <!-- ======================================================= -->
     <div class="fixed bottom-0 left-0 right-0 z-40 bg-neoBg border-t-[3px] border-black shadow-[0_-4px_0_rgba(0,0,0,0.08)]">
-        <div class="max-w-6xl mx-auto px-3 py-2.5">
-            <div class="grid grid-cols-3 gap-2 sm:gap-3.5">
-                <!-- TAB 1: DEPOSIT QRIS V2 -->
-                <button id="tabBtnDeposits" onclick="switchAdminTab('deposits')" class="tab-btn active neo-btn bg-white text-black font-cyber font-extrabold py-2 sm:py-2.5 px-2 sm:px-4 text-[10px] sm:text-xs uppercase flex items-center justify-center gap-1.5 sm:gap-2">
+        <div class="max-w-6xl mx-auto px-2 sm:px-3 py-2">
+            <div class="grid grid-cols-5 gap-1.5 sm:gap-2.5">
+                <!-- TAB 1: DEPOSIT QRIS -->
+                <button id="tabBtnDeposits" onclick="switchAdminTab('deposits')" class="tab-btn active neo-btn bg-white text-black font-cyber font-extrabold py-2 px-1.5 sm:px-3 text-[9.5px] sm:text-xs uppercase flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5">
                     <i class="fa-solid fa-qrcode text-xs sm:text-sm"></i>
-                    <span class="truncate">QRIS v2</span>
-                    <span id="pendingDepositBadge" class="bg-neoPink text-white border-2 border-black font-mono font-black text-[10px] px-1.5 py-0.2 shadow-[1.5px_1.5px_0px_#000] shrink-0">0</span>
+                    <span class="truncate">QRIS</span>
+                    <span id="pendingDepositBadge" class="bg-neoPink text-white border border-black font-mono font-black text-[9px] px-1 py-0.2 shrink-0">0</span>
                 </button>
 
                 <!-- TAB 2: LIVE CHAT CS -->
-                <button id="tabBtnChat" onclick="switchAdminTab('chat')" class="tab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2 sm:py-2.5 px-2 sm:px-4 text-[10px] sm:text-xs uppercase flex items-center justify-center gap-1.5 sm:gap-2">
+                <button id="tabBtnChat" onclick="switchAdminTab('chat')" class="tab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2 px-1.5 sm:px-3 text-[9.5px] sm:text-xs uppercase flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5">
                     <i class="fa-solid fa-headset text-xs sm:text-sm"></i>
-                    <span class="truncate">Live Chat</span>
-                    <span id="unreadChatBadge" class="bg-neoGreen text-black border-2 border-black font-mono font-black text-[10px] px-1.5 py-0.2 shadow-[1.5px_1.5px_0px_#000] shrink-0">0</span>
+                    <span class="truncate">Chat</span>
+                    <span id="unreadChatBadge" class="bg-neoGreen text-black border border-black font-mono font-black text-[9px] px-1 py-0.2 shrink-0">0</span>
                 </button>
 
                 <!-- TAB 3: NOTIFIKASI -->
-                <button id="tabBtnNotifications" onclick="switchAdminTab('notifications')" class="tab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2 sm:py-2.5 px-2 sm:px-4 text-[10px] sm:text-xs uppercase flex items-center justify-center gap-1.5 sm:gap-2">
+                <button id="tabBtnNotifications" onclick="switchAdminTab('notifications')" class="tab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2 px-1.5 sm:px-3 text-[9.5px] sm:text-xs uppercase flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5">
                     <i class="fa-solid fa-bell text-xs sm:text-sm"></i>
-                    <span class="truncate">Notifikasi</span>
-                    <span id="totalNotifBadge" class="bg-neoCyan text-black border-2 border-black font-mono font-black text-[10px] px-1.5 py-0.2 shadow-[1.5px_1.5px_0px_#000] shrink-0">0</span>
+                    <span class="truncate">Notif</span>
+                    <span id="totalNotifBadge" class="bg-neoCyan text-black border border-black font-mono font-black text-[9px] px-1 py-0.2 shrink-0">0</span>
+                </button>
+
+                <!-- TAB 4: PRODUK & VARIAN -->
+                <button id="tabBtnProducts" onclick="switchAdminTab('products')" class="tab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2 px-1.5 sm:px-3 text-[9.5px] sm:text-xs uppercase flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5">
+                    <i class="fa-solid fa-boxes-stacked text-xs sm:text-sm"></i>
+                    <span class="truncate">Produk</span>
+                    <span id="totalProdBadge" class="bg-neoPurple text-black border border-black font-mono font-black text-[9px] px-1 py-0.2 shrink-0">0</span>
+                </button>
+
+                <!-- TAB 5: VOUCHER -->
+                <button id="tabBtnVouchers" onclick="switchAdminTab('vouchers')" class="tab-btn neo-btn bg-white text-black font-cyber font-extrabold py-2 px-1.5 sm:px-3 text-[9.5px] sm:text-xs uppercase flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5">
+                    <i class="fa-solid fa-ticket text-xs sm:text-sm"></i>
+                    <span class="truncate">Voucher</span>
+                    <span id="totalVoucherBadge" class="bg-neoYellow text-black border border-black font-mono font-black text-[9px] px-1 py-0.2 shrink-0">0</span>
                 </button>
             </div>
         </div>
     </div>
-
-    <script>
+    
+        <script>
         let allDepositsData = [];
         let allNotificationsData = [];
+        let allAdminProductsData = [];
+        let allAdminVouchersData = [];
         let currentDepositFilter = 'all';
         let selectedUserId = null;
         let selectedUsername = '';
         let selectedUserEmail = '';
         let adminPollInterval = null;
         let selectedDeliveryMode = 'broadcast';
+        let productVariantRows = [];
 
         function setTextSafe(id, text) {
             const el = document.getElementById(id);
@@ -569,18 +827,26 @@
             const secDep = document.getElementById('sectionDeposits');
             const secChat = document.getElementById('sectionChat');
             const secNotif = document.getElementById('sectionNotifications');
+            const secProd = document.getElementById('sectionProducts');
+            const secVoucher = document.getElementById('sectionVouchers');
 
             if (secDep) secDep.classList.toggle('hidden', tab !== 'deposits');
             if (secChat) secChat.classList.toggle('hidden', tab !== 'chat');
             if (secNotif) secNotif.classList.toggle('hidden', tab !== 'notifications');
+            if (secProd) secProd.classList.toggle('hidden', tab !== 'products');
+            if (secVoucher) secVoucher.classList.toggle('hidden', tab !== 'vouchers');
 
             const btnDep = document.getElementById('tabBtnDeposits');
             const btnChat = document.getElementById('tabBtnChat');
             const btnNotif = document.getElementById('tabBtnNotifications');
+            const btnProd = document.getElementById('tabBtnProducts');
+            const btnVoucher = document.getElementById('tabBtnVouchers');
 
             if (btnDep) btnDep.classList.toggle('active', tab === 'deposits');
             if (btnChat) btnChat.classList.toggle('active', tab === 'chat');
             if (btnNotif) btnNotif.classList.toggle('active', tab === 'notifications');
+            if (btnProd) btnProd.classList.toggle('active', tab === 'products');
+            if (btnVoucher) btnVoucher.classList.toggle('active', tab === 'vouchers');
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -588,6 +854,10 @@
                 loadAdminNotifications();
             } else if (tab === 'chat') {
                 loadUserList();
+            } else if (tab === 'products') {
+                loadAdminProducts();
+            } else if (tab === 'vouchers') {
+                loadAdminVouchers();
             }
         }
 
@@ -623,9 +893,9 @@
             renderDepositsGrid();
         }
 
-        async function loadDepositsQrisV2() {
+        async function loadDepositsQris() {
             try {
-                const res = await fetch('/api/admin/deposits-qrisv2');
+                const res = await fetch('/api/admin/deposits-qris');
                 const data = await res.json();
                 if (data.status && Array.isArray(data.deposits)) {
                     allDepositsData = data.deposits;
@@ -645,7 +915,7 @@
                 : allDepositsData.filter(d => (d.status || '').toLowerCase() === currentDepositFilter);
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="neo-box p-6 text-center text-xs font-mono font-bold col-span-full bg-white">Tidak ada transaksi deposit QRIS v2 pada kategori ini.</div>`;
+                grid.innerHTML = `<div class="neo-box p-6 text-center text-xs font-mono font-bold col-span-full bg-white">Tidak ada transaksi deposit QRIS pada kategori ini.</div>`;
                 return;
             }
 
@@ -741,11 +1011,11 @@
             if (!conf.isConfirmed) return;
 
             try {
-                const res = await fetch(`/api/admin/deposits-qrisv2/${encodeURIComponent(orderId)}/approve`, { method: 'POST' });
+                const res = await fetch(`/api/admin/deposits-qris/${encodeURIComponent(orderId)}/approve`, { method: 'POST' });
                 const result = await res.json();
                 if (result.status) {
                     Swal.fire({ icon: 'success', title: 'BERHASIL', text: result.message, timer: 1600, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
-                    loadDepositsQrisV2();
+                    loadDepositsQris();
                 } else {
                     throw new Error(result.message);
                 }
@@ -767,11 +1037,11 @@
             if (!conf.isConfirmed) return;
 
             try {
-                const res = await fetch(`/api/admin/deposits-qrisv2/${encodeURIComponent(orderId)}/cancel`, { method: 'POST' });
+                const res = await fetch(`/api/admin/deposits-qris/${encodeURIComponent(orderId)}/cancel`, { method: 'POST' });
                 const result = await res.json();
                 if (result.status) {
                     Swal.fire({ icon: 'info', title: 'DIBATALKAN', text: result.message, timer: 1600, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
-                    loadDepositsQrisV2();
+                    loadDepositsQris();
                 } else {
                     throw new Error(result.message);
                 }
@@ -1179,6 +1449,512 @@
             }
         }
 
+        // =======================================================
+        // GENERATOR & KELOLA PRODUK + MULTI-VARIAN SHOPEE-STYLE
+        // =======================================================
+        function switchProductSubTab(sub) {
+            const pForm = document.getElementById('prodPanelForm');
+            const pManage = document.getElementById('prodPanelManage');
+            const bForm = document.getElementById('prodSubBtnForm');
+            const bManage = document.getElementById('prodSubBtnManage');
+
+            if (pForm) pForm.classList.toggle('hidden', sub !== 'form');
+            if (pManage) pManage.classList.toggle('hidden', sub !== 'manage');
+            if (bForm) bForm.classList.toggle('active', sub === 'form');
+            if (bManage) bManage.classList.toggle('active', sub === 'manage');
+        }
+
+        function toggleProductVariantsMode() {
+            const enabled = Boolean(document.getElementById('prodEnableVariants')?.checked);
+            const singleBlock = document.getElementById('singleProductPriceBlock');
+            const multiBlock = document.getElementById('multiVariantBuilderBlock');
+            const badge = document.getElementById('variantModeStatusBadge');
+
+            if (enabled) {
+                singleBlock.classList.add('hidden');
+                multiBlock.classList.remove('hidden');
+                badge.innerText = 'MULTI-VARIAN SHOPEE';
+                badge.className = 'text-[10px] font-mono font-extrabold bg-neoCyan border-2 border-black px-2 py-0.5 uppercase';
+                if (productVariantRows.length === 0) {
+                    addVariantRow({ name: 'Indonesia', price: 5000, discountPrice: 0, stock: 25, image: '', downloadUrl: 'https://wa.me/6285122629940' });
+                    addVariantRow({ name: 'Jepang', price: 18000, discountPrice: 15000, stock: 10, image: '', downloadUrl: 'https://wa.me/6285122629940' });
+                }
+            } else {
+                singleBlock.classList.remove('hidden');
+                multiBlock.classList.add('hidden');
+                badge.innerText = 'PRODUK TUNGGAL';
+                badge.className = 'text-[10px] font-mono font-extrabold bg-white border-2 border-black px-2 py-0.5 uppercase';
+            }
+        }
+
+        function addVariantRow(preset = null) {
+            syncVariantRowsFromDom();
+            productVariantRows.push({
+                name: preset?.name || '',
+                price: preset?.price ?? 10000,
+                discountPrice: preset?.discountPrice ?? 0,
+                stock: preset?.stock ?? 10,
+                image: preset?.image || '',
+                downloadUrl: preset?.downloadUrl || ''
+            });
+            renderVariantRows();
+        }
+
+        function removeVariantRow(idx) {
+            syncVariantRowsFromDom();
+            productVariantRows.splice(idx, 1);
+            renderVariantRows();
+        }
+
+        function syncVariantRowsFromDom() {
+            const rows = document.querySelectorAll('.variant-builder-row');
+            if (!rows.length) return;
+            productVariantRows = Array.from(rows).map(row => ({
+                name: row.querySelector('.var-name')?.value || '',
+                price: Number(row.querySelector('.var-price')?.value || 0),
+                discountPrice: Number(row.querySelector('.var-discount')?.value || 0),
+                stock: Number(row.querySelector('.var-stock')?.value || 0),
+                image: row.querySelector('.var-image')?.value || '',
+                downloadUrl: row.querySelector('.var-url')?.value || ''
+            }));
+        }
+
+        function renderVariantRows() {
+            const container = document.getElementById('variantRowsContainer');
+            if (!container) return;
+
+            if (productVariantRows.length === 0) {
+                container.innerHTML = `<div class="p-3 bg-white border-2 border-dashed border-black text-center text-xs font-bold text-slate-600">Belum ada opsi varian. Klik "+ Tambah Opsi Varian".</div>`;
+                return;
+            }
+
+            container.innerHTML = productVariantRows.map((v, idx) => `
+                <div class="variant-builder-row bg-white border-[2.5px] border-black p-3 space-y-2.5 shadow-[3px_3px_0px_#000]">
+                    <div class="flex items-center justify-between border-b-2 border-black pb-1.5">
+                        <span class="text-[11px] font-cyber font-extrabold uppercase bg-neoYellow border border-black px-2 py-0.5">Opsi Varian #${idx + 1}</span>
+                        <button type="button" onclick="removeVariantRow(${idx})" class="bg-neoPink text-white border-2 border-black px-2 py-0.5 text-[10px] font-cyber font-extrabold uppercase">
+                            <i class="fa-solid fa-trash"></i> Hapus
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+                        <div>
+                            <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Nama Opsi (Negara/Paket) *</label>
+                            <input type="text" value="${escapeHtml(v.name)}" placeholder="Contoh: Indonesia" class="var-name w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Harga Normal (Rp) *</label>
+                            <input type="number" min="0" value="${Number(v.price || 0)}" class="var-price w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Harga Diskon (Rp)</label>
+                            <input type="number" min="0" value="${Number(v.discountPrice || 0)}" class="var-discount w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Stok Opsi *</label>
+                            <input type="number" min="0" value="${Number(v.stock || 0)}" class="var-stock w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">URL Gambar Khusus Opsi (Opsional)</label>
+                            <input type="text" value="${escapeHtml(v.image)}" placeholder="https://..." class="var-image w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-cyber font-extrabold uppercase mb-1">Link Download / WA / TG Khusus Opsi</label>
+                            <input type="text" value="${escapeHtml(v.downloadUrl)}" placeholder="https://wa.me/6285122629940" class="var-url w-full bg-neoBg border-2 border-black px-2.5 py-1.5 text-xs font-mono font-bold">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function fillNokosPreset() {
+            resetProductForm();
+            document.getElementById('prodNameInput').value = 'Jual Nokos WhatsApp Fresh';
+            document.getElementById('prodCategoryInput').value = 'Nomor Virtual';
+            document.getElementById('prodBadgeInput').value = 'BEST SELLER';
+            document.getElementById('prodImageInput').value = 'https://cdn.larasxd.my.id/files/Z9zjj0RF7G7ena.png';
+            document.getElementById('prodDescInput').value = 'Nomor kosong (Nokos) WhatsApp siap pakai, anti banned, garansi kode OTP masuk 1x pakai. Pilih negara sesuai kebutuhan Anda!';
+            document.getElementById('prodEnableVariants').checked = true;
+            document.getElementById('prodVariantGroupName').value = 'Negara';
+            productVariantRows = [
+                { name: 'Indonesia', price: 5000, discountPrice: 0, stock: 30, image: '', downloadUrl: 'https://wa.me/6285122629940' },
+                { name: 'Jepang', price: 18000, discountPrice: 15000, stock: 12, image: '', downloadUrl: 'https://wa.me/6285122629940' }
+            ];
+            toggleProductVariantsMode();
+            renderVariantRows();
+        }
+
+        function resetProductForm() {
+            const form = document.getElementById('productGeneratorForm');
+            if (form) form.reset();
+            document.getElementById('prodIdInput').value = '';
+            document.getElementById('prodEnableVariants').checked = false;
+            productVariantRows = [];
+            toggleProductVariantsMode();
+            setTextSafe('prodFormTabLabel', 'Tambah Produk Baru');
+            document.getElementById('prodFormHeaderTitle').innerHTML = '<i class="fa-solid fa-plus-circle"></i> Generator Produk Baru';
+            setTextSafe('btnSubmitProductText', 'Simpan & Terbitkan Produk');
+            document.getElementById('btnCancelProductEdit').classList.add('hidden');
+        }
+
+        async function loadAdminProducts() {
+            try {
+                const res = await fetch('/api/products');
+                const data = await res.json();
+                if (data.success && Array.isArray(data.products)) {
+                    allAdminProductsData = data.products;
+                    const count = allAdminProductsData.length;
+                    setTextSafe('totalProdBadge', count);
+                    setTextSafe('prodManageCountTab', count);
+                    setTextSafe('manageProdTotalText', count);
+                    renderAdminProductsList();
+                }
+            } catch (e) {}
+        }
+
+        function renderAdminProductsList() {
+            const container = document.getElementById('adminProductsListContainer');
+            if (!container) return;
+
+            const q = (document.getElementById('searchProdAdminInput')?.value || '').toLowerCase().trim();
+            const filtered = q
+                ? allAdminProductsData.filter(p =>
+                    String(p.name || '').toLowerCase().includes(q) ||
+                    String(p.category || '').toLowerCase().includes(q)
+                )
+                : allAdminProductsData;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-xs font-mono font-bold text-slate-600">Belum ada produk ditemukan.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(p => {
+                const variants = Array.isArray(p.variants) ? p.variants : [];
+                const hasVars = variants.length > 0;
+                const totalStock = hasVars
+                    ? variants.reduce((s, v) => s + Number(v.stock || 0), 0)
+                    : Number(p.stock || 0);
+                const priceSummary = hasVars
+                    ? variants.map(v => `${escapeHtml(v.name)}: ${formatRupiah(v.discountPrice > 0 ? v.discountPrice : v.price)} (${v.stock})`).join(' • ')
+                    : formatRupiah(p.discountPrice > 0 ? p.discountPrice : p.price);
+
+                return `
+                    <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neoBg/70">
+                        <div class="flex items-start gap-3 min-w-0">
+                            <img src="${escapeHtml(p.image || '')}" class="w-14 h-14 object-contain bg-white border-2 border-black shrink-0">
+                            <div class="min-w-0 space-y-1">
+                                <div class="flex flex-wrap items-center gap-1.5">
+                                    <span class="bg-neoCyan border border-black px-2 py-0.5 text-[10px] font-black font-cyber">${escapeHtml(p.category || 'Umum')}</span>
+                                    ${hasVars ? `<span class="bg-neoYellow border border-black px-2 py-0.5 text-[10px] font-black font-mono">${variants.length} ${escapeHtml(p.variantGroupName || 'Varian')}</span>` : ''}
+                                    <span class="text-[10px] font-mono font-bold text-slate-600">Total Stok: ${totalStock} • Terjual: ${p.soldCount || 0}</span>
+                                </div>
+                                <h4 class="font-cyber font-extrabold text-sm text-black truncate">${escapeHtml(p.name)}</h4>
+                                <p class="text-[11px] font-mono font-bold text-slate-700 break-words">${priceSummary}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button type="button" onclick="editAdminProduct('${escapeHtml(p.id)}')" class="neo-btn bg-neoCyan text-black font-cyber font-extrabold px-3 py-2 text-xs uppercase flex items-center gap-1">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </button>
+                            <button type="button" onclick="deleteAdminProduct('${escapeHtml(p.id)}', '${escapeHtml(p.name)}')" class="neo-btn bg-neoPink text-white font-cyber font-extrabold px-3 py-2 text-xs uppercase flex items-center gap-1">
+                                <i class="fa-solid fa-trash"></i> Hapus
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function editAdminProduct(prodId) {
+            const p = allAdminProductsData.find(item => String(item.id) === String(prodId));
+            if (!p) return;
+
+            switchProductSubTab('form');
+            document.getElementById('prodIdInput').value = p.id;
+            document.getElementById('prodNameInput').value = p.name || '';
+            document.getElementById('prodCategoryInput').value = p.category || '';
+            document.getElementById('prodBadgeInput').value = p.badge || '';
+            document.getElementById('prodImageInput').value = p.image || '';
+            const extraImgs = Array.isArray(p.images) ? p.images.filter(u => u !== p.image) : [];
+            document.getElementById('prodGalleryInput').value = extraImgs.join(', ');
+            document.getElementById('prodDescInput').value = p.description || '';
+
+            const variants = Array.isArray(p.variants) ? p.variants : [];
+            if (variants.length > 0) {
+                document.getElementById('prodEnableVariants').checked = true;
+                document.getElementById('prodVariantGroupName').value = p.variantGroupName || 'Varian';
+                productVariantRows = variants.map(v => ({
+                    name: v.name || v.label || '',
+                    price: Number(v.price || 0),
+                    discountPrice: Number(v.discountPrice || 0),
+                    stock: Number(v.stock || 0),
+                    image: v.image || '',
+                    downloadUrl: v.downloadUrl || ''
+                }));
+                toggleProductVariantsMode();
+                renderVariantRows();
+            } else {
+                document.getElementById('prodEnableVariants').checked = false;
+                productVariantRows = [];
+                toggleProductVariantsMode();
+                document.getElementById('prodPriceInput').value = Number(p.price || 0);
+                document.getElementById('prodDiscountPriceInput').value = Number(p.discountPrice || 0);
+                document.getElementById('prodStockInput').value = Number(p.stock || 0);
+                document.getElementById('prodDownloadUrlInput').value = p.downloadUrl || '';
+            }
+
+            setTextSafe('prodFormTabLabel', 'Edit Produk');
+            document.getElementById('prodFormHeaderTitle').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Produk: ${escapeHtml(p.name)}`;
+            setTextSafe('btnSubmitProductText', 'Simpan Perubahan Produk');
+            document.getElementById('btnCancelProductEdit').classList.remove('hidden');
+        }
+
+        async function submitProductGenerator(e) {
+            e.preventDefault();
+            const prodId = (document.getElementById('prodIdInput').value || '').trim();
+            const isEdit = Boolean(prodId);
+            const enableVariants = Boolean(document.getElementById('prodEnableVariants').checked);
+
+            const mainImage = document.getElementById('prodImageInput').value.trim();
+            const galleryRaw = document.getElementById('prodGalleryInput').value || '';
+            const extraImages = galleryRaw.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+            const images = [...new Set([mainImage, ...extraImages])];
+
+            let variants = [];
+            let price = Number(document.getElementById('prodPriceInput').value || 0);
+            let discountPrice = Number(document.getElementById('prodDiscountPriceInput').value || 0);
+            let stock = Number(document.getElementById('prodStockInput').value || 0);
+            let downloadUrl = document.getElementById('prodDownloadUrlInput').value.trim();
+
+            if (enableVariants) {
+                syncVariantRowsFromDom();
+                variants = productVariantRows.filter(v => v.name.trim() !== '');
+                if (variants.length === 0) {
+                    Swal.fire({ icon: 'warning', title: 'VARIAN KOSONG', text: 'Tambahkan minimal 1 opsi varian (misal: Indonesia).', customClass: { popup: 'cyber-swal' } });
+                    return;
+                }
+                price = Math.min(...variants.map(v => Number(v.price || 0)));
+                discountPrice = 0;
+                stock = variants.reduce((sum, v) => sum + Math.max(0, Number(v.stock || 0)), 0);
+                if (!downloadUrl && variants[0]?.downloadUrl) downloadUrl = variants[0].downloadUrl;
+            }
+
+            const payload = {
+                name: document.getElementById('prodNameInput').value.trim(),
+                category: document.getElementById('prodCategoryInput').value.trim(),
+                badge: document.getElementById('prodBadgeInput').value.trim(),
+                image: mainImage,
+                images,
+                description: document.getElementById('prodDescInput').value.trim(),
+                price,
+                discountPrice,
+                stock,
+                downloadUrl,
+                variantGroupName: enableVariants ? (document.getElementById('prodVariantGroupName').value.trim() || 'Varian') : '',
+                variants
+            };
+
+            const btn = document.getElementById('btnSubmitProduct');
+            btn.disabled = true;
+
+            try {
+                const url = isEdit ? `/api/admin/products/${encodeURIComponent(prodId)}` : '/api/admin/products';
+                const method = isEdit ? 'PUT' : 'POST';
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (!res.ok || !result.status) {
+                    throw new Error(result.message || 'Gagal menyimpan produk.');
+                }
+
+                resetProductForm();
+                await loadAdminProducts();
+                Swal.fire({
+                    icon: 'success',
+                    title: isEdit ? 'PRODUK DIPERBARUI!' : 'PRODUK DITAMBAHKAN!',
+                    text: result.message,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function deleteAdminProduct(prodId, name) {
+            const conf = await Swal.fire({
+                title: 'HAPUS PRODUK?',
+                text: `Yakin ingin menghapus produk "${name}" dari toko?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                customClass: { popup: 'cyber-swal' }
+            });
+            if (!conf.isConfirmed) return;
+
+            try {
+                const res = await fetch(`/api/admin/products/${encodeURIComponent(prodId)}`, { method: 'DELETE' });
+                const result = await res.json();
+                if (!res.ok || !result.status) {
+                    throw new Error(result.message || 'Gagal menghapus produk.');
+                }
+                await loadAdminProducts();
+                Swal.fire({ icon: 'success', title: 'TERHAPUS', text: result.message, timer: 1500, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+            }
+        }
+
+        // =======================================================
+        // GENERATOR & KELOLA VOUCHER DISKON
+        // =======================================================
+        function generateRandomVoucherCode() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let code = 'ARULZ-';
+            for (let i = 0; i < 6; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            const input = document.getElementById('voucherCodeInput');
+            if (input) input.value = code;
+        }
+
+        function toggleVoucherTypeFields() {
+            const type = document.getElementById('voucherTypeInput')?.value || 'fixed';
+            const label = document.getElementById('voucherValueLabel');
+            const maxGroup = document.getElementById('voucherMaxDiscountGroup');
+            const valInput = document.getElementById('voucherValueInput');
+
+            if (type === 'percent') {
+                if (label) label.innerText = 'Persentase Diskon (%) *';
+                if (valInput) valInput.placeholder = '20';
+                if (maxGroup) maxGroup.classList.remove('hidden');
+            } else {
+                if (label) label.innerText = 'Nominal Diskon (Rp) *';
+                if (valInput) valInput.placeholder = '5000';
+                if (maxGroup) maxGroup.classList.add('hidden');
+            }
+        }
+
+        async function loadAdminVouchers() {
+            try {
+                const res = await fetch('/api/admin/vouchers');
+                const data = await res.json();
+                if (data.status && Array.isArray(data.vouchers)) {
+                    allAdminVouchersData = data.vouchers;
+                    const count = allAdminVouchersData.length;
+                    setTextSafe('totalVoucherBadge', count);
+                    setTextSafe('manageVoucherTotalText', count);
+                    renderAdminVouchersList();
+                }
+            } catch (e) {}
+        }
+
+        function renderAdminVouchersList() {
+            const container = document.getElementById('adminVouchersListContainer');
+            if (!container) return;
+
+            if (allAdminVouchersData.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-xs font-mono font-bold text-slate-600">Belum ada voucher dibuat.</div>`;
+                return;
+            }
+
+            container.innerHTML = allAdminVouchersData.map(v => {
+                const discText = v.type === 'percent'
+                    ? `Diskon ${v.value}%${v.maxDiscount > 0 ? ` (Maks ${formatRupiah(v.maxDiscount)})` : ''}`
+                    : `Potongan ${formatRupiah(v.value)}`;
+                const quotaText = v.quota > 0 ? `${v.usedCount || 0}/${v.quota} Terpakai` : `${v.usedCount || 0} Terpakai (Unlimited)`;
+
+                return `
+                    <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-neoBg/70">
+                        <div class="space-y-1">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="bg-neoYellow border-2 border-black px-2.5 py-0.5 text-xs font-mono font-black">${escapeHtml(v.code)}</span>
+                                <span class="bg-neoGreen border border-black px-2 py-0.5 text-[10px] font-cyber font-extrabold">${discText}</span>
+                                <span class="text-[10px] font-mono font-bold text-slate-600">Min. Belanja: ${formatRupiah(v.minOrder || 0)} • Kuota: ${quotaText}</span>
+                            </div>
+                        </div>
+                        <button type="button" onclick="deleteAdminVoucher('${escapeHtml(v._id)}', '${escapeHtml(v.code)}')" class="neo-btn bg-neoPink text-white font-cyber font-extrabold px-3 py-2 text-xs uppercase flex items-center gap-1 shrink-0">
+                            <i class="fa-solid fa-trash"></i> Hapus
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function submitVoucherGenerator(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitVoucher');
+            btn.disabled = true;
+
+            try {
+                const payload = {
+                    code: document.getElementById('voucherCodeInput').value.trim().toUpperCase(),
+                    type: document.getElementById('voucherTypeInput').value,
+                    value: Number(document.getElementById('voucherValueInput').value || 0),
+                    minOrder: Number(document.getElementById('voucherMinOrderInput').value || 0),
+                    maxDiscount: Number(document.getElementById('voucherMaxDiscountInput').value || 0),
+                    quota: Number(document.getElementById('voucherQuotaInput').value || 0)
+                };
+
+                const res = await fetch('/api/admin/vouchers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+                if (!res.ok || !result.status) {
+                    throw new Error(result.message || 'Gagal membuat voucher.');
+                }
+
+                document.getElementById('voucherGeneratorForm').reset();
+                toggleVoucherTypeFields();
+                await loadAdminVouchers();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'VOUCHER AKTIF!',
+                    text: result.message,
+                    customClass: { popup: 'cyber-swal' }
+                });
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function deleteAdminVoucher(voucherId, code) {
+            const conf = await Swal.fire({
+                title: 'HAPUS VOUCHER?',
+                text: `Hapus permanen kode voucher "${code}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                customClass: { popup: 'cyber-swal' }
+            });
+            if (!conf.isConfirmed) return;
+
+            try {
+                const res = await fetch(`/api/admin/vouchers/${encodeURIComponent(voucherId)}`, { method: 'DELETE' });
+                const result = await res.json();
+                if (!res.ok || !result.status) {
+                    throw new Error(result.message || 'Gagal menghapus voucher.');
+                }
+                await loadAdminVouchers();
+                Swal.fire({ icon: 'success', title: 'TERHAPUS', text: result.message, timer: 1400, showConfirmButton: false, customClass: { popup: 'cyber-swal' } });
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'GAGAL', text: err.message, customClass: { popup: 'cyber-swal' } });
+            }
+        }
+
         // LIVE CHAT FUNCTIONS + PENANDA UNREAD BADGE
         function scrollUserCarousel(direction) {
             const container = document.getElementById('adminUserList');
@@ -1194,7 +1970,6 @@
 
                 setTextSafe('userCountText', users.length);
 
-                // Hitung total pesan belum dibaca untuk penanda pada tombol Live Chat CS
                 const totalUnreadChats = users.reduce((sum, u) => sum + (Number(u.unreadCount) || 0), 0);
                 setTextSafe('unreadChatBadge', totalUnreadChats);
 
@@ -1278,11 +2053,13 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             selectDeliveryMode('broadcast');
-            loadDepositsQrisV2();
+            loadDepositsQris();
             loadUserList();
             loadAdminNotifications();
+            loadAdminProducts();
+            loadAdminVouchers();
             adminPollInterval = setInterval(() => {
-                loadDepositsQrisV2();
+                loadDepositsQris();
                 if (selectedUserId) loadUserMessages();
                 loadUserList();
             }, 5000);
